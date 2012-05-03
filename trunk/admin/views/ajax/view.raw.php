@@ -1,0 +1,76 @@
+<?php
+/**
+ * jUpgrade
+ *
+ * @version		$Id$
+ * @package		MatWare
+ * @subpackage	com_jupgrade
+ * @copyright	Copyright 2006 - 2011 Matias Aguire. All rights reserved.
+ * @license		GNU General Public License version 2 or later.
+ * @author		Matias Aguirre <maguirre@matware.com.ar>
+ * @link		http://www.matware.com.ar
+ */
+
+// No direct access.
+defined('_JEXEC') or die;
+
+jimport( 'joomla.application.component.view' );
+
+/**
+ * @package		MatWare
+ * @subpackage	com_jupgrade
+ */
+class jupgradeProViewAjax extends JView
+{
+	/**
+	 * Display the view.
+	 *
+	 * @param	string	$tpl	The subtemplate to display.
+	 *
+	 * @return	void
+	 */
+	function display($tpl = null)
+	{
+
+//echo "dsds";
+
+		$task = JRequest::getCmd('task', '');
+
+		if ($task == '') { 
+			echo JText::_('ERROR: task not found');
+		}
+
+		$return	= $this->get(ucfirst($task));		
+	
+		echo $return;
+
+/*
+		JToolBarHelper::title(JText::_( 'jUpgrade' ), 'jupgrade');
+		JToolBarHelper::custom('cpanel', 'back.png', 'back_f2.png', 'Back', false, false);
+		JToolBarHelper::preferences('com_jupgradepro', '500');
+		JToolBarHelper::spacer();
+		JToolBarHelper::custom('help', 'help.png', 'help_f2.png', 'Help', false, false);
+		JToolBarHelper::spacer();
+
+		// get params
+		$params		= JComponentHelper::getParams('com_jupgradepro');
+
+		// Set timelimit to 0
+		if(!@ini_get('safe_mode')) {
+			if ($params->get('timelimit') == 0) {
+				set_time_limit(0);
+			}
+		}
+
+		$xmlfile = JPATH_COMPONENT.'/jupgradepro.xml';
+ 		$xml = JFactory::getXMLParser('Simple');
+ 		$xml->loadFile($xmlfile);
+		$attrib = $xml->document->version[0];
+
+		$this->params =	$params;
+		$this->version =	$attrib->data();
+
+		parent::display($tpl);
+*/
+	}
+}

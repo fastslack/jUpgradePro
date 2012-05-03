@@ -1,0 +1,149 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE config>
+<config>
+
+	<fieldset
+		name="global"
+		label="COM_JUPGRADEPRO_CONFIG_GLOBAL_TITLE"
+		description="COM_JUPGRADEPRO_CONFIG_GLOBAL_TITLE_DESC">
+
+		<field
+			name="path"
+			type="text"
+			label="COM_JUPGRADEPRO_CONFIG_PATH"
+			description="COM_JUPGRADEPRO_CONFIG_PATH_DESC"
+			default=""
+		/>
+
+	</fieldset>
+
+	<fieldset
+		name="database"
+		label="COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE"
+		description="COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE_DESC">
+
+		<field
+			name="hostname"
+			type="text"
+			label="COM_JUPGRADEPRO_CONFIG_HOSTNAME"
+			description="COM_JUPGRADEPRO_CONFIG_HOSTNAME_DESC"
+			default="localhost"
+		/>
+
+		<field
+			name="username"
+			type="text"
+			label="COM_JUPGRADEPRO_CONFIG_USERNAME"
+			description="COM_JUPGRADEPRO_CONFIG_USERNAME_DESC"
+			default=""
+		/>
+
+		<field
+			name="password"
+			type="password"
+			label="COM_JUPGRADEPRO_CONFIG_PASSWORD"
+			description="COM_JUPGRADEPRO_CONFIG_PASSWORD_DESC"
+			default=""
+		/>
+
+		<field
+			name="database"
+			type="text"
+			label="COM_JUPGRADEPRO_CONFIG_DATABASE"
+			description="COM_JUPGRADEPRO_CONFIG_DATABASE_DESC"
+			default=""
+		/>
+
+		<field
+			name="prefix"
+			type="text"
+			label="COM_JUPGRADEPRO_CONFIG_PREFIX"
+			description="COM_JUPGRADEPRO_CONFIG_PREFIX_DESC"
+			default="jos_"
+		/>
+
+	</fieldset>
+
+
+	<fieldset
+		name="templates"
+		label="COM_JUPGRADEPRO_CONFIG_TEMPLATE_TITLE"
+		description="COM_JUPGRADEPRO_CONFIG_TEMPLATE_TITLE_DESC">
+
+		<field
+			name="skip_templates"
+			type="list"
+			label="COM_JUPGRADEPRO_CONFIG_TEMPLATE"
+			description="COM_JUPGRADEPRO_CONFIG_TEMPLATE_DESC"
+			default="0">
+			<option
+				value="0">JNO</option>
+			<option
+				value="1">JYES</option>
+		</field>
+
+		<field
+			name="positions"
+			type="list"
+			label="COM_JUPGRADEPRO_CONFIG_POSITIONS"
+			description="COM_JUPGRADEPRO_CONFIG_POSITIONS_DESC"
+			default="0">
+			<option
+				value="0">JNO</option>
+			<option
+				value="1">JYES</option>
+		</field>
+
+	</fieldset>
+
+	<fieldset
+		name="skips"
+		label="COM_JUPGRADEPRO_CONFIG_SKIPS_TITLE"
+		description="COM_JUPGRADEPRO_CONFIG_SKIPS_TITLE_DESC">
+
+		<field
+			name="skip_checks"
+			type="list"
+			label="COM_JUPGRADEPRO_CONFIG_SKIP_CHECKS"
+			description="COM_JUPGRADEPRO_CONFIG_SKIP_CHECKS_DESC"
+			default="0">
+			<option
+				value="0">JNO</option>
+			<option
+				value="1">JYES</option>
+		</field>
+
+		<field
+			name="skip_extensions"
+			type="list"
+			label="COM_JUPGRADEPRO_CONFIG_SKIP_EXTENSIONS"
+			description="COM_JUPGRADEPRO_CONFIG_SKIP_EXTENSIONS_DESC"
+			default="0">
+			<option
+				value="0">JNO</option>
+			<option
+				value="1">JYES</option>
+		</field>
+
+	</fieldset>
+
+	<fieldset
+		name="debug"
+		label="COM_JUPGRADEPRO_CONFIG_DEBUG_TITLE"
+		description="COM_JUPGRADEPRO_CONFIG_DEBUG_TITLE_DESC">
+
+		<field
+			name="debug"
+			type="list"
+			label="COM_JUPGRADEPRO_CONFIG_DEBUG"
+			description="COM_JUPGRADEPRO_CONFIG_DEBUG_DESC"
+			default="0">
+			<option
+				value="0">JNO</option>
+			<option
+				value="1">JYES</option>
+		</field>
+
+	</fieldset>
+
+</config>

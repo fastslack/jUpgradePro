@@ -50,9 +50,6 @@ class jUpgradeProModelAjax extends JModel
 		// Initialize jupgrade class
 		$jupgrade = new jUpgrade;
 		
-		// Requirements
-		$requirements = $jupgrade->getRequirements();
-
 		// Getting the component parameter with global settings
 		$params = $jupgrade->getParams();
 
@@ -103,54 +100,7 @@ class jUpgradeProModelAjax extends JModel
 			echo json_encode($message);
 			exit;
 		}
-		
-		// Check Curl
-		$skip_download = isset($params->skip_download) ? $params->skip_download : 0;	
 	
-		if ($skip_download != 1) {
-			$ext = get_loaded_extensions();
-	
-			if (!in_array("curl", $ext)) {
-				$message['number'] = 406;
-				$message['text'] = "cURL not loaded";
-				echo json_encode($message);
-				exit;
-			}
-		}
-		
-		// Check dirs
-		if (!is_writable(JPATH_ROOT)) {
-			$message['number'] = 407;
-			$message['text'] = JPATH_ROOT." is unwritable";
-			echo json_encode($message);
-			exit;
-		}
-		
-		$tmp = JPATH_ROOT.'/tmp';
-		
-		if (!is_writable($tmp)) {
-			$message['number'] = 408;
-			$message['text'] = "{$tmp} is unwritable";
-			echo json_encode($message);
-			exit;
-		}
-		
-		// Compare the PHP version
-		if (!version_compare($requirements['phpMust'], $requirements['phpIs'], '<')) {
-			$message['number'] = 409;
-			$message['text'] = "PHP 5.2+ or greater is required";
-			echo json_encode($message);
-			exit;
-		}
-		
-		// Compare the MYSQL version
-		if (!version_compare($requirements['mysqlMust'], $requirements['mysqlIs'])) {
-			$message['number'] = 410;
-			$message['text'] = "MySQL 5.0+ or greater is required";
-			echo json_encode($message);
-			exit;
-		}
-
 		// Check safe_mode_gid
 		if (@ini_get('safe_mode_gid')) {
 			$message['number'] = 411;

@@ -606,37 +606,7 @@ class jUpgrade
 		return $this->params->toObject();
 	}
 
-	/**
-	 * Internal function to get the component settings
-	 *
-	 * @return	an object with global settings
-	 * @since	0.5.7
-	 * @throws	Exception
-	 */
-	public function getRequirements()
-	{
-		// Check if server is linux
-		ob_start();
-		phpinfo(1);
-		$phpinfo = ob_get_contents();
-		ob_end_clean();
-		$phpinfo = preg_replace("'<style[^>]*>.*</style>'siU",'',$phpinfo);
-		$phpinfo = strip_tags($phpinfo);
-		$exp = explode(" ", $phpinfo);
 
-		$requirements = array();
-
-		$requirements['phpMust'] = '5.2.4';
-		$requirements['phpIs'] = PHP_VERSION;
-
-		$requirements['mysqlMust'] = '5.1';
-		if ($exp[3] == 'Linux') {
-			$requirements['mysqlMust'] = '5.0.4';
-		}
-		$requirements['mysqlIs'] = $this->db_old->getVersion();
-
-		return $requirements;
-	}
 
 	/**
 	 * Internal function to check if 5 seconds has been passed
@@ -656,80 +626,5 @@ class jUpgrade
 			return false;
 
 		return true;
-	}
-
-	/**
-	 *
-	 * Gets the changeset object
-	 *
-	 * @return  JSchemaChangeset
-	 */
-	public function getChangeSet()
-	{
-		$folder = JPATH_ADMINISTRATOR . '/components/com_admin/sql/updates/';
-		$changeSet = JSchemaChangeset::getInstance(JFactory::getDbo(), $folder);
-		return $changeSet;
-	}
-
-	/**
-	 * Get version from #__schemas table
-	 *
-	 * @return  mixed  the return value from the query, or null if the query fails
-	 * @throws Exception
-	 */
-
-	public function getSchemaVersion() {
-		$db = $this->db_new;
-		$query = $db->getQuery(true);
-		$query->select('version_id')->from($db->qn('#__schemas'))
-		->where('extension_id = 700');
-		$db->setQuery($query);
-		$result = $db->loadResult();
-		if ($db->getErrorNum()) {
-			throw new Exception('Database error - getSchemaVersion');
-		}
-		return $result;
-	}
-
-	/**
-	 * Fix schema version if wrong
-	 *
-	 * @param JSchemaChangeSet
-	 *
-	 * @return   mixed  string schema version if success, false if fail
-	 */
-	public function fixSchemaVersion($changeSet)
-	{
-		// Get correct schema version -- last file in array
-		$schema = $changeSet->getSchema();
-		$db = $this->db_new;
-		$result = false;
-
-		// Check value. If ok, don't do update
-		$version = $this->getSchemaVersion();
-		if ($version == $schema)
-		{
-			$result = $version;
-		}
-		else
-		{
-			// Delete old row
-			$query = $db->getQuery(true);
-			$query->delete($db->qn('#__schemas'));
-			$query->where($db->qn('extension_id') . ' = 700');
-			$db->setQuery($query);
-			$db->query();
-
-			// Add new row
-			$query = $db->getQuery(true);
-			$query->insert($db->qn('#__schemas'));
-			$query->set($db->qn('extension_id') . '= 700');
-			$query->set($db->qn('version_id') . '= ' . $db->q($schema));
-			$db->setQuery($query);
-			if ($db->query()) {
-				$result = $schema;
-			}
-		}
-		return $result;
 	}
 }

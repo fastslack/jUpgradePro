@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE install>
+<install type="component" version="1.5.19" method="upgrade">
+	<name>jUpgradePro</name>
+	<author>Matias Aguirre</author>
+	<authorEmail>maguirre@matware.com.ar</authorEmail>
+	<authorUrl>http://www.matware.com.ar</authorUrl>
+	<copyright>Copyright 2006 - 2011 Matias Aguirre. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later.</license>
+	<creationDate>2011-02-07</creationDate>
+	<version>2.5.2</version>
+	<description></description>
+
+	<install>
+		<sql>
+			<file charset="utf8" driver="mysql">sql/install.sql</file>
+		</sql>
+	</install>
+
+	<files folder="site">
+		<filename>index.html</filename>
+	</files>
+
+	<administration>
+		<menu img="components/com_jupgradepro/images/jupgrade.png">jUpgradePro</menu>
+
+		<files folder="admin">
+			<folder>controllers</folder>
+			<folder>css</folder>
+			<folder>extensions</folder>
+			<folder>images</folder>
+			<folder>includes</folder>
+			<folder>js</folder>
+			<folder>language</folder>
+			<folder>models</folder>
+			<folder>tables</folder>
+			<folder>sql</folder>
+			<folder>views</folder>
+
+			<filename>jupgradepro.php</filename>
+			<filename>config.xml</filename>
+			<filename>access.xml</filename>
+			<filename>controller.php</filename>
+			<filename>index.html</filename>
+		</files>
+
+		<languages folder="admin">
+			<language tag="en-GB">language/en-GB/en-GB.com_jupgradepro.ini</language>
+			<language tag="en-GB">language/en-GB/en-GB.com_jupgradepro.sys.ini</language>
+		</languages>
+	</administration>
+
+</install>

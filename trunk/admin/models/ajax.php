@@ -303,7 +303,9 @@ class jUpgradeProModelAjax extends JModel
 	public function _processStep ($step)
 	{
 		// Require the file
-		require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
+		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
+			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
+		}
 
 		switch ($step->name)
 		{
@@ -402,6 +404,9 @@ class jUpgradeProModelAjax extends JModel
 
 				break;
 			case 'extensions':
+				require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
+				require_once JPATH_COMPONENT.'/includes/jupgrade.extensions.class.php';				
+	
 				// Get jUpgradeExtensions instance
 				$extension = jUpgradeExtensions::getInstance($step);
 				$success = $extension->upgrade();

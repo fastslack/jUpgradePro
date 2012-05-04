@@ -257,11 +257,7 @@ class jUpgradeExtensions extends jUpgrade
 			}
 
 			// Check default path for extensions files
-			if (empty($this->params->cli)) {
-				$default_path = JPATH_ROOT."/administrator/components/com_jupgrade";
-			} else {
-				$default_path = JPATH_ROOT;
-			}
+			$default_path = JPATH_ROOT."/administrator/components/com_jupgradepro";
 
 			if (empty($state->xmlfile)) {
 				// Find xml file from jUpgrade
@@ -342,7 +338,6 @@ class jUpgradeExtensions extends jUpgrade
 					$cat->upgrade();
 
 				} //end if
-
 
 			} //end if
 		}

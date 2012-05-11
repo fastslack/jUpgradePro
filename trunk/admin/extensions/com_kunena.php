@@ -149,7 +149,10 @@ class jUpgradeComponentKunena extends jUpgradeExtensions {
 		$this->source = $this->destination = "#__{$table}";
 
 		// Clone table
-		$this->cloneTable($this->source, $this->destination);
+		//$this->cloneTable($this->source, $this->destination);
+		$folder = JPATH_COMPONENT.DS."sql".DS."updates";
+		$from = preg_replace ('/#__/', $this->db_old->getPrefix(), $this->source);
+		$export = $this->getExportTable($this->db_old, $from, $folder, false);
 
 		// Get data
 		$rows = parent::getSourceData('*');

@@ -279,6 +279,31 @@ class jUpgrade
 	}
 
 	/**
+	 * populateDatabase
+	 */
+	function populateDatabase(& $db, $sqlfile, & $errors, $nexttask='mainconfig')
+	{
+		if( !($buffer = file_get_contents($sqlfile)) )
+		{
+			return -1;
+		}
+
+		$queries = $db->splitSql($buffer);
+
+		foreach ($queries as $query)
+		{
+			$query = trim($query);
+			if ($query != '' && $query {0} != '#')
+			{
+				$db->setQuery($query);
+				$db->query() or die($db->getErrorMsg());
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Sets the data in the destination database.
 	 *
 	 * @return	void
@@ -362,99 +387,6 @@ class jUpgrade
 	}
 
 	/**
-	 * Copy table to old site to new site
-	 *
-	 * @return	boolean
-	 * @since 1.1.0
-	 * @throws	Exception
-	 */
-	protected function copyTable($from, $to=null) {
-
-		// Check if table exists
-		$database = $this->config_old['database'];
-		if (!$to) $to = $from;
-		$from = preg_replace ('/#__/', $this->db_old->getPrefix(), $from);
-		$to = preg_replace ('/#__/', $this->db_new->getPrefix(), $to);
-
-		$success = $this->cloneTable($from, $to);
-		if ($success) {
-			$query = "INSERT INTO {$to} SELECT * FROM {$from}";
-			$this->db_new->setQuery($query);
-			$this->db_new->query();
-
-			// Check for query error.
-			$error = $this->db_new->getErrorMsg();
-			if ($error) {
-				throw new Exception($error);
-			}
-			$success = true;
-		}
-
-		return $success;
-	}
-
- 	/**
-	 * Clone table structure from old site to new site
-	 *
-	 * @return	boolean
-	 * @since 1.1.0
-	 * @throws	Exception
-	 */
-	protected function cloneTable($from, $to=null, $drop=true) {
-		// Check if table exists
-		$database = $this->config_old['database'];
-		if (!$to) $to = $from;
-		$from = preg_replace ('/#__/', $this->db_old->getPrefix(), $from);
-		$to = preg_replace ('/#__/', $this->db_new->getPrefix(), $to);
-
-		$query = "SELECT COUNT(*) AS count
-			FROM information_schema.tables
-			WHERE table_schema = '$database'
-			AND table_name = '$from'";
-
-		$this->db_old->setQuery($query);
-		$res = $this->db_old->loadResult();
-
-		if($res == 0) {
-			$success = false;
-		} else {
-			/*
-			if ($drop) {
-				if ($this->canDrop) {
-					$query = "DROP TABLE IF EXISTS {$to}";
-					$this->db_new->setQuery($query);
-					$this->db_new->query();
-				} else {
-					$query = "DELETE FROM {$to}";
-					$this->db_new->setQuery($query);
-					$this->db_new->query();
-				}
-
-				// Check for query error.
-				$error = $this->db_new->getErrorMsg();
-
-				if ($error) {
-					throw new Exception($error);
-				}
-			}
-			*/
-			$query = "CREATE TABLE {$to} LIKE {$from}";
-			$this->db_new->setQuery($query);
-			$this->db_new->query();
-
-			// Check for query error.
-			$error = $this->db_new->getErrorMsg();
-
-			if ($error) {
-				throw new Exception($error);
-			}
-			$success = true;
-		}
-
-		return $success;
-	}
-
-	/**
 	 * Save internal state.
 	 *
 	 * @return	boolean
@@ -499,19 +431,6 @@ class jUpgrade
 		$this->output = $text;
 		return $output;
 	}
-
-	/**
-	 * Internal function to debug
-	 *
-	 * @return	a better version of print_r
-	 * @since	0.4.5
-	 * @throws	Exception
-	 */
-	public function print_a($subject)
-	{
-		echo str_replace("=>","&#8658;",str_replace("Array","<font color=\"red\"><b>Array</b></font>",nl2br(str_replace(" "," &nbsp; ",print_r($subject,true)))));
-	}
-
 
 	/**
 	 * Internal function to get original database prefix

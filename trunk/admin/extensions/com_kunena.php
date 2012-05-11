@@ -212,11 +212,6 @@ class jUpgradeComponentKunena extends jUpgradeExtensions {
 		$component = JTable::getInstance ( 'extension', 'JTable', array('dbo'=>$this->db_new) );
 		$component->load(array('type'=>'component', 'element'=>$this->name));
 
-		// First fix all broken menu items
-		$query = "UPDATE #__menu SET component_id={$this->db_new->quote($component->extension_id)} WHERE type = 'component' AND link LIKE '%option={$this->name}%'";
-		$this->db_new->setQuery ( $query );
-		$this->db_new->query ();
-
 		$menumap = $this->getMapList('menus');
 
 		// Get all menu items from the component (JMenu style)

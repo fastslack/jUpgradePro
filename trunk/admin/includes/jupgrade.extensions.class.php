@@ -368,6 +368,10 @@ class jUpgradeExtensions extends jUpgrade
 			}
 			if ($this->ready)
 			{
+				$this->ready = $this->fixExtensionMenus();
+			}
+			if ($this->ready)
+			{
 				$this->ready = $this->migrateExtensionCustom();
 			}
 
@@ -832,6 +836,26 @@ class jUpgradeExtensions extends jUpgrade
 			}
 		}
 		return empty($this->state->folders);
+	}
+
+	/**
+	 * Migrate custom information.
+	 *
+	 * @return	boolean Ready
+	 * @since	1.1.0
+	 */
+	protected function fixExtensionMenus()
+	{
+		// Get component object
+		$component = JTable::getInstance ( 'extension', 'JTable', array('dbo'=>$this->db_new) );
+		$component->load(array('type'=>'component', 'element'=>$this->name));
+
+		// First fix all broken menu items
+		$query = "UPDATE #__menu SET component_id={$this->db_new->quote($component->extension_id)} WHERE type = 'component' AND link LIKE '%option={$this->name}%'";
+		$this->db_new->setQuery ( $query );
+		$this->db_new->query ();
+
+		return true;
 	}
 
 	/**

@@ -268,33 +268,6 @@ class jUpgradeProModelAjax extends JModel
 	}
 
 	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getExtensions() {
-
-		// jUpgrade class
-		$jupgrade = new jUpgrade;
-
-		$step = $this->_getStep();
-
-		// TODO: Error handler
-
-		$this->_processExtensionStep($step);
-
-		$this->_updateStep($step);
-
-		$message['status'] = "OK";
-		$message['step'] = $step->id;
-		$message['name'] = $step->name;
-		$message['text'] = 'DONE';
-		echo json_encode($message);
-
-	}
-
-	/**
 	 * New processStep
 	 *
 	 * @return	none
@@ -417,6 +390,44 @@ class jUpgradeProModelAjax extends JModel
 	} // end method
 
 	/**
+	 * Migrate
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	function getExtensions() {
+
+		// jUpgrade class
+		$jupgrade = new jUpgrade;
+
+		$step = $this->_getStep();
+
+		// TODO: Error handler
+
+		$this->_processExtensionStep($step);
+
+		// Select the steps
+		$query = "SELECT * FROM jupgrade_steps AS s WHERE s.extension = 1 ORDER BY s.id DESC LIMIT 1";
+		$jupgrade->db_new->setQuery($query);
+		$lastid = $jupgrade->db_new->loadResult();
+
+		// Check for query error.
+		$error = $jupgrade->db_new->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		$message['status'] = "OK";
+		$message['step'] = $step->id;
+		$message['name'] = $step->name;
+		$message['lastid'] = $lastid;
+		$message['text'] = 'DONE';
+		echo json_encode($message);
+
+	}
+
+	/**
 	 * Getting the next step
 	 *
 	 * @return   step object
@@ -445,6 +456,12 @@ class jUpgradeProModelAjax extends JModel
 		}
 	}
 
+	/**
+	 * updateStep
+	 *
+	 * @return	none
+	 * @since	2.5.2
+	 */
 	public function _updateStep($step) {
 		// Initialize jupgrade class
 		$jupgrade = new jUpgrade;
@@ -464,6 +481,7 @@ class jUpgradeProModelAjax extends JModel
 
 		return true;
 	}
+
 	/**
 	 * processStep
 	 *
@@ -473,7 +491,7 @@ class jUpgradeProModelAjax extends JModel
 	public function _processExtensionStep ($step)
 	{
 		// Require the file
-		require_once JPATH_COMPONENT.'/includes/migrate_extensions.php';
+		require_once JPATH_COMPONENT.'/includes/jupgrade.extensions.class.php';	
 
 		// Get jUpgradeExtensions instance
 		$extension = jUpgradeExtensions::getInstance($step);

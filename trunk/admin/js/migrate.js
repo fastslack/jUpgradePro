@@ -283,8 +283,8 @@ var jUpgrade = new Class({
 				}
 
 				if (object.number == 100) {
-					//self.extensions();
-					self.done();
+					self.extensions();
+					//self.done();
 				}
 
 			}
@@ -383,30 +383,6 @@ var jUpgrade = new Class({
 		// Start the checks
 		files.send();
 
-/*
-		var d = new Ajax( 'components/com_jupgradepro/includes/migrate_files.php', {
-		  method: 'get',
-		  onComplete: function( msg ) {
-		    //alert(msg);
-				pb6.set(100);
-				pb6.finish();
-
-				if (self.options.debug_php == 1) {
-					text = document.getElementById('debug');
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[files]</b><br><br>' +msg;
-				}
-
-				if (self.options.skip_extensions == 1) {
-					self.done();
-				}else{
-					self.extensions();
-				}
-
-		  }
-		}).request('directory=' + self.options.directory);
-*/
-
-
 	}, // end function
 
 	/**
@@ -424,22 +400,21 @@ var jUpgrade = new Class({
 			noCache: true,
 			data: 'directory=' + self.options.directory,
 			onComplete: function(response) {
-				var ex = self.__explode(';|;', response);
-				var msg = ex[0];
-				var id = ex[1];
-				var file = ex[2];
-				var lastid = ex[3];
 
-				pb7.set(100);
-				text = document.getElementById('status_ext');
-				text.innerHTML = 'Migrating ' + file;
+				//alert(response);
+
+				var object = JSON.decode(response);
 
 				if (self.options.debug_php == 1) {
 					text = document.getElementById('debug');
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>['+id+'] ['+file+']</b><br><br>'+response;
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>['+object.step+'] ['+object.name+']</b><br><br>'+object.text;
 				}
 
-				if (id == lastid) {
+				pb7.set(100);
+				text = document.getElementById('status_ext');
+				text.innerHTML = 'Migrating ' + object.name;
+
+				if (object.step == object.lastid) {
 					pb7.finish();
 
 					// Shutdown periodical
@@ -449,6 +424,7 @@ var jUpgrade = new Class({
 					self.done();
 				}
 			}
+
 		});
 
 		var runExtensionsMigration = function() {
@@ -492,69 +468,5 @@ var jUpgrade = new Class({
 		$('done').setStyle('display', 'block');
 		mySlideDone.toggle();
 
-
-/*
-		var d = new Ajax( 'index.php?option=com_jupgradepro&format=raw&controller=ajax&task=done', {
-		  method: 'get',
-		  onComplete: function( response ) {
-				var mySlideDone = new Fx.Slide('done');
-				mySlideDone.hide();
-				$('done').setStyle('display', 'block');
-				mySlideDone.toggle();
-		  }
-		}).request('directory=' + self.options.directory);
-*/
-
-	}, // end function
-
-	/**
-	 * Internal function to do the explode
-	 *
-	 * @return	bool
-	 * @since	1.2.0
-	 */
-	__explode: function (delimiter, string, limit) {
-
-   var emptyArray = { 0: '' };
-     
-    // third argument is not required
-    if ( arguments.length < 2 ||
-        typeof arguments[0] == 'undefined' ||
-        typeof arguments[1] == 'undefined' )
-    {
-        return null;
-    }
-  
-    if ( delimiter === '' ||
-        delimiter === false ||
-        delimiter === null )
-    {
-        return false;
-    }
-  
-    if ( typeof delimiter == 'function' ||
-        typeof delimiter == 'object' ||
-        typeof string == 'function' ||
-        typeof string == 'object' )
-    {
-        return emptyArray;
-    }
-  
-    if ( delimiter === true ) {
-        delimiter = '1';
-    }
-     
-    if (!limit) {
-        return string.toString().split(delimiter.toString());
-    } else {
-        // support for limit argument
-        var splitted = string.toString().split(delimiter.toString());
-        var partA = splitted.splice(0, limit - 1);
-        var partB = splitted.join(delimiter.toString());
-        partA.push(partB);
-        return partA;
-    }
-
 	} // end function
-
 });

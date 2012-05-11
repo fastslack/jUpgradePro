@@ -59,7 +59,7 @@ class jUpgradeMenu extends jUpgrade
 		//$join[] = "LEFT JOIN #__extensions AS e ON e.element = c.option";
 
 		$rows = parent::getSourceData(
-			 ' m.id, m.menutype, m.name AS title, m.alias, m.link, m.type,'
+			 ' m.id, m.menutype, m.name AS title, m.alias, m.link, m.type, c.option,'
 			//.' m.published, m.parent AS parent_id, e.extension_id AS component_id,'
 			.' m.published, m.parent AS parent_id,'
 			.' m.sublevel AS level, m.ordering, m.checked_out, m.checked_out_time, m.browserNav,'
@@ -69,6 +69,12 @@ class jUpgradeMenu extends jUpgrade
 			'm.id DESC'
 		);
  
+		// Getting the extensions id's of the new Joomla installation
+		$query = "SELECT extension_id, element"
+		." FROM #__extensions";
+		$this->db_new->setQuery($query);
+		$extensions_ids = $this->db_new->loadObjectList('element');	
+
 		// Initialize values
 		$aliases = array();
 		$unique_alias_suffix = 1;
@@ -85,6 +91,11 @@ class jUpgradeMenu extends jUpgrade
 			// Fixing parent_id
 			if ($row['parent_id'] == 0) {
 				$row['parent_id'] = 1;
+			}
+			// Fixing extension_id
+			if ( isset($extensions_ids[$row['option']]) ) {
+				$row['component_id'] = $extensions_ids[$row['option']]->extension_id;
+				unset($row['option']);
 			}
 
       // Fixing menus URLs
@@ -192,6 +203,9 @@ class jUpgradeMenu extends jUpgrade
 
 				$row->id = $lastid + 1;
 			}	
+
+			// Not needed
+			unset($row->option);
 
 			// Inserting the menu
 			if (!$this->db_new->insertObject($table, $row)) {

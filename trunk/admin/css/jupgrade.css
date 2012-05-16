@@ -114,6 +114,11 @@ div#info {
 .text {
 	font-family: Arial,Helvetica,sans-serif;
 	font-size: 11pt;
+	margin-top: 15px;
+}
+
+h2.done {
+	margin-top: 30px;
 }
 
 #pb0-box, #pb1-box, #pb2-box, #pb3-box, #pb4-box, #pb5-box, #pb6-box, #pb7-box {

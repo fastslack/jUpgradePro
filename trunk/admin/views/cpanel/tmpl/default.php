@@ -87,7 +87,7 @@ window.addEvent('domready', function() {
 				</div>
 
 				<div id="done">
-					<h2><?php echo JText::_('Migration Successful!'); ?></h2>
+					<h2 class="done"><?php echo JText::_('Migration Successful!'); ?></h2>
 				</div>
 				<div id="info">
 					<div id="info_version"><?php echo JText::_('jUpgradePro'); ?> <?php echo JText::_('Version').' <b>'.$this->version.'</b>'; ?></div>

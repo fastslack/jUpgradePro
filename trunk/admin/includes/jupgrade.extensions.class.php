@@ -751,9 +751,6 @@ class jUpgradeExtensions extends jUpgrade
 	 */
 	protected function migrateTable(&$db, $folder, $filename) {
 
-		// Inserting the table to the new installation
-		//JLoader::register('JUpgradeProHelper', JPATH_COMPONENT.DS.'helpers'.DS.'jupgradepro.php');
-
 		$sqlfile = $folder.DS.$filename.".sql";
 
 		// Import the sql file
@@ -839,7 +836,7 @@ class jUpgradeExtensions extends jUpgrade
 	}
 
 	/**
-	 * Migrate custom information.
+	 * Fix extensions menu
 	 *
 	 * @return	boolean Ready
 	 * @since	1.1.0

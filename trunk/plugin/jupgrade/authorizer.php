@@ -40,6 +40,7 @@ class JRESTAuthorizer
 				JResponse::setHeader('status', 400);
 				JResponse::setBody('Username not found.');
 				JResponse::sendHeaders();
+				exit;
 			}
 
 			// Check the password

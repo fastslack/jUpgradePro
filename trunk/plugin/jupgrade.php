@@ -71,6 +71,7 @@ class plgSystemJUpgrade extends JPlugin
 				JResponse::setHeader('status', 400);
 				JResponse::setBody('Invalid password.');
 				JResponse::sendHeaders();
+				exit;
 			}
 
 			// Check the username and pass
@@ -83,7 +84,8 @@ class plgSystemJUpgrade extends JPlugin
 			}else{
 				JResponse::setHeader('status', 400);
 				JResponse::setBody('Dispatch error.');
-				JResponse::sendHeaders();			
+				JResponse::sendHeaders();
+				exit;		
 			}
 
 			exit; // Exit

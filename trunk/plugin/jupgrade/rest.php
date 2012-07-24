@@ -305,8 +305,6 @@ class JRESTMessage
 
 		$this->setParameters($parameters);
 
-//print_r($this->_parameters);
-
 		return true;
 	}
 

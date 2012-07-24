@@ -26,6 +26,60 @@ defined('JPATH_BASE') or die();
 class JUpgradeTable extends JTable
 {
 	/**
+	 * 
+	 *
+	 * @return  boolean  True if the user and pass are authorized
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function _getRequestID()
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();	
+
+		$query = 'SELECT `cid` FROM jupgrade_steps'
+		. ' WHERE name = '.$db->quote($this->_type);
+		$db->setQuery( $query );
+		$result = $db->loadResult();
+
+		if ($result == 0) {
+			$query = "SELECT `{$this->getKeyName()}` FROM {$this->getTableName()}"
+				." ORDER BY `{$this->getKeyName()}` ASC LIMIT 1";
+			$db->setQuery( $query );
+			$result = $db->loadResult();			
+
+		} else {
+			$query = "SELECT `{$this->getKeyName()}` FROM {$this->getTableName()}"
+				." WHERE `{$this->getKeyName()}` > {$result} ORDER BY `{$this->getKeyName()}` ASC LIMIT 1";
+			$db->setQuery( $query );
+			$result = $db->loadResult();
+		}
+
+		$this->_updateRequestID($result);
+
+		return $result;
+	}
+
+	/**
+	 * 
+	 *
+	 * @return  boolean  True if the user and pass are authorized
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function _updateRequestID($id)
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();	
+	
+		$query = "UPDATE `jupgrade_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($this->_type);
+		$db->setQuery( $query );
+		return $db->query();
+	}
+
+	/**
 	 * Get total of the rows of the table
 	 *
 	 * @access	public

@@ -25,6 +25,12 @@ class JRESTDispatcher
 	 * @since  1.0
 	 */
 	private $_parameters = array();
+
+	/**
+	 * @var    JUpgradeTable  JUpgradeTable object
+	 * @since  1.0
+	 */
+	private $_table = array();
 	
 	/**
 	 * 
@@ -36,10 +42,19 @@ class JRESTDispatcher
 	 */
 	public function execute($parameters)
 	{
+		// Getting the database instance
+		$db = JFactory::getDbo();	
+	
+		// Loading params
 		$this->_parameters = $parameters;
-	
-		//print_r($parameters);
-	
+
+		// Loading table
+		if (isset($this->_parameters['HTTP_TYPE'])) {
+			JTable::addIncludePath(JPATH_PLUGINS.'/system/jupgrade/table');
+			$this->_table = JUpgradeTable::getInstance($this->_parameters['HTTP_TYPE'], 'JUpgradeTable');
+		}
+
+		//
 		if (array_key_exists('HTTP_TASK', $parameters)) {
 
 			$task = $this->_parameters['HTTP_TASK'];
@@ -72,12 +87,8 @@ class JRESTDispatcher
 	 * @throws  InvalidArgumentException
 	 */
 	public function getTotal()
-	{	
-		JTable::addIncludePath(JPATH_PLUGINS.'/system/jupgrade/table');
-	
-		$table = JUpgradeTable::getInstance($this->_parameters['HTTP_TYPE'], 'JUpgradeTable');
-	
-		return $table->total();
+	{
+		return $this->_table->total();
 	}
 	
 	/**
@@ -89,13 +100,32 @@ class JRESTDispatcher
 	 * @throws  InvalidArgumentException
 	 */
 	public function getRow()
-	{	
-		JTable::addIncludePath(JPATH_PLUGINS.'/system/jupgrade/table');
-	
-		$table = JUpgradeTable::getInstance($this->_parameters['HTTP_TYPE'], 'JUpgradeTable');
-	
-		$table->load($this->_parameters['HTTP_ID']);
+	{			
+		$id = $this->_table->_getRequestID();
+
+		$this->_table->load($id);
+		$this->_table->migrate();
 		
-		return $table->toJSON();
+		return $this->_table->toJSON();
+	}
+
+	/**
+	 * 
+	 *
+	 * @return  boolean  True if the user and pass are authorized
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function getCleanup()
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();	
+
+		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0 WHERE name = '{$this->_parameters['HTTP_TYPE']}'";
+		$db->setQuery( $query );
+		$result = $db->query();
+
+		return true;
 	}
 }

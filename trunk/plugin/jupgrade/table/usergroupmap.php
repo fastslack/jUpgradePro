@@ -30,6 +30,11 @@ class JUpgradeTableUsergroupmap extends JUpgradeTable
 	
 	var $user_id		= null;	
 
+	/**
+	 * Table type
+	 *
+	 * @var string
+	 */	
 	var $_type = 'usergroupmap';
 
 	protected $usergroup_map = array(
@@ -82,7 +87,6 @@ class JUpgradeTableUsergroupmap extends JUpgradeTable
 		unset($this->aro_id);
 	}
 
-
 	/**
 	 * Method to get a map of the User id to ARO id.
 	 *
@@ -110,5 +114,4 @@ class JUpgradeTableUsergroupmap extends JUpgradeTable
 
 		return $map;
 	}
-			
 }

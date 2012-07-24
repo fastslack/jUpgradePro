@@ -33,7 +33,12 @@ class JUpgradeTableAROGroup extends JUpgradeTable
 	var $lft		= null;
 
 	var $rgt		= null;
-	
+
+	/**
+	 * Table type
+	 *
+	 * @var string
+	 */		
 	var $_type = 'arogroup';	
 
 	protected $usergroup_map = array(

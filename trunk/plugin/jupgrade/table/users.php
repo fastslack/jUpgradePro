@@ -104,7 +104,12 @@ class JUpgradeTableUsers extends JUpgradeTable
 	 * @var string
 	 */
 	var $params			= null;
-	
+
+	/**
+	 * Table type
+	 *
+	 * @var string
+	 */	
 	var $_type = 'users';	
 
 	/**

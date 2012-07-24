@@ -8,6 +8,18 @@
 		description="COM_JUPGRADEPRO_CONFIG_GLOBAL_TITLE_DESC">
 
 		<field
+			name="method"
+			type="list"
+			label="COM_JUPGRADEPRO_CONFIG_METHOD"
+			description="COM_JUPGRADEPRO_CONFIG_METHOD_DESC"
+			default="0">
+			<option
+				value="database">Database</option>
+			<option
+				value="rest">WebService</option>
+		</field>
+
+		<field
 			name="path"
 			type="text"
 			label="COM_JUPGRADEPRO_CONFIG_PATH"
@@ -15,12 +27,35 @@
 			default=""
 		/>
 
+	</fieldset>
+
+	<fieldset
+		name="rest"
+		label="COM_JUPGRADEPRO_CONFIG_REST_TITLE"
+		description="COM_JUPGRADEPRO_CONFIG_REST_TITLE_DESC">
+
 		<field
-			name="limit"
+			name="rest_hostname"
 			type="text"
-			label="COM_JUPGRADEPRO_CONFIG_LIMIT"
-			description="COM_JUPGRADEPRO_CONFIG_LIMIT_DESC"
-			default="10000"
+			label="COM_JUPGRADEPRO_CONFIG_HOSTNAME"
+			description="COM_JUPGRADEPRO_CONFIG_HOSTNAME_DESC"
+			default="http://www.example.org/"
+		/>
+
+		<field
+			name="rest_username"
+			type="text"
+			label="COM_JUPGRADEPRO_CONFIG_USERNAME"
+			description="COM_JUPGRADEPRO_CONFIG_USERNAME_DESC"
+			default=""
+		/>
+
+		<field
+			name="rest_password"
+			type="password"
+			label="COM_JUPGRADEPRO_CONFIG_PASSWORD"
+			description="COM_JUPGRADEPRO_CONFIG_PASSWORD_DESC"
+			default=""
 		/>
 
 	</fieldset>
@@ -68,6 +103,14 @@
 			label="COM_JUPGRADEPRO_CONFIG_PREFIX"
 			description="COM_JUPGRADEPRO_CONFIG_PREFIX_DESC"
 			default="jos_"
+		/>
+
+		<field
+			name="limit"
+			type="text"
+			label="COM_JUPGRADEPRO_CONFIG_LIMIT"
+			description="COM_JUPGRADEPRO_CONFIG_LIMIT_DESC"
+			default="10000"
 		/>
 
 	</fieldset>

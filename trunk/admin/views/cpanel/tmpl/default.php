@@ -27,8 +27,8 @@ $params	= $this->params;
 // get document to add scripts
 $document	= JFactory::getDocument();
 $document->addScript('components/com_jupgradepro/js/dwProgressBar.js');
-
-$document->addScript('components/com_jupgradepro/js/migrate.js');
+$document->addScript('components/com_jupgradepro/js/Base64.js');
+$document->addScript('components/com_jupgradepro/js/migrate.rest.js');
 $document->addStyleSheet("components/com_jupgradepro/css/jupgrade.css");
 ?>
 <script type="text/javascript">

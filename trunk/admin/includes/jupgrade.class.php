@@ -36,6 +36,7 @@ class jUpgrade
 	protected $ready = true;
 	protected $output = '';
 	protected $params = null;
+	protected $rest_type = null;
 
 	protected $usergroup_map = array(
 			// Old	=> // New
@@ -54,8 +55,7 @@ class jUpgrade
 
 	public $config = array();
 	public $config_old = array();
-	public $db_old = null;
-	public $db_new = null;
+	public $_db = null;
 
 	function __construct($step = null)
 	{
@@ -71,60 +71,11 @@ class jUpgrade
 		}
 		$this->checkTimeout();
 
-		// Base includes
-		jimport('joomla.base.object');
-		jimport('joomla.base.adapter');
-
-		// Application includes
-		jimport('joomla.application.helper');
-		jimport('joomla.application.application');
-		jimport('joomla.application.component.modellist');
-
-		// Error includes
-		jimport('joomla.error.error');
-		jimport('joomla.error.exception');
-
-		// Database includes
-		jimport('joomla.database.database');
-		jimport('joomla.database.table');
-		jimport('joomla.database.tablenested');
-		jimport('joomla.database.table.asset');
-		jimport('joomla.database.table.category');
-
-		// Update and installer includes for 3rd party extensions
-		jimport('joomla.installer.installer');
-		jimport('joomla.updater.updater');
-		jimport('joomla.updater.update');
-
-		// File and folder management
-		jimport('joomla.filesystem.folder');
-
-		// Other stuff
-		jimport('joomla.utilities.string');
-		jimport('joomla.filter.filteroutput');
-		jimport('joomla.html.parameter');
-		jimport('joomla.environment.uri');
-
-		// Echo all errors, otherwise things go really bad.
-		JError::setErrorHandling(E_ALL, 'echo');
-
 		// Getting the parameters
 		$this->params	= JComponentHelper::getParams('com_jupgradepro');
 
 		// Creating dabatase instance for this installation
-		$this->db_new = JFactory::getDBO();
-
-		// Creating old dabatase instance
-		$config = array();
-		$config['driver']   = $this->params->get('driver');
-		$config['host']     = $this->params->get('hostname');
-		$config['user']     = $this->params->get('username');
-		$config['password'] = $this->params->get('password');
-		$config['database'] = $this->params->get('database');
-		$config['prefix']   = $this->params->get('prefix');
-
-		// Creating old dabatase instance
-		$this->db_old = JDatabase::getInstance($config);
+		$this->_db = JFactory::getDBO();
 
 		// Set timelimit to 0
 		if(!@ini_get('safe_mode')) {
@@ -141,8 +92,8 @@ class jUpgrade
 
 		// MySQL grants check
 		$query = "SHOW GRANTS FOR CURRENT_USER";
-		$this->db_new->setQuery( $query );
-		$list = $this->db_new->loadRowList();
+		$this->_db->setQuery( $query );
+		$list = $this->_db->loadRowList();
 		$grant = isset($list[1][0]) ? $list[1][0] : $list[0][0];
 		$grant = empty($list[1][0]) ? $list[0][0] : $list[1][0];
 
@@ -278,6 +229,67 @@ class jUpgrade
 		return $rows;
 	}
 
+
+	/**
+	 * Get the raw data for this part of the upgrade.
+	 *
+	 * @return	array	Returns a reference to the source data array.
+	 * @since	0.4.4
+	 * @throws	Exception
+	 */
+	public function &getRestData()
+	{
+		$data = array();
+	
+		// Setting the headers for REST
+		$str = $this->params->get('rest_username').":".$this->params->get('rest_password');
+		$data['Authorization'] = base64_encode($str);
+		$data['AUTH_USER'] = $this->params->get('rest_username');
+    $data['AUTH_PW'] = $this->params->get('rest_password');
+
+		return $data;
+	}
+
+	/**
+	 * Get the raw data for this part of the upgrade.
+	 *
+	 * @return	array	Returns a reference to the source data array.
+	 * @since	0.4.4
+	 * @throws	Exception
+	 */
+	protected function &getSourceDataRest()
+	{
+		jimport('joomla.http.http');
+
+		$rows = array();
+		$data = array();
+	
+		// JHttp instance
+		$http = new JHttp();
+		
+		$data = $this->getRestData();
+
+		// Getting the total
+		$data['task'] = "cleanup";
+		$data['type'] = ($this->rest_type == null) ? $this->name : $this->rest_type;
+		$cleanup = $http->get($this->params->get('rest_hostname'), $data);
+		
+		// Getting the total
+		$data['task'] = "total";
+		$total = $http->get($this->params->get('rest_hostname'), $data);
+		$total = (int) $total->body;
+
+		// Getting the rows
+		$data['task'] = "row";
+
+		for ($i=1;$i<=$total;$i++) {		
+			$response = $http->get($this->params->get('rest_hostname'), $data);			
+			$rows[$i] = json_decode($response->body);
+		}
+
+		return $rows;
+	}
+
 	/**
 	 * populateDatabase
 	 */
@@ -312,9 +324,11 @@ class jUpgrade
 	 */
 	protected function setDestinationData($rows = null)
 	{
+		$method = $this->params->get('method');
+	
 		// Get the source data.
 		if ($rows === null) {
-			$rows = $this->getSourceData();
+			$rows = ($method == 'rest') ? $this->getSourceDataRest() : $this->getSourceData();
 		}
 
 		$table = empty($this->destination) ? $this->source : $this->destination;
@@ -325,10 +339,12 @@ class jUpgrade
 			// Convert the array into an object.
 			$row = (object) $row;
 
-			if (!$this->db_new->insertObject($table, $row)) {
-				throw new Exception($this->db_new->getErrorMsg());
+			if (!$this->_db->insertObject($table, $row)) {
+				throw new Exception($this->_db->getErrorMsg());
 			}
+
 		}
+
 	}
 
 	/**
@@ -369,16 +385,16 @@ class jUpgrade
 
 		if ($this->canDrop) {
 			$query = "TRUNCATE TABLE {$table}";
-			$this->db_new->setQuery($query);
-			$this->db_new->query();
+			$this->_db->setQuery($query);
+			$this->_db->query();
 		} else {
 			$query = "DELETE FROM {$table}";
-			$this->db_new->setQuery($query);
-			$this->db_new->query();
+			$this->_db->setQuery($query);
+			$this->_db->query();
 		}
 
 		// Check for query error.
-		$error = $this->db_new->getErrorMsg();
+		$error = $this->_db->getErrorMsg();
 
 		if ($error) {
 			throw new Exception($error);
@@ -398,12 +414,12 @@ class jUpgrade
 		if (!$this->name) return false;
 
 		$state = json_encode($this->state);
-		$query = "UPDATE jupgrade_steps SET state = {$this->db_new->quote($state)} WHERE name = {$this->db_new->quote($this->name)}";
-		$this->db_new->setQuery($query);
-		$this->db_new->query();
+		$query = "UPDATE jupgrade_steps SET state = {$this->_db->quote($state)} WHERE name = {$this->_db->quote($this->name)}";
+		$this->_db->setQuery($query);
+		$this->_db->query();
 
 		// Check for query error.
-		$error = $this->db_new->getErrorMsg();
+		$error = $this->_db->getErrorMsg();
 
 		return !$error;
 	}
@@ -439,35 +455,6 @@ class jUpgrade
 	 * @since	0.5.3
 	 * @throws	Exception
 	 */
-	public function getPrefix()
-	{
-		// configuration.php path
-		$filename = JPATH_ROOT.DS.'configuration.php';
-
-		// read the file
-		$handle = fopen($filename, "r");
-		$contents = fread($handle, filesize($filename));
-		fclose($handle);
-
-		// grep the dbprefix line
-		$pattern = '/dbprefix\ = (.*)/';
-		preg_match($pattern, $contents, $matches);
-		$prefix = $matches[1];
-
-		// Strip all trash
-		$prefix = explode(";", $prefix);
-		$prefix = $prefix[0];
-		return $prefix = trim($prefix, "'");
-
-	}
-
-	/**
-	 * Internal function to get original database prefix
-	 *
-	 * @return	an original database prefix
-	 * @since	0.5.3
-	 * @throws	Exception
-	 */
 	public function getMapList($table = 'categories', $section = false)
 	{
 		// Getting the categories id's
@@ -478,11 +465,11 @@ class jUpgrade
 			$query .= " WHERE section = '{$section}'";
 		}
 
-		$this->db_new->setQuery($query);
-		$data = $this->db_new->loadObjectList('old');
+		$this->_db->setQuery($query);
+		$data = $this->_db->loadObjectList('old');
 
 		// Check for query error.
-		$error = $this->db_new->getErrorMsg();
+		$error = $this->_db->getErrorMsg();
 
 		if ($error) {
 			throw new Exception($error);
@@ -524,8 +511,6 @@ class jUpgrade
 	{
 		return $this->params->toObject();
 	}
-
-
 
 	/**
 	 * Internal function to check if 5 seconds has been passed

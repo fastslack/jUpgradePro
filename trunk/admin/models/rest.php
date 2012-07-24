@@ -17,12 +17,12 @@ defined('_JEXEC') or die;
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
 
 /**
- * Ajax Model
+ * Rest Model
  *
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jUpgradeProModelAjax extends JModel
+class jUpgradeProModelRest extends JModel
 {
 	/**
 	 * Initial checks in jUpgrade
@@ -40,222 +40,6 @@ class jUpgradeProModelAjax extends JModel
 	}
 
 	/**
-	 * Initial checks in jUpgrade
-	 *
-	 * @return	none
-	 * @since	1.2.0
-	 */
-	function getChecks()
-	{
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
-		
-		// Getting the component parameter with global settings
-		$params = $jupgrade->getParams();
-
-		// Checking tables
-		$query = "SHOW TABLES";
-		$jupgrade->_db->setQuery($query);
-		$tables = $jupgrade->_db->loadResultArray();
-		
-		$message = array();
-		$message['status'] = "ERROR";
-
-		if (!in_array('jupgrade_categories', $tables)) {
-			$message['number'] = 401;
-			$message['text'] = "jupgrade_categories table not exist";
-			echo json_encode($message);
-			exit;
-		}
-		
-		if (!in_array('jupgrade_menus', $tables)) {
-			$message['number'] = 402;
-			$message['text'] = "jupgrade_menus table not exist";
-			echo json_encode($message);
-			exit;
-		}
-		
-		if (!in_array('jupgrade_modules', $tables)) {
-			$message['number'] = 403;
-			$message['text'] = "jupgrade_modules table not exist";
-			echo json_encode($message);
-			exit;
-		}
-		
-		if (!in_array('jupgrade_steps', $tables)) {
-			$message['number'] = 404;
-			$message['text'] = "jupgrade_steps table not exist";
-			echo json_encode($message);
-			exit;
-		}		
-
-		// Check if jupgrade_steps is fine
-		$query = "SELECT COUNT(id) FROM `jupgrade_steps`";
-		$jupgrade->_db->setQuery($query);
-		$nine = $jupgrade->_db->loadResult();
-		
-		if ($nine < 10) {
-			$message['number'] = 405;
-			$message['text'] = "jupgrade_steps is not valid";
-			echo json_encode($message);
-			exit;
-		}
-	
-		// Check safe_mode_gid
-		if (@ini_get('safe_mode_gid')) {
-			$message['number'] = 411;
-			$message['text'] = "You must to disable 'safe_mode_gid' on your php configuration";
-			echo json_encode($message);
-			exit;
-		}
-
-		// Done checks
-		$message['status'] = "OK";
-		$message['number'] = 100;
-		$message['text'] = "DONE";
-		echo json_encode($message);
-		exit;
-	}
-
-	/**
-	 * Cleanup
-	 *
-	 * @return	none
-	 * @since	1.2.0
-	 */
-	function getCleanup()
-	{
-		/**
-		 * Initialize jupgrade class
-		 */
-		$jupgrade = new jUpgrade;
-
-		// Getting the component parameter with global settings
-		$params = $jupgrade->getParams();
-
-		// If REST is enable, cleanup the source jupgrade_steps table
-		if ($params->method == 'rest') {
-		
-			jimport('joomla.http.http');
-
-			// JHttp instance
-			$http = new JHttp();		
-		
-			// Getting the rest data
-			$data = $jupgrade->getRestData();
-		
-			// Getting the total
-			$data['task'] = "cleanup";
-			$response = $http->get($params->rest_hostname, $data);
-		}
-
-		// Get the prefix
-		$prefix = $jupgrade->_db->getPrefix();
-
-		// Set all status to 0 and clear state
-		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, state = ''";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
-
-		// Convert the params to array
-		$core_skips = (array) $params;
-
-		// Skiping the steps setted by user
-		foreach ($core_skips as $k => $v) {
-			$core = substr($k, 0, 9);
-			$name = substr($k, 10, 15);
-
-			if ($core == "skip_core") {
-				if ($v == 1) {
-					// Set all status to 0 and clear state
-					$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = '{$name}'";
-					$jupgrade->_db->setQuery($query);
-					$jupgrade->_db->query();				
-				}
-			}
-		}
-
-		// Cleanup 3rd extensions
-		$query = "DELETE FROM jupgrade_steps WHERE id > 12";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
-
-		if ($jupgrade->canDrop) {
-
-			$tables = array();
-			$tables[] = 'jupgrade_categories';
-			$tables[] = 'jupgrade_menus';
-			$tables[] = 'jupgrade_modules';
-
-			for ($i=0;$i<count($tables);$i++) {
-				// Truncate mapping tables
-				$query = "TRUNCATE TABLE `{$tables[$i]}`";
-				$jupgrade->_db->setQuery($query);
-				$jupgrade->_db->query();
-			}
-
-			// Check for query error.
-			$error = $jupgrade->_db->getErrorMsg();
-
-			if ($error) {
-				throw new Exception($error);
-			}
-
-		} else {
-			$tables = array();
-			$tables[][0] = 'jupgrade_categories';
-			$tables[][0] = 'jupgrade_menus';
-			$tables[][0] = 'jupgrade_modules';
-
-			for ($i=0;$i<count($tables);$i++) {
-				// Truncate mapping tables
-				$query = "DELETE FROM `{$tables[$i][0]}`";
-				$jupgrade->_db->setQuery($query);
-				$jupgrade->_db->query();
-
-				// Check for query error.
-				$error = $jupgrade->_db->getErrorMsg();
-
-				if ($error) {
-					throw new Exception($error);
-				}
-			}
-		}
-
-		// Insert needed value
-		$query = "INSERT INTO `jupgrade_menus` ( `old`, `new`) VALUES ( 0, 0)";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Insert uncategorized id
-		$query = "INSERT INTO `jupgrade_categories` (`old`, `new`) VALUES (0, 2)";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Done checks
-		$message['status'] = "OK";
-		$message['number'] = 100;
-		$message['text'] = "DONE";
-		echo json_encode($message);
-		exit;
-	}
-
-
-	/**
 	 * Migrate
 	 *
 	 * @return	none
@@ -264,7 +48,7 @@ class jUpgradeProModelAjax extends JModel
 	function getMigrate() {
 
 		// jUpgrade class
-		$jupgrade = new jUpgrade;
+		//$jupgrade = new jUpgrade;
 
 		$step = $this->_getStep();
 
@@ -272,11 +56,10 @@ class jUpgradeProModelAjax extends JModel
 
 		$this->_processStep($step);
 
-		$this->_updateStep($step);
-
 		$message['status'] = "OK";
 		$message['step'] = $step->id;
 		$message['name'] = $step->name;
+		$message['title'] = $step->title;
 		$message['text'] = 'DONE';
 		echo json_encode($message);
 
@@ -289,7 +72,7 @@ class jUpgradeProModelAjax extends JModel
 	 * @since	2.5.0
 	 */
 	public function _processStep ($step)
-	{
+	{	
 		// Require the file
 		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
 			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
@@ -302,10 +85,14 @@ class jUpgradeProModelAjax extends JModel
 				$u1 = new jUpgradeUsers($step);
 				$u1->upgrade();
 
+				break;
+			case 'arogroup':
+
 				// Migrate the usergroups.
 				$u2 = new jUpgradeUsergroups($step);
 				$u2->upgrade();
-
+				break;
+			case 'usergroupmap':
 				// Migrate the user-to-usergroup mapping.
 				$u2 = new jUpgradeUsergroupMap($step);
 				$u2->upgrade();
@@ -402,45 +189,10 @@ class jUpgradeProModelAjax extends JModel
 				break;
 		}
 
+
+		$this->_updateStep($step);
+
 	} // end method
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getExtensions() {
-
-		// jUpgrade class
-		$jupgrade = new jUpgrade;
-
-		$step = $this->_getStep();
-
-		// TODO: Error handler
-
-		$this->_processExtensionStep($step);
-
-		// Select the steps
-		$query = "SELECT * FROM jupgrade_steps AS s WHERE s.extension = 1 ORDER BY s.id DESC LIMIT 1";
-		$jupgrade->_db->setQuery($query);
-		$lastid = $jupgrade->_db->loadResult();
-
-		// Check for query error.
-		$error = $jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		$message['status'] = "OK";
-		$message['step'] = $step->id;
-		$message['name'] = $step->name;
-		$message['lastid'] = $lastid;
-		$message['text'] = 'DONE';
-		echo json_encode($message);
-
-	}
 
 	/**
 	 * Getting the next step
@@ -495,6 +247,44 @@ class jUpgradeProModelAjax extends JModel
 		}
 
 		return true;
+	}
+
+	/**
+	 * Migrate
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	function getExtensions() {
+
+		// jUpgrade class
+		$jupgrade = new jUpgrade;
+
+		$step = $this->_getStep();
+
+		// TODO: Error handler
+
+		$this->_processExtensionStep($step);
+
+		// Select the steps
+		$query = "SELECT * FROM jupgrade_steps AS s WHERE s.extension = 1 ORDER BY s.id DESC LIMIT 1";
+		$jupgrade->_db->setQuery($query);
+		$lastid = $jupgrade->_db->loadResult();
+
+		// Check for query error.
+		$error = $jupgrade->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		$message['status'] = "OK";
+		$message['step'] = $step->id;
+		$message['name'] = $step->name;
+		$message['lastid'] = $lastid;
+		$message['text'] = 'DONE';
+		echo json_encode($message);
+
 	}
 
 	/**

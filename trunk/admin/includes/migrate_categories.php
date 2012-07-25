@@ -61,7 +61,7 @@ class jUpgradeCategories extends jUpgradeCategory
 		// rootidmap
 		$rootidmap = 0;
 
-		// JTable:store() run an update if id exists so we create them first
+		// JTable::store() run an update if id exists so we create them first
 		foreach ($categories as $category)
 		{
 			$object = new stdClass();

@@ -94,20 +94,18 @@ class JUpgradeTableMenus extends JUpgradeTable
 	public function getConditionsHook()
 	{
 		$conditions = array();
-				
-		$where = array();
-		//$where[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
-
+		
+		$conditions['as'] = "m";
+		
 		$join = array();
 		$join[] = "LEFT JOIN #__components AS c ON c.id = m.componentid";
 		
-		$conditions['where'] = $where;
+		$conditions['where'] = array();
 		$conditions['join'] = $join;
 		$conditions['order'] = "id DESC";
 		
 		return $conditions;
 	}
-
 
 	/**
 	 * 

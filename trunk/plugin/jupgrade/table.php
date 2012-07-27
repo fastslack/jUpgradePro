@@ -52,6 +52,11 @@ class JUpgradeTable extends JTable
 	 */
 	public function _requestID( $moreconditions = null)
 	{
+		function processWhere($conditions) {
+			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+			return $where;
+		}
+	
 		$db =& $this->getDBO();
 
 		$query = 'SELECT `cid` FROM jupgrade_steps'
@@ -65,16 +70,17 @@ class JUpgradeTable extends JTable
 			array_push($conditions['where'], $moreconditions);
 		}
 
-		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
 		$order = isset($conditions['order']) ? $conditions['order'] : 'ASC';
 
-		if ($order == 'ASC') {
-			$query = "SELECT MIN({$this->getKeyName()}) FROM {$this->getTableName()} WHERE {$this->getKeyName()} > {$stepid} LIMIT 1";
-		}else if ($order == 'DESC') {
+		if (strpos($order,'ASC') !== false) {
+			$conditions['where'][] = "{$this->getKeyName()} > {$stepid}";
+			$query = "SELECT MIN({$this->getKeyName()}) FROM {$this->getTableName()} ".processWhere($conditions)." LIMIT 1";
+		}else if (strpos($order,'DESC') !== false) {
 			if ($stepid == 0) {
-				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} LIMIT 1";
+				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} ".processWhere($conditions)." LIMIT 1";
 			}else{
-				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} WHERE {$this->getKeyName()} < {$stepid} LIMIT 1";
+				$conditions['where'][] = "{$this->getKeyName()} < {$stepid}";
+				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} ".processWhere($conditions)." LIMIT 1";
 			}
 		}
 		
@@ -154,12 +160,16 @@ class JUpgradeTable extends JTable
 		// Get the conditions
 		$conditions = $this->getConditionsHook();
 		
+		// Get `AS` mysql statement
+		$where_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
+		
 		// Add oid condition		
-		$oid_condition = "`{$this->getKeyName()}` = {$oid}";
+		$oid_condition = "{$where_as}{$this->getKeyName()} = {$oid}";
 		array_push($conditions['where'], $oid_condition);
 
-		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';		
 		$select = isset($conditions['select']) ? $conditions['select'] : '*';
+		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 		
 		$join = '';
 		if (isset($conditions['join'])) {
@@ -169,7 +179,7 @@ class JUpgradeTable extends JTable
 		$order = isset($conditions['order']) ? $conditions['order'] : "{$this->getKeyName()} ASC";
 
 		// Get the row
-		$query = "SELECT {$select} FROM {$this->getTableName()} {$join} {$where} ORDER BY {$order} LIMIT 1";
+		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where} LIMIT 1";
 		$db->setQuery( $query );
 		//echo $query;
 		

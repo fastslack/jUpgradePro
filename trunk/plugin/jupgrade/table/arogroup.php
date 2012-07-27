@@ -62,29 +62,22 @@ class JUpgradeTableAROGroup extends JUpgradeTable
 	}
 
 	/**
-	 * Get total of the rows of the table
+	 * Setting the conditions hook
 	 *
-	 * @access	public
-	 * @return	int	The total of rows
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
 	 */
-	public function total( )
+	public function getConditionsHook()
 	{
-		$db =& $this->getDBO();
-
-		$query = "SELECT COUNT(*) FROM {$this->_tbl}"
-		. " WHERE {$this->_tbl_key} > 30";
-		$db->setQuery( $query );
-
-		$result = $db->loadResult( );
-
-		if ($result) {
-			return (int)$result;
-		}
-		else
-		{
-			$this->setError( $db->getErrorMsg() );
-			return false;
-		}
+		$conditions = array();
+				
+		$where = array();
+		$where[] = "{$this->_tbl_key} > 30";
+		
+		$conditions['where'] = $where;
+		
+		return $conditions;
 	}
 
 	/**

@@ -65,7 +65,7 @@ class JRESTDispatcher
 			// Does the method exist?
 			if (method_exists($this, $method))
 			{
-				return $return = $this->$method();
+				return $this->$method();
 			}
 			else
 			{
@@ -87,7 +87,7 @@ class JRESTDispatcher
 	 * @throws  InvalidArgumentException
 	 */
 	public function getTotal()
-	{
+	{	
 		return $this->_table->total();
 	}
 	
@@ -100,12 +100,19 @@ class JRESTDispatcher
 	 * @throws  InvalidArgumentException
 	 */
 	public function getRow()
-	{			
-		$id = $this->_table->_getRequestID();
-
+	{
+		// Get the next id
+		$id = $this->_table->getNextID();
+		// Load the row
 		$this->_table->load($id);
+		// Check if the row is loaded
+		$key = $this->_table->getKeyName();
+		if ($this->_table->$key == 0) {
+			return false;
+		}
+		// Migrate it
 		$this->_table->migrate();
-		
+		// Return as JSON
 		return $this->_table->toJSON();
 	}
 
@@ -119,13 +126,32 @@ class JRESTDispatcher
 	 */
 	public function getCleanup()
 	{
+		$type = isset($this->_parameters['HTTP_TYPE']) ? $this->_parameters['HTTP_TYPE'] : '';
+
+		return $this->cleanup($type);
+	}
+	
+	/**
+	 * 
+	 *
+	 * @return  boolean  True if the user and pass are authorized
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function cleanup($type)
+	{
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0 WHERE name = '{$this->_parameters['HTTP_TYPE']}'";
+		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0"; 
+		if ($type != false) {
+			$query .= " WHERE name = '{$type}'";
+		}
+
 		$db->setQuery( $query );
 		$result = $db->query();
 
 		return true;
-	}
+	}	
 }

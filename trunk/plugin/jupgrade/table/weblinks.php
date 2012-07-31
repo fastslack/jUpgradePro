@@ -59,6 +59,4 @@ class JUpgradeTableWeblinks extends JUpgradeTable {
 	function __construct(&$_db) {
 		parent::__construct('#__weblinks', 'id', $_db);
 	}
-
-
 }

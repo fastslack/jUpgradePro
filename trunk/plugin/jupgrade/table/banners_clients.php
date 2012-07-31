@@ -21,7 +21,7 @@ defined('JPATH_BASE') or die();
  */
 class JUpgradeTableBanners_Clients extends JUpgradeTable {
 	/** @var int(11) */
-	var $cid = null;
+	var $id = null;
 	/** @var varchar(255) */
 	var $name = null;
 	/** @var varchar(255) */
@@ -66,4 +66,15 @@ class JUpgradeTableBanners_Clients extends JUpgradeTable {
 		return $conditions;
 	}	
 
+	/**
+	 * 
+	 *
+	 * @access	public
+	 * @param		Array	Result to migrate
+	 * @return	Array	Migrated result
+	 */
+	function migrate( )
+	{	
+		unset($this->cid);
+	}	
 }

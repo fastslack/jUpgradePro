@@ -21,7 +21,7 @@ defined('JPATH_BASE') or die();
  */
 class JUpgradeTableBanners extends JUpgradeTable {
 	/** @var int(11) */
-	var $bid = null;
+	var $id = null;
 	/** @var int(11) */
 	var $cid = null;
 	/** @var varchar(30) */
@@ -43,7 +43,7 @@ class JUpgradeTableBanners extends JUpgradeTable {
 	/** @var datetime */
 	var $date = null;
 	/** @var tinyint(1) */
-	var $showBanner = null;
+	var $state = null;
 	/** @var tinyint(1) */
 	var $checked_out = null;
 	/** @var datetime */
@@ -97,8 +97,19 @@ class JUpgradeTableBanners extends JUpgradeTable {
 													.'`sticky`, `ordering`, `publish_up`, `publish_down`, `tags`, `params`'	;
 		
 		$conditions['where'] = array();
-		$conditions['order'] = "bid ASC";
 		
 		return $conditions;
+	}
+	
+	/**
+	 * 
+	 *
+	 * @access	public
+	 * @param		Array	Result to migrate
+	 * @return	Array	Migrated result
+	 */
+	function migrate( )
+	{	
+		unset($this->bid);
 	}	
 }

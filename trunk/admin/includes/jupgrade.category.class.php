@@ -137,7 +137,7 @@ class jUpgradeCategory extends jUpgrade
 	{
 		if (parent::upgrade()) {
 			// Rebuild the categories table
-			$table = JTable::getInstance('Category', 'JTable', array('dbo' => $this->db_new));
+			$table = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
 
 			if (!$table->rebuild()) {
 				echo JError::raiseError(500, $table->getError());
@@ -155,7 +155,7 @@ class jUpgradeCategory extends jUpgrade
 	public function insertCategory($object, $parent = false)
 	{
 		// Getting the category table
-		$category = JTable::getInstance('Category', 'JTable', array('dbo' => $this->db_new));
+		$category = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
 
 		// Get old id
 		$oldlist = new stdClass();
@@ -198,8 +198,8 @@ class jUpgradeCategory extends jUpgrade
 		$oldlist->new = $category->id;
 
 		// Save old and new id
-		if (!$this->db_new->insertObject('jupgrade_categories', $oldlist)) {
-			throw new Exception($this->db_new->getErrorMsg());
+		if (!$this->_db->insertObject('jupgrade_categories', $oldlist)) {
+			throw new Exception($this->_db->getErrorMsg());
 		}
 
 	 	return true;

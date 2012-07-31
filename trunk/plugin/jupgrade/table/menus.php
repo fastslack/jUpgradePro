@@ -1,15 +1,12 @@
 <?php
 /**
-* @version		$Id: menu.php 14401 2010-01-26 14:10:00Z louis $
-* @package		Joomla.Framework
-* @subpackage	Table
-* @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
-* @license		GNU/GPL, see LICENSE.php
-* Joomla! is free software. This version may have been modified pursuant
-* to the GNU General Public License, and as distributed it includes or
-* is derivative of works licensed under the GNU General Public License or
-* other free or open source software licenses.
-* See COPYRIGHT.php for copyright notices and details.
+* @version $Id:
+* @package Matware.jUpgradePro
+* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @author Matias Aguirre
+* @email maguirre@matware.com.ar
+* @link http://www.matware.com.ar/
+* @license GNU General Public License version 2 or later; see LICENSE
 */
 
 // Check to ensure this file is within the rest of the framework

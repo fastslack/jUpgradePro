@@ -9,11 +9,6 @@
 	<authorUrl>http://www.matware.com.ar</authorUrl>
 	<version>1.5</version>
 	<description>REST WebService for jUpgrade</description>
-	<install>
-		<sql>
-			<file charset="utf8" driver="mysql">install.sql</file>
-		</sql>
-	</install>
 	<files>
 		<filename plugin="jupgrade">jupgrade.php</filename>
 		<folder>jupgrade</folder>

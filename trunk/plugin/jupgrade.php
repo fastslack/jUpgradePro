@@ -94,5 +94,49 @@ class plgSystemJUpgrade extends JPlugin
 		//exit; // Exit test
 		
 	} // end method
+
+
+	function checkStepTable()
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();	
+
+		$sqlfile = JPATH_PLUGINS.'/system/jupgrade/sql/install.sql';
+	
+		// Checking tables
+		$query = "SHOW TABLES";
+		$db->setQuery($query);
+		$tables = $db->loadResultArray();
+		
+		if (!in_array('jupgrade_steps', $tables)) {
+			populateDatabase(& $db, $sqlfile )
+		}		
+
+	} // end method
+
+	/**
+	 * populateDatabase
+	 */
+	function populateDatabase(& $db, $sqlfile)
+	{
+		if( !($buffer = file_get_contents($sqlfile)) )
+		{
+			return -1;
+		}
+
+		$queries = $db->splitSql($buffer);
+
+		foreach ($queries as $query)
+		{
+			$query = trim($query);
+			if ($query != '' && $query {0} != '#')
+			{
+				$db->setQuery($query);
+				$db->query() or die($db->getErrorMsg());
+			}
+		}
+
+		return true;
+	}
 	
 } // end class

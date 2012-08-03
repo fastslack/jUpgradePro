@@ -144,7 +144,7 @@ class JRESTDispatcher
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0"; 
+		$query = "UPDATE jupgrade_steps SET cid = 0"; 
 		if ($type != false) {
 			$query .= " WHERE name = '{$type}'";
 		}

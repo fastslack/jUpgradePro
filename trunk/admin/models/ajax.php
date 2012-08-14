@@ -134,7 +134,7 @@ class jUpgradeProModelAjax extends JModel
 		$params = $jupgrade->getParams();
 
 		// If REST is enable, cleanup the source jupgrade_steps table
-		if ($params->method == 'rest') {
+		if ($params->method == 'rest' || $params->method == 'rest_individual') {
 		
 			jimport('joomla.http.http');
 
@@ -150,12 +150,12 @@ class jUpgradeProModelAjax extends JModel
 		}
 
 		// Get the prefix
-		$prefix = $jupgrade->_db->getPrefix();
+		$prefix = $this->_db->getPrefix();
 
 		// Set all status to 0 and clear state
-		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, state = ''";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
+		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, state = '' WHERE name != 'sections'";
+		$this->_db->setQuery($query);
+		$this->_db->query();
 
 		// Convert the params to array
 		$core_skips = (array) $params;
@@ -169,16 +169,16 @@ class jUpgradeProModelAjax extends JModel
 				if ($v == 1) {
 					// Set all status to 0 and clear state
 					$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = '{$name}'";
-					$jupgrade->_db->setQuery($query);
-					$jupgrade->_db->query();				
+					$this->_db->setQuery($query);
+					$this->_db->query();				
 				}
 			}
 		}
 
 		// Cleanup 3rd extensions
-		$query = "DELETE FROM jupgrade_steps WHERE id > 12";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
+		$query = "DELETE FROM jupgrade_steps WHERE id > 17";
+		$this->_db->setQuery($query);
+		$this->_db->query();
 
 		if ($jupgrade->canDrop) {
 
@@ -190,12 +190,12 @@ class jUpgradeProModelAjax extends JModel
 			for ($i=0;$i<count($tables);$i++) {
 				// Truncate mapping tables
 				$query = "TRUNCATE TABLE `{$tables[$i]}`";
-				$jupgrade->_db->setQuery($query);
-				$jupgrade->_db->query();
+				$this->_db->setQuery($query);
+				$this->_db->query();
 			}
 
 			// Check for query error.
-			$error = $jupgrade->_db->getErrorMsg();
+			$error = $this->_db->getErrorMsg();
 
 			if ($error) {
 				throw new Exception($error);
@@ -210,11 +210,11 @@ class jUpgradeProModelAjax extends JModel
 			for ($i=0;$i<count($tables);$i++) {
 				// Truncate mapping tables
 				$query = "DELETE FROM `{$tables[$i][0]}`";
-				$jupgrade->_db->setQuery($query);
-				$jupgrade->_db->query();
+				$this->_db->setQuery($query);
+				$this->_db->query();
 
 				// Check for query error.
-				$error = $jupgrade->_db->getErrorMsg();
+				$error = $this->_db->getErrorMsg();
 
 				if ($error) {
 					throw new Exception($error);
@@ -224,11 +224,11 @@ class jUpgradeProModelAjax extends JModel
 
 		// Insert needed value
 		$query = "INSERT INTO `jupgrade_menus` ( `old`, `new`) VALUES ( 0, 0)";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
+		$this->_db->setQuery($query);
+		$this->_db->query();
 
 		// Check for query error.
-		$error = $jupgrade->_db->getErrorMsg();
+		$error = $this->_db->getErrorMsg();
 
 		if ($error) {
 			throw new Exception($error);
@@ -236,11 +236,23 @@ class jUpgradeProModelAjax extends JModel
 
 		// Insert uncategorized id
 		$query = "INSERT INTO `jupgrade_categories` (`old`, `new`) VALUES (0, 2)";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
+		$this->_db->setQuery($query);
+		$this->_db->query();
 
 		// Check for query error.
-		$error = $jupgrade->_db->getErrorMsg();
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Delete uncategorized categories
+		$query = "DELETE FROM {$prefix}categories WHERE id > 1";
+		$this->_db->setQuery($query);
+		$this->_db->query();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
 
 		if ($error) {
 			throw new Exception($error);

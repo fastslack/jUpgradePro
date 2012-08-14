@@ -86,7 +86,7 @@ class JUpgradeTableCategories extends JUpgradeTable
 		$where = array();
 		$where[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
 		
-		$conditions['order'] = "section ASC, ordering ASC";		
+		$conditions['order'] = "section DESC, ordering DESC";		
 		$conditions['where'] = $where;
 		
 		return $conditions;

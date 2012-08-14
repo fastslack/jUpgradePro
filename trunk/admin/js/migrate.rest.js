@@ -187,44 +187,13 @@ var jUpgrade = new Class({
 			displayText: false
 		});
 
+		// Get the status element
+		text = document.getElementById('status');
+		debug = document.getElementById('debug');
 
-		/*
-			REST METHOD
-
-			var str = "matias:matias";
-			var authorization = str.toBase64();
-
-			// Getting the total
-			var ajax = new Request({
-				url: 'http://moncada/jupgrade',
-				method: 'get',
-				headers: { 
-					'Authorization': authorization,
-					'auth_user': 'matias',
-					'auth_pw': 'matias',
-					'task': 'total',
-					'type': 'user'
-				},
-				onSuccess: function(response) {
-					//console.log(response);
-					
-					var total = JSON.decode(response);
-					
-					//alert(total);
-					
-					//for (i=0;i<total;i++) {
-					//	console.log(total);
-					//}
-				},
-				onFailure: function(instance) {
-						// some action
-				}
-			}).send();
-			// then we execute
-			//ajax.send();
-		*/
-
-
+		//
+		// Using rest but not getting the data individually
+		//
 		var request = new Request({
 			url: 'index.php?option=com_jupgradepro&format=raw&view=rest&task=migrate',
 			method: 'get',
@@ -232,36 +201,38 @@ var jUpgrade = new Class({
 			//data: 'directory=' + self.options.directory,
 			onComplete: function(response) {
 
-				//console.log(response);
+				console.log(response);
 				//alert(response);
 
 				var object = JSON.decode(response);
 
-				pb4.set(object.step*11);
-				text = document.getElementById('status');
+				pb4.set(object.step*6);
 				text.innerHTML = 'Migrating ' + object.title;
 
 				if (self.options.debug_php == 1) {
-					text = document.getElementById('debug');
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>['+object.step+'] ['+object.name+']</b><br><br>' +object.text;
+					debug.innerHTML = debug.innerHTML + '<br><br>==========<br><b>['+object.step+'] ['+object.name+']</b><br><br>' +object.text;
 				}
 
-				if (object.step > 12 || object.step == '') {
+				//console.log(response);
+
+				if (object.step > 16 || object.step == '') {
 					pb4.finish();
 
 					// Shutdown periodical
 					$clear(migration_periodical);
 
+					self.done();
+
 					// Run templates step
-					if (self.options.skip_templates == 1) {
-						if (self.options.skip_files == 1) {
-							self.done();
-						}else{
-							self.files();
-						}
-					}else{
-						self.templates();
-					}
+					//if (self.options.skip_templates == 1) {
+					//	if (self.options.skip_files == 1) {
+					//		self.done();
+					//	}else{
+					//		self.files();
+					//	}
+					//}else{
+					//	self.templates();
+					//}
 
 				}
 			}
@@ -271,12 +242,28 @@ var jUpgrade = new Class({
 			request.send();
 		};
 
-		migration_periodical = runMigration.periodical(1500);
+		migration_periodical = runMigration.periodical(200);
 
 		// Scroll the window
 		var myScroll = new Fx.Scroll(window).toBottom();
 
 	}, // end function
+
+
+
+	/**
+	 * Run the templates
+	 *
+	 * @return	bool
+	 * @since	1.2.0
+	 */
+	changeStatus: function(e) {
+	
+		console.log('change status');
+	
+	}, // end function
+
+
 
 	/**
 	 * Run the templates

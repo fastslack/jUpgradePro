@@ -257,7 +257,7 @@ var jUpgrade = new Class({
 						currItem.innerHTML = counter;
 						
 						if (counter == object.total) {
-							console.log(object);
+							//console.log(object);
 
 							if (object.name == 'weblinks') {
 								$clear(step);
@@ -286,20 +286,6 @@ var jUpgrade = new Class({
 		// Scroll the window
 		var myScroll = new Fx.Scroll(window).toBottom();
 
-	}, // end function
-
-
-
-	/**
-	 * Run the templates
-	 *
-	 * @return	bool
-	 * @since	1.2.0
-	 */
-	changeStatus: function(e) {
-	
-	
-	
 	}, // end function
 
 

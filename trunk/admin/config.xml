@@ -14,14 +14,17 @@
 			description="COM_JUPGRADEPRO_CONFIG_METHOD_DESC"
 			default="0">
 			<option
-				value="database">Database</option>
+				value="database">Database - Getting the items from database</option>
 			<option
-				value="rest">WebService</option>
+				value="rest">WebService REST - Getting all items at same time (more faster)</option>
+			<option
+				value="rest_individual">WebService REST - Getting individual items (better for large databases)</option>
 		</field>
 
 		<field
 			name="path"
 			type="text"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_PATH"
 			description="COM_JUPGRADEPRO_CONFIG_PATH_DESC"
 			default=""
@@ -37,6 +40,7 @@
 		<field
 			name="rest_hostname"
 			type="text"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_HOSTNAME"
 			description="COM_JUPGRADEPRO_CONFIG_HOSTNAME_DESC"
 			default="http://www.example.org/"
@@ -45,6 +49,7 @@
 		<field
 			name="rest_username"
 			type="text"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_USERNAME"
 			description="COM_JUPGRADEPRO_CONFIG_USERNAME_DESC"
 			default=""
@@ -53,6 +58,7 @@
 		<field
 			name="rest_password"
 			type="password"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_PASSWORD"
 			description="COM_JUPGRADEPRO_CONFIG_PASSWORD_DESC"
 			default=""
@@ -68,6 +74,7 @@
 		<field
 			name="hostname"
 			type="text"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_HOSTNAME"
 			description="COM_JUPGRADEPRO_CONFIG_HOSTNAME_DESC"
 			default="localhost"
@@ -76,6 +83,7 @@
 		<field
 			name="username"
 			type="text"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_USERNAME"
 			description="COM_JUPGRADEPRO_CONFIG_USERNAME_DESC"
 			default=""
@@ -84,6 +92,7 @@
 		<field
 			name="password"
 			type="password"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_PASSWORD"
 			description="COM_JUPGRADEPRO_CONFIG_PASSWORD_DESC"
 			default=""
@@ -92,6 +101,7 @@
 		<field
 			name="database"
 			type="text"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_DATABASE"
 			description="COM_JUPGRADEPRO_CONFIG_DATABASE_DESC"
 			default=""
@@ -100,6 +110,7 @@
 		<field
 			name="prefix"
 			type="text"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_PREFIX"
 			description="COM_JUPGRADEPRO_CONFIG_PREFIX_DESC"
 			default="jos_"
@@ -108,6 +119,7 @@
 		<field
 			name="limit"
 			type="text"
+			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_LIMIT"
 			description="COM_JUPGRADEPRO_CONFIG_LIMIT_DESC"
 			default="10000"

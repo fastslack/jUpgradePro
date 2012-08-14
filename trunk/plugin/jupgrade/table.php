@@ -235,6 +235,37 @@ class JUpgradeTable extends JTable
 	}
 
 	/**
+	 * Get the last id
+	 *
+	 * @access	public
+	 * @return	int	The last id
+	 */
+	public function lastid()
+	{
+		$db =& $this->getDBO();
+
+		$conditions = $this->getConditionsHook();
+
+		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+
+		$order = isset($conditions['order']) ? $conditions['order'] : "{$this->getKeyName()} ASC";
+
+		// Get Total
+		$query = "SELECT id FROM {$this->_tbl} {$where} {$order} LIMIT 1";
+		$db->setQuery( $query );
+		$lastid = $db->loadResult();
+
+		if ($lastid) {
+			return (int)$lastid;
+		}
+		else
+		{
+			$this->setError( $db->getErrorMsg() );
+			return false;
+		}
+	}
+
+	/**
 	 * Export item list to json
 	 *
 	 * @access public

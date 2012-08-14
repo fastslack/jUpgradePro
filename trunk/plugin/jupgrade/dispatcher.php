@@ -16,29 +16,28 @@ defined('_JEXEC') or die;
  *
  * @package     Joomla.Platform
  * @subpackage  REST
- * @since       1.0
+ * @since       3.0
  */
 class JRESTDispatcher
 {
 	/**
 	 * @var    array  Associative array of parameters for the REST message.
-	 * @since  1.0
+	 * @since  3.0
 	 */
 	private $_parameters = array();
 
 	/**
 	 * @var    JUpgradeTable  JUpgradeTable object
-	 * @since  1.0
+	 * @since  3.0
 	 */
 	private $_table = array();
 	
 	/**
 	 * 
 	 *
-	 * @return  boolean  True if the user and pass are authorized
+	 * @return  boolean
 	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
+	 * @since   3.0
 	 */
 	public function execute($parameters)
 	{
@@ -81,10 +80,9 @@ class JRESTDispatcher
 	/**
 	 * 
 	 *
-	 * @return  boolean  True if the user and pass are authorized
+	 * @return  boolean
 	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
+	 * @since   3.0
 	 */
 	public function getTotal()
 	{	
@@ -94,10 +92,9 @@ class JRESTDispatcher
 	/**
 	 * 
 	 *
-	 * @return  boolean  True if the user and pass are authorized
+	 * @return  boolean  
 	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
+	 * @since   3.0
 	 */
 	public function getRow()
 	{
@@ -119,10 +116,21 @@ class JRESTDispatcher
 	/**
 	 * 
 	 *
-	 * @return  boolean  True if the user and pass are authorized
+	 * @return  boolean
 	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
+	 * @since   3.0
+	 */
+	public function getLastid()
+	{	
+		return $this->_table->lastid();
+	}
+
+	/**
+	 * 
+	 *
+	 * @return  boolean 
+	 *
+	 * @since   3.0
 	 */
 	public function getCleanup()
 	{
@@ -134,10 +142,9 @@ class JRESTDispatcher
 	/**
 	 * 
 	 *
-	 * @return  boolean  True if the user and pass are authorized
+	 * @return  boolean  
 	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
+	 * @since   3.0
 	 */
 	public function cleanup($type)
 	{

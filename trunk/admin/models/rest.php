@@ -25,6 +25,72 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
 class jUpgradeProModelRest extends JModel
 {
 	/**
+	 * Get the next step
+	 *
+	 * @return   step object
+	 */
+	public function getStep() {
+	
+		// Initialize jupgrade class
+		$jupgrade = new jUpgrade;
+
+		// Select the steps
+		$query = "SELECT * FROM jupgrade_steps AS s WHERE s.status != 1 ORDER BY s.id ASC LIMIT 1";
+		$this->_db->setQuery($query);
+		$step = $this->_db->loadObject();
+
+		// JHttp instance
+		jimport('joomla.http.http');
+		$http = new JHttp();
+		$data = $jupgrade->getRestData();
+		
+		// Getting the total
+		$data['task'] = "total";
+		$data['type'] = $step->name;
+		$total = $http->get($jupgrade->params->get('rest_hostname'), $data);
+		$step->total = (int) $total->body;
+	
+		$json = json_encode($step);
+
+		return($json);
+	}
+
+	/**
+	 * Get a single row
+	 *
+	 * @return   step object
+	 */
+	public function getRow() {
+
+		// Initialize jupgrade class
+		$jupgrade = new jUpgrade;
+
+		// JHttp instance
+		jimport('joomla.http.http');
+		$http = new JHttp();
+		$data = $jupgrade->getRestData();
+		
+		// Getting the total
+		$data['task'] = "row";
+		$data['type'] = JRequest::getVar('type');
+		
+		$response = $http->get($jupgrade->params->get('rest_hostname'), $data);
+		if ($response->body != '') {
+			$row = json_decode($response->body, true);
+		}	
+	
+		$json = json_encode($row);
+
+		return($json);
+	}
+
+
+
+
+
+
+
+	/**
 	 * Initial checks in jUpgrade
 	 *
 	 * @return	none
@@ -47,19 +113,20 @@ class jUpgradeProModelRest extends JModel
 	 */
 	function getMigrate() {
 
-		// jUpgrade class
-		//$jupgrade = new jUpgrade;
 
 		$step = $this->_getStep();
 
-		// TODO: Error handler
+//print_r($step);
 
-		$this->_processStep($step);
+		// TODO: Error handler
+		echo $this->_processStep($step);
 
 		$message['status'] = "OK";
 		$message['step'] = $step->id;
 		$message['name'] = $step->name;
 		$message['title'] = $step->title;
+		$message['class'] = $step->class;
+		$message['category'] = $step->category;
 		$message['text'] = 'DONE';
 		echo json_encode($message);
 
@@ -80,104 +147,6 @@ class jUpgradeProModelRest extends JModel
 
 		switch ($step->name)
 		{
-			case 'users':
-				// Migrate the users.
-				$u1 = new jUpgradeUsers($step);
-				$u1->upgrade();
-
-				break;
-			case 'arogroup':
-
-				// Migrate the usergroups.
-				$u2 = new jUpgradeUsergroups($step);
-				$u2->upgrade();
-				break;
-			case 'usergroupmap':
-				// Migrate the user-to-usergroup mapping.
-				$u2 = new jUpgradeUsergroupMap($step);
-				$u2->upgrade();
-
-				break;
-			case 'categories':
-				// Migrate the Categories.
-				$categories = new jUpgradeCategories($step);
-				$categories->upgrade();
-
-				break;
-			case 'content':
-				// Migrate the Content.
-				$content = new jUpgradeContent($step);
-				$content->upgrade();
-
-				// Migrate the Frontpage Content.
-				$frontpage = new jUpgradeContentFrontpage($step);
-				$frontpage->upgrade();
-
-				break;
-			case 'menus':
-				// Migrate the menu.
-				$menu = new jUpgradeMenu;
-				$menu->upgrade();
-
-				// Migrate the menu types.
-				$menutypes = new jUpgradeMenuTypes($step);
-				$menutypes->upgrade();
-
-				break;
-			case 'modules':
-				// Migrate the Modules.
-				$modules = new jUpgradeModules($step);
-				$modules->upgrade();
-
-				// Migrate the Modules Menus.
-				$modulesmenu = new jUpgradeModulesMenu($step);
-				$modulesmenu->upgrade();
-
-				break;
-			case 'banners':
-				// Migrate the categories of banners.
-				$cat = new jUpgradeCategory($step);
-				$cat->section = "com_banner";
-				$cat->upgrade();
-
-				// Migrate the banners.
-				$banners = new jUpgradeBanners($step);
-				$banners->upgrade();
-
-				break;
-			case 'contacts':
-				// Migrate the categories of contacts.
-				$cat = new jUpgradeCategory($step);
-				$cat->section = "com_contact_details";
-				$cat->upgrade();
-
-				// Migrate the contacts.
-				$contacts = new jUpgradeContacts($step);
-				$contacts->upgrade();
-
-				break;
-			case 'newsfeeds':
-				// Migrate the categories of newsfeeds.
-				$cat = new jUpgradeCategory($step);
-				$cat->section = "com_newsfeeds";
-				$cat->upgrade();
-
-				// Migrate the newsfeeds.
-				$newsfeeds = new jUpgradeNewsfeeds;
-				$newsfeeds->upgrade();
-
-				break;
-			case 'weblinks':
-				// Migrate the categories of weblinks.
-				$cat = new jUpgradeCategory($step);
-				$cat->section = "com_weblinks";
-				$cat->upgrade();
-
-				// Migrate the weblinks.
-				$weblinks = new jUpgradeWeblinks($step);
-				$weblinks->upgrade();
-
-				break;
 			case 'extensions':
 				require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
 				require_once JPATH_COMPONENT.'/includes/jupgrade.extensions.class.php';				
@@ -187,8 +156,14 @@ class jUpgradeProModelRest extends JModel
 				$success = $extension->upgrade();
 
 				break;
+			default:
+				// Getting the class name
+				$class = $step->class;
+			
+				// Migrate the process.
+				$process = new $class($step);
+				$process->upgrade();
 		}
-
 
 		$this->_updateStep($step);
 

@@ -120,6 +120,9 @@ class JUpgradeTableCategories extends JUpgradeTable
 		if ($this->alias == "") {
 			$this->alias = JFilterOutput::stringURLSafe($this->title);
 		}
+		// Correct alias root
+		if ($this->alias == "root") {
+			$this->alias = "root-v15";
+		}
 	}
-
 }

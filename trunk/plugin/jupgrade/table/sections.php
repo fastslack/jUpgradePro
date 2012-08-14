@@ -103,7 +103,7 @@ class JUpgradeTableSections extends JUpgradeTable
 
 		$this->extension = 'com_section';
 		
-		$this->sid = $this->id;
+		$this->old_id = $this->id;
 		unset($this->id);
 
 		// Correct alias

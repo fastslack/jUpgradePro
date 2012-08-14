@@ -180,46 +180,28 @@ class jUpgradeProModelAjax extends JModel
 		$this->_db->setQuery($query);
 		$this->_db->query();
 
-		if ($jupgrade->canDrop) {
+		// Truncate the selected tables
+		$tables = array();
+		$tables[] = 'jupgrade_categories';
+		$tables[] = 'jupgrade_menus';
+		$tables[] = 'jupgrade_modules';
+		$tables[] = "{$this->_db->getPrefix()}menu_types";
+		$tables[] = "{$this->_db->getPrefix()}content";
 
-			$tables = array();
-			$tables[] = 'jupgrade_categories';
-			$tables[] = 'jupgrade_menus';
-			$tables[] = 'jupgrade_modules';
-
-			for ($i=0;$i<count($tables);$i++) {
-				// Truncate mapping tables
+		for ($i=0;$i<count($tables);$i++) {
+			if ($jupgrade->canDrop) {
 				$query = "TRUNCATE TABLE `{$tables[$i]}`";
-				$this->_db->setQuery($query);
-				$this->_db->query();
+			}else{
+				$query = "DELETE FROM `{$tables[$i]}`";
 			}
+			$this->_db->setQuery($query);
+			$this->_db->query();
+		}
 
-			// Check for query error.
-			$error = $this->_db->getErrorMsg();
-
-			if ($error) {
-				throw new Exception($error);
-			}
-
-		} else {
-			$tables = array();
-			$tables[][0] = 'jupgrade_categories';
-			$tables[][0] = 'jupgrade_menus';
-			$tables[][0] = 'jupgrade_modules';
-
-			for ($i=0;$i<count($tables);$i++) {
-				// Truncate mapping tables
-				$query = "DELETE FROM `{$tables[$i][0]}`";
-				$this->_db->setQuery($query);
-				$this->_db->query();
-
-				// Check for query error.
-				$error = $this->_db->getErrorMsg();
-
-				if ($error) {
-					throw new Exception($error);
-				}
-			}
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+		if ($error) {
+			throw new Exception($error);
 		}
 
 		// Insert needed value
@@ -281,7 +263,6 @@ class jUpgradeProModelAjax extends JModel
 		$step = $this->_getStep();
 
 		// TODO: Error handler
-
 		$this->_processStep($step);
 
 		$this->_updateStep($step);

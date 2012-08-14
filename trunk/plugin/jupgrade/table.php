@@ -248,7 +248,7 @@ class JUpgradeTable extends JTable
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
 
-		$order = isset($conditions['order']) ? $conditions['order'] : "{$this->getKeyName()} ASC";
+		$order = isset($conditions['order']) ? $conditions['order'] : "ORDER BY {$this->getKeyName()} DESC";
 
 		// Get Total
 		$query = "SELECT id FROM {$this->_tbl} {$where} {$order} LIMIT 1";

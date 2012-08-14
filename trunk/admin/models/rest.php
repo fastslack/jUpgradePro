@@ -56,41 +56,6 @@ class jUpgradeProModelRest extends JModel
 	}
 
 	/**
-	 * Get a single row
-	 *
-	 * @return   step object
-	 */
-	public function getRow() {
-
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
-
-		// JHttp instance
-		jimport('joomla.http.http');
-		$http = new JHttp();
-		$data = $jupgrade->getRestData();
-		
-		// Getting the total
-		$data['task'] = "row";
-		$data['type'] = JRequest::getVar('type');
-		
-		$response = $http->get($jupgrade->params->get('rest_hostname'), $data);
-		if ($response->body != '') {
-			$row = json_decode($response->body, true);
-		}	
-	
-		$json = json_encode($row);
-
-		return($json);
-	}
-
-
-
-
-
-
-
-	/**
 	 * Initial checks in jUpgrade
 	 *
 	 * @return	none
@@ -113,10 +78,7 @@ class jUpgradeProModelRest extends JModel
 	 */
 	function getMigrate() {
 
-
 		$step = $this->_getStep();
-
-//print_r($step);
 
 		// TODO: Error handler
 		echo $this->_processStep($step);
@@ -129,7 +91,6 @@ class jUpgradeProModelRest extends JModel
 		$message['category'] = $step->category;
 		$message['text'] = 'DONE';
 		echo json_encode($message);
-
 	}
 
 	/**

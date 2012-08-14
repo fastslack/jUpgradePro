@@ -43,28 +43,4 @@ class jUpgradeMenusTypes extends jUpgrade
 
 		return $rows;
 	}
-
-	/**
-	 * Sets the data in the destination database.
-	 *
-	 * @return	void
-	 * @since	0.4.
-	 * @throws	Exception
-	 */
-	protected function setDestinationData()
-	{
-		// Truncate jupgrade_menus table
-		$this->cleanDestinationData();
-
-		try
-		{
-			parent::setDestinationData();
-		}
-		catch (Exception $e)
-		{
-			echo JError::raiseError(500, $e->getMessage());
-
-			return false;
-		}
-	}
 }

@@ -157,11 +157,11 @@ class jUpgradeCategory extends jUpgrade
 		// Getting the category table
 		$category = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
 
-		// Get old id
+		// Get section and old id
 		$oldlist = new stdClass();
-		$oldlist->section = isset($object['extension']) ? $object['extension'] : '';
-		$oldlist->old = isset($object['sid']) ? $object['sid'] : $object['id'];
-		unset($object['sid']);
+		$oldlist->section = !empty($object['extension']) ? $object['extension'] : 0;
+		$oldlist->old = isset($object['old_id']) ? $object['old_id'] : $object['id'];
+		unset($object['old_id']);
 
 		// Correct extension
 		if (isset($object['extension'])) {

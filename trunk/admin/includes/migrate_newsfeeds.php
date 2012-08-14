@@ -11,9 +11,6 @@
  * @link		http://www.matware.com.ar
  */
 
-// Require the category class
-require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
-
 /**
  * Upgrade class for Newsfeeds
  *
@@ -45,19 +42,34 @@ class jUpgradeNewsfeeds extends jUpgrade
 			'id'
 		);
 
+		return $rows;
+	}
+	
+	/**
+	 * Sets the data in the destination database.
+	 *
+	 * @return	void
+	 * @since	3.0.
+	 * @throws	Exception
+	 */
+	protected function setDestinationData()
+	{
+		// Getting the component parameter with global settings
+		$params = $this->getParams();	
+	
+		// Get the source data.
+		$rows = $this->loadData('newsfeeds');
+
 		// Getting the categories id's
 		$categories = $this->getMapList('categories', 'com_newsfeeds');
 
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
-			$row['access'] = empty($row['access']) ? 1 : $row['access'] + 1;
 			$row['language'] = '*';
-
+		
 			$cid = $row['catid'];
 			$row['catid'] = &$categories[$cid]->new;
 		}
-
-		return $rows;
 	}
 }

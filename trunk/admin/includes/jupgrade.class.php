@@ -21,54 +21,66 @@ defined('_JEXEC') or die;
  * @subpackage	com_jupgrade
  */
 class jUpgrade
-{
-	/**
-	 * Parameters
-	 * @since	0.4.
-	 */
-	public    $canDrop = false;
-	protected $source = null;
-	protected $id = 0;
-	protected $lastid = 0;
-	protected $name = 'undefined';
-	protected $state = null;
-	protected $xml = null;
+{	
 	protected $ready = true;
 	protected $output = '';
-	protected $params = null;
 	protected $rest_type = null;
 
-	protected $usergroup_map = array(
-			// Old	=> // New
-			0		=> 0,	// ROOT
-			28		=> 1,	// USERS (=Public)
-			29		=> 1,	// Public Frontend
-			18		=> 2,	// Registered
-			19		=> 3,	// Author
-			20		=> 4,	// Editor
-			21		=> 5,	// Publisher
-			30		=> 6,	// Public Backend (=Manager)
-			23		=> 6,	// Manager
-			24		=> 7,	// Administrator
-			25		=> 8,	// Super Administrator
-		);
-
-	public $config = array();
-	public $config_old = array();
+	/**
+	 * @var      
+	 * @since  3.0
+	 */
+	public $params = null;
+	
+	/**
+	 * @var      
+	 * @since  3.0
+	 */
 	public $_db = null;
+
+	/**
+	 * @var	array
+	 * @since  3.0
+	 */
+	private $_step = array();
+
+	/**
+	 * @var    array  List of possible parameters.
+	 * @since  12.1
+	 */
+	private $_reserved = array(
+		'id',
+		'lastid',
+		'name',
+		'class',
+		'category',
+		'state',
+		'xml'
+	);
+
+	/**
+	 * @var bool Can drop
+	 * @since	0.4.
+	 */
+	public $canDrop = false;
 
 	function __construct($step = null)
 	{
+		$data = array();
+	
 		if ($step) {
-			$this->id = $step->id;
-			$this->lastid = isset($step->lastid) ? $step->lastid : 0;
-			$this->name = $step->name;
-			$this->state = json_decode($step->state);
+			$data['id'] = $step->id;
+			$data['lastid'] = isset($step->lastid) ? $step->lastid : 0;
+			$data['name'] = $step->name;
+			$data['state'] = json_decode($step->state);
 			if (isset($this->state->xmlfile)) {
 				// Read xml definition file
-				$this->xml = simplexml_load_file($this->state->xmlfile);
+				$data['xml'] = simplexml_load_file($this->state->xmlfile);
 			}
 		}
+		
+		$this->setParameters($data);
+			
 		$this->checkTimeout();
 
 		// Getting the parameters
@@ -99,6 +111,32 @@ class jUpgrade
 
 		if (strpos($grant, 'DROP') == true || strpos($grant, 'ALL') == true) {
 			$this->canDrop = true;
+		}
+	}
+
+	/**
+	 * Method to set the OAuth message parameters.  This will only set valid OAuth message parameters.  If non-valid
+	 * parameters are in the input array they will be ignored.
+	 *
+	 * @param   array  $parameters  The OAuth message parameters to set.
+	 *
+	 * @return  void
+	 *
+	 * @since   12.1
+	 */
+	public function setParameters($data)
+	{
+		// Ensure that only valid OAuth parameters are set if they exist.
+		if (!empty($data))
+		{
+			foreach ($data as $k => $v)
+			{
+				if (in_array($k, $this->_reserved))
+				{
+					// Perform url decoding so that any use of '+' as the encoding of the space character is correctly handled.
+					$this->_step[$k] = urldecode((string) $v);
+				}
+			}
 		}
 	}
 
@@ -137,6 +175,102 @@ class jUpgrade
 	}
 
 	/**
+	 * The public entry point for the class.
+	 *
+	 * @return	boolean
+	 * @since	0.4.
+	 */
+	public function upgrade()
+	{
+		try
+		{
+			$this->setDestinationData();
+		}
+		catch (Exception $e)
+		{
+			echo JError::raiseError(500, $e->getMessage());
+
+			return false;
+		}
+
+		return true;
+	}
+
+	/**
+	 * Sets the data in the destination database.
+	 *
+	 * @return	void
+	 * @since	0.4.
+	 * @throws	Exception
+	 */
+	protected function setDestinationData($rows = null)
+	{	
+		// Get the source data.
+		if ($rows === null) {
+			$rows = $this->loadData();
+		}
+
+		$this->insertData($rows);
+	}
+
+	/**
+	 * loadData
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	protected function loadData($type = null)
+	{
+		$method = $this->params->get('method');
+	
+		$rows = array();
+
+		// Get the source data.
+		if ($method == 'rest') {
+			$rows = $this->getSourceDataRest($type);
+		} else if ($method == 'rest_individual') {
+			$rows[] = (object) $this->getSourceDataRestIndividual($type);
+		} else if ($method == 'database') {
+			$rows = $this->getSourceData();
+		}
+	
+		return $rows;
+	}
+
+	/**
+	 * insertData
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	protected function insertData($rows)
+	{	
+		$table = empty($this->destination) ? $this->source : $this->destination;
+	
+		if (is_array($rows)) {
+			foreach ($rows as $row)
+			{
+				// Convert the array into an object.
+				$row = (object) $row;
+
+				if (!$this->_db->insertObject($table, $row)) {
+					throw new Exception($this->_db->getErrorMsg());
+				}
+			}
+		}else if (is_object($rows)) {
+		
+			if (!$this->_db->insertObject($table, $rows)) {
+				throw new Exception($this->_db->getErrorMsg());
+			}		
+	
+		}
+	
+		return true;
+	}
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @param	string 	$select	A select condition to add to the query.
@@ -156,7 +290,7 @@ class jUpgrade
 		}
 
 		// Prepare the query for the source data.
-		$query = $this->db_old->getQuery(true);
+		$query = $this->_db->getQuery(true);
 
 		$query->select((string)$select);
 		$query->from((string)$this->source);
@@ -215,11 +349,11 @@ class jUpgrade
 		if (!empty($debug))
 			$this->print_a($query->__toString());
 
-		$this->db_old->setQuery((string)$query);
+		$this->_db->setQuery((string)$query);
 
 		// Getting data
-		$rows	= $this->db_old->loadAssocList();
-		$error = $this->db_old->getErrorMsg();
+		$rows	= $this->_db->loadAssocList();
+		$error = $this->_db->getErrorMsg();
 
 		// Check for query error.
 		if ($error) {
@@ -257,7 +391,7 @@ class jUpgrade
 	 * @since	0.4.4
 	 * @throws	Exception
 	 */
-	protected function &getSourceDataRest()
+	protected function &getSourceDataRest($type = null)
 	{
 		jimport('joomla.http.http');
 
@@ -269,9 +403,9 @@ class jUpgrade
 		
 		$data = $this->getRestData();
 
-		// Getting the total
+		// Cleanup
 		$data['task'] = "cleanup";
-		$data['type'] = ($this->rest_type == null) ? $this->name : $this->rest_type;
+		$data['type'] = ($type == null) ? $this->_step['name'] : $type;
 		$cleanup = $http->get($this->params->get('rest_hostname'), $data);
 		
 		// Getting the total
@@ -283,11 +417,44 @@ class jUpgrade
 		$data['task'] = "row";
 
 		for ($i=1;$i<=$total;$i++) {		
-			$response = $http->get($this->params->get('rest_hostname'), $data);			
-			$rows[$i] = json_decode($response->body);
+			$response = $http->get($this->params->get('rest_hostname'), $data);
+			if ($response->body != '') {
+				$rows[$i] = json_decode($response->body, true);
+			}
 		}
 
 		return $rows;
+	}
+
+	/**
+	 * Get the raw data for this part of the upgrade.
+	 *
+	 * @return	array	Returns a reference to the source data array.
+	 * @since	0.4.4
+	 * @throws	Exception
+	 */
+	protected function &getSourceDataRestIndividual($type = null)
+	{
+		jimport('joomla.http.http');
+
+		//$row = array();
+		$data = array();
+	
+		// JHttp instance
+		$http = new JHttp();
+		
+		$data = $this->getRestData();
+	
+		// Getting the rows
+		$data['type'] = ($type == null) ? $this->_step['name'] : $type;
+		$data['task'] = "row";
+
+		$response = $http->get($this->params->get('rest_hostname'), $data);
+		if ($response->body != '') {
+			$row = json_decode($response->body, true);
+		}
+	
+		return $row;
 	}
 
 	/**
@@ -310,60 +477,6 @@ class jUpgrade
 				$db->setQuery($query);
 				$db->query() or die($db->getErrorMsg());
 			}
-		}
-
-		return true;
-	}
-
-	/**
-	 * Sets the data in the destination database.
-	 *
-	 * @return	void
-	 * @since	0.4.
-	 * @throws	Exception
-	 */
-	protected function setDestinationData($rows = null)
-	{
-		$method = $this->params->get('method');
-	
-		// Get the source data.
-		if ($rows === null) {
-			$rows = ($method == 'rest') ? $this->getSourceDataRest() : $this->getSourceData();
-		}
-
-		$table = empty($this->destination) ? $this->source : $this->destination;
-
-		// TODO: this is ok for proof of concept, but add some batching for more efficient inserting.
-		foreach ($rows as $row)
-		{
-			// Convert the array into an object.
-			$row = (object) $row;
-
-			if (!$this->_db->insertObject($table, $row)) {
-				throw new Exception($this->_db->getErrorMsg());
-			}
-
-		}
-
-	}
-
-	/**
-	 * The public entry point for the class.
-	 *
-	 * @return	boolean
-	 * @since	0.4.
-	 */
-	public function upgrade()
-	{
-		try
-		{
-			$this->setDestinationData();
-		}
-		catch (Exception $e)
-		{
-			echo JError::raiseError(500, $e->getMessage());
-
-			return false;
 		}
 
 		return true;
@@ -455,7 +568,7 @@ class jUpgrade
 	 * @since	0.5.3
 	 * @throws	Exception
 	 */
-	public function getMapList($table = 'categories', $section = false)
+	public function getMapList($table = 'categories', $section = false, $custom = false)
 	{
 		// Getting the categories id's
 		$query = "SELECT *"
@@ -463,6 +576,10 @@ class jUpgrade
 
 		if ($section !== false) {
 			$query .= " WHERE section = '{$section}'";
+		}
+
+		if ($custom !== false) {
+			$query .= " WHERE {$custom}";
 		}
 
 		$this->_db->setQuery($query);

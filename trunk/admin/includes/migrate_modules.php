@@ -73,7 +73,7 @@ class jUpgradeModules extends jUpgrade
 	protected function &getSourceData()
 	{
 
-		$select = "`id` AS `sid` , `title`, `content`, `ordering`, `position`,"
+		$select = "`id`, `title`, `content`, `ordering`, `position`,"
 						." `checked_out`, `checked_out_time`, `published`, `module`,"
 						." `access`, `showtitle`, `params`, `client_id`";
 
@@ -90,11 +90,11 @@ class jUpgradeModules extends jUpgrade
 		);
 
 		// Set up the mapping table for the old positions to the new positions.
-		$map = self::getPositionsMap();
-		$map_keys = array_keys($map);
+		//$map = self::getPositionsMap();
+		//$map_keys = array_keys($map);
 
 		// Getting the component parameter with global settings
-		$params = $this->getParams();
+		//$params = $this->getParams();
 
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
@@ -125,11 +125,11 @@ class jUpgradeModules extends jUpgrade
 			}
 
 			## Change positions
-			if ($params->positions == 0) {
-				if (in_array($row['position'], $map_keys)) {
-						$row['position'] = $map[$row['position']];
-				}
-			}
+			//if ($params->positions == 0) {
+			//	if (in_array($row['position'], $map_keys)) {
+			//			$row['position'] = $map[$row['position']];
+			//	}
+			//}
 		}
 
 		return $rows;
@@ -146,15 +146,18 @@ class jUpgradeModules extends jUpgrade
 	{
 		$table	= empty($this->destination) ? $this->source : $this->destination;
 
-		// Clean the modules table
-		//$query = "DELETE FROM {$table} WHERE id >= 1";
-		//$this->db_new->setQuery($query);
-		//$this->db_new->query();
+		// Getting the component parameter with global settings
+		$params = $this->getParams();
 
 		// Truncate jupgrade_modules table
 		$clean = $this->cleanDestinationData('jupgrade_modules');
+
 		// Get the source data.
-		$rows	= $this->getSourceData();
+		$rows = $this->loadData('modules');
+
+		// Set up the mapping table for the old positions to the new positions.
+		$map = self::getPositionsMap();
+		$map_keys = array_keys($map);
 
 		// 
 		foreach ($rows as $row)
@@ -162,22 +165,29 @@ class jUpgradeModules extends jUpgrade
 			// Convert the array into an object.
 			$row = (object) $row;
 
+			## Change positions
+			if ($params->positions == 0) {
+				if (in_array($row->position, $map_keys)) {
+						$row->position = $map[$row->position];
+				}
+			}
+
 			// Get old id 
 			$oldlist = new stdClass();
-			$oldlist->old = $row->sid;
-			unset($row->sid);
+			$oldlist->old = $row->id;
+			unset($row->id);
 
 			// Insert module
-			if (!$this->db_new->insertObject($table, $row)) {
-				throw new Exception($this->db_new->getErrorMsg());
+			if (!$this->_db->insertObject($table, $row)) {
+				throw new Exception($this->_db->getErrorMsg());
 			}
 
 			// Get new id 
-			$oldlist->new = $this->db_new->insertid();
+			$oldlist->new = $this->_db->insertid();
 
 			// Save old and new id
-			if (!$this->db_new->insertObject('jupgrade_modules', $oldlist)) {
-				throw new Exception($this->db_new->getErrorMsg());
+			if (!$this->_db->insertObject('jupgrade_modules', $oldlist)) {
+				throw new Exception($this->_db->getErrorMsg());
 			}
 		}
 /*
@@ -188,88 +198,7 @@ class jUpgradeModules extends jUpgrade
 		$sqlfile = JPATH_COMPONENT.DS.'sql'.DS.'modules.sql';
 
 		// Import the sql file
-	  if (JUpgradeHelper::populateDatabase($this->db_new, $sqlfile, $errors) > 0 ) {
-	  	return false;
-	  }
-*/
-	}
-
-}
-
-/**
- * Upgrade class for modules menu
- *
- * This class takes the modules from the existing site and inserts them into the new site.
- *
- * @since	0.4.5
- */
-class jUpgradeModulesMenu extends jUpgrade
-{
-	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.5
-	 */
-	protected $source = '#__modules_menu AS m';
-
-	/**
-	 * @var		string	The name of the destination database table.
-	 * @since	0.4.5
-	 */
-	protected $destination = '#__modules_menu';
-
-	/**
-	 * Get the raw data for this part of the upgrade.
-	 *
-	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.5
-	 * @throws	Exception
-	 */
-	protected function &getSourceData()
-	{
-		// Creating the query
-		//$where = "m.moduleid NOT IN (2,3,4,8,13,14,15)";
-
-		$join = array();
-		$join[] = "INNER JOIN jupgrade_modules AS map ON  map.old = m.moduleid";
-		$join[] = "INNER JOIN jupgrade_menus AS men ON  men.old = m.menuid";
-
-		// Getting the data
-		$rows = parent::getSourceData(
-			'map.new AS moduleid, men.new AS menuid',
-		  $join,
-			$where,
-			'm.moduleid'
-		);
-
-		return $rows;
-	}
-
-	/**
-	 * Sets the data in the destination database.
-	 *
-	 * @return	void
-	 * @since	0.4.
-	 * @throws	Exception
-	 */
-	protected function setDestinationData()
-	{
-		// Clean the modules table
-		$query = "DELETE FROM {$this->destination} WHERE id >= 1";
-		$this->db_new->setQuery($query);
-		$this->db_new->query();
-
-		//
-		//parent::setDestinationData();
-
-/*
-		// Require the files
-		require_once JPATH_COMPONENT.DS.'includes'.DS.'helper.php';
-
-		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT.DS.'sql'.DS.'modules_menu.sql';
-
-		// Import the sql file
-	  if (JUpgradeHelper::populateDatabase($this->db_new, $sqlfile, $errors) > 0 ) {
+	  if (JUpgradeHelper::populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
 	  	return false;
 	  }
 */

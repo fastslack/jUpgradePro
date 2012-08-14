@@ -44,21 +44,20 @@ class jUpgradeCategories extends jUpgradeCategory
 	 */
 	protected function setDestinationData()
 	{
-		// Delete uncategorized categories
-		$query = "DELETE FROM {$this->destination} WHERE id > 1";
-		$this->db_new->setQuery($query);
-		$this->db_new->query();
-
+		$params = $this->getParams();
+	
 		/**
 		 * Inserting the categories
 		 * @since	2.5.1
 		 */
-
 		// Content categories
 		$this->section = 'com_content'; 
 		// Get the source data.
-		$categories	= $this->getSourceData();
-		// rootidmap
+		$categories = $this->loadData('categories');
+
+		// Initialize values
+		$aliases = array();
+		$unique_alias_suffix = 1;
 		$rootidmap = 0;
 
 		// JTable::store() run an update if id exists so we create them first
@@ -66,74 +65,57 @@ class jUpgradeCategories extends jUpgradeCategory
 		{
 			$object = new stdClass();
 
+			$category = (array) $category;
+
 			if ($category['id'] == 1) {
 				$query = "SELECT id+1"
 				." FROM #__categories"
 				." ORDER BY id DESC LIMIT 1";
-				$this->db_old->setQuery($query);
-				$rootidmap = $this->db_old->loadResult();
+				$this->_db->setQuery($query);
+				$rootidmap = $this->_db->loadResult();
 
 				$object->id = $rootidmap;
+				$category['old_id'] = $category['id'];
+				$category['id'] = $rootidmap;
 			}else{
 				$object->id = $category['id'];
 			}
 
 			// Inserting the menu
-			if (!$this->db_new->insertObject($this->destination, $object)) {
-				throw new Exception($this->db_new->getErrorMsg());
+			if (!$this->_db->insertObject($this->destination, $object)) {
+				echo $this->_db->getErrorMsg();
 			}
 		}
 
-		/**
-		 * Inserting the sections
-		 *
-		 * @since	2.5.1
-		 */
-		// Content categories
-		$this->source = '#__sections'; 
-		// Get the source data.
-		$sections	= $this->getSourceData();
-
-		// Insert the sections
-		foreach ($sections as $section)
+		// Update the category
+		foreach ($categories as $category)
 		{
-			// Inserting the category
-			$this->insertCategory($section);
-		}
+			$category = (array) $category;
 
-		/**
-		 * Updating the categories
-		 *
-		 * @since	2.5.1
-		 */
-		$catmap = $this->getMapList('categories', 'com_section');
+			$category['asset_id'] = null;
+			$category['parent_id'] = 1;
+			$category['lft'] = null;
+			$category['rgt'] = null;
+			$category['level'] = null;
 
-		// Insert the categories
-		foreach ($categories as $i=>$category)
-		{
 			if ($category['id'] == 1) {
 				$category['id'] = $rootidmap;
 			}
 
-			$category['asset_id'] = null;
-			$category['parent_id'] = isset($catmap[$category['extension']]->new) ? $catmap[$category['extension']]->new : 1;
-			$category['lft'] = $i;
-			$category['rgt'] = null;
-			$category['level'] = null;
+			// Check if has duplicated aliases
+			$query = "SELECT alias"
+			." FROM #__categories"
+			." WHERE alias = ".$this->_db->quote($category['alias']);
+			$this->_db->setQuery($query);
+			$aliases = $this->_db->loadAssoc();
 
-			// Inserting the category
+			$count = count($aliases);
+			if ($count > 0) {
+				$category['alias'] .= "-".rand(0, 99999);
+			}
+
 			$this->insertCategory($category);
 		}
 
-		// Require the files
-		require_once JPATH_COMPONENT.DS.'includes'.DS.'helper.php';
-
-		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT.DS.'sql'.DS.'categories.sql';
-
-		// Import the sql file
-	  if (JUpgradeHelper::populateDatabase($this->db_new, $sqlfile, $errors) > 0 ) {
-	  	return false;
-	  }
 	}
 }

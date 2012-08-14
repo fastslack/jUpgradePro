@@ -11,9 +11,6 @@
  * @license		  GNU General Public License version 2 or later; see LICENSE.txt
  */
 
-// Require the category class
-require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
-
 /**
  * Upgrade class for Weblinks
  *
@@ -45,18 +42,38 @@ class jUpgradeWeblinks extends jUpgrade
 			'id'
 		);
 
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
+		{
+			$row['params'] = $this->convertParams($row['params']);
+		}
+
+		return $rows;
+	}
+	
+	/**
+	 * Sets the data in the destination database.
+	 *
+	 * @return	void
+	 * @since	3.0.
+	 * @throws	Exception
+	 */
+	protected function setDestinationData()
+	{
+		// Getting the component parameter with global settings
+		$params = $this->getParams();
+
+		// Get the source data.
+		$rows = $this->loadData('weblinks');
+
 		// Getting the categories id's
 		$categories = $this->getMapList('categories', 'com_weblinks');
 
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
-		{
-			$row['params'] = $this->convertParams($row['params']);
-
+		{		
 			$cid = $row['catid'];
 			$row['catid'] = &$categories[$cid]->new;
 		}
-
-		return $rows;
 	}
 }

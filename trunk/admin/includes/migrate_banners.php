@@ -45,25 +45,25 @@ class jUpgradeBanners extends jUpgrade
 	 */
 	protected function &getSourceData()
 	{
-	        $rows = parent::getSourceData(
-	                '`bid` AS id, `cid`, `type`, `name`, `alias`, `imptotal`, `impmade`, '
-	                .'`clicks`, `imageurl`, `clickurl`, `date`, `showBanner` AS state, `checked_out`, '
-	                .'`checked_out_time`, `editor`, `custombannercode`, `catid`, `description`, '
-	                .'`sticky`, `ordering`, `publish_up`, `publish_down`, `tags`, `params`', null, 'bid'); 
+		$rows = parent::getSourceData(
+			'`bid` AS id, `cid`, `type`, `name`, `alias`, `imptotal`, `impmade`, '
+			.'`clicks`, `imageurl`, `clickurl`, `date`, `showBanner` AS state, `checked_out`, '
+			.'`checked_out_time`, `editor`, `custombannercode`, `catid`, `description`, '
+			.'`sticky`, `ordering`, `publish_up`, `publish_down`, `tags`, `params`', null, 'bid'); 
 
-	        // Getting the categories id's
-	        $categories = $this->getMapList('categories', 'com_banners');
+		// Getting the categories id's
+		$categories = $this->getMapList('categories', 'com_banners');
 
-	        // Do some custom post processing on the list.
-	        foreach ($rows as $index => &$row)
-	        {    
-	                $row['params'] = $this->convertParams($row['params']);                        
+		// Do some custom post processing on the list.
+		foreach ($rows as $index => &$row)
+		{    
+			$row['params'] = $this->convertParams($row['params']);                        
 
-	                $cid = $row['catid'];
-	                $row['catid'] = &$categories[$cid]->new;
-	        }
+			$cid = $row['catid'];
+			$row['catid'] = &$categories[$cid]->new;
+		}
 
-	        return $rows;
+		return $rows;
 	}
 
 	/**
@@ -75,10 +75,14 @@ class jUpgradeBanners extends jUpgrade
 	 */
 	protected function setDestinationData()
 	{
-		$rows = $this->getSourceData();
+		// Getting the component parameter with global settings
+		$params = $this->getParams();	
+
+		// Get the source data.
+		$rows = $this->loadData('banners');
 
 		foreach($rows as &$row)
-	        {
+		{
 			$temp = new JParameter($row['params']);
 			$temp->set('imageurl', 'images/banners/' . $row['imageurl']);
 			$row['params'] = json_encode($temp->toObject());

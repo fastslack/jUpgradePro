@@ -63,6 +63,8 @@ class jUpgradeMenu extends jUpgrade
 		// Do some custom post processing on the list.
 		foreach ($rows as $key => &$row) {
  
+			$row = (array) $row;
+
 			// Fixing access
 			$row['access']++;
 			// Fixing level
@@ -163,7 +165,8 @@ class jUpgradeMenu extends jUpgrade
 		$sections = $this->getMapList('categories', 'com_section');
 	
 		// Get the source data.
-		$rows	= ($params->method == 'rest') ? $this->getSourceDataRest() : $this->getSourceData();
+		$rows = $this->loadData('menus');
+		
 		$table	= empty($this->destination) ? $this->source : $this->destination;
 
 		// Getting the extensions id's of the new Joomla installation

@@ -115,9 +115,6 @@ class jUpgradeContent extends jUpgrade
 	{
 		$params = $this->getParams();
 
-		// Truncate the table for better debug
-		//$clean	= $this->cleanDestinationData();
-
 		// Get the source data.
 		$rows = $this->loadData('contents');
 
@@ -166,6 +163,18 @@ class jUpgradeContent extends jUpgrade
 			// Getting the asset table
 			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
 
+			// Check if has duplicated aliases
+			$query = "SELECT alias"
+			." FROM #__content"
+			." WHERE alias = ".$this->_db->quote($row['alias']);
+			$this->_db->setQuery($query);
+			$aliases = $this->_db->loadAssoc();
+
+			$count = count($aliases);
+			if ($count > 0) {
+				$row['alias'] .= "-".rand(0, 99999);
+			}
+
 			// Bind data to save content
 			if (!$content->bind($row)) {
 				echo JError::raiseError(500, $content->getError());
@@ -176,22 +185,50 @@ class jUpgradeContent extends jUpgrade
 				echo JError::raiseError(500, $content->getError());
 			}
 
-			// The Joomla 2.5 database structure does not allow duplicate aliases
-			if (in_array($content->alias, $aliases, true)) {
-				$content->alias .= $unique_alias_suffix;
-				$unique_alias_suffix++;
-			}
-			$aliases[] = $content->alias;
-
 			// Insert the content
 			if (!$content->store()) {
 				echo JError::raiseError(500, $content->getError());
 			}
 
+			if ($row['id'] == $this->getLastid()) {
+				$this->updateFeature();
+				$this->fixComponentConfiguration();
+			}
 		}
 
 		$params = $this->getParams();
 
+	}
+
+	protected function getLastId()
+	{
+		$method = $this->params->get('method');
+	
+		// Get the source data.
+		if ($method == 'rest' || $method == 'rest_individual') {
+
+			jimport('joomla.http.http');
+	
+			// JHttp instance
+			$http = new JHttp();		
+			$data = $this->getRestData();
+
+			// Getting the total
+			$data['task'] = "lastid";
+			$data['type'] = "contents";
+			$lastid = $http->get($this->params->get('rest_hostname'), $data);
+			$lastid = (int) $lastid->body;
+
+		} else if ($method == 'database') {
+			//$rows = $this->getSourceData();
+		}
+
+		return $lastid;
+	}
+
+
+	protected function updateFeature()
+	{
 		/*
 		 * Update the featured column with records from content_frontpage FIXXXXXXXXXXXXXx
 		 *
@@ -206,7 +243,11 @@ class jUpgradeContent extends jUpgrade
 		if ($error) {
 			throw new Exception($error);
 		}*/
+	}
 
+
+	protected function fixComponentConfiguration()
+	{
 		/*
 		 * Upgrading the content configuration
 		 *
@@ -235,5 +276,8 @@ class jUpgradeContent extends jUpgrade
 		if ($error) {
 			throw new Exception($error);
 		}*/
+
+
 	}
+
 }

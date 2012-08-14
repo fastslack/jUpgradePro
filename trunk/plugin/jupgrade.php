@@ -46,6 +46,10 @@ class plgSystemJUpgrade extends JPlugin
 		require_once JPATH_PLUGINS . '/system/jupgrade/authorizer.php';
 		require_once JPATH_PLUGINS . '/system/jupgrade/dispatcher.php';
 		require_once JPATH_PLUGINS . '/system/jupgrade/table.php';
+
+
+		// Check if jupgrade_steps exists
+		$this->checkStepTable();
 		
 		// Getting the database instance
 		$db = JFactory::getDbo();
@@ -109,7 +113,7 @@ class plgSystemJUpgrade extends JPlugin
 		$tables = $db->loadResultArray();
 		
 		if (!in_array('jupgrade_steps', $tables)) {
-			populateDatabase(& $db, $sqlfile )
+			populateDatabase(& $db, $sqlfile );
 		}		
 
 	} // end method

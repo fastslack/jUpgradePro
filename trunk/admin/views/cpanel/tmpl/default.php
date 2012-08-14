@@ -24,11 +24,14 @@ JHTML::_('behavior.mootools');
 // get params
 $params	= $this->params;
 
+$method = $params->get('method');
+
 // get document to add scripts
 $document	= JFactory::getDocument();
 $document->addScript('components/com_jupgradepro/js/dwProgressBar.js');
 $document->addScript('components/com_jupgradepro/js/Base64.js');
-$document->addScript('components/com_jupgradepro/js/migrate.rest.js');
+$document->addScript("components/com_jupgradepro/js/migrate.{$method}.js");
+$document->addScript('components/com_jupgradepro/js/requestmultiple.js');
 $document->addStyleSheet("components/com_jupgradepro/css/jupgrade.css");
 ?>
 <script type="text/javascript">
@@ -68,6 +71,10 @@ window.addEvent('domready', function() {
 					<p class="text"><?php echo JText::_('Upgrading progress...'); ?></p>
 					<div id="pb4"></div>
 					<div><small><i><span id="status"><?php echo JText::_('Preparing for migration'); ?></span></i></small></div>
+					<div id="counter">
+						<i><small><b><span id="currItem">0</span></b> items /
+						<b><span id="totalItems">0</span></b> items</small></i>
+					</div>
 				</div>
 
 				<div id="templates">

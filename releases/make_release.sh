@@ -9,7 +9,7 @@
 # 
 
 PROJECT="jupgradepro"
-VERSION="2.5.2alpha1"
+VERSION="3.0.0alpha1"
 
 DIR="com_$PROJECT"
 PACKAGE="com_$PROJECT-$VERSION.zip"
@@ -19,15 +19,22 @@ rm -rf $DIR
 cp -r ../trunk $DIR
 
 # delete version-control stuff and other files
-find $DIR -name ".git" -type d -exec rm -rf {} \;
+find $DIR -name ".svn" -type d -exec rm -rf {} \;
 find $DIR -name ".DS_Store" -exec rm -rf {} \;
 
 # delete unused files
 #rm $DIR/admin/${PROJECT}.xml
 #rm $DIR/TODO
 
+# Zipping plugin
+cd $DIR/plugin/
+zip -rq plg_${PROJECT}-${VERSION}.zip .
+mv plg_${PROJECT}-${VERSION}.zip ../../.
+cd ../..
+
 # create package
 rm $PACKAGE
+rm -rf $DIR/plugin/
 zip -rq $PACKAGE $DIR
 
 # create symlink

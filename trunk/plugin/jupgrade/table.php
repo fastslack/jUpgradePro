@@ -70,20 +70,21 @@ class JUpgradeTable extends JTable
 			array_push($conditions['where'], $moreconditions);
 		}
 
+		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 		$order = isset($conditions['order']) ? $conditions['order'] : 'ASC';
 
 		if (strpos($order,'ASC') !== false) {
 			$conditions['where'][] = "{$this->getKeyName()} > {$stepid}";
-			$query = "SELECT MIN({$this->getKeyName()}) FROM {$this->getTableName()} ".processWhere($conditions)." LIMIT 1";
+			$query = "SELECT MIN({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
 		}else if (strpos($order,'DESC') !== false) {
 			if ($stepid == 0) {
-				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} ".processWhere($conditions)." LIMIT 1";
+				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
 			}else{
 				$conditions['where'][] = "{$this->getKeyName()} < {$stepid}";
-				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} ".processWhere($conditions)." LIMIT 1";
+				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
 			}
 		}
-		
+
 		$db->setQuery( $query );
 		$id = $db->loadResult();
 
@@ -161,7 +162,7 @@ class JUpgradeTable extends JTable
 		$conditions = $this->getConditionsHook();
 		
 		// Get `AS` mysql statement
-		$where_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
+		//$where_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
 		
 		// Add oid condition		
 		$oid_condition = "{$where_as}{$this->getKeyName()} = {$oid}";
@@ -218,9 +219,10 @@ class JUpgradeTable extends JTable
 		$conditions = $this->getConditionsHook();
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 
 		/// Get Total
-		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$where}";
+		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$as} {$where}";
 		$db->setQuery( $query );
 		$total = $db->loadResult();
 

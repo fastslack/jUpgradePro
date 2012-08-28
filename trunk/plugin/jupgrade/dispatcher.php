@@ -85,7 +85,7 @@ class JRESTDispatcher
 	 * @since   3.0
 	 */
 	public function getTotal()
-	{	
+	{
 		return $this->_table->total();
 	}
 	

@@ -34,8 +34,6 @@ class JUpgradeTableWeblinks extends JUpgradeTable {
 	var $date = null;
 	/** @var int(11) */
 	var $hits = null;
-	/** @var tinyint(1) */
-	var $published = null;
 	/** @var int(11) */
 	var $checked_out = null;
 	/** @var datetime */

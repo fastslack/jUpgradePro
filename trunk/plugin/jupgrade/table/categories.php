@@ -82,7 +82,7 @@ class JUpgradeTableCategories extends JUpgradeTable
 	public function getConditionsHook()
 	{
 		$conditions = array();
-				
+
 		$where = array();
 		$where[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
 		

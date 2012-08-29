@@ -170,16 +170,18 @@ class jUpgradeProModelAjax extends JModelLegacy
 					// Set all status to 0 and clear state
 					$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = '{$name}'";
 					$this->_db->setQuery($query);
-					$this->_db->query();				
-				}
-				if ($name == 'users') {
-					$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = 'arogroup'";
-					$this->_db->setQuery($query);
-					$this->_db->query();				
+					$this->_db->query();
 
-					$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = 'usergroupmap'";
-					$this->_db->setQuery($query);
-					$this->_db->query();		
+					if ($name == 'users') {
+						$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = 'arogroup'";
+						$this->_db->setQuery($query);
+						$this->_db->query();				
+
+						$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = 'usergroupmap'";
+						$this->_db->setQuery($query);
+						$this->_db->query();		
+					}
+
 				}
 			}
 		}

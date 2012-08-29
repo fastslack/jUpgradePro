@@ -164,28 +164,80 @@
 		label="COM_JUPGRADEPRO_CONFIG_SKIPS_TITLE"
 		description="COM_JUPGRADEPRO_CONFIG_SKIPS_TITLE_DESC">
 
-		<field
-			name="skip_checks"
-			type="list"
-			label="COM_JUPGRADEPRO_CONFIG_SKIP_CHECKS"
-			description="COM_JUPGRADEPRO_CONFIG_SKIP_CHECKS_DESC"
-			default="0">
-			<option
-				value="0">JNO</option>
-			<option
-				value="1">JYES</option>
+		<field name="skip_checks" type="radio" default="0" label="Skip checks" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_templates" type="radio" default="0" label="Skip templates copy" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_extensions" type="radio" default="0" label="Skip 3rd extensions" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 
-		<field
-			name="skip_extensions"
-			type="list"
-			label="COM_JUPGRADEPRO_CONFIG_SKIP_EXTENSIONS"
-			description="COM_JUPGRADEPRO_CONFIG_SKIP_EXTENSIONS_DESC"
-			default="0">
-			<option
-				value="0">JNO</option>
-			<option
-				value="1">JYES</option>
+		<field name="spacer1" type="spacer" class="text" label="&lt;b&gt;Core skips&lt;/b&gt;" />
+
+		<field name="skip_core_users" type="radio" default="0" label="Skip users" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_categories" type="radio" default="0" label="Skip categories" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_sections" type="radio" default="0" label="Skip sections" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_contents" type="radio" default="0" label="Skip contents" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_contents_frontpage" type="radio" default="0" label="Skip contents frontpage" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_menus" type="radio" default="0" label="Skip menus" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_menus_types" type="radio" default="0" label="Skip menus types" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_modules" type="radio" default="0" label="Skip modules" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_modules_menu" type="radio" default="0" label="Skip modules menus" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_banners" type="radio" default="0" label="Skip banners" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_banners_clients" type="radio" default="0" label="Skip banners clients" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_banners_tracks" type="radio" default="0" label="Skip banners tracks" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_contacts" type="radio" default="0" label="Skip contacts" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_newsfeeds" type="radio" default="0" label="Skip newsfeeds" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_weblinks" type="radio" default="0" label="Skip weblinks" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
 		</field>
 
 	</fieldset>

@@ -153,7 +153,7 @@ class jUpgradeProModelAjax extends JModel
 		$prefix = $this->_db->getPrefix();
 
 		// Set all status to 0 and clear state
-		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, state = '' WHERE name != 'sections'";
+		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, state = '' WHERE name != 'extensions'";
 		$this->_db->setQuery($query);
 		$this->_db->query();
 
@@ -163,7 +163,7 @@ class jUpgradeProModelAjax extends JModel
 		// Skiping the steps setted by user
 		foreach ($core_skips as $k => $v) {
 			$core = substr($k, 0, 9);
-			$name = substr($k, 10, 15);
+			$name = substr($k, 10, 18);
 
 			if ($core == "skip_core") {
 				if ($v == 1) {
@@ -172,11 +172,20 @@ class jUpgradeProModelAjax extends JModel
 					$this->_db->setQuery($query);
 					$this->_db->query();				
 				}
+				if ($name == 'users') {
+					$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = 'arogroup'";
+					$this->_db->setQuery($query);
+					$this->_db->query();				
+
+					$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = 'usergroupmap'";
+					$this->_db->setQuery($query);
+					$this->_db->query();		
+				}
 			}
 		}
 
 		// Cleanup 3rd extensions
-		$query = "DELETE FROM jupgrade_steps WHERE id > 17";
+		$query = "DELETE FROM jupgrade_steps WHERE id > 18";
 		$this->_db->setQuery($query);
 		$this->_db->query();
 

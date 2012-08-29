@@ -21,12 +21,12 @@ $version = "v{$this->version}";
 // get params
 $params	= $this->params;
 
-$method = $params->get('method');
+$m = $params->get('method');
+
+$method = isset($m) ? $m : 'rest_individual';
 
 // get document to add scripts
 $document	= JFactory::getDocument();
-//$document->addScript('components/com_jupgradepro/js/mootools-core-uncompressed.js');
-//$document->addScript('components/com_jupgradepro/js/mootools-more-uncompressed.js');
 $document->addScript('components/com_jupgradepro/js/dwProgressBar.js');
 $document->addScript('components/com_jupgradepro/js/Base64.js');
 $document->addScript("components/com_jupgradepro/js/migrate.{$method}.js");

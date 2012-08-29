@@ -22,7 +22,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jUpgradeProModelRest extends JModel
+class jUpgradeProModelRest extends JModelLegacy
 {
 	/**
 	 * Get the next step

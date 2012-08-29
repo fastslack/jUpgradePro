@@ -20,7 +20,7 @@ jimport( 'joomla.application.component.view' );
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jupgradeProViewRest extends JView
+class jupgradeProViewRest extends JViewLegacy
 {
 	/**
 	 * Display the view.

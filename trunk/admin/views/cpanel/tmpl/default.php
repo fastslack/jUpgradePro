@@ -14,12 +14,9 @@
 // No direct access.
 defined('_JEXEC') or die;
 
+$document	= JFactory::getDocument();
+
 $version = "v{$this->version}";
-
-JHTML::_('behavior.mootools');
-
-// Check if "System - Mootools Upgrade" is enabled
-//$mtupgrade = JPluginHelper::isEnabled( 'system', 'mtupgrade' );
 
 // get params
 $params	= $this->params;
@@ -28,6 +25,8 @@ $method = $params->get('method');
 
 // get document to add scripts
 $document	= JFactory::getDocument();
+//$document->addScript('components/com_jupgradepro/js/mootools-core-uncompressed.js');
+//$document->addScript('components/com_jupgradepro/js/mootools-more-uncompressed.js');
 $document->addScript('components/com_jupgradepro/js/dwProgressBar.js');
 $document->addScript('components/com_jupgradepro/js/Base64.js');
 $document->addScript("components/com_jupgradepro/js/migrate.{$method}.js");
@@ -37,6 +36,7 @@ $document->addStyleSheet("components/com_jupgradepro/css/jupgrade.css");
 <script type="text/javascript">
 
 window.addEvent('domready', function() {
+
 
 	/* Init jUpgrade */
 	var jupgrade = new jUpgrade({

@@ -22,7 +22,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jUpgradeProModelAjax extends JModel
+class jUpgradeProModelAjax extends JModelLegacy
 {
 	/**
 	 * Initial checks in jUpgrade
@@ -56,7 +56,7 @@ class jUpgradeProModelAjax extends JModel
 		// Checking tables
 		$query = "SHOW TABLES";
 		$jupgrade->_db->setQuery($query);
-		$tables = $jupgrade->_db->loadResultArray();
+		$tables = $jupgrade->_db->loadColumn();
 		
 		$message = array();
 		$message['status'] = "ERROR";

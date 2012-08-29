@@ -20,7 +20,7 @@ jimport( 'joomla.application.component.view' );
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jupgradeProViewCpanel extends JView
+class jupgradeProViewCpanel extends JViewLegacy
 {
 	/**
 	 * Display the view.
@@ -48,13 +48,15 @@ class jupgradeProViewCpanel extends JView
 			}
 		}
 
+		// Load mooTools
+		//JHTML::_('behavior.mootools'); // 2.5
+		JHtml::_('behavior.framework', true);
+
 		$xmlfile = JPATH_COMPONENT.'/jupgradepro.xml';
- 		$xml = JFactory::getXMLParser('Simple');
- 		$xml->loadFile($xmlfile);
-		$attrib = $xml->document->version[0];
+		$xml = JFactory::getXML($xmlfile);
 
 		$this->params =	$params;
-		$this->version =	$attrib->data();
+		$this->version = $xml->version[0];
 
 		parent::display($tpl);
 	}

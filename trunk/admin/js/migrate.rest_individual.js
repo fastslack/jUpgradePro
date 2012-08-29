@@ -78,10 +78,10 @@ var jUpgrade = new Class({
 		// Check skip from settings
 		if (self.options.skip_checks != 1) {
 
-			var mySlideChecks = new Fx.Slide('checks');
-			mySlideChecks.hide();
+			//var mySlideChecks = new Fx.Slide('checks');
+			//mySlideChecks.hide();
 			$('checks').setStyle('display', 'block');
-			mySlideChecks.toggle();
+			//mySlideChecks.toggle();
 
 			var pb0 = new dwProgressBar({
 				container: $('pb0'),
@@ -107,7 +107,7 @@ var jUpgrade = new Class({
 
 			cleanup.addEvents({
 				'complete': function(response) {
-
+					//alert(response);
 					var object = JSON.decode(response);
 
 					if (self.options.debug_php == 1) {
@@ -135,7 +135,7 @@ var jUpgrade = new Class({
 
 			checks.addEvents({
 				'complete': function(response) {
-
+					//alert(response);
 					pb0.set(66);
 
 					var object = JSON.decode(response);
@@ -159,6 +159,8 @@ var jUpgrade = new Class({
 			self.download(e);
 		}
 
+
+
 	}, // end function
 
 	/**
@@ -171,10 +173,10 @@ var jUpgrade = new Class({
 		var self = this;
 
 		// CSS stuff
-		var mySlideMigrate = new Fx.Slide('migration');
-		mySlideMigrate.hide();
+		//var mySlideMigrate = new Fx.Slide('migration');
+		//mySlideMigrate.hide();
 		$('migration').setStyle('display', 'block');
-		mySlideMigrate.toggle();
+		//mySlideMigrate.toggle();
 
 		// Progress bar
 		pb4 = new dwProgressBar({
@@ -235,7 +237,8 @@ var jUpgrade = new Class({
 				// Redirect if total == 0
 				if (object.total == 0) {
 					if (object.name == 'weblinks') {
-						$clear(step);
+						//$clear(step);
+						pb4.finish();
 						this.cancel();
 						self.done();
 					}else{
@@ -260,7 +263,8 @@ var jUpgrade = new Class({
 							//console.log(object);
 
 							if (object.name == 'weblinks') {
-								$clear(step);
+								//$clear(step);
+								pb4.finish();
 								this.cancel();
 								self.done();
 							}else{

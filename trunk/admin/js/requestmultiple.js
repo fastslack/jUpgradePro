@@ -46,8 +46,8 @@ Request.Multiple = new Class({
 	Implements : [Options, Chain],
 	
 	options : {
-		onRequest : $empty,
-		onComplete : $empty
+		onRequest : false,
+		onComplete : false
 	},
 	
 	initialize : function(options) {
@@ -59,11 +59,13 @@ Request.Multiple = new Class({
 		var chains = [];
 		chains.include(this.request);
 		
-		$each(this.requests, function(request, k) {
+		console.log(this.requests);
+
+		Object.each(this.requests, function(request, k) {
 			var req = function() {
 				request.addEvent('complete', function() {
 					this.callChain();
-				}.bindWithEvent(this));
+				}.bind(this));
 				request.send();
 			}.bind(this);
 			
@@ -73,7 +75,7 @@ Request.Multiple = new Class({
 		}, this);
 		
 		chains.include(this.complete);			
-		
+	
 		this.chain(chains);
 		this.callChain();
 	},

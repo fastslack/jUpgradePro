@@ -8,7 +8,7 @@ jimport('joomla.application.component.controller');
 /**
  * General Controller of jUpgradePro component
  */
-class jUpgradeProController extends JController
+class jUpgradeProController extends JControllerLegacy
 {
 	/**
 	 * display task

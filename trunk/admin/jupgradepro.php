@@ -15,10 +15,13 @@ JLoader::register('jUpgradeProHelper', dirname(__FILE__) . '/helpers/jupgradepro
 jimport('joomla.application.component.controller');
  
 // Get an instance of the controller prefixed by jUpgradePro
-$controller = JController::getInstance('jUpgradePro');
- 
+//$controller = JController::getInstance('jUpgradePro');
 // Perform the Request task
-$controller->execute(JRequest::getCmd('task'));
+//$controller->execute(JRequest::getCmd('task'));
+
+// Joomla 3.0
+$controller	= JControllerLegacy::getInstance('jUpgradePro');
+$controller->execute(JFactory::getApplication()->input->get('task'));
  
 // Redirect if set by the controller
 $controller->redirect();

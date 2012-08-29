@@ -9,7 +9,7 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_jupgradepro'))
 }
  
 // require helper file
-JLoader::register('jUpgradeProHelper', dirname(__FILE__) . DS . 'helpers' . DS . 'jupgradepro.php');
+JLoader::register('jUpgradeProHelper', dirname(__FILE__) . '/helpers/jupgradepro.php');
  
 // import joomla controller library
 jimport('joomla.application.component.controller');

@@ -71,9 +71,14 @@ class jUpgradeWeblinks extends jUpgrade
 
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
-		{		
-			$cid = $row['catid'];
-			$row['catid'] = &$categories[$cid]->new;
+		{
+			// Convert the array into an object.
+			$row = (object) $row;
+
+			$cid = $row->catid;
+			$row->catid = &$categories[$cid]->new;
 		}
+
+		parent::setDestinationData($rows);
 	}
 }

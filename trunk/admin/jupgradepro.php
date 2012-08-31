@@ -1,7 +1,10 @@
 <?php
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
- 
+
+// Turn off all error reporting
+error_reporting(0);
+
 // Access check.
 if (!JFactory::getUser()->authorise('core.manage', 'com_jupgradepro')) 
 {

@@ -63,28 +63,28 @@ class jUpgradeProModelAjax extends JModelLegacy
 
 		if (!in_array('jupgrade_categories', $tables)) {
 			$message['number'] = 401;
-			$message['text'] = "jupgrade_categories table not exist";
+			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_CAT");
 			echo json_encode($message);
 			exit;
 		}
 		
 		if (!in_array('jupgrade_menus', $tables)) {
 			$message['number'] = 402;
-			$message['text'] = "jupgrade_menus table not exist";
+			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_MENUS");
 			echo json_encode($message);
 			exit;
 		}
 		
 		if (!in_array('jupgrade_modules', $tables)) {
 			$message['number'] = 403;
-			$message['text'] = "jupgrade_modules table not exist";
+			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_MODULES");
 			echo json_encode($message);
 			exit;
 		}
 		
 		if (!in_array('jupgrade_steps', $tables)) {
 			$message['number'] = 404;
-			$message['text'] = "jupgrade_steps table not exist";
+			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NO_EXISTS");
 			echo json_encode($message);
 			exit;
 		}		
@@ -96,7 +96,7 @@ class jUpgradeProModelAjax extends JModelLegacy
 		
 		if ($nine < 10) {
 			$message['number'] = 405;
-			$message['text'] = "jupgrade_steps is not valid";
+			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NOT_VALID");
 			echo json_encode($message);
 			exit;
 		}
@@ -104,7 +104,42 @@ class jUpgradeProModelAjax extends JModelLegacy
 		// Check safe_mode_gid
 		if (@ini_get('safe_mode_gid')) {
 			$message['number'] = 411;
-			$message['text'] = "You must to disable 'safe_mode_gid' on your php configuration";
+			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DISABLE_SAFE_GID');
+			echo json_encode($message);
+			exit;
+		}
+
+		// Check for bad configurations
+		if ($params->method == "rest" || $params->method == "rest_individual") {
+			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' || 
+					$params->rest_username == '' || $params->rest_password == '' ) {
+				$message['number'] = 412;
+				$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
+				echo json_encode($message);
+				exit;
+			}
+		}
+
+		// Check for bad configurations
+		if ($params->method == "database") {
+			if ($params->hostname == 'localhost' || $params->hostname == '' || 
+					$params->username == '' || $params->password == '' || $params->database == '' || $params->prefix == '' ) {
+				$message['number'] = 413;
+				$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
+				echo json_encode($message);
+				exit;
+			}
+		}
+
+		// Checking tables
+		$query = "SELECT COUNT(id) FROM #__categories";
+		$jupgrade->_db->setQuery($query);
+		$categories_count = $jupgrade->_db->loadResult();
+
+
+		if ($categories_count > 7) {
+			$message['number'] = 414;
+			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_CATEGORIES');
 			echo json_encode($message);
 			exit;
 		}

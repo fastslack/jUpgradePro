@@ -144,6 +144,31 @@ class jUpgradeProModelAjax extends JModelLegacy
 			exit;
 		}
 
+		// Checking tables
+		$query = "SELECT COUNT(id) FROM #__content";
+		$jupgrade->_db->setQuery($query);
+		$content_count = $jupgrade->_db->loadResult();
+
+
+		if ($content_count > 0) {
+			$message['number'] = 415;
+			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_CONTENT');
+			echo json_encode($message);
+			exit;
+		}
+
+		// Checking tables
+		$query = "SELECT COUNT(id) FROM #__users";
+		$jupgrade->_db->setQuery($query);
+		$users_count = $jupgrade->_db->loadResult();
+
+		if ($users_count > 1) {
+			$message['number'] = 416;
+			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_USERS');
+			echo json_encode($message);
+			exit;
+		}
+
 		// Done checks
 		$message['status'] = "OK";
 		$message['number'] = 100;

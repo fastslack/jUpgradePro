@@ -146,7 +146,7 @@ var jUpgrade = new Class({
 					}
 
 					if (object.number > 400) {
-						text = document.getElementById('check_error');
+						text = document.getElementById('checkstatus');
 						text.innerHTML = '<small>'+object.text+'</small>';
 					}
 

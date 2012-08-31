@@ -111,10 +111,10 @@ div#info {
 	margin: 10px auto 0 auto;
 }
 
-.text, .migrationtext {
+p.text, p.migrationtext {
 	font-family: Arial,Helvetica,sans-serif;
-	font-size: 11pt;
-	margin-top: 15px;
+	font-size: 12pt;
+	margin-top: 20px;
 }
 
 h2.done {
@@ -144,6 +144,10 @@ h2.done {
 
 #counter {
 	font-size: 6pt;
+}
+
+#check_error {
+	font-size: 8pt;
 }
 
 /* Bootstrap */

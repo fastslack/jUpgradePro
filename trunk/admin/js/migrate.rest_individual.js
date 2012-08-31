@@ -135,7 +135,7 @@ var jUpgrade = new Class({
 
 			checks.addEvents({
 				'complete': function(response) {
-					//alert(response);
+					//console.log(response);
 					pb0.set(66);
 
 					var object = JSON.decode(response);
@@ -143,6 +143,11 @@ var jUpgrade = new Class({
 					if (self.options.debug_php == 1) {
 						text = document.getElementById('debug');
 						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[checks]</b><br><br>' +object.text;
+					}
+
+					if (object.number > 400) {
+						text = document.getElementById('check_error');
+						text.innerHTML = '<small>'+object.text+'</small>';
 					}
 
 					if (object.number == 100) {

@@ -14,11 +14,11 @@
 			description="COM_JUPGRADEPRO_CONFIG_METHOD_DESC"
 			default="rest_individual">
 			<!--<option
-				value="database">Database - Getting the items from database</option>-->
+				value="database">Database - Getting the items from database</option>
 			<option
-				value="rest">WebService REST - Getting all items at same time (more faster)</option>
+				value="rest">WebService REST - Getting all items at same time (more faster)</option>-->
 			<option
-				value="rest_individual">WebService REST - Getting individual items (better for large databases)</option>
+				value="rest_individual">COM_JUPGRADEPRO_CONFIG_REST_TITLE</option>
 		</field>
 
 		<field

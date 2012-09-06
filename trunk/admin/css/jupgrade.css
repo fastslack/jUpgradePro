@@ -71,10 +71,6 @@ div#info {
 	margin: 20px auto 10px auto;
 }
 
-#donate {
-	border: none;
-}
-
 #info_title {
 	margin: 10px;
 	color: #0b141b;
@@ -152,7 +148,37 @@ h2.done {
 
 /* Bootstrap */
 
-
-
+.info, .success, .warning, .error {
+	position: relative;
+  border: 1px solid;
+  margin: 15px 0px;
+  padding:15px 20px 15px 55px;
+  width: 300px;	
+  //font: bold 12px verdana;
+  -moz-box-shadow: 0 0 5px #888;
+  -webkit-box-shadow: 0 0 5px#888;
+  box-shadow: 0 0 5px #888;
+  text-shadow: 2px 2px 2px #ccc;
+  -webkit-border-radius: 15px;
+  -moz-border-radius: 15px;
+  border-radius: 15px;
+	text-align: center;
+}
+.info {
+    color: #00529B;
+    background: #BDE5F8 url('../images/icon-info.png') no-repeat 10px center;
+}
+.success {
+    color: #4F8A10;
+    background: #DFF2BF url('../images/icon-tick.png') no-repeat 10px center;
+}
+.warning {
+    color: #9F6000;
+    background: #FEEFB3 url('../images/icon-warning.png') no-repeat 10px center;
+}
+.error {
+    color: #D8000C;
+    background: #FFBABA url('../images/icon-cross.png') no-repeat 10px center;
+}
 
 

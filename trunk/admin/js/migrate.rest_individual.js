@@ -27,6 +27,7 @@ var jUpgrade = new Class({
 
 		this.setOptions(options);
 
+		$('warning').setStyle('display', 'none');
 		$('checks').setStyle('display', 'none');
 		$('migration').setStyle('display', 'none');
 		$('templates').setStyle('display', 'none');
@@ -181,6 +182,7 @@ var jUpgrade = new Class({
 		//var mySlideMigrate = new Fx.Slide('migration');
 		//mySlideMigrate.hide();
 		$('migration').setStyle('display', 'block');
+		$('warning').setStyle('display', 'block');
 		//mySlideMigrate.toggle();
 
 		// Progress bar

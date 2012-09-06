@@ -56,6 +56,10 @@ window.addEvent('domready', function() {
 		<tr>
 			<td width="100%" valign="top" align="center">
 
+				<div id="warning" class="warning">
+					<?php echo JText::_('COM_JUPGRADEPRO_WARNING_SLOW'); ?>
+				</div>
+
 				<div id="update">
 					<br /><img src="components/com_jupgradepro/images/update.png" align="middle" border="0"/><br />
 					<h2><?php echo JText::_('START UPGRADE'); ?></h2><br />

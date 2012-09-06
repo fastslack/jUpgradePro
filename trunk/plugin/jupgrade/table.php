@@ -162,7 +162,7 @@ class JUpgradeTable extends JTable
 		$conditions = $this->getConditionsHook();
 		
 		// Get `AS` mysql statement
-		//$where_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
+		$where_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
 		
 		// Add oid condition		
 		$oid_condition = "{$where_as}{$this->getKeyName()} = {$oid}";

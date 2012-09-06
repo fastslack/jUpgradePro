@@ -98,7 +98,7 @@ class JUpgradeTableMenus extends JUpgradeTable
 		
 		$conditions['where'] = array();
 		$conditions['join'] = $join;
-		$conditions['order'] = "id DESC";
+		$conditions['order'] = "m.id DESC";
 		
 		return $conditions;
 	}

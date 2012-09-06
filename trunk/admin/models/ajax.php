@@ -275,6 +275,17 @@ class jUpgradeProModelAjax extends JModelLegacy
 			throw new Exception($error);
 		}
 
+		// Delete main menu
+		$query = "DELETE FROM {$this->_db->getPrefix()}menu WHERE id > 1";
+		$this->_db->setQuery($query);
+		$this->_db->query();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+		if ($error) {
+			throw new Exception($error);
+		}
+
 		// Insert needed value
 		$query = "INSERT INTO `jupgrade_menus` ( `old`, `new`) VALUES ( 0, 0)";
 		$this->_db->setQuery($query);

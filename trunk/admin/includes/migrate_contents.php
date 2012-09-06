@@ -64,9 +64,7 @@ class jUpgradeContent extends jUpgrade
 				$row['state'] = 2;
 			}
 
-			/*
-			 * Prevent JGLOBAL_ARTICLE_MUST_HAVE_TEXT error
-			 */
+			// Prevent JGLOBAL_ARTICLE_MUST_HAVE_TEXT error
 			if (trim($row['introtext']) == '' && trim($row['fulltext']) == '')
 			{
 				$row['introtext'] = '&nbsp;';
@@ -190,7 +188,7 @@ class jUpgradeContent extends jUpgrade
 				echo JError::raiseError(500, $content->getError());
 			}
 
-			if ($row['id'] == $this->getLastid()) {
+			if ($row['id'] == $this->getLastid('contents')) {
 				$this->updateFeature();
 				$this->fixComponentConfiguration();
 			}
@@ -199,33 +197,6 @@ class jUpgradeContent extends jUpgrade
 		$params = $this->getParams();
 
 	}
-
-	protected function getLastId()
-	{
-		$method = $this->params->get('method');
-	
-		// Get the source data.
-		if ($method == 'rest' || $method == 'rest_individual') {
-
-			jimport('joomla.http.http');
-	
-			// JHttp instance
-			$http = new JHttp();		
-			$data = $this->getRestData();
-
-			// Getting the total
-			$data['task'] = "lastid";
-			$data['type'] = "contents";
-			$lastid = $http->get($this->params->get('rest_hostname'), $data);
-			$lastid = (int) $lastid->body;
-
-		} else if ($method == 'database') {
-			//$rows = $this->getSourceData();
-		}
-
-		return $lastid;
-	}
-
 
 	protected function updateFeature()
 	{

@@ -158,7 +158,7 @@ class jUpgradeMenu extends jUpgrade
 		// Delete main menu
 		$query = "DELETE FROM {$this->destination} WHERE id > 1";
 		$this->_db->setQuery($query);
-		$this->_db->query();
+		//$this->_db->query();
 
 		// Getting the categories id's
 		$categories = $this->getMapList();
@@ -176,7 +176,7 @@ class jUpgradeMenu extends jUpgrade
 		$extensions_ids = $this->_db->loadObjectList('element');	
 
 		// Initialize values
-		$aliases = array();
+		//$aliases = array();
 		$unique_alias_suffix = 1;
 
 		foreach ($rows as $row)
@@ -184,12 +184,17 @@ class jUpgradeMenu extends jUpgrade
 			// Convert the array into an object.
 			$row = (object) $row;
 
-			// The Joomla 2.5 database structure does not allow duplicate aliases
-			if (in_array($row->alias, $aliases, true)) {
-				$row->alias .= $unique_alias_suffix;
-				$unique_alias_suffix++;
+			// Check if has duplicated aliases
+			$query = "SELECT alias"
+			." FROM #__menu"
+			." WHERE alias = ".$this->_db->quote($row->alias);
+			$this->_db->setQuery($query);
+			$aliases = $this->_db->loadAssoc();
+
+			$count = count($aliases);
+			if ($count > 0) {
+				$row->alias .= "-".rand(0, 99999);
 			}
-			$aliases[] = $row->alias;
 
 			// Fixing id if == 1 (used by root)
 			if ($row->id == 1) {
@@ -244,8 +249,16 @@ class jUpgradeMenu extends jUpgrade
 			if (!$this->_db->insertObject('jupgrade_menus', $menuMap)) {
 				throw new Exception($this->_db->getErrorMsg());
 			}
-		}
 
+			if ($row->id == $this->getLastid('menus')) {
+				$this->populateDefaultMenus();
+			}
+
+		}
+	}
+
+	public function populateDefaultMenus()
+	{
 		// Require the files
 		require_once JPATH_ROOT.DS.'administrator'.DS.'components'.DS.'com_jupgradepro'.DS.'includes'.DS.'helper.php';
 

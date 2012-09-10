@@ -59,7 +59,7 @@ class JUpgradeTable extends JTable
 	
 		$db =& $this->getDBO();
 
-		$query = 'SELECT `cid` FROM jupgrade_steps'
+		$query = 'SELECT `cid` FROM jupgrade_plugin_steps'
 		. ' WHERE name = '.$db->quote($this->_type);
 		$db->setQuery( $query );
 		$stepid = (int) $db->loadResult();
@@ -111,7 +111,7 @@ class JUpgradeTable extends JTable
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 	
-		$query = "UPDATE `jupgrade_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($this->_type);
+		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($this->_type);
 		$db->setQuery( $query );
 		return $db->query();
 	}

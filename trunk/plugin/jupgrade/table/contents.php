@@ -115,12 +115,15 @@ class JUpgradeTableContents extends JUpgradeTable
 			$this->state = 2;
 		}
 
-		/*
-		 * Prevent JGLOBAL_ARTICLE_MUST_HAVE_TEXT error
-		 */
+		// Prevent JGLOBAL_ARTICLE_MUST_HAVE_TEXT error
 		if (trim($this->introtext) == '' && trim($this->fulltext) == '')
 		{
 			$this->introtext = '&nbsp;';
+		}
+
+		// Chaging created_by id
+		if ($this->created_by == 62) {
+			$this->created_by = 60;
 		}
 	}
 

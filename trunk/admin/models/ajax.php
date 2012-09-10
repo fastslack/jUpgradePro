@@ -131,14 +131,36 @@ class jUpgradeProModelAjax extends JModelLegacy
 			}
 		}
 
+		// Convert the params to array
+		$core_skips = (array) $params;
+		$flag = false;
+
+		// Check is all skips is set
+		foreach ($core_skips as $k => $v) {
+			$core = substr($k, 0, 9);
+			$name = substr($k, 10, 18);
+
+			if ($core == "skip_core") {
+				if ($v == 0) {
+					$flag = true;
+				}
+			}
+		}
+
+		if ($flag === false) {
+			$message['number'] = 414;
+			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_SKIPS_ALL');
+			echo json_encode($message);
+			exit;			
+		}		
+
 		// Checking tables
 		$query = "SELECT COUNT(id) FROM #__categories";
 		$jupgrade->_db->setQuery($query);
 		$categories_count = $jupgrade->_db->loadResult();
 
-
 		if ($categories_count > 7) {
-			$message['number'] = 414;
+			$message['number'] = 415;
 			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_CATEGORIES');
 			echo json_encode($message);
 			exit;
@@ -151,7 +173,7 @@ class jUpgradeProModelAjax extends JModelLegacy
 
 
 		if ($content_count > 0) {
-			$message['number'] = 415;
+			$message['number'] = 416;
 			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_CONTENT');
 			echo json_encode($message);
 			exit;
@@ -163,7 +185,7 @@ class jUpgradeProModelAjax extends JModelLegacy
 		$users_count = $jupgrade->_db->loadResult();
 
 		if ($users_count > 1) {
-			$message['number'] = 416;
+			$message['number'] = 417;
 			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_USERS');
 			echo json_encode($message);
 			exit;

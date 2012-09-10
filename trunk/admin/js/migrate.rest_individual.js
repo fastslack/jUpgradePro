@@ -28,6 +28,7 @@ var jUpgrade = new Class({
 		this.setOptions(options);
 
 		$('warning').setStyle('display', 'none');
+		$('error').setStyle('display', 'none');
 		$('checks').setStyle('display', 'none');
 		$('migration').setStyle('display', 'none');
 		$('templates').setStyle('display', 'none');
@@ -147,8 +148,9 @@ var jUpgrade = new Class({
 					}
 
 					if (object.number > 400) {
-						text = document.getElementById('checkstatus');
-						text.innerHTML = '<small>'+object.text+'</small>';
+						$('error').setStyle('display', 'block');
+						text = document.getElementById('error');
+						text.innerHTML = object.text;
 					}
 
 					if (object.number == 100) {
@@ -236,7 +238,6 @@ var jUpgrade = new Class({
 
 		step.addEvents({
 			'complete': function(response) {
-
 				//console.log(response);
 				var object = JSON.decode(response);
 				var counter = 0;

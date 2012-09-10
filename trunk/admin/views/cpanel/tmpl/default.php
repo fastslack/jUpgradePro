@@ -56,6 +56,8 @@ window.addEvent('domready', function() {
 		<tr>
 			<td width="100%" valign="top" align="center">
 
+				<div id="error" class="error"></div>
+
 				<div id="warning" class="warning">
 					<?php echo JText::_('COM_JUPGRADEPRO_WARNING_SLOW'); ?>
 				</div>

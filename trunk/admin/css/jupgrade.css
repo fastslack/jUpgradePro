@@ -153,15 +153,16 @@ h2.done {
   border: 1px solid;
   margin: 15px 0px;
   padding:15px 20px 15px 55px;
-  width: 300px;	
-  //font: bold 12px verdana;
+  width: 300px;
+	min-height: 30px;
+	font-size: 9pt;
   -moz-box-shadow: 0 0 5px #888;
   -webkit-box-shadow: 0 0 5px#888;
   box-shadow: 0 0 5px #888;
   text-shadow: 2px 2px 2px #ccc;
-  -webkit-border-radius: 15px;
-  -moz-border-radius: 15px;
-  border-radius: 15px;
+  -webkit-border-radius: 10px;
+  -moz-border-radius: 10px;
+  border-radius: 10px;
 	text-align: center;
 }
 .info {
@@ -178,7 +179,7 @@ h2.done {
 }
 .error {
     color: #D8000C;
-    background: #FFBABA url('../images/icon-cross.png') no-repeat 10px center;
+    background: #FFBABA url('../images/icon-error.png') no-repeat 10px center;
 }
 
 

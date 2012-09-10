@@ -250,10 +250,12 @@ class JUpgradeTable extends JTable
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
 
-		$order = isset($conditions['order']) ? $conditions['order'] : "ORDER BY {$this->getKeyName()} DESC";
+		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+
+		$order = isset($conditions['order']) ? "ORDER BY {$conditions['order']}" : "ORDER BY {$this->getKeyName()} DESC";
 
 		// Get Total
-		$query = "SELECT id FROM {$this->_tbl} {$where} {$order} LIMIT 1";
+		$query = "SELECT id FROM {$this->_tbl} {$as} {$where} {$order} LIMIT 1";
 		$db->setQuery( $query );
 		$lastid = $db->loadResult();
 

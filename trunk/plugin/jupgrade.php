@@ -112,7 +112,7 @@ class plgSystemJUpgrade extends JPlugin
 		$db->setQuery($query);
 		$tables = $db->loadResultArray();
 		
-		if (!in_array('jupgrade_steps', $tables)) {
+		if (!in_array('jupgrade_plugin_steps', $tables)) {
 			$this->populateDatabase(& $db, $sqlfile );
 		}		
 

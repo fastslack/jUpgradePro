@@ -89,6 +89,19 @@ class jUpgrade
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
 
+		// Creating old dabatase instance
+		if ($this->params->method == 'database') {
+
+			$db_config['driver'] = $this->params->driver;
+			$db_config['host'] = $this->params->hostname;
+			$db_config['user'] = $this->params->username;
+			$db_config['password'] = $this->params->password;
+			$db_config['database'] = $this->params->database;
+			$db_config['prefix'] = $this->params->prefix;
+
+			$this->db_old = JDatabase::getInstance($db_config);
+		}
+
 		// Set timelimit to 0
 		if(!@ini_get('safe_mode')) {
 			if (!empty($this->params->timelimit)) {

@@ -13,8 +13,9 @@
 			label="COM_JUPGRADEPRO_CONFIG_METHOD"
 			description="COM_JUPGRADEPRO_CONFIG_METHOD_DESC"
 			default="rest_individual">
-			<!--<option
+			<option
 				value="database">Database - Getting the items from database</option>
+<!--
 			<option
 				value="rest">WebService REST - Getting all items at same time (more faster)</option>-->
 			<option

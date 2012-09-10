@@ -235,7 +235,7 @@ class jUpgradeProModelAjax extends JModelLegacy
 		$prefix = $this->_db->getPrefix();
 
 		// Set all status to 0 and clear state
-		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, state = '' WHERE name != 'extensions'";
+		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, state = ''";
 		$this->_db->setQuery($query);
 		$this->_db->query();
 
@@ -264,6 +264,14 @@ class jUpgradeProModelAjax extends JModelLegacy
 						$this->_db->query();		
 					}
 
+				}
+			}
+
+			if ($k == 'skip_extensions') {
+				if ($v == 1) {
+					$query = "UPDATE jupgrade_steps SET status = 1 WHERE name = 'extensions'";
+					$this->_db->setQuery($query);
+					$this->_db->query();					
 				}
 			}
 		}
@@ -386,7 +394,7 @@ class jUpgradeProModelAjax extends JModelLegacy
 	 * @since	2.5.0
 	 */
 	public function _processStep ($step)
-	{
+	{	
 		// Require the file
 		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
 			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
@@ -394,100 +402,6 @@ class jUpgradeProModelAjax extends JModelLegacy
 
 		switch ($step->name)
 		{
-			case 'users':
-				// Migrate the users.
-				$u1 = new jUpgradeUsers($step);
-				$u1->upgrade();
-
-				// Migrate the usergroups.
-				$u2 = new jUpgradeUsergroups($step);
-				$u2->upgrade();
-
-				// Migrate the user-to-usergroup mapping.
-				$u2 = new jUpgradeUsergroupMap($step);
-				$u2->upgrade();
-
-				break;
-			case 'categories':
-				// Migrate the Categories.
-				$categories = new jUpgradeCategories($step);
-				$categories->upgrade();
-
-				break;
-			case 'content':
-				// Migrate the Content.
-				$content = new jUpgradeContent($step);
-				$content->upgrade();
-
-				// Migrate the Frontpage Content.
-				$frontpage = new jUpgradeContentFrontpage($step);
-				$frontpage->upgrade();
-
-				break;
-			case 'menus':
-				// Migrate the menu.
-				$menu = new jUpgradeMenu;
-				$menu->upgrade();
-
-				// Migrate the menu types.
-				$menutypes = new jUpgradeMenuTypes($step);
-				$menutypes->upgrade();
-
-				break;
-			case 'modules':
-				// Migrate the Modules.
-				$modules = new jUpgradeModules($step);
-				$modules->upgrade();
-
-				// Migrate the Modules Menus.
-				$modulesmenu = new jUpgradeModulesMenu($step);
-				$modulesmenu->upgrade();
-
-				break;
-			case 'banners':
-				// Migrate the categories of banners.
-				$cat = new jUpgradeCategory($step);
-				$cat->section = "com_banner";
-				$cat->upgrade();
-
-				// Migrate the banners.
-				$banners = new jUpgradeBanners($step);
-				$banners->upgrade();
-
-				break;
-			case 'contacts':
-				// Migrate the categories of contacts.
-				$cat = new jUpgradeCategory($step);
-				$cat->section = "com_contact_details";
-				$cat->upgrade();
-
-				// Migrate the contacts.
-				$contacts = new jUpgradeContacts($step);
-				$contacts->upgrade();
-
-				break;
-			case 'newsfeeds':
-				// Migrate the categories of newsfeeds.
-				$cat = new jUpgradeCategory($step);
-				$cat->section = "com_newsfeeds";
-				$cat->upgrade();
-
-				// Migrate the newsfeeds.
-				$newsfeeds = new jUpgradeNewsfeeds;
-				$newsfeeds->upgrade();
-
-				break;
-			case 'weblinks':
-				// Migrate the categories of weblinks.
-				$cat = new jUpgradeCategory($step);
-				$cat->section = "com_weblinks";
-				$cat->upgrade();
-
-				// Migrate the weblinks.
-				$weblinks = new jUpgradeWeblinks($step);
-				$weblinks->upgrade();
-
-				break;
 			case 'extensions':
 				require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
 				require_once JPATH_COMPONENT.'/includes/jupgrade.extensions.class.php';				
@@ -497,7 +411,16 @@ class jUpgradeProModelAjax extends JModelLegacy
 				$success = $extension->upgrade();
 
 				break;
+			default:
+				// Getting the class name
+				$class = $step->class;
+
+				// Migrate the process.
+				$process = new $class($step);
+				$process->upgrade();
 		}
+
+		$this->_updateStep($step);
 
 	} // end method
 

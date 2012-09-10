@@ -39,19 +39,6 @@ class jUpgradeProModelRest_individual extends JModelLegacy
 		$this->_db->setQuery($query);
 		$step = $this->_db->loadObject();
 
-		// updating the status flag
-		$query = "UPDATE jupgrade_steps SET status = 1"
-		." WHERE name = '{$step->name}'";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
 		// JHttp instance
 		jimport('joomla.http.http');
 		$http = new JHttp();
@@ -63,6 +50,15 @@ class jUpgradeProModelRest_individual extends JModelLegacy
 		$total = $http->get($jupgrade->params->get('rest_hostname'), $data);
 		$step->total = (int) $total->body;
 	
+		// Select last step
+		$query = "SELECT name FROM jupgrade_steps WHERE status = 0 ORDER BY id DESC LIMIT 1";
+		$this->_db->setQuery($query);
+		$step->laststep = $this->_db->loadResult();
+
+		// updating the status flag
+		$this->_updateStep($step);
+
+		// Encoding
 		$json = json_encode($step);
 
 		return($json);

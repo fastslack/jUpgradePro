@@ -244,7 +244,7 @@ var jUpgrade = new Class({
 
 				// Redirect if total == 0
 				if (object.total == 0) {
-					if (object.name == 'weblinks') {
+					if (object.name == object.laststep) {
 						//$clear(step);
 						pb4.finish();
 						this.cancel();
@@ -270,7 +270,7 @@ var jUpgrade = new Class({
 						if (counter == object.total) {
 							//console.log(object);
 
-							if (object.name == 'weblinks') {
+							if (object.name == object.laststep) {
 								//$clear(step);
 								pb4.finish();
 								this.cancel();

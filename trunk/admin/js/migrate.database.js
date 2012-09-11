@@ -27,6 +27,8 @@ var jUpgrade = new Class({
 
 		this.setOptions(options);
 
+		$('warning').setStyle('display', 'none');
+		$('error').setStyle('display', 'none');
 		$('checks').setStyle('display', 'none');
 		$('migration').setStyle('display', 'none');
 		$('templates').setStyle('display', 'none');

@@ -66,7 +66,7 @@ class jUpgradeUsergroups extends jUpgrade
 	 * @since	0.4.4
 	 * @throws	Exception
 	 */
-	protected function &getSourceDatabase()
+	public function &getSourceDatabase()
 	{
 		$rows = parent::getSourceDatabase();
 

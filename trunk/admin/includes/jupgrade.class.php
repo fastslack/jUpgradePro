@@ -39,6 +39,12 @@ class jUpgrade
 	public $_db = null;
 
 	/**
+	 * @var      
+	 * @since  3.0
+	 */
+	public $_db_old = null;
+
+	/**
 	 * @var	array
 	 * @since  3.0
 	 */
@@ -396,7 +402,7 @@ class jUpgrade
 	 * @access	public
 	 * @return	int	The total of rows
 	 */
-	public function getSourceDataTotal()
+	public function getSourceDatabaseTotal()
 	{
 		$conditions = $this->getConditionsHook();
 
@@ -410,8 +416,8 @@ class jUpgrade
 		$total = $this->_db_old->loadResult();
 
 		return (int)$total;
-
 	}
+
 
 	/*
 	 *

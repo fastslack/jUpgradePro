@@ -45,7 +45,7 @@ class jUpgradeModulesMenu extends jUpgrade
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	protected function &getSourceDatabase()
+	public function &getSourceDatabase()
 	{
 		// Creating the query
 		//$where = "m.moduleid NOT IN (2,3,4,8,13,14,15)";

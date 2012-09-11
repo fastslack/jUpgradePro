@@ -56,7 +56,7 @@ class jUpgradeModules extends jUpgrade
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	protected function &getSourceDatabase()
+	public function &getSourceDatabase()
 	{
 
 /*

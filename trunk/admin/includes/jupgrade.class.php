@@ -50,10 +50,15 @@ class jUpgrade
 	 */
 	private $_reserved = array(
 		'id',
+		'cid',
 		'lastid',
 		'name',
+		'title',
 		'class',
 		'category',
+		'status',
+		'extension',
+		'laststep',
 		'state',
 		'xml'
 	);
@@ -66,20 +71,8 @@ class jUpgrade
 
 	function __construct($step = null)
 	{
-		$data = array();
-	
-		if ($step) {
-			$data['id'] = $step->id;
-			$data['lastid'] = isset($step->lastid) ? $step->lastid : 0;
-			$data['name'] = $step->name;
-			$data['state'] = json_decode($step->state);
-			if (isset($this->state->xmlfile)) {
-				// Read xml definition file
-				$data['xml'] = simplexml_load_file($this->state->xmlfile);
-			}
-		}
-		
-		$this->setParameters($data);
+		// Set the step params	
+		$this->setParameters((array) $step);
 			
 		$this->checkTimeout();
 

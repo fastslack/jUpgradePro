@@ -102,19 +102,25 @@ class jUpgradeProModelRest_individual extends JModelLegacy
 	function getMigrate() {
 
 		$step = $this->_getStep(JRequest::getVar('type'));
-		//print_r($step);
 
-		// TODO: Error handler
-		$this->_processStep($step);
+		// Require the file
+		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
+			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
+		}
 
-		$message['status'] = "OK";
-		$message['step'] = $step->id;
-		$message['name'] = $step->name;
-		$message['title'] = $step->title;
-		$message['class'] = $step->class;
-		$message['category'] = $step->category;
-		$message['text'] = 'DONE';
-		echo json_encode($message);
+		// Getting the class name
+		$class = $step->class;
+
+		// Migrate the process.
+		$process = new $class($step);
+		$process->upgrade();
+
+		$this->_updateStep($step);
+
+		$step->status = "OK";
+		$step->text = "DONE";
+
+		echo json_encode((array)$step);
 	}
 
 	/**
@@ -131,43 +137,6 @@ class jUpgradeProModelRest_individual extends JModelLegacy
 		
 		echo json_encode($object);
 	}
-
-	/**
-	 * New processStep
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	public function _processStep ($step)
-	{	
-		// Require the file
-		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
-			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
-		}
-
-		switch ($step->name)
-		{
-			case 'extensions':
-				require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
-				require_once JPATH_COMPONENT.'/includes/jupgrade.extensions.class.php';				
-	
-				// Get jUpgradeExtensions instance
-				$extension = jUpgradeExtensions::getInstance($step);
-				$success = $extension->upgrade();
-
-				break;
-			default:
-				// Getting the class name
-				$class = $step->class;
-
-				// Migrate the process.
-				$process = new $class($step);
-				$process->upgrade();
-		}
-
-		$this->_updateStep($step);
-
-	} // end method
 
 	/**
 	 * Getting the next step

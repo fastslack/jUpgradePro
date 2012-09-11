@@ -72,6 +72,11 @@
 		label="COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE"
 		description="COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE_DESC">
 
+		<field name="driver" type="list" default="mysql" label="Database driver" description="Database driver">
+			<option value="mysql">MySQL</option>
+			<option value="mysqli">MySQLi</option>
+		</field>
+
 		<field
 			name="hostname"
 			type="text"

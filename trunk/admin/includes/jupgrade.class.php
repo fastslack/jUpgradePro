@@ -147,40 +147,6 @@ class jUpgrade
 	}
 
 	/**
-	 * Converts the params fields into a JSON string.
-	 *
-	 * @param	string	$params	The source text definition for the parameter field.
-	 *
-	 * @return	string	A JSON encoded string representation of the parameters.
-	 * @since	0.4.
-	 * @throws	Exception from the convertParamsHook.
-	 */
-	protected function convertParams($params)
-	{
-		$temp	= new JParameter($params);
-		$object	= $temp->toObject();
-
-		// Fire the hook in case this parameter field needs modification.
-		$this->convertParamsHook($object);
-
-		return json_encode($object);
-	}
-
-	/**
-	 * A hook to be able to modify params prior as they are converted to JSON.
-	 *
-	 * @param	object	$object	A reference to the parameters as an object.
-	 *
-	 * @return	void
-	 * @since	0.4.
-	 * @throws	Exception
-	 */
-	protected function convertParamsHook(&$object)
-	{
-		// Do customisation of the params field here for specific data.
-	}
-
-	/**
 	 * The public entry point for the class.
 	 *
 	 * @return	boolean
@@ -647,6 +613,40 @@ class jUpgrade
 	 */
 	protected function mapUserGroup($id) {
 		return isset($this->usergroup_map[$id]) ? $this->usergroup_map[$id] : $id;
+	}
+
+	/**
+	 * Converts the params fields into a JSON string.
+	 *
+	 * @param	string	$params	The source text definition for the parameter field.
+	 *
+	 * @return	string	A JSON encoded string representation of the parameters.
+	 * @since	0.4.
+	 * @throws	Exception from the convertParamsHook.
+	 */
+	protected function convertParams($params)
+	{
+		$temp	= new JParameter($params);
+		$object	= $temp->toObject();
+
+		// Fire the hook in case this parameter field needs modification.
+		$this->convertParamsHook($object);
+
+		return json_encode($object);
+	}
+
+	/**
+	 * A hook to be able to modify params prior as they are converted to JSON.
+	 *
+	 * @param	object	$object	A reference to the parameters as an object.
+	 *
+	 * @return	void
+	 * @since	0.4.
+	 * @throws	Exception
+	 */
+	protected function convertParamsHook(&$object)
+	{
+		// Do customisation of the params field here for specific data.
 	}
 
 	/**

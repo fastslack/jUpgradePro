@@ -83,16 +83,16 @@ class jUpgrade
 		$this->_db = JFactory::getDBO();
 
 		// Creating old dabatase instance
-		if ($this->params->method == 'database') {
+		if ($this->params->get('method') == 'database') {
 
-			$db_config['driver'] = $this->params->driver;
-			$db_config['host'] = $this->params->hostname;
-			$db_config['user'] = $this->params->username;
-			$db_config['password'] = $this->params->password;
-			$db_config['database'] = $this->params->database;
-			$db_config['prefix'] = $this->params->prefix;
+			$db_config['driver'] = $this->params->get('driver');
+			$db_config['host'] = $this->params->get('hostname');
+			$db_config['user'] = $this->params->get('username');
+			$db_config['password'] = $this->params->get('password');
+			$db_config['database'] = $this->params->get('database');
+			$db_config['prefix'] = $this->params->get('prefix');
 
-			$this->db_old = JDatabase::getInstance($db_config);
+			$this->_db_old = JDatabase::getInstance($db_config);
 		}
 
 		// Set timelimit to 0
@@ -335,6 +335,50 @@ class jUpgrade
 		return $rows;
 	}
 
+	/**
+	 * Get total of the rows of the table
+	 *
+	 * @access	public
+	 * @return	int	The total of rows
+	 */
+	public function getSourceDataTotal()
+	{
+		//$db =& $this->getDBO();
+
+		$conditions = $this->getConditionsHook();
+
+		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+
+		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+
+		/// Get Total
+		$query = "SELECT COUNT(*) FROM {$this->source} {$as} {$where}";
+		$this->_db_old->setQuery( $query );
+		$total = $this->_db_old->loadResult();
+
+		if ($total) {
+			return (int)$total;
+		}
+		else
+		{
+			throw new Exception($this->_db_old->getErrorMsg());
+			return false;
+		}
+	}
+
+	/*
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function getConditionsHook()
+	{
+		$conditions = array();		
+		$conditions['where'] = array();
+		// Do customisation of the params field here for specific data.
+		return $conditions;	
+	}
 
 	/**
 	 * Get the raw data for this part of the upgrade.

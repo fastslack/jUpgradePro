@@ -362,11 +362,29 @@ class jUpgradeProModelAjax extends JModelLegacy
 
 
 	/**
+	 * Get the next step
+	 *
+	 * @return   step object
+	 */
+	public function getStep() {
+		// Get the step
+		$step = $this->_getStep();
+
+		// updating the status flag
+		$this->_updateStep($step);
+
+		// Encoding
+		$json = json_encode($step);
+
+		return($json);
+	}
+
+	/**
 	 * Migrate
 	 *
 	 * @return	none
 	 * @since	2.5.0
-	 */
+	 *
 	function getMigrate() {
 
 		// jUpgrade class
@@ -385,6 +403,36 @@ class jUpgradeProModelAjax extends JModelLegacy
 		$message['text'] = 'DONE';
 		echo json_encode($message);
 
+	}*/
+
+	/**
+	 * Migrate
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	function getMigrate() {
+
+		$step = $this->_getStep(JRequest::getVar('type'));
+
+		// Require the file
+		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
+			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
+		}
+
+		// Getting the class name
+		$class = $step->class;
+
+		// Migrate the process.
+		$process = new $class($step);
+		$process->upgrade();
+
+		$this->_updateStep($step);
+
+		$step->status = "OK";
+		$step->text = "DONE";
+
+		echo json_encode((array)$step);
 	}
 
 	/**
@@ -392,7 +440,7 @@ class jUpgradeProModelAjax extends JModelLegacy
 	 *
 	 * @return	none
 	 * @since	2.5.0
-	 */
+	 *
 	public function _processStep ($step)
 	{	
 		// Require the file
@@ -422,7 +470,90 @@ class jUpgradeProModelAjax extends JModelLegacy
 
 		$this->_updateStep($step);
 
-	} // end method
+	} // end method*/
+
+	/**
+	 * Getting the next step
+	 *
+	 * @return   step object
+	 */
+	public function _getStep($key = null) {
+
+		// Select the steps
+		if (isset($key)) {
+			$query = "SELECT * FROM jupgrade_steps AS s WHERE s.name = '{$key}' ORDER BY s.id ASC LIMIT 1";
+		}else{
+			$query = "SELECT * FROM jupgrade_steps AS s WHERE s.status != 1 ORDER BY s.id ASC LIMIT 1";
+		}
+
+		$this->_db->setQuery($query);
+		$step = $this->_db->loadObject();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Select last step
+		$query = "SELECT name FROM jupgrade_steps WHERE status = 0 ORDER BY id DESC LIMIT 1";
+		$this->_db->setQuery($query);
+		$step->laststep = $this->_db->loadResult();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Require the file
+		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
+			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
+		}
+
+		// Getting the class name
+		$class = $step->class;
+
+		// Migrate the process.
+		$jupgrade = new $class($step);
+		$step->total =  $jupgrade->getSourceDataTotal();
+
+		// Check if steps is an object
+		if (is_object($step)) {
+		  return $step;
+		}else{
+			return false;
+		}
+
+	}
+
+	/**
+	 * updateStep
+	 *
+	 * @return	none
+	 * @since	2.5.2
+	 */
+	public function _updateStep($step) {
+		// Initialize jupgrade class
+		$jupgrade = new jUpgrade;
+
+		// updating the status flag
+		$query = "UPDATE jupgrade_steps SET status = 1"
+		." WHERE name = '{$step->name}'";
+		$jupgrade->_db->setQuery($query);
+		$jupgrade->_db->query();
+
+		// Check for query error.
+		$error = $jupgrade->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		return true;
+	}
 
 	/**
 	 * Migrate
@@ -460,61 +591,6 @@ class jUpgradeProModelAjax extends JModelLegacy
 		$message['text'] = 'DONE';
 		echo json_encode($message);
 
-	}
-
-	/**
-	 * Getting the next step
-	 *
-	 * @return   step object
-	 */
-	public function _getStep() {
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
-
-		// Select the steps
-		$query = "SELECT * FROM jupgrade_steps AS s WHERE s.status != 1 ORDER BY s.id ASC LIMIT 1";
-		$jupgrade->_db->setQuery($query);
-		$step = $jupgrade->_db->loadObject();
-
-		// Check for query error.
-		$error = $jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-	
-		// Check if steps is an object
-		if (is_object($step)) {
-		  return $step;
-		}else{
-			return false;
-		}
-	}
-
-	/**
-	 * updateStep
-	 *
-	 * @return	none
-	 * @since	2.5.2
-	 */
-	public function _updateStep($step) {
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
-
-		// updating the status flag
-		$query = "UPDATE jupgrade_steps SET status = 1"
-		." WHERE name = '{$step->name}'";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		return true;
 	}
 
 	/**

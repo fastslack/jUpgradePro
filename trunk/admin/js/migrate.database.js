@@ -147,6 +147,12 @@ var jUpgrade = new Class({
 						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[checks]</b><br><br>' +object.text;
 					}
 
+					if (object.number > 400) {
+						$('error').setStyle('display', 'block');
+						text = document.getElementById('error');
+						text.innerHTML = object.text;
+					}
+
 					if (object.number == 100) {
 						cleanup.send();
 					}
@@ -169,6 +175,136 @@ var jUpgrade = new Class({
 	 * @return	bool
 	 * @since	1.2.0
 	 */
+	migrate: function(e) {
+		var self = this;
+
+		// CSS stuff
+		//var mySlideMigrate = new Fx.Slide('migration');
+		//mySlideMigrate.hide();
+		$('migration').setStyle('display', 'block');
+		$('warning').setStyle('display', 'block');
+		//mySlideMigrate.toggle();
+
+		// Progress bar
+		pb4 = new dwProgressBar({
+			container: $('pb4'),
+			startPercentage: 5,
+			speed: 1000,
+			boxID: 'pb4-box',
+			percentageID: 'pb4-perc',
+			displayID: 'text',
+			displayText: false
+		});
+
+		// Get the status element
+		status = document.getElementById('status');
+		// Get the migration_text element
+		migration_text = document.getElementById('migration_text');
+		// Get the currItem element
+		currItem = document.getElementById('currItem');
+		// Get the totalItems element
+		totalItems = document.getElementById('totalItems');
+
+		// Declare counter
+		var counter = 0;
+
+		var rm = new Request.Multiple({
+			onRequest : function() {
+				//console.log('RM request init');
+			},
+			onComplete : function() {
+				//console.log('RM complete');
+			}
+		});
+
+		//
+		// 
+		//
+		var row = new Request({
+			link: 'chain',
+			method: 'get'
+		}); // end Request
+	
+		//
+		// 
+		//
+		var step = new Request({
+			link: 'chain',
+			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=step',
+			method: 'get'
+		}); // end Request		
+
+		step.addEvents({
+			'complete': function(response) {
+				console.log(response);
+				var object = JSON.decode(response);
+				var counter = 0;
+
+				// Redirect if total == 0
+				if (object.total == 0) {
+					if (object.name == object.laststep) {
+						//$clear(step);
+						pb4.finish();
+						this.cancel();
+						self.done();
+					}else{
+						step.send();
+					}
+				}
+
+				// Changing title and statusbar
+				pb4.set(object.id*6);
+				status.innerHTML = 'Migrating ' + object.title;
+				currItem.innerHTML = 0;
+				totalItems.innerHTML = object.total;
+
+				// Adding event to the row request
+				row.addEvents({
+					'complete': function(response) {
+						console.log(response);
+						counter = counter + 1;
+						currItem.innerHTML = counter;
+						
+						if (counter == object.total) {
+							//console.log(object);
+
+							if (object.name == object.laststep) {
+								//$clear(step);
+								pb4.finish();
+								this.cancel();
+								self.done();
+							}else{
+								step.send();
+							}
+						}
+					}
+				});
+				
+				// Start the checks
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=migrate&type='+object.name;			
+				
+				for (i=1;i<=object.total;i++) {
+					rm.addRequest(i, row);			
+				}
+		
+				rm.runAll();						
+			}
+		});
+
+		step.send();
+
+		// Scroll the window
+		var myScroll = new Fx.Scroll(window).toBottom();
+
+	}, // end function
+
+
+	/**
+	 * Run the migration
+	 *
+	 * @return	bool
+	 * @since	1.2.0
+	 *
 	migrate: function(e) {
 		var self = this;
 
@@ -233,7 +369,7 @@ var jUpgrade = new Class({
 
 		migration_periodical = runMigration.periodical(1500);
 
-	}, // end function
+	}, // end function*/
 
 	/**
 	 * Run the templates

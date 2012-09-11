@@ -27,40 +27,26 @@ class jUpgradeModules extends jUpgrade
 	protected $source = '#__modules';
 
 	/**
-	 * Get the mapping of the old positions to the new positions in the template.
-	 *
-	 * @return	array	An array with keys of the old names and values being the new names.
-	 * @since	0.5.7
+	 * @var		string	The key of the table
+	 * @since	3.0.0
 	 */
-	public static function getPositionsMap()
-	{
-		$map = array(
-			// Old	=> // New
-			'search'				=> 'position-0',
-			'top'						=> 'position-1',
-			'breadcrumbs'		=> 'position-2',
-			'left'					=> 'position-6',
-			'right'					=> 'position-7',
-			'search'				=> 'position-8',
-			'footer'				=> 'position-9',
-			'header'				=> 'position-15'
-		);
-
-		return $map;
-	}
+	protected $_tbl_key = 'id';
 
 	/**
-	 * A hook to be able to modify params prior as they are converted to JSON.
-	 *
-	 * @param	object	$object	A reference to the parameters as an object.
+	 * Setting the conditions hook
 	 *
 	 * @return	void
-	 * @since	1.0.3
+	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	protected function convertParamsHook(&$object)
+	public function getConditionsHook()
 	{
-		if (isset($object->startLevel)) $object->startLevel++;
+		$conditions = array();
+				
+		$conditions['where'][] = "id > 15 ";
+		$conditions['where'][] = "module IN ('mod_breadcrumbs', 'mod_footer', 'mod_mainmenu', 'mod_menu', 'mod_related_items', 'mod_stats', 'mod_wrapper', 'mod_archive', 'mod_custom', 'mod_latestnews', 'mod_mostread', 'mod_search', 'mod_syndicate', 'mod_banners', 'mod_feed', 'mod_login', 'mod_newsflash', 'mod_random_image', 'mod_whosonline' )";
+				
+		return $conditions;
 	}
 
 	/**
@@ -70,24 +56,16 @@ class jUpgradeModules extends jUpgrade
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	protected function &getSourceData()
+	protected function &getSourceDatabase()
 	{
 
+/*
 		$select = "`id`, `title`, `content`, `ordering`, `position`,"
 						." `checked_out`, `checked_out_time`, `published`, `module`,"
 						." `access`, `showtitle`, `params`, `client_id`";
+*/
 
-		$where = array();
-		//$where[] = "client_id != 1";
-		$where[] = "id > 15 ";
-		$where[] = "module IN ('mod_breadcrumbs', 'mod_footer', 'mod_mainmenu', 'mod_menu', 'mod_related_items', 'mod_stats', 'mod_wrapper', 'mod_archive', 'mod_custom', 'mod_latestnews', 'mod_mostread', 'mod_search', 'mod_syndicate', 'mod_banners', 'mod_feed', 'mod_login', 'mod_newsflash', 'mod_random_image', 'mod_whosonline' )";
-
-		$rows = parent::getSourceData(
-			$select,
-		  null,
-			$where,
-			'id'
-		);
+		$rows = parent::getSourceDatabase();
 
 		// Set up the mapping table for the old positions to the new positions.
 		//$map = self::getPositionsMap();
@@ -202,5 +180,42 @@ class jUpgradeModules extends jUpgrade
 	  	return false;
 	  }
 */
+	}
+
+	/**
+	 * Get the mapping of the old positions to the new positions in the template.
+	 *
+	 * @return	array	An array with keys of the old names and values being the new names.
+	 * @since	0.5.7
+	 */
+	public static function getPositionsMap()
+	{
+		$map = array(
+			// Old	=> // New
+			'search'				=> 'position-0',
+			'top'						=> 'position-1',
+			'breadcrumbs'		=> 'position-2',
+			'left'					=> 'position-6',
+			'right'					=> 'position-7',
+			'search'				=> 'position-8',
+			'footer'				=> 'position-9',
+			'header'				=> 'position-15'
+		);
+
+		return $map;
+	}
+
+	/**
+	 * A hook to be able to modify params prior as they are converted to JSON.
+	 *
+	 * @param	object	$object	A reference to the parameters as an object.
+	 *
+	 * @return	void
+	 * @since	1.0.3
+	 * @throws	Exception
+	 */
+	protected function convertParamsHook(&$object)
+	{
+		if (isset($object->startLevel)) $object->startLevel++;
 	}
 }

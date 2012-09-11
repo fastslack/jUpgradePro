@@ -35,6 +35,32 @@ class jUpgradeBanners extends jUpgrade
 	 */
 	protected $destination = '#__banners';
 
+	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'id';
+
+	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function getConditionsHook()
+	{
+		$conditions = array();
+		
+		$conditions['select'] = '`bid` AS id, `cid`, `type`, `name`, `alias`, `imptotal`, `impmade`, '
+													.'`clicks`, `imageurl`, `clickurl`, `date`, `showBanner` AS state, `checked_out`, '
+													.'`checked_out_time`, `editor`, `custombannercode`, `catid`, `description`, '
+													.'`sticky`, `ordering`, `publish_up`, `publish_down`, `tags`, `params`'	;
+		
+		$conditions['where'] = array();
+		
+		return $conditions;
+	}
 
 	/**
 	 * Get the raw data for this part of the upgrade.
@@ -43,13 +69,9 @@ class jUpgradeBanners extends jUpgrade
 	 * @since       0.4.5
 	 * @throws      Exception
 	 */
-	protected function &getSourceData()
+	protected function &getSourceDatabase()
 	{
-		$rows = parent::getSourceData(
-			'`bid` AS id, `cid`, `type`, `name`, `alias`, `imptotal`, `impmade`, '
-			.'`clicks`, `imageurl`, `clickurl`, `date`, `showBanner` AS state, `checked_out`, '
-			.'`checked_out_time`, `editor`, `custombannercode`, `catid`, `description`, '
-			.'`sticky`, `ordering`, `publish_up`, `publish_down`, `tags`, `params`', null, 'bid'); 
+		$rows = parent::getSourceDatabase();
 
 		// Getting the categories id's
 		$categories = $this->getMapList('categories', 'com_banners');

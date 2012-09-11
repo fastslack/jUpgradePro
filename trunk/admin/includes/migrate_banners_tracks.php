@@ -34,4 +34,10 @@ class jUpgradeBannersTracks extends jUpgrade
 	 * @since       0.4.5
 	 */
 	protected $destination = '#__banner_tracks';
+
+	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'banner_id';
 }

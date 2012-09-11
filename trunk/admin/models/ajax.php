@@ -384,32 +384,6 @@ class jUpgradeProModelAjax extends JModelLegacy
 	 *
 	 * @return	none
 	 * @since	2.5.0
-	 *
-	function getMigrate() {
-
-		// jUpgrade class
-		$jupgrade = new jUpgrade;
-
-		$step = $this->_getStep();
-
-		// TODO: Error handler
-		$this->_processStep($step);
-
-		$this->_updateStep($step);
-
-		$message['status'] = "OK";
-		$message['step'] = $step->id;
-		$message['name'] = $step->name;
-		$message['text'] = 'DONE';
-		echo json_encode($message);
-
-	}*/
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
 	 */
 	function getMigrate() {
 
@@ -434,43 +408,6 @@ class jUpgradeProModelAjax extends JModelLegacy
 
 		echo json_encode((array)$step);
 	}
-
-	/**
-	 * New processStep
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 *
-	public function _processStep ($step)
-	{	
-		// Require the file
-		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
-			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
-		}
-
-		switch ($step->name)
-		{
-			case 'extensions':
-				require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
-				require_once JPATH_COMPONENT.'/includes/jupgrade.extensions.class.php';				
-	
-				// Get jUpgradeExtensions instance
-				$extension = jUpgradeExtensions::getInstance($step);
-				$success = $extension->upgrade();
-
-				break;
-			default:
-				// Getting the class name
-				$class = $step->class;
-
-				// Migrate the process.
-				$process = new $class($step);
-				$process->upgrade();
-		}
-
-		$this->_updateStep($step);
-
-	} // end method*/
 
 	/**
 	 * Getting the next step
@@ -518,6 +455,8 @@ class jUpgradeProModelAjax extends JModelLegacy
 
 		// Migrate the process.
 		$jupgrade = new $class($step);
+
+
 		$step->total =  $jupgrade->getSourceDataTotal();
 
 		// Check if steps is an object

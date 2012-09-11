@@ -33,17 +33,24 @@ class jUpgradeModulesMenu extends jUpgrade
 	protected $destination = '#__modules_menu';
 
 	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'moduleid';
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	protected function &getSourceData()
+	protected function &getSourceDatabase()
 	{
 		// Creating the query
 		//$where = "m.moduleid NOT IN (2,3,4,8,13,14,15)";
 
+/*
 		$join = array();
 		$join[] = "INNER JOIN jupgrade_modules AS map ON  map.old = m.moduleid";
 		$join[] = "INNER JOIN jupgrade_menus AS men ON  men.old = m.menuid";
@@ -55,6 +62,9 @@ class jUpgradeModulesMenu extends jUpgrade
 			$where,
 			'm.moduleid'
 		);
+*/
+
+		$rows = parent::getSourceDatabase();
 
 		return $rows;
 	}

@@ -261,7 +261,7 @@ var jUpgrade = new Class({
 				// Adding event to the row request
 				row.addEvents({
 					'complete': function(response) {
-						console.log(response);
+						//console.log(response);
 						counter = counter + 1;
 						currItem.innerHTML = counter;
 						

@@ -36,6 +36,32 @@ class jUpgradeCategories extends jUpgradeCategory
 	protected $destination = '#__categories';
 
 	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'id';
+
+	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function getConditionsHook()
+	{
+		$conditions = array();
+
+		$where = array();
+		$where[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
+		
+		$conditions['order'] = "section DESC, ordering DESC";		
+		$conditions['where'] = $where;
+		
+		return $conditions;
+	}
+
+	/**
 	 * Sets the data in the destination database.
 	 *
 	 * @return	void

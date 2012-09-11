@@ -38,15 +38,21 @@ class jUpgradeUsergroupMap extends jUpgrade
 	protected $destination = '#__user_usergroup_map';
 
 	/**
+	 * @var		string	The name of the source database table.
+	 * @since	0.4.4
+	 */
+	protected $_tbl_key = 'aro_id';
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array
 	 * @since	0.4.4
 	 * @throws	Exception
 	 */
-	protected function &getSourceData()
+	protected function &getSourceDatabase()
 	{
-		$rows = parent::getSourceData();
+		$rows = parent::getSourceDatabase();
 
 		// Set up the mapping table for the old groups to the new groups.
 		$groupMap = jUpgradeUsergroups::getUsergroupIdMap();

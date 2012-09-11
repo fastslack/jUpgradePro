@@ -33,24 +33,21 @@ class jUpgradeContent extends jUpgrade
 	protected $destination = '#__content';
 
 	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'id';
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	protected function &getSourceData()
+	protected function &getSourceDatabase()
 	{
-		$rows = parent::getSourceData(
-			'`id`, `title`, `alias`, `title_alias`, `introtext`, `fulltext`, `state`, '
-			.'`mask`, `catid`, `created`, `created_by`, `created_by_alias`, '
-			.'`modified`, `modified_by`, `checked_out`, `checked_out_time`, `publish_up`, `publish_down`, '
-			.'`images`, `urls`, `attribs`, `version`, `parentid`, `ordering`, `metakey`, `metadesc`, '
-			.'`access`, `hits` ',
-			null,
-			null,
-			'id'
-		);
+		$rows = parent::getSourceDatabase();
 	
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)

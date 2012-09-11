@@ -25,4 +25,9 @@ class jUpgradeContentFrontpage extends jUpgrade
 	 */
 	protected $source = '#__content_frontpage';
 
+	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'id';
 }

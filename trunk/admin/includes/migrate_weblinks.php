@@ -27,20 +27,29 @@ class jUpgradeWeblinks extends jUpgrade
 	protected $source = '#__weblinks';
 
 	/**
+	 * @var		string	The name of the source database table.
+	 * @since	0.4.4
+	 */
+	protected $_tbl_key = 'id';
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	protected function &getSourceData()
+	protected function &getSourceDatabase()
 	{
+/*
 		$rows = parent::getSourceData(
 			'`id`, `catid`, `sid`, `title`, `alias`, `url`, `description`, `date`, `hits`, '
      .' `published` AS state, `checked_out`, `checked_out_time`, `ordering`, `archived`, `approved`,`params`',
 			null,
 			'id'
 		);
+*/
+		$rows = parent::getSourceDatabase();
 
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)

@@ -27,20 +27,29 @@ class jUpgradeNewsfeeds extends jUpgrade
 	protected $source = '#__newsfeeds';
 
 	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'id';
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	protected function &getSourceData()
+	protected function &getSourceDatabase()
 	{
+/*
 		$rows = parent::getSourceData(
 			'`catid`,`id`,`name`,`alias`,`link`,`filename`,`published`,`numarticles`,`cache_time`, '
      .'`checked_out`,`checked_out_time`,`ordering`,`rtl`',
 			null,
 			'id'
 		);
+*/
+		$rows = parent::getSourceDatabase();
 
 		return $rows;
 	}

@@ -26,21 +26,8 @@ class jUpgradeMenusTypes extends jUpgrade
 	protected $source = '#__menu_types';
 
 	/**
-	 * Get the raw data for this part of the upgrade.
-	 *
-	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.5
-	 * @throws	Exception
+	 * @var		string	The key of the table
+	 * @since	3.0.0
 	 */
-	protected function &getSourceData()
-	{
-		$rows = parent::getSourceData(
-			 '*',
-			null,
-			null,
-			'id'
-		);
-
-		return $rows;
-	}
+	protected $_tbl_key = 'id';
 }

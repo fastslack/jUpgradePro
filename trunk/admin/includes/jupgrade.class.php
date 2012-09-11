@@ -195,7 +195,7 @@ class jUpgrade
 	protected function loadData($type = null)
 	{
 		$method = $this->params->get('method');
-	
+
 		$rows = array();
 
 		// Get the source data.
@@ -204,9 +204,9 @@ class jUpgrade
 		} else if ($method == 'rest_individual') {
 			$rows[] = (object) $this->getSourceDataRestIndividual($type);
 		} else if ($method == 'database') {
-			$rows = $this->getSourceData();
+			$rows = $this->getSourceDatabase();
 		}
-	
+
 		return $rows;
 	}
 
@@ -243,96 +243,151 @@ class jUpgrade
 	}
 
 	/**
-	 * Get the raw data for this part of the upgrade.
+	 * Get total of the rows of the table
 	 *
-	 * @param	string 	$select	A select condition to add to the query.
-	 * @param	string 	$join	 A select condition to add to the query.
-	 * @param	mixed 	$where	A string or array where condition to add to the query.
-	 * @param	string	$order	The ordering for the source data.
-	 *
-	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.
-	 * @throws	Exception
+	 * @access	public
+	 * @return	int	The total of rows
 	 */
-	protected function &getSourceData($select = '*', $join = null, $where = null, $order = null, $groupby  = null, $debug = null)
+	public function getSourceDatabase( )
 	{
-		// Error checking.
-		if (empty($this->source)) {
-			throw new Exception('Source table not specified.');
+		$k = $this->_tbl_key;
+
+		$oid = $this->_requestID();
+
+		if ($oid === null) {
+			return false;
 		}
 
-		// Prepare the query for the source data.
-		$query = $this->_db->getQuery(true);
+		// Get the conditions
+		$conditions = $this->getConditionsHook();
 
-		$query->select((string)$select);
-		$query->from((string)$this->source);
+		// Get `AS` mysql statement
+		$where_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
+		
+		// Add oid condition		
+		$oid_condition = "{$where_as}{$this->getKeyName()} = {$oid}";
+		array_push($conditions['where'], $oid_condition);
 
-		// Check if 'where' clause is set
-		if (!empty($where))
+		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';		
+		$select = isset($conditions['select']) ? $conditions['select'] : '*';
+		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+
+		$join = '';
+		if (isset($conditions['join'])) {
+			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
+		}
+
+		$order = isset($conditions['order']) ? $conditions['order'] : "{$this->getKeyName()} ASC";
+
+		// Get the row
+		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where} LIMIT 1";
+		$this->_db_old->setQuery( $query );
+		//echo $query;
+
+		$this->_db_old->loadAssocList();
+
+		if ($result = $this->_db_old->loadAssocList( )) {
+			$this->_updateID($oid);
+			return $result;
+		}
+		else
 		{
-			// Multiple conditions
-			if (is_array($where))
-			{
-				for($i=0;$i<count($where);$i++) {
-					$query->where((string)$where[$i]);
-				}
-			}
-			else if (is_string($where))
-			{
-				$query->where((string)$where);
-			}
+			throw new Exception( $this->_db_old->getErrorMsg() );
+			return false;
+		}
+	}
 
+	/**
+	 * Get next id
+	 *
+	 * @access	public
+	 * @return	int	The total of rows
+	 */
+	public function _requestID( $moreconditions = null)
+	{
+
+		function processWhere($conditions) {
+			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+			return $where;
 		}
 
-		// Check if 'join' clause is set
-		if (!empty($join))
+		$query = 'SELECT `cid` FROM jupgrade_steps'
+		. ' WHERE name = '.$this->_db->quote($this->_step['name']);
+		$this->_db->setQuery( $query );
+		$stepid = (int) $this->_db->loadResult();
+
+		$conditions = $this->getConditionsHook();
+		
+		if ($moreconditions != null && is_array($conditions)) {
+			array_push($conditions['where'], $moreconditions);
+		}
+
+		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+		$order = isset($conditions['order']) ? $conditions['order'] : 'ASC';
+
+		if (strpos($order,'ASC') !== false) {
+			$conditions['where'][] = "{$this->getKeyName()} > {$stepid}";
+			$query = "SELECT MIN({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
+		}else if (strpos($order,'DESC') !== false) {
+			if ($stepid == 0) {
+				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
+			}else{
+				$conditions['where'][] = "{$this->getKeyName()} < {$stepid}";
+				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
+			}
+		}
+
+		$this->_db_old->setQuery( $query );
+		$id = $this->_db_old->loadResult();
+
+		if ($id) {
+			return (int)$id;
+		}
+		else
 		{
-			// Multiple joins
-			if (is_array($join))
-			{
-				for($i=0;$i<count($join);$i++) {
-					$pieces = explode("JOIN", $join[$i]);
-					$type = trim($pieces[0]);
-					$conditions = trim($pieces[1]);
-
-					$query->join((string)$type, (string)$conditions);
-				}
-
-			}
-			else if (is_string($join))
-			{
-				$pieces = explode("JOIN", $join);
-				$type = trim($pieces[0]);
-				$conditions = trim($pieces[1]);
-
-				$query->join((string)$type, (string)$conditions);
-			}
+			throw new Exception( $this->_db_old->getErrorMsg() );
+			return false;
 		}
+	}
 
-		// Add group statement if exists
-		if (!empty($groupby))
-			$query->group($groupby);
+	/**
+	 * 
+	 * @return  boolean  
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function getKeyName()
+	{
+		return $this->_tbl_key;
+	}
 
-		// Check if 'order' clause is set
-		if (!empty($order))
-			$query->order($order);
+	/**
+	 * 
+	 * @return  boolean  
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function getTableName()
+	{
+		return $this->source;
+	}
 
-		// Debug
-		if (!empty($debug))
-			$this->print_a($query->__toString());
+	/**
+	 * 
+	 *
+	 * @return  boolean  True if the user and pass are authorized
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function _updateID($id)
+	{	
+		$query = "UPDATE `jupgrade_steps` SET `cid` = '{$id}' WHERE name = ".$this->_db->quote($this->_step['name']);
+		$this->_db->setQuery( $query );
 
-		$this->_db->setQuery((string)$query);
-
-		// Getting data
-		$rows	= $this->_db->loadAssocList();
-		$error = $this->_db->getErrorMsg();
-
-		// Check for query error.
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		return $rows;
+		return $this->_db->query();
 	}
 
 	/**
@@ -343,8 +398,6 @@ class jUpgrade
 	 */
 	public function getSourceDataTotal()
 	{
-		//$db =& $this->getDBO();
-
 		$conditions = $this->getConditionsHook();
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
@@ -356,14 +409,8 @@ class jUpgrade
 		$this->_db_old->setQuery( $query );
 		$total = $this->_db_old->loadResult();
 
-		if ($total) {
-			return (int)$total;
-		}
-		else
-		{
-			throw new Exception($this->_db_old->getErrorMsg());
-			return false;
-		}
+		return (int)$total;
+
 	}
 
 	/*

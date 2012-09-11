@@ -33,16 +33,26 @@ class jUpgradeBannersClients extends jUpgrade
 	protected $destination = '#__banner_clients';
 
 	/**
-	 * Get the raw data for this part of the upgrade.
-	 *
-	 * @return      array   Returns a reference to the source data array.
-	 * @since       2.5.2
-	 * @throws      Exception
+	 * @var		string	The key of the table
+	 * @since	3.0.0
 	 */
-	protected function &getSourceData()
-	{
-		$rows = parent::getSourceData('`cid` AS id, `name`, `contact`, `email`, `extrainfo`, `checked_out`, `checked_out_time`'); 
+	protected $_tbl_key = 'cid';
 
-		return $rows;
-	}
+	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function getConditionsHook()
+	{
+		$conditions = array();
+		
+		$conditions['select'] = '`cid` AS id, `name`, `contact`, `email`, `extrainfo`, `checked_out`, `checked_out_time`';
+		
+		$conditions['where'] = array();
+		
+		return $conditions;
+	}	
 }

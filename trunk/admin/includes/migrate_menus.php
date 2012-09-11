@@ -34,16 +34,49 @@ class jUpgradeMenu extends jUpgrade
 	protected $destination = '#__menu';
 
 	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'id';
+
+	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function getConditionsHook()
+	{
+		$conditions = array();
+		
+		$conditions['as'] = "m";
+		
+		$conditions['select'] = 'm.id, m.menutype, m.name, m.name AS title, m.alias, m.link, m.type, c.option, m.published, m.parent AS parent_id,'
+			.' m.sublevel AS level, m.ordering, m.checked_out, m.checked_out_time, m.browserNav, m.access, m.params, m.home';
+		
+		$join = array();
+		$join[] = "LEFT JOIN #__components AS c ON c.id = m.componentid";
+		
+		$conditions['where'] = array();
+		$conditions['join'] = $join;
+		$conditions['order'] = "m.id DESC";
+		
+		return $conditions;
+	}
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	protected function &getSourceData()
+	protected function &getSourceDatabase()
 	{
 		$params = $this->getParams();
 
+/*
 		// Creating the query
 		$join = array();
 		$join[] = "LEFT JOIN #__components AS c ON c.id = m.componentid";
@@ -59,7 +92,10 @@ class jUpgradeMenu extends jUpgrade
 			null,
 			'm.id DESC'
 		);
- 
+ */
+
+		$rows = parent::getSourceDatabase();
+
 		// Do some custom post processing on the list.
 		foreach ($rows as $key => &$row) {
  

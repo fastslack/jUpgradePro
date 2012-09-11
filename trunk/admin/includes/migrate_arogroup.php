@@ -33,7 +33,32 @@ class jUpgradeUsergroups extends jUpgrade
 	 * @since	0.4.4
 	 */
 	protected $destination = '#__usergroups';
-	
+
+	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'id';
+
+	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function getConditionsHook()
+	{
+		$conditions = array();
+				
+		$where = array();
+		$where[] = "{$this->_tbl_key} > 30";
+		
+		$conditions['where'] = $where;
+		
+		return $conditions;
+	}
+
 	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
@@ -41,16 +66,9 @@ class jUpgradeUsergroups extends jUpgrade
 	 * @since	0.4.4
 	 * @throws	Exception
 	 */
-	protected function &getSourceData()
+	protected function &getSourceDatabase()
 	{
-		$rows = parent::getSourceData(
-			// Custom where clause.
-			// We only want to get groups that we don't know about from custom group management extensions.
-			// Our assumption is the core groups have not been tampered with (if they were, Joomla would not run well).
-			'*',
-			null,
-			$this->db_old->nameQuote('id').' > 30'
-		);
+		$rows = parent::getSourceDatabase();
 
 		// Set up the mapping table for the old groups to the new groups.
 		$map = self::getUsergroupIdMap();

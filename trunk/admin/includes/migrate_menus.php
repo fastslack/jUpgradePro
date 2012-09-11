@@ -25,13 +25,7 @@ class jUpgradeMenu extends jUpgrade
 	 * @var		string	The name of the source database table.
 	 * @since	0.4.5
 	 */
-	protected $source = '#__menu AS m';
-
-	/**
-	 * @var		string	The name of the destination database table.
-	 * @since	0.4.8
-	 */
-	protected $destination = '#__menu';
+	protected $source = '#__menu';
 
 	/**
 	 * @var		string	The key of the table

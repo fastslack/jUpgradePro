@@ -185,11 +185,6 @@ class jUpgradeMenu extends jUpgrade
 	{
 		$params = $this->getParams();
 
-		// Delete main menu
-		$query = "DELETE FROM {$this->destination} WHERE id > 1";
-		$this->_db->setQuery($query);
-		//$this->_db->query();
-
 		// Getting the categories id's
 		$categories = $this->getMapList();
 		$sections = $this->getMapList('categories', 'com_section');
@@ -246,7 +241,7 @@ class jUpgradeMenu extends jUpgrade
 			$row->title = $row->name;
 
 			if ($this->_version == '3.0') {
-				unset($row['ordering']);
+				unset($row->ordering);
 			}
 
 			// Not needed

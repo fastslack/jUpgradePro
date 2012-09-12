@@ -14,7 +14,7 @@
 // No direct access.
 defined('_JEXEC') or die;
 
-require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/jupgrade.model.php';
 
 /**
  * Rest Model
@@ -22,7 +22,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jUpgradeProModelRest_individual extends JModelLegacy
+class jUpgradeProModelRest_individual extends jUpgradeProModel
 {
 	/**
 	 * Get the next step
@@ -49,11 +49,6 @@ class jUpgradeProModelRest_individual extends JModelLegacy
 		$data['type'] = $step->name;
 		$total = $http->get($jupgrade->params->get('rest_hostname'), $data);
 		$step->total = (int) $total->body;
-	
-		// Select last step
-		$query = "SELECT name FROM jupgrade_steps WHERE status = 0 ORDER BY id DESC LIMIT 1";
-		$this->_db->setQuery($query);
-		$step->laststep = $this->_db->loadResult();
 
 		// updating the status flag
 		$this->_updateStep($step);
@@ -91,111 +86,6 @@ class jUpgradeProModelRest_individual extends JModelLegacy
 		$json = json_encode($row);
 
 		return($json);
-	}
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getMigrate() {
-
-		$step = $this->_getStep(JRequest::getVar('type'));
-
-		// Require the file
-		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
-			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
-		}
-
-		// Getting the class name
-		$class = $step->class;
-
-		// Migrate the process.
-		$process = new $class($step);
-		$process->upgrade();
-
-		$this->_updateStep($step);
-
-		$step->status = "OK";
-		$step->text = "DONE";
-
-		echo json_encode((array)$step);
-	}
-
-	/**
-	 * Initial checks in jUpgrade
-	 *
-	 * @return	none
-	 * @since	1.2.0
-	 */
-	function getParams()
-	{
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
-		$object = $jupgrade->getParams();
-		
-		echo json_encode($object);
-	}
-
-	/**
-	 * Getting the next step
-	 *
-	 * @return   step object
-	 */
-	public function _getStep($key = null) {
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
-
-		// Select the steps
-		if (isset($key)) {
-			$query = "SELECT * FROM jupgrade_steps AS s WHERE s.name = '{$key}' ORDER BY s.id ASC LIMIT 1";
-		}else{
-			$query = "SELECT * FROM jupgrade_steps AS s WHERE s.status != 1 ORDER BY s.id ASC LIMIT 1";
-		}
-
-		$jupgrade->_db->setQuery($query);
-		$step = $jupgrade->_db->loadObject();
-
-		// Check for query error.
-		$error = $jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-	
-		// Check if steps is an object
-		if (is_object($step)) {
-		  return $step;
-		}else{
-			return false;
-		}
-	}
-
-	/**
-	 * updateStep
-	 *
-	 * @return	none
-	 * @since	2.5.2
-	 */
-	public function _updateStep($step) {
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
-
-		// updating the status flag
-		$query = "UPDATE jupgrade_steps SET status = 1"
-		." WHERE name = '{$step->name}'";
-		$jupgrade->_db->setQuery($query);
-		$jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		return true;
 	}
 
 	/**
@@ -255,74 +145,5 @@ class jUpgradeProModelRest_individual extends JModelLegacy
 		{
 			$this->_updateStep($step);
 		}
-	}
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getTemplates() {
-
-		// Require the file
-		require_once JPATH_COMPONENT.'/includes/templates_db.php';
-
-		// Migration 3rd party templates
-		$templates = new jUpgradeTemplates;
-
-		if ($templates->upgrade()) {
-			$message['status'] = "OK";
-			$message['number'] = 100;
-			$message['text'] = "DONE";
-		}
-
-		echo json_encode($message);
-	}
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getTemplatesfiles() {
-
-		// Require the file
-		require_once JPATH_COMPONENT.'/includes/templates_files.php';
-
-		// Migration 3rd party templates
-		$templates = new jUpgradeTemplatesFiles;
-
-		if ($templates->upgrade()) {
-			$message['status'] = "OK";
-			$message['number'] = 100;
-			$message['text'] = "DONE";
-		}
-
-		echo json_encode($message);
-	}
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getFiles() {
-
-		// Require the file
-		require_once JPATH_COMPONENT.'/includes/migrate_files.php';
-
-		// Migration 3rd party templates
-		$templates = new jUpgradeFiles;
-
-		if ($templates->upgrade()) {
-			$message['status'] = "OK";
-			$message['number'] = 100;
-			$message['text'] = "DONE";
-		}
-
-		echo json_encode($message);
 	}
 }

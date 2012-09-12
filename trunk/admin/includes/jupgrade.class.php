@@ -166,9 +166,7 @@ class jUpgrade
 		}
 		catch (Exception $e)
 		{
-			echo JError::raiseError(500, $e->getMessage());
-
-			return false;
+			throw new Exception($e->getMessage());
 		}
 
 		return true;
@@ -289,8 +287,6 @@ class jUpgrade
 		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where} LIMIT 1";
 		$this->_db_old->setQuery( $query );
 		//echo $query;
-
-		$this->_db_old->loadAssocList();
 
 		if ($result = $this->_db_old->loadAssocList( )) {
 			$this->_updateID($oid);
@@ -723,7 +719,7 @@ class jUpgrade
 	 */
 	protected function convertParams($params)
 	{
-		$temp	= new JParameter($params);
+		$temp	= new JRegistry($params);
 		$object	= $temp->toObject();
 
 		// Fire the hook in case this parameter field needs modification.

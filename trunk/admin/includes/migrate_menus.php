@@ -280,7 +280,7 @@ class jUpgradeMenu extends jUpgrade
 				throw new Exception($this->_db->getErrorMsg());
 			}
 
-			if ($row->id == $this->getLastid('menus')) {
+			if ($row->id == $this->getLastId('menus')) {
 				$this->populateDefaultMenus();
 			}
 

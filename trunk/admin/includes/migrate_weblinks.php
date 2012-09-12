@@ -33,6 +33,23 @@ class jUpgradeWeblinks extends jUpgrade
 	protected $_tbl_key = 'id';
 
 	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function getConditionsHook()
+	{
+		$conditions = array();
+
+		$conditions['select'] = '`id`, `catid`, `sid`, `title`, `alias`, `url`, `description`, `date`, `hits`, '
+     .' `published` AS state, `checked_out`, `checked_out_time`, `ordering`, `archived`, `approved`,`params`';
+				
+		return $conditions;
+	}
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
@@ -41,14 +58,7 @@ class jUpgradeWeblinks extends jUpgrade
 	 */
 	public function &getSourceDatabase()
 	{
-/*
-		$rows = parent::getSourceData(
-			'`id`, `catid`, `sid`, `title`, `alias`, `url`, `description`, `date`, `hits`, '
-     .' `published` AS state, `checked_out`, `checked_out_time`, `ordering`, `archived`, `approved`,`params`',
-			null,
-			'id'
-		);
-*/
+		// Getting the rows
 		$rows = parent::getSourceDatabase();
 
 		// Do some custom post processing on the list.

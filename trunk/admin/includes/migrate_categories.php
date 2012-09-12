@@ -71,13 +71,15 @@ class jUpgradeCategories extends jUpgradeCategory
 	protected function setDestinationData()
 	{
 		$params = $this->getParams();
-	
+
 		/**
 		 * Inserting the categories
 		 * @since	2.5.1
 		 */
 		// Content categories
 		$this->section = 'com_content'; 
+
+
 		// Get the source data.
 		$categories = $this->loadData('categories');
 

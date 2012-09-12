@@ -42,7 +42,11 @@ class jUpgradeModules extends jUpgrade
 	public function getConditionsHook()
 	{
 		$conditions = array();
-				
+
+		$conditions['select'] = "`id`, `title`, `content`, `ordering`, `position`,"
+			." `checked_out`, `checked_out_time`, `published`, `module`,"
+			." `access`, `showtitle`, `params`, `client_id`";
+
 		$conditions['where'][] = "id > 15 ";
 		$conditions['where'][] = "module IN ('mod_breadcrumbs', 'mod_footer', 'mod_mainmenu', 'mod_menu', 'mod_related_items', 'mod_stats', 'mod_wrapper', 'mod_archive', 'mod_custom', 'mod_latestnews', 'mod_mostread', 'mod_search', 'mod_syndicate', 'mod_banners', 'mod_feed', 'mod_login', 'mod_newsflash', 'mod_random_image', 'mod_whosonline' )";
 				
@@ -58,13 +62,6 @@ class jUpgradeModules extends jUpgrade
 	 */
 	public function &getSourceDatabase()
 	{
-
-/*
-		$select = "`id`, `title`, `content`, `ordering`, `position`,"
-						." `checked_out`, `checked_out_time`, `published`, `module`,"
-						." `access`, `showtitle`, `params`, `client_id`";
-*/
-
 		$rows = parent::getSourceDatabase();
 
 		// Set up the mapping table for the old positions to the new positions.

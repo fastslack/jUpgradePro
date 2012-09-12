@@ -185,7 +185,7 @@ class jUpgradeContent extends jUpgrade
 				echo JError::raiseError(500, $content->getError());
 			}
 
-			if ($row['id'] == $this->getLastid('contents')) {
+			if ($row['id'] == $this->getLastId('contents')) {
 				$this->updateFeature();
 				$this->fixComponentConfiguration();
 			}

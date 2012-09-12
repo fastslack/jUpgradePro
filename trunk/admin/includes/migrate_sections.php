@@ -82,7 +82,7 @@ class jUpgradeSections extends jUpgradeCategory
 			// Inserting the category
 			$this->insertCategory($section);
 
-			if ($section['old_id'] == $this->getLastid()) {
+			if ($section['old_id'] == $this->getLastId()) {
 				$this->fixParents();
 				$this->insertUncategorized();
 			}

@@ -396,7 +396,11 @@ class jUpgrade
 	{
 		$conditions = $this->getConditionsHook();
 
-		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		$where = '';
+
+		if ( isset( $conditions['where'] ) ) {
+			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		}
 
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 

@@ -46,6 +46,10 @@ class jUpgradeProModelAjax extends jUpgradeProModel
 
 		$step->total = $jupgrade->getSourceDatabaseTotal();
 
+		if ($step->name == $step->laststep) {
+			$step->end = true;
+		}
+
 		// updating the status flag
 		$this->_updateStep($step);
 

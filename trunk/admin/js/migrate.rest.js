@@ -242,16 +242,15 @@ var jUpgrade = new Class({
 				var object = JSON.decode(response);
 				var counter = 0;
 
-				if (object == null) {
-					pb4.finish();
-					this.cancel();
-					self.done();
-				}
+				// Changing title and statusbar
+				pb4.set(object.id*6);
+				status.innerHTML = 'Migrating ' + object.title;
+				currItem.innerHTML = 0;
+				totalItems.innerHTML = object.total;
 
 				// Redirect if total == 0
 				if (object.total == 0) {
-					if (object.name == object.laststep) {
-						//$clear(step);
+					if (object.end == true) {
 						pb4.finish();
 						this.cancel();
 						self.done();
@@ -259,12 +258,6 @@ var jUpgrade = new Class({
 						step.send();
 					}
 				}
-
-				// Changing title and statusbar
-				pb4.set(object.id*6);
-				status.innerHTML = 'Migrating ' + object.title;
-				currItem.innerHTML = 0;
-				totalItems.innerHTML = object.total;
 
 				// Adding event to the row request
 				row.addEvents({
@@ -274,10 +267,8 @@ var jUpgrade = new Class({
 						currItem.innerHTML = counter;
 						
 						if (counter == object.total) {
-							//console.log(object);
 
-							if (object.name == object.laststep) {
-								//$clear(step);
+							if (object.end == true) {
 								pb4.finish();
 								this.cancel();
 								self.done();

@@ -30,14 +30,12 @@ class jUpgradeProModelRest extends jUpgradeProModel
 	 * @return   step object
 	 */
 	public function getStep() {
-	
+
+		// Getting the steps
+		$step = $this->_getStep();
+
 		// Initialize jupgrade class
 		$jupgrade = new jUpgrade;
-
-		// Select the steps
-		$query = "SELECT * FROM jupgrade_steps AS s WHERE s.status != 1 ORDER BY s.id ASC LIMIT 1";
-		$this->_db->setQuery($query);
-		$step = $this->_db->loadObject();
 
 		// JHttp instance
 		jimport('joomla.http.http');
@@ -49,6 +47,10 @@ class jUpgradeProModelRest extends jUpgradeProModel
 		$data['type'] = $step->name;
 		$total = $http->get($jupgrade->params->get('rest_hostname'), $data);
 		$step->total = (int) $total->body;
+
+		if ($step->name == $step->laststep) {
+			$step->end = true;
+		}
 
 		// updating the status flag
 		$this->_updateStep($step);

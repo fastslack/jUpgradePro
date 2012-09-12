@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.users.class.php';
-require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.extensions.class.php';
+//require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.extensions.class.php';
 
 /**
  * jUpgradePro Model

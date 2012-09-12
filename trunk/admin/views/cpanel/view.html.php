@@ -31,12 +31,12 @@ class jupgradeProViewCpanel extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		JToolBarHelper::title(JText::_( 'jUpgradePro' ), 'jupgrade');
-		JToolBarHelper::custom('cpanel', 'back.png', 'back_f2.png', 'Back', false, false);
-		JToolBarHelper::preferences('com_jupgradepro', '500');
-		JToolBarHelper::spacer();
-		JToolBarHelper::custom('help', 'help.png', 'help_f2.png', 'Help', false, false);
-		JToolBarHelper::spacer();
+		JToolbarHelper::title(JText::_( 'jUpgradePro' ), 'jupgrade');
+		JToolbarHelper::custom('cpanel', 'back.png', 'back_f2.png', 'Back', false, false);
+		JToolbarHelper::preferences('com_jupgradepro', '500');
+		JToolbarHelper::spacer();
+		JToolbarHelper::custom('help', 'help.png', 'help_f2.png', 'Help', false, false);
+		JToolbarHelper::spacer();
 
 		// get params
 		$params		= JComponentHelper::getParams('com_jupgradepro');
@@ -52,7 +52,8 @@ class jupgradeProViewCpanel extends JViewLegacy
 		//JHTML::_('behavior.mootools'); // 2.5
 		JHtml::_('behavior.framework', true);
 
-		$xmlfile = JPATH_COMPONENT.'/jupgradepro.xml';
+		$xmlfile = JPATH_COMPONENT_ADMINISTRATOR.'/jupgradepro.xml';
+
 		$xml = JFactory::getXML($xmlfile);
 
 		$this->params =	$params;

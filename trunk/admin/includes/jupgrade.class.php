@@ -41,6 +41,12 @@ class jUpgrade
 	public $_db_old = null;
 
 	/**
+	 * @var      
+	 * @since  3.0
+	 */
+	public $_version = null;
+
+	/**
 	 * @var	array
 	 * @since  3.0
 	 */
@@ -79,6 +85,7 @@ class jUpgrade
 		$this->checkTimeout();
 
 		jimport('legacy.component.helper');
+		jimport('cms.version.version');
 
 		// Getting the parameters
 		$this->params	= JComponentHelper::getParams('com_jupgradepro');
@@ -122,6 +129,10 @@ class jUpgrade
 		if (strpos($grant, 'DROP') == true || strpos($grant, 'ALL') == true) {
 			$this->canDrop = true;
 		}
+
+		// Getting the Joomla version
+		$version = new JVersion;
+		$this->_version = $version->RELEASE;
 	}
 
 	/**

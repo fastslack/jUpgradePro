@@ -1,4 +1,16 @@
 <?php
+/**
+ * jUpgrade
+ *
+ * @version		$Id$
+ * @package		MatWare
+ * @subpackage	com_jupgrade
+ * @copyright	Copyright 2006 - 2011 Matias Aguire. All rights reserved.
+ * @license		GNU General Public License version 2 or later.
+ * @author		Matias Aguirre <maguirre@matware.com.ar>
+ * @link		http://www.matware.com.ar
+ */
+
 // No direct access to this file
 defined('_JEXEC') or die('Restricted access');
  
@@ -19,11 +31,7 @@ class jUpgradeProController extends JControllerLegacy
 	{
 		// set default view if not set
 		JRequest::setVar('view', JRequest::getCmd('view', 'cpanel'));
- 
-		// call parent behavior
-		parent::display($cachable);
- 
-		// Set the submenu
-		//jUpgradeProHelper::addSubmenu('messages');
+
+		return parent::display();
 	}
 }

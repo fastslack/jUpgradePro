@@ -176,7 +176,7 @@ class jUpgrade
 	 * @throws	Exception
 	 */
 	protected function setDestinationData($rows = null)
-	{	
+	{
 		// Get the source data.
 		if ($rows === null) {
 			$rows = $this->loadData();
@@ -348,30 +348,6 @@ class jUpgrade
 
 	/**
 	 * 
-	 * @return  boolean  
-	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
-	 */
-	public function getKeyName()
-	{
-		return $this->_tbl_key;
-	}
-
-	/**
-	 * 
-	 * @return  boolean  
-	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
-	 */
-	public function getTableName()
-	{
-		return $this->source;
-	}
-
-	/**
-	 * 
 	 *
 	 * @return  boolean  True if the user and pass are authorized
 	 *
@@ -520,31 +496,72 @@ class jUpgrade
 		return $row;
 	}
 
-	protected function getLastId($type)
+	protected function getLastId()
 	{
 		$method = $this->params->get('method');
 	
 		// Get the source data.
 		if ($method == 'rest') {
-
-			jimport('joomla.http.http');
-	
-			// JHttp instance
-			$http = new JHttp();		
-			$data = $this->getRestData();
-
-			// Getting the total
-			$data['task'] = "lastid";
-			$data['type'] = $type;
-			$lastid = $http->get($this->params->get('rest_hostname'), $data);
-			$lastid = (int) $lastid->body;
-
+			$lastid = $this->getLastIdRest();
 		} else if ($method == 'database') {
-			//$rows = $this->getSourceData();
+			$lastid = $this->getLastIdDatabase();
 		}
 
 		return $lastid;
 	}
+
+	/**
+	 * Get the last id from RESTful
+	 *
+	 * @access	public
+	 * @return	int	The last id
+	 */
+	public function getLastIdRest()
+	{
+		jimport('joomla.http.http');
+
+		// JHttp instance
+		$http = new JHttp();		
+		$data = $this->getRestData();
+
+		// Getting the total
+		$data['task'] = "lastid";
+		$data['type'] = $this->_step['name'];
+		$lastid = $http->get($this->params->get('rest_hostname'), $data);
+		return (int) $lastid->body;
+	}
+
+	/**
+	 * Get the last id from database
+	 *
+	 * @access	public
+	 * @return	int	The last id
+	 */
+	public function getLastIdDatabase()
+	{
+		$conditions = $this->getConditionsHook();
+
+		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+
+		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+
+		$order = isset($conditions['order']) ? "ORDER BY {$conditions['order']}" : "ORDER BY {$this->getKeyName()} DESC";
+
+		// Get Total
+		$query = "SELECT id FROM {$this->source} {$as} {$where} {$order} LIMIT 1";
+		$this->_db_old->setQuery( $query );
+		$lastid = $this->_db_old->loadResult();
+
+		if ($lastid) {
+			return (int)$lastid;
+		}
+		else
+		{
+			$this->setError( $this->_db_old->getErrorMsg() );
+			return false;
+		}
+	}
+
 
 	/**
 	 * populateDatabase
@@ -602,6 +619,30 @@ class jUpgrade
 			throw new Exception($error);
 		}
 
+	}
+
+	/**
+	 * 
+	 * @return  boolean  
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function getKeyName()
+	{
+		return $this->_tbl_key;
+	}
+
+	/**
+	 * 
+	 * @return  boolean  
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function getTableName()
+	{
+		return $this->source;
 	}
 
 	/**

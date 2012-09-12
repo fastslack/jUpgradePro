@@ -372,7 +372,7 @@ class jUpgradeProModel extends JModel
 		$process = new $class($step);
 		$process->upgrade();
 
-		$this->_updateStep($step);
+		//$this->_updateStep($step);
 
 		$step->status = "OK";
 		$step->text = "DONE";

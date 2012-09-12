@@ -28,11 +28,18 @@ class jUpgradeCategory extends jUpgrade
 	 * @since	1.2.2
 	 */
 	public $section = '';
+
 	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.5.6
+	 * @var		string	The name of the destination database table.
+	 * @since	3.0.0
 	 */
-	protected $source = '#__categories';
+	protected $destination = '#__categories';
+
+	/**
+	 * @var		string	The key of the table
+	 * @since	3.0.0
+	 */
+	protected $_tbl_key = 'id';
 
 	/**
 	 * Get the raw data for this part of the upgrade.
@@ -41,9 +48,10 @@ class jUpgradeCategory extends jUpgrade
 	 * @since	0.5.6
 	 * @throws	Exception
 	 */
-	protected function &getSourceData()
+	public function &getSourceDatabase()
 	{
 
+/*
 		if ($this->section == 'com_content' && $this->source == '#__categories') {
 			$select = '`id`, `id` AS sid, `title`, `alias`, `section` AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
 			$where = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
@@ -64,6 +72,9 @@ class jUpgradeCategory extends jUpgrade
 			$where,
 			$order
 		);
+*/
+
+		$rows = parent::getSourceDatabase();
 
 		// Initialize values
 		$aliases = array();

@@ -30,18 +30,6 @@ class jUpgradeSections extends jUpgradeCategory
 	protected $source = '#__sections';
 
 	/**
-	 * @var		string	The name of the destination database table.
-	 * @since	0.4.5
-	 */
-	protected $destination = '#__categories';
-
-	/**
-	 * @var		string	The key of the table
-	 * @since	3.0.0
-	 */
-	protected $_tbl_key = 'id';
-
-	/**
 	 * Setting the conditions hook
 	 *
 	 * @return	void
@@ -51,13 +39,46 @@ class jUpgradeSections extends jUpgradeCategory
 	public function getConditionsHook()
 	{
 		$conditions = array();
-				
+
+		$conditions['select'] = '`id` AS old_id, `title`, `alias`, \'com_section\' AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
+
 		$where = array();
 		$where[] = "scope = 'content'";
 		
 		$conditions['where'] = $where;
 		
 		return $conditions;
+	}
+
+	/**
+	 * Get the raw data for this part of the upgrade.
+	 *
+	 * @return	array	Returns a reference to the source data array.
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function &getSourceDatabase()
+	{
+		$rows = parent::getSourceDatabase();
+	
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
+		{
+			$row['params'] = $this->convertParams($row['params']);
+			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
+			$row['title'] = str_replace("'", "&#39;", $row['title']);
+			$row['description'] = str_replace("'", "&#39;", $row['description']);
+			$row['language'] = '*';
+
+			$row['extension'] = 'com_section';
+
+			// Correct alias
+			if ($row['alias'] == "") {
+				$row['alias'] = JFilterOutput::stringURLSafe($row['title']);
+			}
+		}
+
+		return $rows;
 	}
 
 	/**
@@ -69,8 +90,6 @@ class jUpgradeSections extends jUpgradeCategory
 	 */
 	protected function setDestinationData()
 	{
-		//$params = $this->getParams();
-
 		// Get the source data.
 		$sections = $this->loadData('sections');
 
@@ -82,7 +101,7 @@ class jUpgradeSections extends jUpgradeCategory
 			// Inserting the category
 			$this->insertCategory($section);
 
-			if ($section['old_id'] == $this->getLastId()) {
+			if ($section['old_id'] == $this->getLastId()) { 
 				$this->fixParents();
 				$this->insertUncategorized();
 			}
@@ -94,13 +113,13 @@ class jUpgradeSections extends jUpgradeCategory
 	protected function insertUncategorized()
 	{
 		// Require the files
-		require_once JPATH_COMPONENT.DS.'includes'.DS.'helper.php';
+		//require_once JPATH_COMPONENT.DS.'includes'.DS.'helper.php';
 
 		// The sql file with menus
 		$sqlfile = JPATH_COMPONENT.DS.'sql'.DS.'categories.sql';
 
 		// Import the sql file
-	  if (JUpgradeHelper::populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
+	  if ($this->populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
 	  	return false;
 	  }
 		

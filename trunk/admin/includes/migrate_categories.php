@@ -30,18 +30,6 @@ class jUpgradeCategories extends jUpgradeCategory
 	protected $source = '#__categories';
 
 	/**
-	 * @var		string	The name of the destination database table.
-	 * @since	0.4.5
-	 */
-	protected $destination = '#__categories';
-
-	/**
-	 * @var		string	The key of the table
-	 * @since	3.0.0
-	 */
-	protected $_tbl_key = 'id';
-
-	/**
 	 * Setting the conditions hook
 	 *
 	 * @return	void
@@ -51,6 +39,8 @@ class jUpgradeCategories extends jUpgradeCategory
 	public function getConditionsHook()
 	{
 		$conditions = array();
+
+		$conditions['select'] = '`id`, `id` AS sid, `title`, `alias`, `section` AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
 
 		$where = array();
 		$where[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";

@@ -138,7 +138,6 @@ class JUpgradeTableUsers extends JUpgradeTable
 
     // Chaging admin username and email
     if ($this->id == 62) {
-			$this->id = 60;
       $this->username = $this->username.'v15';
       $this->email = $this->email.'v15';
     }

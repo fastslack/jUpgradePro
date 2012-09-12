@@ -340,6 +340,29 @@ class jUpgradeProModel extends JModelLegacy
 			throw new Exception($error);
 		}
 
+		// Change the id of the admin user
+		$query = "UPDATE {$prefix}users SET id = 10 WHERE username = 'admin'";
+		$this->_db->setQuery($query);
+		$this->_db->query();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		$query = "UPDATE {$prefix}user_usergroup_map SET user_id = 10 WHERE group_id = 8";
+		$this->_db->setQuery($query);
+		$this->_db->query();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
 		// Done checks
 		$message['status'] = "OK";
 		$message['number'] = 100;

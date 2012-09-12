@@ -50,7 +50,6 @@ class jUpgradeUsers extends jUpgradeUsersDefault
 
       // Chaging admin username and email
       if ($row['id'] == 62) {
-					$row['id'] = 60;
           $row['username'] = $row['username'].'v15';
           $row['email'] = $row['email'].'v15';
       }

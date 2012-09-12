@@ -62,6 +62,31 @@ class jUpgradeUsers extends jUpgradeUsersDefault
 	}
 
 	/**
+	 * Sets the data in the destination database.
+	 *
+	 * @return	void
+	 * @since	0.4.
+	 * @throws	Exception
+	 */
+	protected function setDestinationData($rows = null)
+	{
+		// Get the source data.
+		$rows = $this->loadData('users');
+
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
+		{
+			$row = (array) $row;
+
+			if ($this->_version == '3.0') {
+				unset($row['usertype']);
+			}
+		}
+
+		$this->insertData($rows);
+	}
+
+	/**
 	 * A hook to be able to modify params prior as they are converted to JSON.
 	 *
 	 * @param	object	$object	A reference to the parameters as an object.

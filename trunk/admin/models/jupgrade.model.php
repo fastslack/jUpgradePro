@@ -384,8 +384,8 @@ class jUpgradeProModel extends JModelLegacy
 		$step = $this->_getStep($type);
 
 		// Require the file
-		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
-			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
+		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$step->name.'.php')) {
+			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$step->name.'.php';
 		}
 
 		// Getting the class name

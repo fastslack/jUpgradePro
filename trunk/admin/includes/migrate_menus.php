@@ -181,7 +181,7 @@ class jUpgradeMenu extends jUpgrade
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData()
+	protected function setDestinationData($rows = null)
 	{
 		$params = $this->getParams();
 
@@ -244,7 +244,11 @@ class jUpgradeMenu extends jUpgrade
 			
 			// Fixes
 			$row->title = $row->name;
-			
+
+			if ($this->_version == '3.0') {
+				unset($row['ordering']);
+			}
+
 			// Not needed
 			unset($row->name);
 			unset($row->option);

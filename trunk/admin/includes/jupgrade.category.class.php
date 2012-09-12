@@ -119,7 +119,7 @@ class jUpgradeCategory extends jUpgrade
 	 * @since	0.5.6
 	 * @throws	Exception
 	 */
-	protected function setDestinationData()
+	protected function setDestinationData($rows = null)
 	{
 		// Get the source data.
 		$categories	= $this->getSourceData();

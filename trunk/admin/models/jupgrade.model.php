@@ -25,7 +25,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.users.class.php';
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jUpgradeProModel extends JModel
+class jUpgradeProModel extends JModelLegacy
 {
 	/**
 	 * Initial checks in jUpgrade

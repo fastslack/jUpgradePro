@@ -78,6 +78,8 @@ class jUpgrade
 			
 		$this->checkTimeout();
 
+		jimport('legacy.component.helper');
+
 		// Getting the parameters
 		$this->params	= JComponentHelper::getParams('com_jupgradepro');
 

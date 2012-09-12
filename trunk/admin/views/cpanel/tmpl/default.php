@@ -23,7 +23,7 @@ $params	= $this->params;
 
 $m = $params->get('method');
 
-$method = isset($m) ? $m : 'rest_individual';
+$method = isset($m) ? $m : 'rest';
 
 // get document to add scripts
 $document	= JFactory::getDocument();

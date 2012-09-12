@@ -95,7 +95,7 @@ class jUpgradeProModel extends JModel
 		}
 
 		// Check for bad configurations
-		if ($params->method == "rest" || $params->method == "rest_individual") {
+		if ($params->method == "rest") {
 			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' || 
 					$params->rest_username == '' || $params->rest_password == '' ) {
 				$message['number'] = 412;
@@ -201,7 +201,7 @@ class jUpgradeProModel extends JModel
 		$params = $jupgrade->getParams();
 
 		// If REST is enable, cleanup the source jupgrade_steps table
-		if ($params->method == 'rest' || $params->method == 'rest_individual') {
+		if ($params->method == 'rest') {
 		
 			jimport('joomla.http.http');
 

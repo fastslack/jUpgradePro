@@ -93,7 +93,7 @@ class jUpgradeExtensions extends jUpgrade
 			);
 		}
 
-		if ($method == 'rest' OR $method == 'rest_individual') {
+		if ($method == 'rest') {
 			$rows = $this->getSourceDataRest('components');
 		}
 
@@ -129,7 +129,7 @@ class jUpgradeExtensions extends jUpgrade
 			);
 		}
 
-		if ($method == 'rest' OR $method == 'rest_individual') {
+		if ($method == 'rest') {
 			$rows = $this->getSourceDataRest('ext_modules');
 		}
 
@@ -164,7 +164,7 @@ class jUpgradeExtensions extends jUpgrade
 			);
 		}
 
-		if ($method == 'rest' OR $method == 'rest_individual') {
+		if ($method == 'rest') {
 			$rows = $this->getSourceDataRest('plugins');
 		}
 

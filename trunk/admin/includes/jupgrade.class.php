@@ -204,8 +204,6 @@ class jUpgrade
 
 		// Get the source data.
 		if ($method == 'rest') {
-			$rows = $this->getSourceDataRest($type);
-		} else if ($method == 'rest_individual') {
 			$rows[] = (object) $this->getSourceDataRestIndividual($type);
 		} else if ($method == 'database') {
 			$rows = $this->getSourceDatabase();
@@ -527,7 +525,7 @@ class jUpgrade
 		$method = $this->params->get('method');
 	
 		// Get the source data.
-		if ($method == 'rest' || $method == 'rest_individual') {
+		if ($method == 'rest') {
 
 			jimport('joomla.http.http');
 	

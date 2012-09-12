@@ -129,31 +129,4 @@ class jUpgradeSections extends jUpgradeCategory
 			}
 		}
 	}
-
-	protected function getLastId()
-	{
-		$method = $this->params->get('method');
-	
-		// Get the source data.
-		if ($method == 'rest' || $method == 'rest_individual') {
-
-			jimport('joomla.http.http');
-	
-			// JHttp instance
-			$http = new JHttp();		
-			$data = $this->getRestData();
-
-			// Getting the total
-			$data['task'] = "lastid";
-			$data['type'] = "sections";
-			$lastid = $http->get($this->params->get('rest_hostname'), $data);
-			$lastid = (int) $lastid->body;
-
-		} else if ($method == 'database') {
-			//$rows = $this->getSourceData();
-		}
-
-		return $lastid;
-	}
-
 }

@@ -232,7 +232,7 @@ var jUpgrade = new Class({
 		//
 		var step = new Request({
 			link: 'chain',
-			url: 'index.php?option=com_jupgradepro&format=raw&view=rest_individual&task=step',
+			url: 'index.php?option=com_jupgradepro&format=raw&view=rest&task=step',
 			method: 'get'
 		}); // end Request		
 
@@ -283,7 +283,7 @@ var jUpgrade = new Class({
 				});
 				
 				// Start the checks
-				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=rest_individual&task=migrate&type='+object.name;			
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=rest&task=migrate&type='+object.name;			
 				
 				for (i=1;i<=object.total;i++) {
 					rm.addRequest(i, row);			

@@ -12,14 +12,11 @@
 			type="list"
 			label="COM_JUPGRADEPRO_CONFIG_METHOD"
 			description="COM_JUPGRADEPRO_CONFIG_METHOD_DESC"
-			default="rest_individual">
+			default="rest">
 			<option
-				value="database">Database - Getting the items from database</option>
-<!--
+				value="database">COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE</option>
 			<option
-				value="rest">WebService REST - Getting all items at same time (more faster)</option>-->
-			<option
-				value="rest_individual">COM_JUPGRADEPRO_CONFIG_REST_TITLE</option>
+				value="rest">COM_JUPGRADEPRO_CONFIG_REST_TITLE</option>
 		</field>
 
 		<field

@@ -7,7 +7,7 @@
 	<copyright>Copyright 2006 - 2011 Matias Aguirre. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later.</license>
 	<creationDate>2011-02-07</creationDate>
-	<version>3.0.0alpha2</version>
+	<version>3.0.0beta1</version>
 	<description></description>
 
 	<install>
@@ -21,7 +21,7 @@
 	</files>
 
 	<administration>
-		<menu img="components/com_jupgradepro/images/jupgrade.png">jUpgradePro</menu>
+		<menu img="components/com_jupgradepro/images/jupgrade.png">COM_JUPGRADEPRO</menu>
 
 		<files folder="admin">
 			<folder>controllers</folder>
@@ -32,7 +32,6 @@
 			<folder>js</folder>
 			<folder>language</folder>
 			<folder>models</folder>
-			<folder>tables</folder>
 			<folder>sql</folder>
 			<folder>views</folder>
 

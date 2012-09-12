@@ -132,8 +132,15 @@ class JUpgradeTableUsers extends JUpgradeTable
 	 * @return	Array	Migrated result
 	 */
 	function migrate ()
-	{	
+	{
 		// Fixing the params compatible with 2.5/3.0
 		$this->params = $this->convertParams($this->params);
+
+    // Chaging admin username and email
+    if ($this->id == 62) {
+			$this->id = 60;
+      $this->username = $this->username.'v15';
+      $this->email = $this->email.'v15';
+    }
 	}
 }

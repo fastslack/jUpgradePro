@@ -13,7 +13,7 @@
 defined('JPATH_BASE') or die();
 
 /**
- * AroGroup table
+ * Usergroupmap table
  *
  * @package 	Joomla.Framework
  * @subpackage		Table

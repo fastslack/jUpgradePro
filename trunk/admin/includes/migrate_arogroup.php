@@ -20,7 +20,7 @@
  * @subpackage	com_jupgrade
  * @since		0.4.4
  */
-class jUpgradeUsergroups extends jUpgrade
+class jUpgradeUsergroups extends jUpgradeUsersDefault
 {
 	/**
 	 * @var		string	The name of the source database table.
@@ -71,7 +71,7 @@ class jUpgradeUsergroups extends jUpgrade
 		$rows = parent::getSourceDatabase();
 
 		// Set up the mapping table for the old groups to the new groups.
-		$map = self::getUsergroupIdMap();
+		$map = $this->getUsergroupIdMap();
 
 		// Do some custom post processing on the list.
 		// The schema for old groups is: id, parent_id, name, lft, rgt, value

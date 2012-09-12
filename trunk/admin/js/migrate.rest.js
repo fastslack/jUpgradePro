@@ -242,6 +242,12 @@ var jUpgrade = new Class({
 				var object = JSON.decode(response);
 				var counter = 0;
 
+				if (object == null) {
+					pb4.finish();
+					this.cancel();
+					self.done();
+				}
+
 				// Redirect if total == 0
 				if (object.total == 0) {
 					if (object.name == object.laststep) {

@@ -43,6 +43,8 @@ class jUpgradeWeblinks extends jUpgrade
 	{
 		$conditions = array();
 
+		$conditions['where'] = false;
+
 		$conditions['select'] = '`id`, `catid`, `sid`, `title`, `alias`, `url`, `description`, `date`, `hits`, '
      .' `published` AS state, `checked_out`, `checked_out_time`, `ordering`, `archived`, `approved`,`params`';
 				

@@ -18,7 +18,7 @@
  *
  * @since	0.4.4
  */
-class jUpgradeUsers extends jUpgrade
+class jUpgradeUsers extends jUpgradeUsersDefault
 {
 	/**
 	 * @var		string	The name of the source database table.

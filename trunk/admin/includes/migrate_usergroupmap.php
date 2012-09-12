@@ -14,7 +14,7 @@
 /**
  * Upgrade class for the Usergroup Map
  *
- * This translates the group mapping table from 1.5 to 1.6.
+ * This translates the group mapping table from 1.5 to 3.0.
  * Group id's up to 30 need to be mapped to the new group id's.
  * Group id's over 30 can be used as is.
  * User id's are maintained in this upgrade process.
@@ -23,7 +23,7 @@
  * @subpackage	com_jupgrade
  * @since		0.4.4
  */
-class jUpgradeUsergroupMap extends jUpgrade
+class jUpgradeUsergroupMap extends jUpgradeUsersDefault
 {
 	/**
 	 * @var		string	The name of the source database table.
@@ -55,7 +55,7 @@ class jUpgradeUsergroupMap extends jUpgrade
 		$rows = parent::getSourceDatabase();
 
 		// Set up the mapping table for the old groups to the new groups.
-		$groupMap = jUpgradeUsergroups::getUsergroupIdMap();
+		$groupMap = $this->getUsergroupIdMap();
 
 		// Set up the mapping table for the ARO id's to the new user id's.
 		$userMap = $this->getUserIdAroMap();
@@ -83,31 +83,5 @@ class jUpgradeUsergroupMap extends jUpgrade
 		}
 
 		return $rows;
-	}
-
-	/**
-	 * Method to get a map of the User id to ARO id.
-	 *
-	 * @returns	array	An array of the user id's keyed by ARO id.
-	 * @since	0.4.4
-	 * @throws	Exception on database error.
-	 */
-	protected function getUserIdAroMap()
-	{
-		$this->db_old->setQuery(
-			'SELECT id, value' .
-			' FROM #__core_acl_aro' .
-			' ORDER BY id'
-		);
-
-		$map	= $this->db_old->loadAssocList('id', 'value');
-		$error	= $this->db_old->getErrorMsg();
-
-		// Check for query error.
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		return $map;
 	}
 }

@@ -44,7 +44,7 @@ class jUpgradeProModelAjax extends jUpgradeProModel
 		// Migrate the process.
 		$jupgrade = new $class($step);
 
-		$step->total =  $jupgrade->getSourceDatabaseTotal();
+		$step->total = $jupgrade->getSourceDatabaseTotal();
 
 		// updating the status flag
 		$this->_updateStep($step);

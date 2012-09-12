@@ -22,10 +22,6 @@ defined('_JEXEC') or die;
  */
 class jUpgrade
 {	
-	protected $ready = true;
-	protected $output = '';
-	protected $rest_type = null;
-
 	/**
 	 * @var      
 	 * @since  3.0
@@ -638,19 +634,6 @@ class jUpgrade
 	}
 
 	/**
-	 * Function to output text back to user
-	 *
-	 * @return	string Previous output
-	 * @since	1.1.0
-	 */
-	public function output($text='')
-	{
-		$output = empty($this->output) ? $this->name : $this->output;
-		$this->output = $text;
-		return $output;
-	}
-
-	/**
 	 * Internal function to get original database prefix
 	 *
 	 * @return	an original database prefix
@@ -683,27 +666,6 @@ class jUpgrade
 		}
 
 		return $data;
-	}
-
-	/**
-	 * Get the mapping of the old usergroups to the new usergroup id's.
-	 *
-	 * @return	array	An array with keys of the old id's and values being the new id's.
-	 * @since	1.1.0
-	 */
-	protected function getUsergroupIdMap()
-	{
-		return $this->usergroup_map;
-	}
-
-	/**
-	 * Map old user group from Joomla 1.5 to new installation.
-	 *
-	 * @return	int	New user group
-	 * @since	1.2.2
-	 */
-	protected function mapUserGroup($id) {
-		return isset($this->usergroup_map[$id]) ? $this->usergroup_map[$id] : $id;
 	}
 
 	/**

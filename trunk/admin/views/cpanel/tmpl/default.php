@@ -28,7 +28,6 @@ $method = isset($m) ? $m : 'rest';
 // get document to add scripts
 $document	= JFactory::getDocument();
 $document->addScript('components/com_jupgradepro/js/dwProgressBar.js');
-$document->addScript('components/com_jupgradepro/js/Base64.js');
 $document->addScript("components/com_jupgradepro/js/migrate.{$method}.js");
 $document->addScript('components/com_jupgradepro/js/requestmultiple.js');
 $document->addStyleSheet("components/com_jupgradepro/css/jupgrade.css");

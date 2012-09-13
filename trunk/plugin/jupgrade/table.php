@@ -59,8 +59,10 @@ class JUpgradeTable extends JTable
 	
 		$db =& $this->getDBO();
 
+		$type = (($this->_type == 'components') OR ($this->_type == 'ext_modules') OR ($this->_type == 'plugins')) ? 'extensions' : $this->_type;
+
 		$query = 'SELECT `cid` FROM jupgrade_plugin_steps'
-		. ' WHERE name = '.$db->quote($this->_type);
+		. ' WHERE name = '.$db->quote($type);
 		$db->setQuery( $query );
 		$stepid = (int) $db->loadResult();
 
@@ -84,7 +86,7 @@ class JUpgradeTable extends JTable
 				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
 			}
 		}
-
+		//echo $query;
 		$db->setQuery( $query );
 		$id = $db->loadResult();
 
@@ -110,8 +112,11 @@ class JUpgradeTable extends JTable
 	{
 		// Getting the database instance
 		$db = JFactory::getDbo();	
-	
-		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($this->_type);
+
+		$type = (($this->_type == 'components') OR ($this->_type == 'ext_modules') OR ($this->_type == 'plugins')) ? 'extensions' : $this->_type;
+
+		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($type);
+
 		$db->setQuery( $query );
 		return $db->query();
 	}

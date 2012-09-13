@@ -166,9 +166,6 @@ var jUpgrade = new Class({
 		}else{
 			self.download(e);
 		}
-
-
-
 	}, // end function
 
 	/**
@@ -181,11 +178,16 @@ var jUpgrade = new Class({
 		var self = this;
 
 		// CSS stuff
-		//var mySlideMigrate = new Fx.Slide('migration');
-		//mySlideMigrate.hide();
 		$('migration').setStyle('display', 'block');
 		$('warning').setStyle('display', 'block');
-		//mySlideMigrate.toggle();
+
+		var mySlideWarning = new Fx.Slide('warning');
+
+		setTimeout(function() {
+			e = new Event(e);
+			mySlideWarning.slideOut();
+			e.stop();
+		}, 10000); 
 
 		// Progress bar
 		pb4 = new dwProgressBar({

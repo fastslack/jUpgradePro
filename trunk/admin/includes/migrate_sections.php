@@ -112,11 +112,8 @@ class jUpgradeSections extends jUpgradeCategory
 
 	protected function insertUncategorized()
 	{
-		// Require the files
-		//require_once JPATH_COMPONENT.DS.'includes'.DS.'helper.php';
-
 		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT.DS.'sql'.DS.'categories.sql';
+		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'/sql/categories-'.$this->_version.'.sql';
 
 		// Import the sql file
 	  if ($this->populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {

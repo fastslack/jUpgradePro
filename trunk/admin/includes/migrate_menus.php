@@ -288,14 +288,11 @@ class jUpgradeMenu extends jUpgrade
 
 	public function populateDefaultMenus()
 	{
-		// Require the files
-		require_once JPATH_ROOT.DS.'administrator'.DS.'components'.DS.'com_jupgradepro'.DS.'includes'.DS.'helper.php';
-
 		// The sql file with menus
-		$sqlfile = JPATH_ROOT.DS.'administrator'.DS.'components'.DS.'com_jupgradepro'.DS.'sql'.DS.'menus.sql';
+		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'/sql/menus-'.$this->_version.'.sql';
 
 		// Import the sql file
-	  if (JUpgradeHelper::populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
+	  if ($this->populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
 	  	return false;
 	  }
 	}

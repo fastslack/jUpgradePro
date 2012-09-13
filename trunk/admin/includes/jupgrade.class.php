@@ -213,7 +213,11 @@ class jUpgrade
 
 		// Get the source data.
 		if ($method == 'rest') {
-			$rows[] = (object) $this->getSourceDataRestIndividual($type);
+			if ( ($type == 'components') OR ($type == 'ext_modules') OR ($type == 'plugins')) {
+				$rows = $this->getSourceDataRest($type);
+			}else{
+				$rows[] = (object) $this->getSourceDataRestIndividual($type);
+			}
 		} else if ($method == 'database') {
 			$rows = $this->getSourceDatabase();
 		}
@@ -282,6 +286,7 @@ class jUpgrade
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';		
 		$select = isset($conditions['select']) ? $conditions['select'] : '*';
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+		$group_by = isset($conditions['group_by']) ? 'GROUP BY '.$conditions['group_by'] : '';
 
 		$join = '';
 		if (isset($conditions['join'])) {
@@ -291,7 +296,7 @@ class jUpgrade
 		$order = isset($conditions['order']) ? $conditions['order'] : "{$this->getKeyName()} ASC";
 
 		// Get the row
-		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where} LIMIT 1";
+		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where} {$group_by} LIMIT 1";
 		$this->_db_old->setQuery( $query );
 		//echo $query;
 

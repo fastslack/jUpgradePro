@@ -28,29 +28,9 @@ class jUpgradeExtensions extends jUpgrade
 	public $count = 0;
 	protected $extensions = array();
 
-	public function getInstance($step) {
-		static $instances = array();
-
-		if (!isset($instances[$step->name])) {
-
-			$state = json_decode($step->state);
-
-			// Try to load the adapter object
-			if (file_exists($state->phpfile)) {
-				require_once $state->phpfile;
-			}
-
-			if (class_exists($state->class)) {
-				$instances[$step->name] = new $state->class($step);
-			} else {
-				$instances[$step->name] = new jUpgradeExtensions($step);
-			}
-		}
-		return $instances[$step->name];
-	}
-
 	public function upgrade()
 	{
+
 		if (!$this->upgradeComponents()) {
 			return false;
 		}
@@ -75,27 +55,11 @@ class jUpgradeExtensions extends jUpgrade
 	 */
 	protected function upgradeComponents()
 	{
-		$method = $this->params->get('method');
+		require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_components.php';
 
-		$this->source = '#__components AS c';
-		$this->destination = '#__extensions';
+		$components = new jUpgradeComponents();
 
-		if ($method == 'database') {
-			$where = array();
-			$where[] = "c.parent = 0";
-			$where[] = "c.option NOT IN ('com_admin', 'com_banners', 'com_cache', 'com_categories', 'com_checkin', 'com_config', 'com_contact', 'com_content', 'com_cpanel', 'com_frontpage', 'com_installer', 'com_jupgrade', 'com_languages', 'com_login', 'com_mailto', 'com_massmail', 'com_media', 'com_menus', 'com_messages', 'com_modules', 'com_newsfeeds', 'com_plugins', 'com_poll', 'com_search', 'com_sections', 'com_templates', 'com_user', 'com_users', 'com_weblinks', 'com_wrapper' )";
-
-			$rows = parent::getSourceData(
-				'name, \'component\' AS type, `option` AS element, 1 AS client_id, params',
-			 null,
-			 $where,
-				'id'
-			);
-		}
-
-		if ($method == 'rest') {
-			$rows = $this->getSourceDataRest('components');
-		}
+		$rows = $components->loadData('components');
 
 		$this->_addExtensions ( $rows, 'com' );
 
@@ -111,29 +75,14 @@ class jUpgradeExtensions extends jUpgrade
 	 */
 	protected function upgradeModules()
 	{
-		$method = $this->params->get('method');
+		require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_ext_modules.php';
 
-		$this->source = "#__modules";
-		$this->destination = "#__extensions";
+		$modules = new jUpgradeExtModules();
 
-		if ($method == 'database') {
-			$where = array();
-			$where[] = "module   NOT   IN   ('mod_mainmenu',   'mod_login',   'mod_popular',   'mod_latest',   'mod_stats',   'mod_unread',   'mod_online',   'mod_toolbar',   'mod_quickicon',   'mod_logged',   'mod_footer',   'mod_menu',   'mod_submenu',   'mod_status',   'mod_title',   'mod_login' )";
-
-			$rows = parent::getSourceData(
-				'title as name, \'module\' AS type, `module` AS element, params',
-				null,
-				$where,
-				'id',
-				'element'
-			);
-		}
-
-		if ($method == 'rest') {
-			$rows = $this->getSourceDataRest('ext_modules');
-		}
+		$rows = $modules->loadData('ext_modules');
 
 		$this->_addExtensions ( $rows, 'mod' );
+
 		return true;
 	}
 
@@ -146,27 +95,11 @@ class jUpgradeExtensions extends jUpgrade
 	 */
 	protected function upgradePlugins()
 	{
-		$method = $this->params->get('method');
+		require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_plugins.php';
 
-		$this->source = "#__plugins";
-		$this->destination = "#__extensions";
+		$plugin = new jUpgradePlugins();
 
-		if ($method == 'database') {
-			$where = array();
-			$where[] = "element   NOT   IN   ('joomla',   'ldap',   'gmail',   'openid',   'content',   'categories',   'contacts',   'sections',   'newsfeeds',   'weblinks',   'pagebreak',   'vote',   'emailcloak',   'geshi',   'loadmodule',   'pagenavigation', 'none',   'tinymce',   'xstandard',   'image',   'readmore',   'sef',   'debug',   'legacy',   'cache',   'remember', 'backlink', 'log', 'blogger', 'mtupdate' )";
-
-			$rows = parent::getSourceData(
-				'name, \'plugin\' AS type, element, folder, client_id, ordering, params',
-				null,
-				$where,
-				'id',
-				'element'
-			);
-		}
-
-		if ($method == 'rest') {
-			$rows = $this->getSourceDataRest('plugins');
-		}
+		$rows = $plugin->loadData('plugins');
 
 		$this->_addExtensions ( $rows, 'plg' );
 		return true;
@@ -261,7 +194,7 @@ class jUpgradeExtensions extends jUpgrade
 
 			$path = preg_replace($types, $directories, $name);
 
-			if (is_dir(JPATH_ROOT.DS."administrator/{$path}")) {
+			if (is_dir(JPATH_ROOT."/administrator/{$path}")) {
 				// Find j16upgrade.xml from the extension's administrator folders
 				$files = (array) JFolder::files(JPATH_ROOT."/administrator/{$path}", '^j25upgrade\.xml$', true, true);
 				$state->xmlfile = array_shift( $files );
@@ -324,7 +257,8 @@ class jUpgradeExtensions extends jUpgrade
 				}
 
 				$row->params = $this->convertParams($row->params);
-				if (!$this->_db->insertObject($this->destination, $row)) {
+
+				if (!$this->_db->insertObject('#__extensions', $row)) {
 					throw new Exception($this->_db->getErrorMsg());
 				}
 				$this->count = $this->count+1;

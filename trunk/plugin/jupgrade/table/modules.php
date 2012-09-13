@@ -68,7 +68,6 @@ class JUpgradeTableModules extends JUpgradeTable
 		parent::__construct( '#__modules', 'id', $db );
 	}
 
-
 	/**
 	 * Setting the conditions hook
 	 *
@@ -85,7 +84,6 @@ class JUpgradeTableModules extends JUpgradeTable
 				
 		return $conditions;
 	}
-
 
 	/**
 	 * 

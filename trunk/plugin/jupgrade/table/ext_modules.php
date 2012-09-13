@@ -24,7 +24,7 @@ class JUpgradeTableExt_modules extends JUpgradeTable
 	/** @var int Primary key */
 	var $id					= null;
 	/** @var string */
-	var $title				= null;
+	var $name				= null;
 	/** @var string */
 	var $showtitle			= null;
 	/** @var int */

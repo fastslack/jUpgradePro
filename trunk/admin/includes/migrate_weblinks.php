@@ -43,7 +43,7 @@ class jUpgradeWeblinks extends jUpgrade
 	{
 		$conditions = array();
 
-		$conditions['select'] = '`id`, `catid`, `sid`, `title`, `alias`, `url`, `description`, `date`, `hits`, '
+		$conditions['select'] = '`id`, `catid`, `title`, `alias`, `url`, `description`, `date`, `hits`, '
      .' `published` AS state, `checked_out`, `checked_out_time`, `ordering`, `archived`, `approved`,`params`';
 				
 		return $conditions;
@@ -77,7 +77,7 @@ class jUpgradeWeblinks extends jUpgrade
 	 * @since	3.0.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData()
+	protected function setDestinationData($rows = null)
 	{
 		// Getting the component parameter with global settings
 		$params = $this->getParams();
@@ -92,10 +92,18 @@ class jUpgradeWeblinks extends jUpgrade
 		foreach ($rows as &$row)
 		{
 			// Convert the array into an object.
-			$row = (object) $row;
+			$row = (array) $row;
+			
+			$cid = $row['catid'];
+			$row['catid'] = &$categories[$cid]->new;
 
-			$cid = $row->catid;
-			$row->catid = &$categories[$cid]->new;
+			if ($this->_version == '3.0') {
+				$row['created'] = $row['date'];
+				unset($row['approved']);
+				unset($row['archived']);
+				unset($row['date']);
+				unset($row['sid']);
+			}
 		}
 
 		parent::setDestinationData($rows);

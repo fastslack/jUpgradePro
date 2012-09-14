@@ -377,11 +377,11 @@ class jUpgradeProModel extends JModelLegacy
 	 * @return	none
 	 * @since	2.5.0
 	 */
-	function getMigrate($type = false) {
+	function getMigrate($table = false) {
 
-		$type = ($type == false) ? JRequest::getVar('type') : $type;
+		$table = ($table == false) ? JRequest::getVar('table') : $table;
 
-		$step = $this->_getStep($type);
+		$step = $this->_getStep($table);
 
 		// Require the file
 		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$step->name.'.php')) {

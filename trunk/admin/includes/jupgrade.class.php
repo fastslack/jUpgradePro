@@ -445,10 +445,10 @@ class jUpgrade
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.4
+	 * @since 3.0.0
 	 * @throws	Exception
 	 */
-	protected function &getSourceDataRest($type = null)
+	protected function &getSourceDataRest($table = null)
 	{
 		jimport('joomla.http.http');
 
@@ -462,7 +462,7 @@ class jUpgrade
 
 		// Cleanup
 		$data['task'] = "cleanup";
-		$data['type'] = ($type == null) ? $this->_step['name'] : $type;
+		$data['table'] = ($table == null) ? $this->_step['name'] : $table;
 		$cleanup = $http->get($this->params->get('rest_hostname'), $data);
 		
 		// Getting the total
@@ -487,10 +487,10 @@ class jUpgrade
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.4
+	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	protected function &getSourceDataRestIndividual($type = null)
+	protected function &getSourceDataRestIndividual($table = null)
 	{
 		jimport('joomla.http.http');
 
@@ -503,7 +503,7 @@ class jUpgrade
 		$data = $this->getRestData();
 	
 		// Getting the rows
-		$data['type'] = ($type == null) ? $this->_step['name'] : $type;
+		$data['table'] = ($table == null) ? $this->_step['name'] : $table;
 		$data['task'] = "row";
 
 		$response = $http->get($this->params->get('rest_hostname'), $data);
@@ -544,7 +544,7 @@ class jUpgrade
 
 		// Getting the total
 		$data['task'] = "lastid";
-		$data['type'] = $this->_step['name'];
+		$data['table'] = $this->_step['name'];
 		$lastid = $http->get($this->params->get('rest_hostname'), $data);
 		return (int) $lastid->body;
 	}

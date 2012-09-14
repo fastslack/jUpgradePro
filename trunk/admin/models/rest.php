@@ -44,7 +44,7 @@ class jUpgradeProModelRest extends jUpgradeProModel
 		
 		// Getting the total
 		$data['task'] = "total";
-		$data['type'] = $step->name;
+		$data['table'] = $step->name;
 		$total = $http->get($jupgrade->params->get('rest_hostname'), $data);
 		$step->total = (int) $total->body;
 
@@ -78,7 +78,7 @@ class jUpgradeProModelRest extends jUpgradeProModel
 		
 		// Getting the total
 		$data['task'] = "row";
-		$data['type'] = JRequest::getVar('type');
+		$data['table'] = JRequest::getVar('table');
 		
 		$response = $http->get($jupgrade->params->get('rest_hostname'), $data);
 		if ($response->body != '') {

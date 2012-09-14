@@ -282,7 +282,7 @@ var jUpgrade = new Class({
 				});
 				
 				// Start the checks
-				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=rest&task=migrate&type='+object.name;			
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=rest&task=migrate&table='+object.name;			
 				
 				for (i=1;i<=object.total;i++) {
 					rm.addRequest(i, row);			

@@ -24,7 +24,56 @@ defined('JPATH_BASE') or die();
  * @tutorial	Joomla.Framework/jtable.cls
  */
 class JUpgradeTable extends JTable
-{
+{	
+	/**
+	 * 
+	 *
+	 * @return  boolean  
+	 *
+	 * @since   3.0
+	 */
+	public function getRow()
+	{
+		// Get the next id
+		$id = $this->getNextID();
+		// Load the row
+		$this->load($id);
+		// Check if the row is loaded
+		$key = $this->getKeyName();
+		if ($this->$key == 0) {
+			return false;
+		}
+		// Migrate it
+		$this->migrate();
+		// Return as JSON
+		return $this->toJSON();
+	}
+
+	/**
+	 * 
+	 *
+	 * @return  boolean 
+	 *
+	 * @since   3.0
+	 */
+	public function getCleanup()
+	{
+		$table = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
+
+		// Getting the database instance
+		$db = JFactory::getDbo();	
+
+		$query = "UPDATE jupgrade_plugin_steps SET cid = 0"; 
+		if ($table != false) {
+			$query .= " WHERE name = '{$table}'";
+		}
+
+		$db->setQuery( $query );
+		$result = $db->query();
+
+		return true;
+	}
+	
 	/**
 	 * 
 	 *
@@ -59,10 +108,8 @@ class JUpgradeTable extends JTable
 	
 		$db =& $this->getDBO();
 
-		$type = (($this->_type == 'components') OR ($this->_type == 'ext_modules') OR ($this->_type == 'plugins')) ? 'extensions' : $this->_type;
-
 		$query = 'SELECT `cid` FROM jupgrade_plugin_steps'
-		. ' WHERE name = '.$db->quote($type);
+		. ' WHERE name = '.$db->quote($this->_type);
 		$db->setQuery( $query );
 		$stepid = (int) $db->loadResult();
 
@@ -113,9 +160,7 @@ class JUpgradeTable extends JTable
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$type = (($this->_type == 'components') OR ($this->_type == 'ext_modules') OR ($this->_type == 'plugins')) ? 'extensions' : $this->_type;
-
-		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($type);
+		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($this->_type);
 
 		$db->setQuery( $query );
 		return $db->query();
@@ -217,7 +262,7 @@ class JUpgradeTable extends JTable
 	 * @access	public
 	 * @return	int	The total of rows
 	 */
-	public function total()
+	public function getTotal()
 	{
 		$db =& $this->getDBO();
 
@@ -247,7 +292,7 @@ class JUpgradeTable extends JTable
 	 * @access	public
 	 * @return	int	The last id
 	 */
-	public function lastid()
+	public function getLastid()
 	{
 		$db =& $this->getDBO();
 

@@ -47,118 +47,33 @@ class JRESTDispatcher
 		// Loading params
 		$this->_parameters = $parameters;
 
+		$task = $this->_parameters['HTTP_TASK'];
+		$table = $this->_parameters['HTTP_TABLE'];
+		$files = $this->_parameters['HTTP_FILES'];
+
 		// Loading table
-		if (isset($this->_parameters['HTTP_TYPE'])) {
+		if (isset($table)) {
 			JTable::addIncludePath(JPATH_PLUGINS.'/system/jupgrade/table');
-			$this->_table = JUpgradeTable::getInstance($this->_parameters['HTTP_TYPE'], 'JUpgradeTable');
+			$class = JUpgradeTable::getInstance($this->_parameters['HTTP_TABLE'], 'JUpgradeTable');
 		}
 
-		//
-		if (array_key_exists('HTTP_TASK', $parameters)) {
-
-			$task = $this->_parameters['HTTP_TASK'];
-
-			// 
-			$method = 'get'.ucfirst($task);
-
-			// Does the method exist?
-			if (method_exists($this, $method))
-			{
-				return $this->$method();
-			}
-			else
-			{
-				return false;	
-			}
-
-		}else{
-			return false;
-		}
-	}
-	
-
-	/**
-	 * 
-	 *
-	 * @return  boolean
-	 *
-	 * @since   3.0
-	 */
-	public function getTotal()
-	{
-		return $this->_table->total();
-	}
-	
-	/**
-	 * 
-	 *
-	 * @return  boolean  
-	 *
-	 * @since   3.0
-	 */
-	public function getRow()
-	{
-		// Get the next id
-		$id = $this->_table->getNextID();
-		// Load the row
-		$this->_table->load($id);
-		// Check if the row is loaded
-		$key = $this->_table->getKeyName();
-		if ($this->_table->$key == 0) {
-			return false;
-		}
-		// Migrate it
-		$this->_table->migrate();
-		// Return as JSON
-		return $this->_table->toJSON();
-	}
-
-	/**
-	 * 
-	 *
-	 * @return  boolean
-	 *
-	 * @since   3.0
-	 */
-	public function getLastid()
-	{	
-		return $this->_table->lastid();
-	}
-
-	/**
-	 * 
-	 *
-	 * @return  boolean 
-	 *
-	 * @since   3.0
-	 */
-	public function getCleanup()
-	{
-		$type = isset($this->_parameters['HTTP_TYPE']) ? $this->_parameters['HTTP_TYPE'] : '';
-
-		return $this->cleanup($type);
-	}
-	
-	/**
-	 * 
-	 *
-	 * @return  boolean  
-	 *
-	 * @since   3.0
-	 */
-	public function cleanup($type)
-	{
-		// Getting the database instance
-		$db = JFactory::getDbo();	
-
-		$query = "UPDATE jupgrade_plugin_steps SET cid = 0"; 
-		if ($type != false) {
-			$query .= " WHERE name = '{$type}'";
+		// Loading table
+		if (isset($files)) {
+			require_once JPATH_PLUGINS . '/system/jupgrade/files.php';
+			$class = new JUpgradeFiles();
 		}
 
-		$db->setQuery( $query );
-		$result = $db->query();
+		// Get the method name
+		$method = 'get'.ucfirst($task);
 
-		return true;
-	}	
+		// Does the method exist?
+		if (method_exists($class, $method))
+		{
+			return $class->$method();
+		}
+		else
+		{
+			return false;	
+		}
+	}
 }

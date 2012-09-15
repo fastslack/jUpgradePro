@@ -44,6 +44,8 @@ class JRESTMessage
 		'HTTP_AUTH_PW',
 		'HTTP_TASK',
 		'HTTP_TYPE',
+		'HTTP_TABLE',
+		'HTTP_FILES',
 		'HTTP_ID',
 		'AUTH_USER',
 		'AUTH_PW'

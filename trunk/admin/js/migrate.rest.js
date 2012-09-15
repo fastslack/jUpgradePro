@@ -120,7 +120,7 @@ var jUpgrade = new Class({
 					if (object.number == 100) {
 						pb0.set(100);
 						pb0.finish();
-						self.files(e);
+						self.migrate(e);
 					}
 
 				}
@@ -164,7 +164,7 @@ var jUpgrade = new Class({
 			checks.send();
 
 		}else{
-			self.download(e);
+			self.migrate(e);
 		}
 	}, // end function
 

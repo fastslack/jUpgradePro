@@ -69,33 +69,38 @@ window.addEvent('domready', function() {
 				<div id="checks">
 					<p class="text"><?php echo JText::_('Checking and cleaning...'); ?></p>
 					<div id="pb0"></div>
-					<div><small><i><span id="checkstatus"><?php echo JText::_('Preparing for check...'); ?></span></i></small></div>
+					<div><small><i><span id="checkstatus"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
 				</div>
 
 				<div id="migration">
 					<p class="text"><?php echo JText::_('Upgrading progress...'); ?></p>
 					<div id="pb4"></div>
-					<div><small><i><span id="status"><?php echo JText::_('Preparing for migration'); ?></span></i></small></div>
+					<div><small><i><span id="status"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
 					<div id="counter">
 						<i><small><b><span id="currItem">0</span></b> items /
 						<b><span id="totalItems">0</span></b> items</small></i>
 					</div>
 				</div>
 
-				<div id="templates">
-					<p class="text"><?php echo JText::_('Copying templates...'); ?></p>
-					<div id="pb5"></div>
-				</div>
-
 				<div id="files">
 					<p class="text"><?php echo JText::_('Copying images/media files...'); ?></p>
+					<div id="pb5"></div>
+					<div><small><i><span id="files_status"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
+					<div id="files_counter">
+						<i><small><b><span id="files_currItem">0</span></b> items /
+						<b><span id="files_totalItems">0</span></b> items</small></i>
+					</div>
+				</div>
+
+				<div id="templates">
+					<p class="text"><?php echo JText::_('Copying templates...'); ?></p>
 					<div id="pb6"></div>
 				</div>
 
 				<div id="extensions">
 					<p class="text"><?php echo JText::_('Upgrading 3rd extensions...'); ?></p>
 					<div id="pb7"></div>
-					<div><small><i><span id="status_ext"><?php echo JText::_('Preparing for 3rd extensions migration'); ?></span></i></small></div>
+					<div><small><i><span id="status_ext"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
 				</div>
 
 				<div id="done">

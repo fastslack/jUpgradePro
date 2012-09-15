@@ -216,6 +216,7 @@ class jUpgradeProModel extends JModelLegacy
 		
 			// Getting the total
 			$data['task'] = "cleanup";
+			$data['files'] = "images";
 			$response = $http->get($params->rest_hostname, $data);
 		}
 
@@ -267,7 +268,7 @@ class jUpgradeProModel extends JModelLegacy
 		// Cleanup 3rd extensions
 		$query = "DELETE FROM jupgrade_steps WHERE id > 18";
 		$this->_db->setQuery($query);
-		$this->_db->query();
+		//$this->_db->query();
 
 		// Truncate the selected tables
 		$tables = array();
@@ -377,11 +378,11 @@ class jUpgradeProModel extends JModelLegacy
 	 * @return	none
 	 * @since	2.5.0
 	 */
-	function getMigrate($type = false) {
+	function getMigrate($table = false) {
 
-		$type = ($type == false) ? JRequest::getVar('type') : $type;
+		$table = ($table == false) ? JRequest::getVar('table') : $table;
 
-		$step = $this->_getStep($type);
+		$step = $this->_getStep($table);
 
 		// Require the file
 		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$step->name.'.php')) {

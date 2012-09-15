@@ -120,7 +120,7 @@ var jUpgrade = new Class({
 					if (object.number == 100) {
 						pb0.set(100);
 						pb0.finish();
-						self.migrate(e);
+						self.files(e);
 					}
 
 				}
@@ -282,7 +282,7 @@ var jUpgrade = new Class({
 				});
 				
 				// Start the checks
-				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=rest&task=migrate&type='+object.name;			
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=rest&task=migrate&table='+object.name;			
 				
 				for (i=1;i<=object.total;i++) {
 					rm.addRequest(i, row);			
@@ -299,7 +299,151 @@ var jUpgrade = new Class({
 
 	}, // end function
 
+	/**
+	 * Run the files copying
+	 *
+	 * @return	bool
+	 * @since	1.2.0
+	 */
+	files: function(e) {
+		var self = this;
 
+		// CSS stuff
+		$('files').setStyle('display', 'block');
+
+		var pb5 = new dwProgressBar({
+			container: $('pb5'),
+			startPercentage: 10,
+			speed: 1000,
+			boxID: 'pb5-box',
+			percentageID: 'pb5-perc',
+			displayID: 'text',
+			displayText: false
+		});
+
+		// Get the status element
+		status = document.getElementById('files_status');
+		// Get the migration_text element
+		migration_text = document.getElementById('files_text');
+		// Get the currItem element
+		currItem = document.getElementById('files_currItem');
+		// Get the totalItems element
+		totalItems = document.getElementById('files_totalItems');
+
+		// Declare counter
+		var counter = 0;
+
+		var rm = new Request.Multiple({
+			onRequest : function() {
+				//console.log('RM request init');
+			},
+			onComplete : function() {
+				//console.log('RM complete');
+			}
+		});
+
+		//
+		// 
+		//
+		var file = new Request({
+			link: 'chain',
+			method: 'get'
+		}); // end Request
+	
+		//
+		// 
+		//
+		var step = new Request({
+			link: 'chain',
+			url: 'index.php?option=com_jupgradepro&format=raw&view=rest&task=imageslist',
+			method: 'get'
+		}); // end Request		
+
+		step.addEvents({
+			'complete': function(response) {
+				//console.log(response);
+				var object = JSON.decode(response);
+				var counter = 0;
+
+				// Changing title and statusbar
+				status.innerHTML = 'Getting image list';
+				currItem.innerHTML = 0;
+				totalItems.innerHTML = object.total;
+
+				// Adding event to the row request
+				file.addEvents({
+					'complete': function(response) {
+						//console.log(response);
+						counter = counter + 1;
+						currItem.innerHTML = counter;
+						status.innerHTML = 'Getting '+object.images[counter];						
+
+						percent = (counter / object.total) * 100;
+
+						pb5.set(percent);
+
+						if (counter == object.total) {
+							self.done();
+						}
+						
+					}
+				});
+				
+				// Start the checks
+				file.options.url = 'index.php?option=com_jupgradepro&format=raw&view=rest&task=image&files=images';			
+				
+				for (i=1;i<=object.total;i++) {
+					rm.addRequest(i, file);			
+				}
+		
+				rm.runAll();			
+			}
+		});
+
+		step.send();
+
+		// Scroll the window
+		var myScroll = new Fx.Scroll(window).toBottom();
+
+
+/*
+
+		//
+		// Files 
+		//
+		var files = new Request({
+			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=files',
+			method: 'get',
+			noCache: true
+		}); // end Request		
+
+		files.addEvents({
+			'complete': function(response) {
+
+				pb6.set(100);
+				pb6.finish();
+
+				var object = JSON.decode(response);
+
+				if (self.options.debug_php == 1) {
+					text = document.getElementById('debug');
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[files]</b><br><br>' +object.text;
+				}
+
+				if (self.options.skip_extensions == 1) {
+					self.done();
+				}else{
+					self.extensions();
+				}
+
+			}
+		});
+
+		// Start the checks
+		files.send();
+*/
+
+	}, // end function
 
 
 
@@ -389,68 +533,6 @@ var jUpgrade = new Class({
 
 		// Start the checks
 		templates.send();
-
-	}, // end function
-
-	/**
-	 * Run the files copying
-	 *
-	 * @return	bool
-	 * @since	1.2.0
-	 */
-	files: function(e) {
-		var self = this;
-
-		var mySlideTem = new Fx.Slide('files');
-		mySlideTem.hide();
-		$('files').setStyle('display', 'block');
-		mySlideTem.toggle();
-
-		var pb6 = new dwProgressBar({
-			container: $('pb6'),
-			startPercentage: 20,
-			speed: 1000,
-			boxID: 'pb6-box',
-			percentageID: 'pb6-perc',
-			displayID: 'text',
-			displayText: false
-		});
-
-		var myScroll = new Fx.Scroll(window).toBottom();
-
-		//
-		// Files 
-		//
-		var files = new Request({
-			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=files',
-			method: 'get',
-			noCache: true
-		}); // end Request		
-
-		files.addEvents({
-			'complete': function(response) {
-
-				pb6.set(100);
-				pb6.finish();
-
-				var object = JSON.decode(response);
-
-				if (self.options.debug_php == 1) {
-					text = document.getElementById('debug');
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[files]</b><br><br>' +object.text;
-				}
-
-				if (self.options.skip_extensions == 1) {
-					self.done();
-				}else{
-					self.extensions();
-				}
-
-			}
-		});
-
-		// Start the checks
-		files.send();
 
 	}, // end function
 

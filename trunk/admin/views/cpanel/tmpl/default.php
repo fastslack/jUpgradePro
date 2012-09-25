@@ -39,11 +39,11 @@ window.addEvent('domready', function() {
 
 	/* Init jUpgrade */
 	var jupgrade = new jUpgrade({
+		skip_checks: <?php echo $params->get("skip_checks") ? $params->get("skip_checks") : 0; ?>,
     skip_templates: <?php echo $params->get("skip_templates") ? $params->get("skip_templates") : 0; ?>,
     skip_extensions: <?php echo $params->get("skip_extensions") ? $params->get("skip_extensions") : 0; ?>,
     positions: <?php echo $params->get("positions") ? $params->get("positions") : 0; ?>,
-    debug_php: <?php echo $params->get("debug") ? $params->get("debug") : 0; ?>,
-    debug_js: <?php echo $params->get("debug") ? $params->get("debug") : 0; ?>
+    debug: <?php echo $params->get("debug") ? $params->get("debug") : 0; ?>,
 	});
 
 });

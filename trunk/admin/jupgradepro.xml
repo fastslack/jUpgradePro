@@ -7,7 +7,7 @@
 	<copyright>Copyright 2006 - 2012 Matias Aguirre. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later.</license>
 	<creationDate>2012-08-30</creationDate>
-	<version>3.0.0beta2</version>
+	<version>3.0.0-RC1</version>
 	<description></description>
 
 	<install>
@@ -26,7 +26,6 @@
 		<files folder="admin">
 			<folder>controllers</folder>
 			<folder>css</folder>
-			<folder>extensions</folder>
 			<folder>images</folder>
 			<folder>includes</folder>
 			<folder>js</folder>

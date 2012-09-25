@@ -14,21 +14,14 @@
 // No direct access.
 defined('_JEXEC') or die;
 
-$document	= JFactory::getDocument();
-
+// Get the version
 $version = "v{$this->version}";
-
 // get params
 $params	= $this->params;
-
-$m = $params->get('method');
-
-$method = isset($m) ? $m : 'rest';
-
 // get document to add scripts
 $document	= JFactory::getDocument();
 $document->addScript('components/com_jupgradepro/js/dwProgressBar.js');
-$document->addScript("components/com_jupgradepro/js/migrate.{$method}.js");
+$document->addScript("components/com_jupgradepro/js/migrate.js");
 $document->addScript('components/com_jupgradepro/js/requestmultiple.js');
 $document->addStyleSheet("components/com_jupgradepro/css/jupgrade.css");
 ?>
@@ -36,9 +29,9 @@ $document->addStyleSheet("components/com_jupgradepro/css/jupgrade.css");
 
 window.addEvent('domready', function() {
 
-
 	/* Init jUpgrade */
 	var jupgrade = new jUpgrade({
+		method: '<?php echo $params->get("method") ? $params->get("method") : 0; ?>',
 		skip_checks: <?php echo $params->get("skip_checks") ? $params->get("skip_checks") : 0; ?>,
     skip_templates: <?php echo $params->get("skip_templates") ? $params->get("skip_templates") : 0; ?>,
     skip_extensions: <?php echo $params->get("skip_extensions") ? $params->get("skip_extensions") : 0; ?>,

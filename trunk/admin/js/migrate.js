@@ -14,7 +14,7 @@ var jUpgrade = new Class({
   Implements: [Options, Events],
 
   options: {
-    mode: 1,
+    method: 'rest',
     skip_checks: 0,
     positions: 0,
     debug: 0
@@ -159,9 +159,8 @@ var jUpgrade = new Class({
 			checks.send();
 
 		}else{
-			self.download(e);
+			self.migrate(e);
 		}
-
 	}, // end function
 
 	/**
@@ -172,6 +171,12 @@ var jUpgrade = new Class({
 	 */
 	migrate: function(e) {
 		var self = this;
+
+		var method = self.options.method;
+
+		if (method == 'database') {
+			method = 'ajax';
+		}
 
 		// CSS stuff
 		$('migration').setStyle('display', 'block');
@@ -228,13 +233,13 @@ var jUpgrade = new Class({
 		//
 		var step = new Request({
 			link: 'chain',
-			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=step',
+			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=step',
 			method: 'get'
 		}); // end Request		
 
 		step.addEvents({
 			'complete': function(response) {
-				console.log(response);
+				//console.log(response);
 				var object = JSON.decode(response);
 				var counter = 0;
 
@@ -269,10 +274,7 @@ var jUpgrade = new Class({
 						currItem.innerHTML = counter;
 						
 						if (counter == object.total) {
-							//console.log(object);
-
 							if (object.end == true) {
-								//$clear(step);
 								pb4.finish();
 								this.cancel();
 								self.done();
@@ -284,7 +286,7 @@ var jUpgrade = new Class({
 				});
 				
 				// Start the checks
-				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=migrate&table='+object.name;			
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=migrate&table='+object.name;			
 				
 				for (i=1;i<=object.total;i++) {
 					rm.addRequest(i, row);			

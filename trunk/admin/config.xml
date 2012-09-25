@@ -53,6 +53,15 @@
 			default=""
 		/>
 
+		<field
+			name="rest_key"
+			type="password"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_KEY"
+			description="COM_JUPGRADEPRO_CONFIG_KEY_DESC"
+			default=""
+		/>
+
 	</fieldset>
 
 	<fieldset
@@ -79,7 +88,7 @@
 			type="text"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_HOSTNAME"
-			description="COM_JUPGRADEPRO_CONFIG_HOSTNAME_DESC"
+			description="COM_JUPGRADEPRO_CONFIG_HOSTNAME_DB_DESC"
 			default="localhost"
 		/>
 
@@ -88,7 +97,7 @@
 			type="text"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_USERNAME"
-			description="COM_JUPGRADEPRO_CONFIG_USERNAME_DESC"
+			description="COM_JUPGRADEPRO_CONFIG_USERNAME_DB_DESC"
 			default=""
 		/>
 
@@ -97,7 +106,7 @@
 			type="password"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_PASSWORD"
-			description="COM_JUPGRADEPRO_CONFIG_PASSWORD_DESC"
+			description="COM_JUPGRADEPRO_CONFIG_PASSWORD_DB_DESC"
 			default=""
 		/>
 
@@ -106,7 +115,7 @@
 			type="text"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_DATABASE"
-			description="COM_JUPGRADEPRO_CONFIG_DATABASE_DESC"
+			description="COM_JUPGRADEPRO_CONFIG_DATABASE_DB_DESC"
 			default=""
 		/>
 
@@ -117,15 +126,6 @@
 			label="COM_JUPGRADEPRO_CONFIG_PREFIX"
 			description="COM_JUPGRADEPRO_CONFIG_PREFIX_DESC"
 			default="jos_"
-		/>
-
-		<field
-			name="limit"
-			type="text"
-			size="60"
-			label="COM_JUPGRADEPRO_CONFIG_LIMIT"
-			description="COM_JUPGRADEPRO_CONFIG_LIMIT_DESC"
-			default="10000"
 		/>
 
 	</fieldset>
@@ -139,7 +139,7 @@
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
 		</field>
-		<field name="skip_files" type="radio" default="1" label="Skip images/media migration" description="">
+		<field name="skip_files" type="radio" default="1" label="Skip images/media migration" description="" disable="1">
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
 		</field>

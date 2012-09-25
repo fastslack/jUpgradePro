@@ -8,8 +8,8 @@
 # * @license     GNU/GPL
 # 
 
-PROJECT="jupgradepro"
-VERSION="3.0.0alpha1"
+PROJECT="jupgradepro-free"
+VERSION="3.0.0-RC1"
 
 DIR="com_$PROJECT"
 PACKAGE="com_$PROJECT-$VERSION.zip"

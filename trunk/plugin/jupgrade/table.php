@@ -50,7 +50,10 @@ class JUpgradeTable extends JTable
 			// Return as JSON
 			return $this->toJSON();
 		}else{
-			return false;
+			JResponse::setHeader('status', 204);
+			JResponse::setBody('No content');
+			JResponse::sendHeaders();
+			exit;
 		}
 	}
 
@@ -124,7 +127,7 @@ class JUpgradeTable extends JTable
 		$db->setQuery( $query );
 		$rows = $db->loadAssocList();
 
-		if (is_array($rows[$oid])) {
+		if (array_key_exists($oid, $rows)) {
 			$this->_updateID($oid+1);
 			return $this->bind($rows[$oid]);
 		}

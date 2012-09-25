@@ -119,6 +119,4 @@ class JUpgradeTableModules extends JUpgradeTable
 			$this->module = "mod_articles_news";
 		}
 	}
-
-
 }

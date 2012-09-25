@@ -12,7 +12,8 @@
 	<files>
 		<filename plugin="jupgrade">jupgrade.php</filename>
 		<folder>jupgrade</folder>
-	</files>
-	<params>
-	</params>
+        </files>
+        <params>
+          <param name="client_key" type="password" default="" label="Key of the client side" description="Key of the client side" />
+        </params>
 </install>

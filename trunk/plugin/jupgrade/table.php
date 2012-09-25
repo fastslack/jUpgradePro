@@ -26,31 +26,36 @@ defined('JPATH_BASE') or die();
 class JUpgradeTable extends JTable
 {	
 	/**
-	 * 
+	 * Get the row
 	 *
-	 * @return  boolean  
+	 * @return  string/json	The json row
 	 *
 	 * @since   3.0
 	 */
 	public function getRow()
 	{
 		// Get the next id
-		$id = $this->getNextID();
+		$id = $this->_getStepID();
 		// Load the row
-		$this->load($id);
-		// Check if the row is loaded
-		$key = $this->getKeyName();
-		if ($this->$key == 0) {
+		$load = $this->load($id);
+
+		if ($load != false) {
+			// Check if the row is loaded
+			$key = $this->getKeyName();
+			if ($this->$key == 0) {
+				return false;
+			}
+			// Migrate it
+			$this->migrate();
+			// Return as JSON
+			return $this->toJSON();
+		}else{
 			return false;
 		}
-		// Migrate it
-		$this->migrate();
-		// Return as JSON
-		return $this->toJSON();
 	}
 
 	/**
-	 * 
+	 * Cleanup
 	 *
 	 * @return  boolean 
 	 *
@@ -73,87 +78,70 @@ class JUpgradeTable extends JTable
 
 		return true;
 	}
-	
-	/**
-	 * 
-	 *
-	 * @return  boolean  True if the user and pass are authorized
-	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
-	 */
-	public function getNextID()
-	{
-		// Getting the database instance
-		$db = JFactory::getDbo();	
-
-		$id = $this->_requestID();
-		$this->_updateID($id);
-
-		return $id;
-	}
 
 	/**
-	 * Get next id
+	 * Get the row
 	 *
 	 * @access	public
 	 * @return	int	The total of rows
 	 */
-	public function _requestID( $moreconditions = null)
+	public function load( $oid = null )
 	{
-		function processWhere($conditions) {
-			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-			return $where;
+		$key = $this->getKeyName();
+		$table = $this->getTableName();
+
+		if ($oid === null) {
+			return false;
 		}
-	
+
+		if ($oid !== null) {
+			$this->$key = $oid;
+		}
+
+		$this->reset();	
+
+		// Get the database instance	
 		$db =& $this->getDBO();
 
-		$query = 'SELECT `cid` FROM jupgrade_plugin_steps'
-		. ' WHERE name = '.$db->quote($this->_type);
-		$db->setQuery( $query );
-		$stepid = (int) $db->loadResult();
-
+		// Get the conditions
 		$conditions = $this->getConditionsHook();
 		
-		if ($moreconditions != null && is_array($conditions)) {
-			array_push($conditions['where'], $moreconditions);
-		}
-
+		//
+		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';		
+		$select = isset($conditions['select']) ? $conditions['select'] : '*';
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-		$order = isset($conditions['order']) ? $conditions['order'] : 'ASC';
 
-		if (strpos($order,'ASC') !== false) {
-			$conditions['where'][] = "{$this->getKeyName()} > {$stepid}";
-			$query = "SELECT MIN({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
-		}else if (strpos($order,'DESC') !== false) {
-			if ($stepid == 0) {
-				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
-			}else{
-				$conditions['where'][] = "{$this->getKeyName()} < {$stepid}";
-				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
-			}
+		//
+		$join = '';
+		if (isset($conditions['join'])) {
+			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
 		}
-		//echo $query;
-		$db->setQuery( $query );
-		$id = $db->loadResult();
+		
+		$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
 
-		if ($id) {
-			return (int)$id;
+		// Get the row
+		$query = "SELECT {$select} FROM {$table} {$as} {$join} {$where} {$order}";
+		$db->setQuery( $query );
+		$rows = $db->loadAssocList();
+
+		if (is_array($rows[$oid])) {
+			$this->_updateID($oid+1);
+			return $this->bind($rows[$oid]);
 		}
 		else
 		{
+			$this->_updateID(0);
 			$this->setError( $db->getErrorMsg() );
 			return false;
 		}
 	}
 
 	/**
-	 * 
+	 * Update the step id
 	 *
-	 * @return  boolean  True if the user and pass are authorized
+	 * @return  boolean  True if the update is ok
 	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
+	 * @since   3.0.0
 	 */
 	public function _updateID($id)
 	{
@@ -167,13 +155,30 @@ class JUpgradeTable extends JTable
 	}
 
 	/**
-	 * 
+	 * Update the step id
 	 *
-	 * 
+	 * @return  int  The next id
 	 *
-	 * @return	void
-	 * @since	3.0.0
-	 * @throws	Exception
+	 * @since   3.0.0
+	 */
+	public function _getStepID()
+	{
+		$db =& $this->getDBO();
+
+		$query = 'SELECT `cid` FROM jupgrade_plugin_steps'
+		. ' WHERE name = '.$db->quote($this->_type);
+		$db->setQuery( $query );
+		$stepid = (int) $db->loadResult();
+
+		return $stepid;
+	}
+
+	/**
+	 * Get the mysql conditions hook
+	 *
+	 * @return  array  The basic conditions
+	 *
+	 * @since   3.0.0
 	 */
 	public function getConditionsHook()
 	{
@@ -183,73 +188,12 @@ class JUpgradeTable extends JTable
 		return $conditions;	
 	}
 
-
 	/**
-	 * Get total of the rows of the table
+	 * Migrate hook
 	 *
-	 * @access	public
-	 * @return	int	The total of rows
-	 */
-	public function load( $oid = null )
-	{
-		$k = $this->_tbl_key;
-
-		if ($oid !== null) {
-			$this->$k = $oid;
-		}
-
-		$oid = $this->$k;
-
-		if ($oid === null) {
-			return false;
-		}
-		$this->reset();	
-
-		// Get the database instance	
-		$db =& $this->getDBO();
-
-		// Get the conditions
-		$conditions = $this->getConditionsHook();
-		
-		// Get `AS` mysql statement
-		$where_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
-		
-		// Add oid condition		
-		$oid_condition = "{$where_as}{$this->getKeyName()} = {$oid}";
-		array_push($conditions['where'], $oid_condition);
-
-		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';		
-		$select = isset($conditions['select']) ? $conditions['select'] : '*';
-		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-		
-		$join = '';
-		if (isset($conditions['join'])) {
-			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
-		}
-		
-		$order = isset($conditions['order']) ? $conditions['order'] : "{$this->getKeyName()} ASC";
-
-		// Get the row
-		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where} LIMIT 1";
-		$db->setQuery( $query );
-		//echo $query;
-		
-		if ($result = $db->loadAssoc( )) {
-			return $this->bind($result);
-		}
-		else
-		{
-			$this->setError( $db->getErrorMsg() );
-			return false;
-		}
-	}
-
-	/**
-	 * 
+	 * @return  nothing
 	 *
-	 * @access	public
-	 * @param		Array	Result to migrate
-	 * @return	Array	Migrated result
+	 * @since   3.0.0
 	 */
 	public function migrate()
 	{
@@ -271,8 +215,13 @@ class JUpgradeTable extends JTable
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 
+		$join = '';
+		if (isset($conditions['join'])) {
+			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
+		}
+
 		/// Get Total
-		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$as} {$where}";
+		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$as} {$join} {$where}";
 		$db->setQuery( $query );
 		$total = $db->loadResult();
 
@@ -299,13 +248,17 @@ class JUpgradeTable extends JTable
 		$conditions = $this->getConditionsHook();
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+
+		$join = '';
+		if (isset($conditions['join'])) {
+			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
+		}
 
 		$order = isset($conditions['order']) ? "ORDER BY {$conditions['order']}" : "ORDER BY {$this->getKeyName()} DESC";
 
 		// Get Total
-		$query = "SELECT id FROM {$this->_tbl} {$as} {$where} {$order} LIMIT 1";
+		$query = "SELECT id FROM {$this->_tbl} {$as} {$where} {$join} {$order} LIMIT 1";
 		$db->setQuery( $query );
 		$lastid = $db->loadResult();
 

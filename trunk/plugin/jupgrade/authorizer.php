@@ -30,25 +30,65 @@ class JRESTAuthorizer
 	 */
 	public function authorize(&$db, $params)
 	{
-			$query = 'SELECT `id`, `password`, `gid`'
-			. ' FROM #__users'
-			. ' WHERE username = '.$db->quote($params['AUTH_USER']);
-			$db->setQuery( $query );
-			$user_result = $db->loadObject();
+		// Uncrypt the request
+		$key = base64_decode($params['HTTP_KEY']);
+		$parts	= explode( ':', $key );
+		$key	= $parts[0];
 
-			if (!is_object($user_result)) {
-				JResponse::setHeader('status', 400);
-				JResponse::setBody('Username not found.');
-				JResponse::sendHeaders();
-				exit;
-			}
+		if (!isset($params['AUTH_USER']) && !isset($params['HTTP_USER']) ) {
+			JResponse::setHeader('status', 400);
+			JResponse::setBody('Username headers not found.');
+			JResponse::sendHeaders();
+			exit;
+		}
 
-			// Check the password
-			$parts	= explode( ':', $user_result->password );
-			$crypt	= $parts[0];
-			$salt	= @$parts[1];
-			$testcrypt = JUserHelper::getCryptedPassword($params['AUTH_PW'], $salt);
-		
-			return ($crypt == $testcrypt) ? true : false;
+		// Looking the username header
+		if (isset($params['AUTH_USER'])) {
+			$user_decode = base64_decode($params['AUTH_USER']);
+		} else if (isset($params['HTTP_USER'])) {
+			$user_decode = base64_decode($params['HTTP_USER']);
+		}
+
+		$parts	= explode( ':', $user_decode );
+		$user	= $parts[0];
+
+		// Looking the username header
+		if (isset($params['AUTH_PW'])) {
+			$password_decode = base64_decode($params['AUTH_PW']);
+		} else if (isset($params['HTTP_PW'])) {
+			$password_decode = base64_decode($params['HTTP_PW']);
+		}
+
+		$parts	= explode( ':', $password_decode );
+		$password	= $parts[0];
+
+		// Getting the local username and password
+		$query = 'SELECT `id`, `password`, `gid`'
+		. ' FROM #__users'
+		. ' WHERE username = '.$db->quote($user);
+		$db->setQuery( $query );
+		$user_result = $db->loadObject();
+
+		if (!is_object($user_result)) {
+			JResponse::setHeader('status', 400);
+			JResponse::setBody('Username not found.');
+			JResponse::sendHeaders();
+			exit;
+		}
+
+		if ($user_result->gid != 25) {
+			JResponse::setHeader('status', 400);
+			JResponse::setBody('Username is not Super Administrator');
+			JResponse::sendHeaders();
+			exit;
+		}
+
+		// Check the password
+		$parts	= explode( ':', $user_result->password );
+		$crypt	= $parts[0];
+		$salt	= @$parts[1];
+		$testcrypt = JUserHelper::getCryptedPassword($password, $salt);
+	
+		return ($crypt == $testcrypt) ? true : false;
 	}
 }

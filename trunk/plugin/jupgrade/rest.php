@@ -46,6 +46,8 @@ class JRESTMessage
 		'HTTP_TYPE',
 		'HTTP_TABLE',
 		'HTTP_FILES',
+		'HTTP_KEY',
+		'HTTP_USER',
 		'HTTP_ID',
 		'AUTH_USER',
 		'AUTH_PW'
@@ -186,6 +188,15 @@ class JRESTMessage
 		{
 			return trim($_SERVER['HTTP_AUTHORIZATION']);
 		}
+		elseif (isset($_SERVER['HTTP_AUTH_USER']))
+		{
+			return trim($_SERVER['HTTP_AUTH_USER']);
+		}
+		elseif (isset($_SERVER['HTTP_USER']))
+		{
+			return trim($_SERVER['HTTP_USER']);
+		}
+
 	}
 
 	/**
@@ -261,6 +272,10 @@ class JRESTMessage
 					$parameters['AUTH_USER'] = trim($_SERVER[$k]);
 				}else if (strpos($k, 'AUTH_PW')) {
 					$parameters['AUTH_PW'] = trim($_SERVER[$k]);
+				}else if (strpos($k, 'USER')) { 
+					$parameters['USER'] = trim($_SERVER[$k]);
+				}else if (strpos($k, 'PW')) {
+					$parameters['PW'] = trim($_SERVER[$k]);
 				}else{
 					$parameters[$k] = trim($_SERVER[$k]);
 				}

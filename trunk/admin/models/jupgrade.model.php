@@ -100,7 +100,7 @@ class jUpgradeProModel extends JModelLegacy
 		// Check for bad configurations
 		if ($params->method == "rest") {
 			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' || 
-					$params->rest_username == '' || $params->rest_password == '' ) {
+					$params->rest_username == '' || $params->rest_password == '' || $params->rest_key == '') {
 				$message['number'] = 412;
 				$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
 				echo json_encode($message);

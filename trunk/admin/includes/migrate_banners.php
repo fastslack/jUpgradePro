@@ -12,7 +12,7 @@
  */
 
 // Require the category class
-require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.php';
 
 /**
  * Upgrade class for Banners
@@ -95,7 +95,7 @@ class jUpgradeBanners extends jUpgrade
 	 * @since       0.4.
 	 * @throws      Exception
 	 */
-	protected function setDestinationData()
+	protected function setDestinationData($rows = null)
 	{
 		// Getting the component parameter with global settings
 		$params = $this->getParams();	
@@ -105,7 +105,9 @@ class jUpgradeBanners extends jUpgrade
 
 		foreach($rows as &$row)
 		{
-			$temp = new JParameter($row['params']);
+			$row = (array) $row;
+
+			$temp = new JRegistry($row['params']);
 			$temp->set('imageurl', 'images/banners/' . $row['imageurl']);
 			$row['params'] = json_encode($temp->toObject());
 

@@ -109,7 +109,7 @@ var jUpgrade = new Class({
 					//alert(response);
 					var object = JSON.decode(response);
 
-					if (self.options.debug_php == 1) {
+					if (self.options.debug == 1) {
 						text = document.getElementById('debug');
 						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[cleanup]</b><br><br>' +object.text;
 					}
@@ -139,7 +139,7 @@ var jUpgrade = new Class({
 
 					var object = JSON.decode(response);
 
-					if (self.options.debug_php == 1) {
+					if (self.options.debug == 1) {
 						text = document.getElementById('debug');
 						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[checks]</b><br><br>' +object.text;
 					}
@@ -183,7 +183,6 @@ var jUpgrade = new Class({
 		setTimeout(function() {
 			e = new Event(e);
 			mySlideWarning.slideOut();
-			e.stop();
 		}, 10000); 
 
 		// Progress bar
@@ -241,11 +240,11 @@ var jUpgrade = new Class({
 				var object = JSON.decode(response);
 				var counter = 0;
 
-				// Changing title and statusbar
-				pb4.set(object.id*6);
-				status.innerHTML = 'Migrating ' + object.title;
-				currItem.innerHTML = 0;
-				totalItems.innerHTML = object.total;
+				if (object == null) {
+					pb4.finish();
+					this.cancel();
+					self.done();
+				}
 
 				// Redirect if total == 0
 				if (object.total == 0) {
@@ -257,6 +256,12 @@ var jUpgrade = new Class({
 						step.send();
 					}
 				}
+
+				// Changing title and statusbar
+				pb4.set(object.id*6);
+				status.innerHTML = 'Migrating ' + object.title;
+				currItem.innerHTML = 0;
+				totalItems.innerHTML = object.total;
 
 				// Adding event to the row request
 				row.addEvents({

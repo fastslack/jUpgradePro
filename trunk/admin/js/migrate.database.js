@@ -107,7 +107,7 @@ var jUpgrade = new Class({
 
 					var object = JSON.decode(response);
 
-					if (self.options.debug_php == 1) {
+					if (self.options.debug == 1) {
 						text = document.getElementById('debug');
 						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[cleanup]</b><br><br>' +object.text;
 					}
@@ -137,7 +137,7 @@ var jUpgrade = new Class({
 
 					var object = JSON.decode(response);
 
-					if (self.options.debug_php == 1) {
+					if (self.options.debug == 1) {
 						text = document.getElementById('debug');
 						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[checks]</b><br><br>' +object.text;
 					}
@@ -174,11 +174,14 @@ var jUpgrade = new Class({
 		var self = this;
 
 		// CSS stuff
-		//var mySlideMigrate = new Fx.Slide('migration');
-		//mySlideMigrate.hide();
 		$('migration').setStyle('display', 'block');
 		$('warning').setStyle('display', 'block');
-		//mySlideMigrate.toggle();
+
+		var mySlideWarning = new Fx.Slide('warning');
+
+		setTimeout(function() {
+			mySlideWarning.slideOut();
+		}, 10000); 
 
 		// Progress bar
 		pb4 = new dwProgressBar({
@@ -244,7 +247,6 @@ var jUpgrade = new Class({
 				// Redirect if total == 0
 				if (object.total == 0) {
 					if (object.end == true) {
-						//$clear(step);
 						pb4.finish();
 						this.cancel();
 						self.done();
@@ -282,7 +284,7 @@ var jUpgrade = new Class({
 				});
 				
 				// Start the checks
-				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=migrate&type='+object.name;			
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=migrate&table='+object.name;			
 				
 				for (i=1;i<=object.total;i++) {
 					rm.addRequest(i, row);			

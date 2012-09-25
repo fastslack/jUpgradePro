@@ -102,7 +102,7 @@ class jUpgradeCategory extends jUpgrade
 
 			// The Joomla 1.6 database structure does not allow duplicate aliases
 			if (in_array($row['alias'], $aliases, true)) {
-				$row['alias'] .= $unique_alias_suffix;
+				$row['alias'] = $row['alias'].$unique_alias_suffix;
 				$unique_alias_suffix++;
 			}
 			$aliases[] = $row['alias'];

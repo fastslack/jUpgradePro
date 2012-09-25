@@ -24,7 +24,7 @@ class jUpgradeModulesMenu extends jUpgrade
 	 * @var		string	The name of the source database table.
 	 * @since	0.4.5
 	 */
-	protected $source = '#__modules_menu AS m';
+	protected $source = '#__modules_menu';
 
 	/**
 	 * @var		string	The name of the destination database table.
@@ -39,34 +39,26 @@ class jUpgradeModulesMenu extends jUpgrade
 	protected $_tbl_key = 'moduleid';
 
 	/**
-	 * Get the raw data for this part of the upgrade.
+	 * Setting the conditions hook
 	 *
-	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.5
+	 * @return	void
+	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function getConditionsHook()
 	{
-		// Creating the query
-		//$where = "m.moduleid NOT IN (2,3,4,8,13,14,15)";
+		$conditions = array();
 
-/*
-		$join = array();
-		$join[] = "INNER JOIN jupgrade_modules AS map ON  map.old = m.moduleid";
-		$join[] = "INNER JOIN jupgrade_menus AS men ON  men.old = m.menuid";
+		$conditions['as'] = "m";
 
-		// Getting the data
-		$rows = parent::getSourceData(
-			'map.new AS moduleid, men.new AS menuid',
-		  $join,
-			$where,
-			'm.moduleid'
-		);
-*/
+		$conditions['select'] = "moduleid, menuid";
 
-		$rows = parent::getSourceDatabase();
+		$conditions['join'][] = "LEFT JOIN #__modules AS modules ON modules.id = m.moduleid";
 
-		return $rows;
+		$conditions['where'][] = "m.moduleid NOT IN (1,2,3,4,8,13,14,15)";
+		$conditions['where'][] = "modules.module IN ('mod_breadcrumbs', 'mod_footer', 'mod_mainmenu', 'mod_menu', 'mod_related_items', 'mod_stats', 'mod_wrapper', 'mod_archive', 'mod_custom', 'mod_latestnews', 'mod_mostread', 'mod_search', 'mod_syndicate', 'mod_banners', 'mod_feed', 'mod_login', 'mod_newsflash', 'mod_random_image', 'mod_whosonline' )";
+				
+		return $conditions;
 	}
 
 	/**
@@ -76,27 +68,26 @@ class jUpgradeModulesMenu extends jUpgrade
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData()
+	protected function setDestinationData($rows = null)
 	{
-		// Clean the modules table
-		$query = "DELETE FROM {$this->destination} WHERE id >= 1";
-		$this->_db->setQuery($query);
-		$this->_db->query();
+		// Get the source data.
+		$rows = $this->loadData('modules_menu');
 
-		//
-		//parent::setDestinationData();
+		$modules_map = $this->getMapList('modules');
+		$menus_map = $this->getMapList('menus');
 
-/*
-		// Require the files
-		require_once JPATH_COMPONENT.DS.'includes'.DS.'helper.php';
+		// 
+		foreach ($rows as $row)
+		{
+			// Convert the array into an object.
+			$row = (object) $row;
 
-		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT.DS.'sql'.DS.'modules_menu.sql';
+			$row->moduleid = isset($modules_map[$row->moduleid]) ? $modules_map[$row->moduleid]->new : $row->moduleid;
 
-		// Import the sql file
-	  if (JUpgradeHelper::populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
-	  	return false;
-	  }
-*/
+			// Insert module
+			if (!$this->_db->insertObject($this->destination, $row)) {
+				throw new Exception($this->_db->getErrorMsg());
+			}
+		}
 	}
 }

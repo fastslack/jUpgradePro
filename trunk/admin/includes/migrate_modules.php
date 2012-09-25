@@ -64,13 +64,6 @@ class jUpgradeModules extends jUpgrade
 	{
 		$rows = parent::getSourceDatabase();
 
-		// Set up the mapping table for the old positions to the new positions.
-		//$map = self::getPositionsMap();
-		//$map_keys = array_keys($map);
-
-		// Getting the component parameter with global settings
-		//$params = $this->getParams();
-
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
@@ -98,13 +91,6 @@ class jUpgradeModules extends jUpgrade
 			else if ($row['module'] == "mod_newsflash") {
 				$row['module'] = "mod_articles_news";
 			}
-
-			## Change positions
-			//if ($params->positions == 0) {
-			//	if (in_array($row['position'], $map_keys)) {
-			//			$row['position'] = $map[$row['position']];
-			//	}
-			//}
 		}
 
 		return $rows;
@@ -123,9 +109,6 @@ class jUpgradeModules extends jUpgrade
 
 		// Getting the component parameter with global settings
 		$params = $this->getParams();
-
-		// Truncate jupgrade_modules table
-		$clean = $this->cleanDestinationData('jupgrade_modules');
 
 		// Get the source data.
 		$rows = $this->loadData('modules');
@@ -165,7 +148,7 @@ class jUpgradeModules extends jUpgrade
 				throw new Exception($this->_db->getErrorMsg());
 			}
 		}
-/*
+		/*
 		// Require the files
 		require_once JPATH_COMPONENT.DS.'includes'.DS.'helper.php';
 
@@ -176,7 +159,7 @@ class jUpgradeModules extends jUpgrade
 	  if (JUpgradeHelper::populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
 	  	return false;
 	  }
-*/
+		*/
 	}
 
 	/**

@@ -12,7 +12,7 @@
  */
 
 // Require the category class
-require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.php';
 
 /**
  * Upgrade class for categories
@@ -58,7 +58,7 @@ class jUpgradeCategories extends jUpgradeCategory
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData()
+	protected function setDestinationData($rows = null)
 	{
 		$params = $this->getParams();
 

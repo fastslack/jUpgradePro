@@ -54,8 +54,9 @@ class jUpgradeUsers extends jUpgradeUsersDefault
           $row['email'] = $row['email'].'v15';
       }
 
-			// Remove unused fields.
-			unset($row['gid']);
+			// Remove unused fields. 
+			$gid = 'gid';
+			unset($row[$gid]);
 		}
 
 		return $rows;

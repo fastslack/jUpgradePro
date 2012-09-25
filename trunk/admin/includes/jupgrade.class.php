@@ -265,9 +265,9 @@ class jUpgrade
 	 */
 	public function getSourceDatabase( )
 	{
-		$k = $this->_tbl_key;
+		$key = $this->_tbl_key;
 
-		$oid = $this->_requestID();
+		$oid = $this->_getStepID();
 
 		if ($oid === null) {
 			return false;
@@ -275,13 +275,6 @@ class jUpgrade
 
 		// Get the conditions
 		$conditions = $this->getConditionsHook();
-
-		// Get `AS` mysql statement
-		$where_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
-		
-		// Add oid condition		
-		$oid_condition = "{$where_as}{$this->getKeyName()} = {$oid}";
-		array_push($conditions['where'], $oid_condition);
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';		
 		$select = isset($conditions['select']) ? $conditions['select'] : '*';
@@ -293,69 +286,21 @@ class jUpgrade
 			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
 		}
 
-		$order = isset($conditions['order']) ? $conditions['order'] : "{$this->getKeyName()} ASC";
+		$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
 
 		// Get the row
-		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where} {$group_by} LIMIT 1";
+		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where} {$group_by} {$order}";
 		$this->_db_old->setQuery( $query );
 		//echo $query;
+		$rows = $this->_db_old->loadAssocList();
 
-		if ($result = $this->_db_old->loadAssocList( )) {
-			$this->_updateID($oid);
-			return $result;
-		}
-		else
-		{
-			throw new Exception( $this->_db_old->getErrorMsg() );
-			return false;
-		}
-	}
+		if (array_key_exists($oid, $rows)) {
+			$this->_updateID($oid+1);
 
-	/**
-	 * Get next id
-	 *
-	 * @access	public
-	 * @return	int	The total of rows
-	 */
-	public function _requestID( $moreconditions = null)
-	{
+			$return = array();
+			$return[] = $rows[$oid];
 
-		function processWhere($conditions) {
-			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-			return $where;
-		}
-
-		$query = 'SELECT `cid` FROM jupgrade_steps'
-		. ' WHERE name = '.$this->_db->quote($this->_step['name']);
-		$this->_db->setQuery( $query );
-		$stepid = (int) $this->_db->loadResult();
-
-		$conditions = $this->getConditionsHook();
-		
-		if ($moreconditions != null && is_array($conditions)) {
-			array_push($conditions['where'], $moreconditions);
-		}
-
-		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-		$order = isset($conditions['order']) ? $conditions['order'] : 'ASC';
-
-		if (strpos($order,'ASC') !== false) {
-			$conditions['where'][] = "{$this->getKeyName()} > {$stepid}";
-			$query = "SELECT MIN({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
-		}else if (strpos($order,'DESC') !== false) {
-			if ($stepid == 0) {
-				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
-			}else{
-				$conditions['where'][] = "{$this->getKeyName()} < {$stepid}";
-				$query = "SELECT MAX({$this->getKeyName()}) FROM {$this->getTableName()} {$as} ".processWhere($conditions)." LIMIT 1";
-			}
-		}
-
-		$this->_db_old->setQuery( $query );
-		$id = $this->_db_old->loadResult();
-
-		if ($id) {
-			return (int)$id;
+			return $return;
 		}
 		else
 		{
@@ -381,6 +326,23 @@ class jUpgrade
 	}
 
 	/**
+	 * Update the step id
+	 *
+	 * @return  int  The next id
+	 *
+	 * @since   3.0.0
+	 */
+	public function _getStepID()
+	{
+		$query = 'SELECT `cid` FROM `jupgrade_steps`'
+		. ' WHERE name = '. $this->_db->quote($this->_step['name']);
+		 $this->_db->setQuery( $query );
+		$stepid = (int)  $this->_db->loadResult();
+
+		return $stepid;
+	}
+
+	/**
 	 * Get total of the rows of the table
 	 *
 	 * @access	public
@@ -398,8 +360,13 @@ class jUpgrade
 
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 
+		$join = '';
+		if (isset($conditions['join'])) {
+			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
+		}
+
 		/// Get Total
-		$query = "SELECT COUNT(*) FROM {$this->source} {$as} {$where}";
+		$query = "SELECT COUNT(*) FROM {$this->source} {$as} {$join} {$where}";
 		$this->_db_old->setQuery( $query );
 		$total = $this->_db_old->loadResult();
 
@@ -433,10 +400,29 @@ class jUpgrade
 		$data = array();
 	
 		// Setting the headers for REST
-		$str = $this->params->get('rest_username').":".$this->params->get('rest_password');
+		$rest_username = $this->params->get('rest_username');
+		$rest_password = $this->params->get('rest_password');
+		$rest_key = $this->params->get('rest_key');
+
+		// Setting the headers for REST
+		$str = $rest_username.":".$rest_password;
 		$data['Authorization'] = base64_encode($str);
-		$data['AUTH_USER'] = $this->params->get('rest_username');
-    $data['AUTH_PW'] = $this->params->get('rest_password');
+
+		// Encoding user
+		$user_encode = $rest_username.":".$rest_key;
+		$data['AUTH_USER'] = base64_encode($user_encode);
+		// Sending by other way, some servers not allow AUTH_ values
+		$data['USER'] = base64_encode($user_encode);
+
+		// Encoding password
+		$pw_encode = $rest_password.":".$rest_key;
+		$data['AUTH_PW'] = base64_encode($pw_encode);
+		// Sending by other way, some servers not allow AUTH_ values
+		$data['PW'] = base64_encode($pw_encode);
+
+		// Encoding key
+		$key_encode = $rest_key.":".$rest_key;
+		$data['KEY'] = base64_encode($key_encode);
 
 		return $data;
 	}
@@ -507,6 +493,7 @@ class jUpgrade
 		$data['task'] = "row";
 
 		$response = $http->get($this->params->get('rest_hostname'), $data);
+
 		if ($response->body != '') {
 			$row = json_decode($response->body, true);
 		}

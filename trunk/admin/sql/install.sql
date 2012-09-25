@@ -64,8 +64,7 @@ INSERT INTO `jupgrade_steps` (`id`, `name`, `title`, `cid`, `class`, `category`,
 (14, 'banners_tracks', 'Banners Tracks', 0, 'jUpgradeBannersTracks', 0, 0, 0, ''),
 (15, 'contacts', 'Contacts', 0, 'jUpgradeContacts', 'com_contact_details', 0, 0, ''),
 (16, 'newsfeeds', 'NewsFeeds', 0, 'jUpgradeNewsfeeds', 'com_newsfeeds', 0, 0, ''),
-(17, 'weblinks', 'Weblinks', 0, 'jUpgradeWeblinks', 'com_weblinks', 0, 0, ''),
-(18, 'extensions', 'Extensions', 0, 'jUpgradeExtensions', 0, 0, 1, '');
+(17, 'weblinks', 'Weblinks', 0, 'jUpgradeWeblinks', 'com_weblinks', 0, 0, '');
 
 
 --

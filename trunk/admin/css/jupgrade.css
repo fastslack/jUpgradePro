@@ -167,7 +167,7 @@ h2.done {
 }
 .info {
     color: #00529B;
-    background: #BDE5F8 url('../images/icon-info.png') no-repeat 10px center;
+    //background: #BDE5F8 url('../images/icon-info.png') no-repeat 10px center;
 }
 .success {
     color: #4F8A10;

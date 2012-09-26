@@ -26,6 +26,7 @@ var jUpgrade = new Class({
 		this.setOptions(options);
 
 		$('warning').setStyle('display', 'none');
+		$('info').setStyle('display', 'none');
 		$('error').setStyle('display', 'none');
 		$('checks').setStyle('display', 'none');
 		$('migration').setStyle('display', 'none');
@@ -183,10 +184,19 @@ var jUpgrade = new Class({
 		$('warning').setStyle('display', 'block');
 
 		var mySlideWarning = new Fx.Slide('warning');
+		var mySlideJoke = new Fx.Slide('info');
 
 		setTimeout(function() {
 			mySlideWarning.slideOut();
 		}, 10000); 
+
+		setTimeout(function() {
+			mySlideJoke.slideIn();
+		}, 120000);
+
+		setTimeout(function() {
+			mySlideJoke.slideOut();
+		}, 135000);
 
 		// Progress bar
 		pb4 = new dwProgressBar({
@@ -239,7 +249,7 @@ var jUpgrade = new Class({
 
 		step.addEvents({
 			'complete': function(response) {
-				//console.log(response);
+				console.log(response);
 				var object = JSON.decode(response);
 				var counter = 0;
 
@@ -291,7 +301,7 @@ var jUpgrade = new Class({
 				for (i=1;i<=object.total;i++) {
 					rm.addRequest(i, row);			
 				}
-		
+
 				rm.runAll();						
 			}
 		});

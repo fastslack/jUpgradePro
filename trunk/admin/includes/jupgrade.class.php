@@ -366,7 +366,7 @@ class jUpgrade
 			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
 		}
 		if ( isset( $conditions['where_or'] ) ) {
-			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where_or'] ) : '';
+			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
 		}
 
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';

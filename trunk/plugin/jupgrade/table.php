@@ -39,21 +39,13 @@ class JUpgradeTable extends JTable
 		// Load the row
 		$load = $this->load($id);
 
-		if ($load != false) {
-			// Check if the row is loaded
-			$key = $this->getKeyName();
-			if ($this->$key == 0) {
-				return false;
-			}
+		if ($load !== false) {
 			// Migrate it
 			$this->migrate();
 			// Return as JSON
 			return $this->toJSON();
 		}else{
-			JResponse::setHeader('status', 204);
-			JResponse::setBody('No content');
-			JResponse::sendHeaders();
-			exit;
+			return false;
 		}
 	}
 
@@ -111,7 +103,7 @@ class JUpgradeTable extends JTable
 		
 		//
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';	
+		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';		
 		$select = isset($conditions['select']) ? $conditions['select'] : '*';
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 
@@ -217,6 +209,7 @@ class JUpgradeTable extends JTable
 		$conditions = $this->getConditionsHook();
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 
 		$join = '';
@@ -225,7 +218,7 @@ class JUpgradeTable extends JTable
 		}
 
 		/// Get Total
-		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$as} {$join} {$where}";
+		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$as} {$join} {$where}{$where_or}";
 		$db->setQuery( $query );
 		$total = $db->loadResult();
 
@@ -249,10 +242,14 @@ class JUpgradeTable extends JTable
 	{
 		$db =& $this->getDBO();
 
+		$key = $this->getKeyName();
+
 		$conditions = $this->getConditionsHook();
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+		$key_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
 
 		$join = '';
 		if (isset($conditions['join'])) {
@@ -262,7 +259,7 @@ class JUpgradeTable extends JTable
 		$order = isset($conditions['order']) ? "ORDER BY {$conditions['order']}" : "ORDER BY {$this->getKeyName()} DESC";
 
 		// Get Total
-		$query = "SELECT id FROM {$this->_tbl} {$as} {$where} {$join} {$order} LIMIT 1";
+		$query = "SELECT {$key_as}{$key} FROM {$this->_tbl} {$as} {$where}{$where_or} {$join} {$order} LIMIT 1";
 		$db->setQuery( $query );
 		$lastid = $db->loadResult();
 

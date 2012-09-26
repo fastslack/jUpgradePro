@@ -26,6 +26,8 @@ class JUpgradeTableSections extends JUpgradeTable
 {
 	/** @var int Primary key */
 	var $id					= null;
+	/** @var int Primary key */
+	var $old_id					= null;
 	/** @var string The menu title for the section (a short name)*/
 	var $title				= null;
 	/** @var string The full name for the section*/

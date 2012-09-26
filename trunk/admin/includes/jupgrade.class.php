@@ -277,7 +277,10 @@ class jUpgrade
 		$conditions = $this->getConditionsHook();
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
+		$where_or = '';
+		if (isset($conditions['where_or'])) {
+			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
+		}		
 		$select = isset($conditions['select']) ? $conditions['select'] : '*';
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 		$group_by = isset($conditions['group_by']) ? 'GROUP BY '.$conditions['group_by'] : '';
@@ -655,7 +658,7 @@ class jUpgrade
 	 */
 	public function getTableName()
 	{
-		return empty($this->destination) ? $this->source : $this->destination;
+		return $this->source;
 	}
 
 	/**

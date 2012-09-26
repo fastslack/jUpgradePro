@@ -253,11 +253,6 @@ var jUpgrade = new Class({
 				var object = JSON.decode(response);
 				var counter = 0;
 
-				if (self.options.debug == 1) {
-					text = document.getElementById('debug');
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[object.title]</b><br><br>' +object.text;
-				}
-
 				if (object == null) {
 					pb4.finish();
 					this.cancel();

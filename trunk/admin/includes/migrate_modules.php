@@ -103,7 +103,7 @@ class jUpgradeModules extends jUpgrade
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData()
+	protected function setDestinationData($rows = null)
 	{
 		$table	= empty($this->destination) ? $this->source : $this->destination;
 
@@ -150,10 +150,10 @@ class jUpgradeModules extends jUpgrade
 		}
 		/*
 		// Require the files
-		require_once JPATH_COMPONENT.DS.'includes'.DS.'helper.php';
+		require_once JJPATH_COMPONENT_ADMINISTRATOR.'includes'.DS.'helper.php';
 
 		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT.DS.'sql'.DS.'modules.sql';
+		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'sql'.DS.'modules.sql';
 
 		// Import the sql file
 	  if (JUpgradeHelper::populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {

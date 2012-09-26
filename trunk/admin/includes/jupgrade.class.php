@@ -276,7 +276,8 @@ class jUpgrade
 		// Get the conditions
 		$conditions = $this->getConditionsHook();
 
-		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';		
+		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
 		$select = isset($conditions['select']) ? $conditions['select'] : '*';
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 		$group_by = isset($conditions['group_by']) ? 'GROUP BY '.$conditions['group_by'] : '';
@@ -289,7 +290,7 @@ class jUpgrade
 		$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
 
 		// Get the row
-		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where} {$group_by} {$order}";
+		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where}{$where_or} {$group_by} {$order}";
 		$this->_db_old->setQuery( $query );
 		//echo $query;
 		$rows = $this->_db_old->loadAssocList();
@@ -353,9 +354,13 @@ class jUpgrade
 		$conditions = $this->getConditionsHook();
 
 		$where = '';
+		$where_or = '';
 
 		if ( isset( $conditions['where'] ) ) {
 			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		}
+		if ( isset( $conditions['where_or'] ) ) {
+			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where_or'] ) : '';
 		}
 
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
@@ -366,7 +371,7 @@ class jUpgrade
 		}
 
 		/// Get Total
-		$query = "SELECT COUNT(*) FROM {$this->source} {$as} {$join} {$where}";
+		$query = "SELECT COUNT(*) FROM {$this->source} {$as} {$join} {$where}{$where_or}";
 		$this->_db_old->setQuery( $query );
 		$total = $this->_db_old->loadResult();
 
@@ -544,16 +549,19 @@ class jUpgrade
 	 */
 	public function getLastIdDatabase()
 	{
+		$key = $this->getKeyName();
 		$conditions = $this->getConditionsHook();
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
 
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+		$key_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
 
 		$order = isset($conditions['order']) ? "ORDER BY {$conditions['order']}" : "ORDER BY {$this->getKeyName()} DESC";
 
 		// Get Total
-		$query = "SELECT id FROM {$this->source} {$as} {$where} {$order} LIMIT 1";
+		$query = "SELECT {$key_as}{$key} FROM {$this->source} {$as} {$where}{$where_or} {$order} LIMIT 1";
 		$this->_db_old->setQuery( $query );
 		$lastid = $this->_db_old->loadResult();
 
@@ -647,7 +655,7 @@ class jUpgrade
 	 */
 	public function getTableName()
 	{
-		return $this->source;
+		return empty($this->destination) ? $this->source : $this->destination;
 	}
 
 	/**

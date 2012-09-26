@@ -10,10 +10,6 @@
  * @author              Matias Aguirre <maguirre@matware.com.ar>
  * @link                http://www.matware.com.ar
  */
-
-// Require the category class
-require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
-
 /**
  * Upgrade class for Banners
  *

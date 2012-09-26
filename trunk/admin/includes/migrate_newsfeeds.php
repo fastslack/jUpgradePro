@@ -61,7 +61,7 @@ class jUpgradeNewsfeeds extends jUpgrade
 	 * @since	3.0.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData()
+	protected function setDestinationData($rows = null)
 	{
 		// Getting the component parameter with global settings
 		$params = $this->getParams();	

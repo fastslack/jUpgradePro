@@ -11,9 +11,6 @@
  * @link                http://www.matware.com.ar
  */
 
-// Require the category class
-require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.php';
-
 /**
  * Upgrade class for Banners
  *

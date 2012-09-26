@@ -106,7 +106,7 @@ class jUpgradeContent extends jUpgrade
 	* @since	0.5.3
 	* @throws	Exception
 	*/
-	protected function setDestinationData()
+	protected function setDestinationData($rows = null)
 	{
 		$params = $this->getParams();
 

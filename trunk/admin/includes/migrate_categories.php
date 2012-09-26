@@ -42,11 +42,12 @@ class jUpgradeCategories extends jUpgradeCategory
 
 		$conditions['select'] = '`id`, `id` AS sid, `title`, `alias`, `section` AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
 
-		$where = array();
-		$where[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
-		
+		$where_or = array();
+		$where_or[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
+		$where_or[] = "section IN ('com_banner', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
+
 		$conditions['order'] = "section DESC, ordering DESC";		
-		$conditions['where'] = $where;
+		$conditions['where_or'] = $where_or;
 		
 		return $conditions;
 	}

@@ -276,7 +276,10 @@ class jUpgrade
 		// Get the conditions
 		$conditions = $this->getConditionsHook();
 
-		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		$where = '';
+		if ( isset( $conditions['where'] ) ) {
+			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		}
 		$where_or = '';
 		if (isset($conditions['where_or'])) {
 			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';

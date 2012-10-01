@@ -1,0 +1,406 @@
+#!/usr/bin/php
+<?php
+/**
+ * @version		    $Id: 
+ * @package		    jUpgrade
+ * @subpackage	  jUpgradeCli
+ * @copyright			CopyRight 2011 Matware All rights reserved.
+ * @author				Matias Aguirre
+ * @email   			maguirre@matware.com.ar
+ * @link					http://www.matware.com.ar/
+ * @license				GNU/GPL http://www.gnu.org/licenses/gpl-2.0-standalone.html
+ */
+// We are a valid Joomla entry point.
+define('_JEXEC', 1);
+
+// Bootstrap the application.
+require './bootstrap.php';
+
+class jUpgradeCli extends JApplicationCli
+{
+	/**
+	* A database object for the application to use.
+	*
+	* @var JDatabase
+	* @since 11.3
+	*/
+	protected $jupgrade = null;
+
+	/**
+	* Class constructor.
+	*
+	* @return void
+	*
+	* @since 2.5.0
+	*/
+	public function __construct()
+	{
+		// Call the parent __construct method so it bootstraps the application class.
+		parent::__construct();
+	
+		// Create the jUpgrade object
+		$this->jupgrade = new jUpgrade;
+
+		// Add the logger.
+		JLog::addLogger(
+			// Pass an array of configuration options
+			array(
+				// Set the name of the log file
+				'text_file' => JPATH_SITE.'/logs/jupgrade.log.php'
+			)
+		);
+
+		// Print a Picasso
+		$this->out();
+		$this->out('                                       /;    ;\              ');
+		$this->out('         jUpgradeCLi v2.5.0        __  \\____//              ');
+		$this->out('                                  /{_\_/   ` \____           ');
+		$this->out('                                  \___   (o)  (o) }          ');
+		$this->out('       _____________________________/          :--]          ');
+		$this->out('   ,-,|`@@@@@@@@       @@@@@@         \_    `__\             ');
+		$this->out('  ;:(  @@@@@@@@@        @@@             \___(o.o)            ');
+		$this->out('  :: )  @@@@          @@@@@@        ,`@@(  `====`            ');
+		$this->out('  :: : @@@@@:          @@@@         `@@@:     \              ');
+		$this->out('  :: \  @@@@@:       @@@@@@@)    (  `@@@`      JLinux Rules! ');
+		$this->out('  ;; /\      /`,    @@@@@@@@@\   :@@@@@)                     ');
+		$this->out('  ::/  )    {_----------------:  :~`,~~;                     ');
+		$this->out(' ;;``; :   )                  :  / `; ;                      ');
+		$this->out(';;;; : :   ;                  :  ;  ; :                      ');
+		$this->out('```` / :  :                   :  :  : :                      ');
+		$this->out('    )_ \__;      ";"          :_ ;  \_\       `,','          ');
+		$this->out('    :__\  \    * `,`*         \  \  :  \   *  8`;`*  *       ');
+		$this->out('        `^`     \ :/           `^`  `-^-`   \ / :  \/        ');
+		$this->out();
+	}
+
+	/**
+	 * Help
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+  public function help()
+	{
+		// Print help
+		$this->out();
+		$this->out(' jUpgradeCli v2.5.0');
+		$this->out(' Usage: jUpgradeCli --from your_database.sql --to your_migrate_database.sql [ --only=users|categories|content|modules|menus ] ');
+		$this->out();
+		$this->out(' Author: Matias Aguirre (maguirre@matware.com.ar)');
+		$this->out(' License: GNU/GPL http://www.gnu.org/licenses/gpl-2.0-standalone.html');
+		$this->out();
+	}
+
+	/**
+	 * execute
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+  public function execute()
+  {
+		// Cleanup 
+		$this->cleanup();
+
+		// Import the user database if exists
+		$from = $this->input->get('from');
+		if (JFile::exists($from)) {
+			// Import the sql file
+		  if (JUpgradeHelper::populateDatabase($this->jupgrade->db_old, $from, $errors) > 0 ) {
+		  	return false;
+		  }
+		}
+
+		// Import Joomla 1.7/2.5 default schema
+		$joomladump = JPATH_BASE.'/sql/joomla.sql';
+		// Import the sql file
+	  if (JUpgradeHelper::populateDatabase($this->jupgrade->db_new, $joomladump, $errors) > 0 ) {
+	  	return false;
+	  }
+
+		// Start migration
+		$this->migrate();
+
+	} // end method
+
+	/**
+	 * migrate
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	public function migrate()
+	{
+
+		$finished = false;
+
+		while (!$finished)
+		{
+
+			$step = $this->getStep();
+
+			if ($step === false){
+				$finished = true;
+				break;
+			}
+
+			$this->out("[{$step->id}] Migrating {$step->name}");
+
+			if ($step->id <= 10) {
+				$this->processStep($step);
+			}else if ($step->id > 10) {
+				$this->processExtensionStep($step);
+			}
+
+			$this->updateStep($step);
+		}
+
+
+
+	} // end method
+
+	/**
+	 * Get the next step
+	 *
+	 * @return   step object
+	 */
+	public function getStep() {
+
+		$step = $this->_getStep(JRequest::getVar('type'));
+
+		// Require the file
+		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
+			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
+		}
+
+		// Getting the class name
+		$class = $step->class;
+
+		// Migrate the process.
+		$jupgrade = new $class($step);
+
+		$step->total = $jupgrade->getSourceDatabaseTotal();
+
+		if ($step->name == $step->laststep) {
+			$step->end = true;
+		}
+
+		// updating the status flag
+		$this->_updateStep($step);
+
+		// Encoding
+		$json = json_encode($step);
+
+		return($json);
+	}
+
+	/**
+	 * Getting the next step
+	 *
+	 * @return   step object
+	 */
+	public function _getStep($key = null) {
+		// Select the steps
+		if (isset($key)) {
+			$query = "SELECT * FROM jupgrade_steps AS s WHERE s.name = '{$key}' ORDER BY s.id ASC LIMIT 1";
+		}else{
+			$query = "SELECT * FROM jupgrade_steps AS s WHERE s.status != 2 ORDER BY s.id ASC LIMIT 1";
+		}
+
+		$this->_db->setQuery($query);
+		$step = $this->_db->loadObject();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Select last step
+		$query = "SELECT name FROM jupgrade_steps WHERE status = 0 ORDER BY id DESC LIMIT 1";
+		$this->_db->setQuery($query);
+		$step->laststep = $this->_db->loadResult();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Check if steps is an object
+		if (is_object($step)) {
+		  return $step;
+		}else{
+			return false;
+		}
+	}
+
+	/**
+	 * updateStep
+	 *
+	 * @return	none
+	 * @since	2.5.2
+	 */
+	public function _updateStep($step, $status = 1, $cache = 0, $cid = false) {
+
+		if ($cache !== false) {
+			$cache = ", cache = {$cache}";
+		}
+		if ($cid !== false) {
+			$cid = ", cid = {$cid}";
+		}
+
+		// updating the status flag
+		$query = "UPDATE jupgrade_steps SET status = {$status} {$cache} {$cid}"
+		." WHERE name = '{$step->name}'";
+		$this->_db->setQuery($query);
+		$this->_db->query();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		return true;
+	}
+
+	/**
+	 * Cleanup
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	function cleanup()
+	{	
+		// Set all status to 0 and clear state
+		$query = "UPDATE jupgrade_steps SET status = 0, state = ''";
+		$this->jupgrade->db_new->setQuery($query);
+		$this->jupgrade->db_new->query();
+
+		// Cleanup 3rd extensions
+		$query = "DELETE FROM jupgrade_steps WHERE id > 10";
+		$this->jupgrade->db_new->setQuery($query);
+		$this->jupgrade->db_new->query();
+		
+		// Get the prefix
+		$prefix = $this->jupgrade->db_new->getPrefix();
+		$prefix_old = $this->jupgrade->db_old->getPrefix();
+
+    if ($this->jupgrade->canDrop) {
+
+			// Drop tables 
+			$this->dropTables($prefix);
+			// Drop old tables
+			$this->dropTables($prefix_old);
+
+			$tables = array();
+			$tables[] = 'jupgrade_categories';
+			$tables[] = 'jupgrade_menus';
+			$tables[] = 'jupgrade_modules';
+
+			for ($i=0;$i<count($tables);$i++) {
+				// Truncate mapping tables
+				$query = "TRUNCATE TABLE `{$tables[$i]}`";
+				$this->jupgrade->db_new->setQuery($query);
+				$this->jupgrade->db_new->query();
+			}
+
+			// Check for query error.
+			$error = $this->jupgrade->db_new->getErrorMsg();
+
+			if ($error) {
+				throw new Exception($error);
+			}
+
+		} else {
+
+			$query = "SHOW TABLES LIKE '{$prefix}%'";
+			$this->jupgrade->db_new->setQuery($query);
+			$tables = $this->jupgrade->db_new->loadRowList();
+
+			$tables[][0] = 'jupgrade_categories';
+			$tables[][0] = 'jupgrade_menus';
+			$tables[][0] = 'jupgrade_modules';
+
+			for ($i=0;$i<count($tables);$i++) {
+				// Truncate mapping tables
+				$query = "DELETE FROM `{$tables[$i][0]}`";
+				$this->jupgrade->db_new->setQuery($query);
+				$this->jupgrade->db_new->query();
+
+				// Check for query error.
+				$error = $this->jupgrade->db_new->getErrorMsg();
+
+				if ($error) {
+					throw new Exception($error);
+				}
+			}
+
+		} // end if
+	} // end method
+
+	public function dropTables($prefix) {
+
+		$query = "SHOW TABLES LIKE '{$prefix}%'";
+		$this->jupgrade->db_new->setQuery($query);
+		$tables = $this->jupgrade->db_new->loadRowList();
+
+		for($i=0;$i<count($tables);$i++) {
+			$table = $tables[$i][0];
+			$query = "DROP TABLE {$table}";
+			$this->jupgrade->db_new->setQuery($query);
+			$this->jupgrade->db_new->query();
+
+			// Check for query error.
+			$error = $this->jupgrade->db_new->getErrorMsg();
+
+			if ($error) {
+				throw new Exception($error);
+			}
+		}
+	}
+
+	/**
+	 * processStep
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	public function processExtensionStep ($step)
+	{
+		// Get jUpgradeExtensions instance
+		$extension = jUpgradeExtensions::getInstance($step);
+		$success = $extension->upgradeExtension();
+
+		if ($extension->isReady())
+		{
+			// updating the status flag
+			$query = "UPDATE jupgrade_steps SET status = 1"
+			." WHERE name = '{$step->name}'";
+			$this->jupgrade->db_new->setQuery($query);
+			$this->jupgrade->db_new->query();
+
+			// Check for query error.
+			$error = $this->jupgrade->db_new->getErrorMsg();
+		}
+	}
+
+} // end class
+
+// Wrap the execution in a try statement to catch any exceptions thrown anywhere in the script.
+try
+{
+	// Instantiate the application object, passing the class name to JCli::getInstance
+	// and use chaining to execute the application.
+	JCli::getInstance('jUpgradeCli')->execute();
+}
+catch (Exception $e)
+{
+	// An exception has been caught, just echo the message.
+	fwrite(STDOUT, $e->getMessage() . "\n");
+	exit($e->getCode());
+}

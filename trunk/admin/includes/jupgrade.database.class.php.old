@@ -1,0 +1,427 @@
+<?php
+/**
+ * jUpgrade
+ *
+ * @version		$Id$
+ * @package		MatWare
+ * @subpackage	com_jupgrade
+ * @copyright	Copyright 2006 - 2011 Matias Aguire. All rights reserved.
+ * @license		GNU General Public License version 2 or later.
+ * @author		Matias Aguirre <maguirre@matware.com.ar>
+ * @link		http://www.matware.com.ar
+ */
+
+/**
+ * Database methods
+ *
+ * This class search for extensions to be migrated
+ *
+ * @since	3.0.0
+ */
+class jUpgradeDatabase extends jUpgrade
+{
+	/**
+	 * Migrate the database tables.
+	 *
+	 * @return	boolean
+	 * @since	1.1.0
+	 */
+	protected function migrateExtensionTables()
+	{
+		if (!isset($this->state->tables))
+		{
+			$this->state->tables = $this->getCopyTables();
+		}
+
+		while(($value = array_shift($this->state->tables)) !== null) {
+
+			$copyTableFunc = 'copyTable_'.$value;
+			if (method_exists($this, $copyTableFunc)) {
+
+				// Use function called like copyTable_kunena_categories
+				$ready = $this->$copyTableFunc($value);
+
+			} else if (strpos($value, '%') !== false) {
+
+				$table = $this->db_old->getPrefix().$value;
+
+				$query = "SHOW TABLES LIKE '{$table}'";
+				$this->db_old->setQuery($query);
+				$tables = $this->db_old->loadRowList();
+
+				for ($i=0;$i<count($tables);$i++) {
+					// Use default migration function
+					$table = $tables[$i][0];
+					$from = preg_replace ('/jos_/', '#__', $table);
+					$this->copyTable($from);
+					$ready = true;
+				}
+
+			} else {
+				// Use default migration function
+				$table = "#__$value";
+				$this->copyTable($table);
+				$ready = true;
+			}
+			// If table hasn't been fully copied, we need to push it back to stack
+			if (!$ready) {
+				array_unshift($this->state->tables, $value);
+			}
+
+			/*
+				BUG: This break the loop, maybe is unused with new migrate table method
+
+			if ($this->checkTimeout()) {
+				break;
+			}
+			*/
+		}
+		return empty($this->state->tables);
+	}
+
+
+	/**
+	 * Copy table to old site to new site
+	 *
+	 * @return	boolean
+	 * @since 1.1.0
+	 * @throws	Exception
+	 */
+	protected function copyTable($from, $to=null) {
+		// Check if table exists
+		if (!$to) $to = $from;
+		$from = preg_replace ('/#__/', $this->db_old->getPrefix(), $from);
+		$to = preg_replace ('/#__/', $this->db_new->getPrefix(), $to);
+
+		// Folder to save the sql files
+		$folder = JPATH_COMPONENT.DS."sql".DS."updates";
+
+		// Running the export table
+		$export = $this->getExportTable($this->db_old, $from, $folder);
+	}
+
+ 	/**
+	 * Return the exportable sql structure and data
+	 *
+	 * @param array or string $tables The tables name
+	 * @return	string Return the structure as string
+	 * @since 2.5.2
+	 */
+	protected function getExportTable(&$db, $tables, $folder, $addData = true) {
+
+		$params = $this->getParams();
+
+		// Sanitize input to an array and iterate over the list.
+		settype($tables, 'array');
+		foreach ($tables as $table)
+		{
+			$exists = $this->tableExists($db, $table); 
+
+			if ($exists) {
+				// Adding table structure
+				$sql  = $this->getTableStructure($db, $table);
+
+				// Getting the values
+				$values = $this->getValues($db, $table);
+
+				// Count the values
+				$valCount = count($values);
+
+				// Check if addData is enabled
+				if ($addData && $valCount > 0) {
+
+					// If valCount is > limit, split the sql files
+					if ($valCount > $params->limit) {
+
+						$offset = 0;
+
+						while ($valCount >= 0) {
+
+							if ($valCount == 0) {
+								break;
+							}
+
+							if ($offset == 0) {
+								$sql .= $this->getTableData($db, $table, $offset, $params->limit);
+							}else{
+								$sql = $this->getTableData($db, $table, $offset, $params->limit);
+							}
+
+							$filename = "{$table}-{$offset}";
+
+							$this->writeSqlStatementToFile($table, $folder, $sql, $filename);
+							$this->migrateTable($this->db_new, $folder, $filename);
+
+							$valCount = $valCount - $params->limit;
+							$valCount = $valCount <= 0 ? $valCount = 0 : $valCount;
+
+							$offset = $offset + $params->limit;
+						}
+
+					}else{
+						$sql .= $this->getTableData($db, $table);
+
+						$this->writeSqlStatementToFile($table, $folder, $sql);
+						$this->migrateTable($this->db_new, $folder, $table);
+
+					}
+				}else{
+
+					$this->writeSqlStatementToFile($table, $folder, $sql);
+					$this->migrateTable($this->db_new, $folder, $table);
+				}
+
+			}
+		}
+
+		return true;
+	}
+
+ 	/**
+	 * Writes to file the $table's data
+	 *
+	 * @param string $table The table name
+	 * @return	string Return the structure as string
+	 * @since 2.5.2
+	 */
+	protected function getTableData(&$db, $table, $offset = 0, $limit = 0) {
+		// Header
+		$data  = "-- \n";
+		$data .= "-- Dumping data for table `$table`\n";
+		$data .= "-- \n\n";
+
+		// Getting the values
+		$values = $this->getValues($db, $table, $offset, $limit);
+
+		// Count the values
+		$valCount = count($values);
+
+		if ($valCount == 0) {
+			return null;
+		}
+
+		$insertStatement = $this->getInsertStatement($db, $table);
+		$valuesStatement = $this->getValuesStatement($db, $table, $offset, $limit);
+
+		$data .= $insertStatement.$valuesStatement;
+
+		return $data;
+	}
+
+ 	/**
+	 * Generating the values statement
+	 *
+	 * @param JDatabase $db The database instance
+	 * @param string $table The table name
+	 * @return	string Return the structure as string
+	 * @since 2.5.2
+	 */
+	protected function getValuesStatement(&$db, $table, $offset = 0, $limit = 0) {
+
+		// Init variable
+		$valuesStatement = "";
+
+		// Getting the values
+		$values = $this->getValues($db, $table, $offset, $limit);
+
+		// Count the values
+		$valCount = count($values);
+
+		// Getting the columns
+		$columns = $db->getTableColumns($table);
+		// Getting the last key
+		end($columns);        
+		$endValue = key($columns);
+
+		// Writting the values statement
+		for ($i=0;$i<$valCount;$i++) {
+			$value = $values[$i];
+
+			reset($columns);
+
+			$valuesStatement .= "( ";
+
+			while ($val = current($columns)) {
+			  $key = key($columns);
+
+				if (is_numeric($value[$key])) {
+					$valuesStatement .= "{$value[$key]}";
+				}else if ($value[$key] == '') {
+					$valuesStatement .= "''";
+				}else{
+					$valuesStatement .= "'".$db->getEscaped($value[$key])."'";
+				}
+
+				if ($key != $endValue) {
+					$valuesStatement .= ", ";
+				}else{
+					$valuesStatement .= ")";
+					if ($i != $valCount-1) {
+						$valuesStatement .= ",";
+					}
+					$valuesStatement .= "\n";
+				}
+
+				next($columns);
+			}
+		}
+
+		return $valuesStatement;
+	}
+
+ 	/**
+	 * Generating the insert statement
+	 *
+	 * @param JDatabase $db The database instance
+	 * @param string $table The table name
+	 * @return	string Return the structure as string
+	 * @since 2.5.2
+	 */
+	protected function getInsertStatement(&$db, $table) {
+
+		$insertStatement = "INSERT INTO `$table` (";
+
+		$query = "SHOW FIELDS FROM {$table}";
+		$db->setQuery($query);
+		$fields = $db->loadAssocList();
+
+		$count = count($fields);
+
+		for ($i=0;$i<$count;$i++) {
+			$field = $fields[$i];
+
+			$insertStatement .= '`'.$field['Field'].'`';
+
+			if ($i != $count-1) {
+				$insertStatement .= ', ';
+			}else{
+				$insertStatement .= ') ';
+			}
+		}
+
+		$insertStatement .= 'VALUES ';
+
+		return $insertStatement;
+	}
+
+ 	/**
+	 * Getting the values of the table
+	 *
+	 * @param JDatabase $db The database instance
+	 * @param string $table The table name
+	 * @return	object Return the values of the table
+	 * @since 2.5.2
+	 */
+	protected function getValues(&$db, $table, $offset = 0, $limit = 0) {
+
+		// Getting the values
+		$query = "SELECT * FROM {$table}";
+		$db->setQuery($query, $offset, $limit);
+		$values = $db->loadAssocList();
+
+		return $values;
+	}
+
+ 	/**
+	 * Getting the values of the table
+	 *
+	 * @param JDatabase $db The database instance
+	 * @param string $table The table name
+	 * @return	object Return the values of the table
+	 * @since 2.5.2
+	 */
+	protected function writeSqlStatementToFile($table, $folder, $sql, $filename = null) {
+
+		// Setting the file name
+		if ($filename != null) {
+			$filename = $folder.DS.$filename.".sql";
+		}else{
+			$filename = $folder.DS.$table.".sql";
+		}
+
+		// Writing the structure to file
+		if (!JFile::write($filename, $sql)) {
+			return false;
+		}
+
+		return true;
+	}
+
+ 	/**
+	 * 
+	 *
+	 * @param 
+	 * @param string $table The table name
+	 * @return	object Return the values of the table
+	 * @since 2.5.2
+	 */
+	protected function migrateTable(&$db, $folder, $filename) {
+
+		$sqlfile = $folder.DS.$filename.".sql";
+
+		// Import the sql file
+		if ($this->populateDatabase($db, $sqlfile, $errors) > 0 ) {
+			return false;
+		}
+
+		return true;
+	}
+
+
+	/**
+ 	* Writes to file all the selected database tables structure with SHOW CREATE TABLE
+	* @param string $table The table name
+	*/
+	public function getTableStructure($db, $table) {
+		// Header
+		$structure  = "-- \n";
+		$structure .= "-- Table structure for table `$table`\n";
+		$structure .= "-- \n\n";
+
+		// Dump Structure
+		//if ( $this->dropTable )
+		//	$structure .= "DROP TABLE IF EXISTS `$table`;\n";
+
+		$result = $db->getTableCreate($table);
+
+		$structure .= "{$result[$table]} ;\n\n";
+
+		return $structure;
+	}
+
+	/**
+ 	* 
+	* @param string $table The table name
+	*/
+	function tableExists ($db, $table) { 
+
+		$tables = $db->getTableList();
+
+		if (in_array($table, $tables)) {
+			return true;
+		}else{
+			return false;
+		}
+	}
+
+	public function dropTables($prefix) {
+
+		$query = "SHOW TABLES LIKE '{$prefix}%'";
+		$this->jupgrade->_db->setQuery($query);
+		$tables = $this->jupgrade->_db->loadRowList();
+
+		for($i=0;$i<count($tables);$i++) {
+			$table = $tables[$i][0];
+			$query = "DROP TABLE {$table}";
+			$this->jupgrade->_db->setQuery($query);
+			$this->jupgrade->_db->query();
+
+			// Check for query error.
+			$error = $this->jupgrade->_db->getErrorMsg();
+
+			if ($error) {
+				throw new Exception($error);
+			}
+		}
+	}
+}

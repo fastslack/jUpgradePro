@@ -66,10 +66,8 @@ class jUpgradeBanners extends jUpgrade
 	 * @since       0.4.5
 	 * @throws      Exception
 	 */
-	public function &getSourceDatabase()
+	public function databaseHook($rows = null)
 	{
-		$rows = parent::getSourceDatabase();
-
 		// Getting the categories id's
 		$categories = $this->getMapList('categories', 'com_banners');
 
@@ -92,13 +90,13 @@ class jUpgradeBanners extends jUpgrade
 	 * @since       0.4.
 	 * @throws      Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
 		// Getting the component parameter with global settings
 		$params = $this->getParams();	
 
 		// Get the source data.
-		$rows = $this->loadData('banners');
+		//$rows = $this->loadData('banners');
 
 		foreach($rows as &$row)
 		{
@@ -116,6 +114,6 @@ class jUpgradeBanners extends jUpgrade
 			unset($row['tags']);
 		}
 
-		parent::setDestinationData($rows);
+		return $rows;
 	}
 }

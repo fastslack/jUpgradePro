@@ -66,10 +66,8 @@ class jUpgradeMenu extends jUpgrade
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function databaseHook($rows = null)
 	{
-		$params = $this->getParams();
-
 /*
 		// Creating the query
 		$join = array();
@@ -87,8 +85,6 @@ class jUpgradeMenu extends jUpgrade
 			'm.id DESC'
 		);
  */
-
-		$rows = parent::getSourceDatabase();
 
 		// Do some custom post processing on the list.
 		foreach ($rows as $key => &$row) {
@@ -181,16 +177,13 @@ class jUpgradeMenu extends jUpgrade
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
 		$params = $this->getParams();
 
 		// Getting the categories id's
 		$categories = $this->getMapList();
 		$sections = $this->getMapList('categories', 'com_section');
-	
-		// Get the source data.
-		$rows = $this->loadData('menus');
 		
 		$table	= empty($this->destination) ? $this->source : $this->destination;
 
@@ -282,8 +275,9 @@ class jUpgradeMenu extends jUpgrade
 			if ($row->id == $this->getLastId('menus')) {
 				$this->populateDefaultMenus();
 			}
-
 		}
+
+		return false;
 	}
 
 	public function populateDefaultMenus()

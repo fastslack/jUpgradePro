@@ -25,38 +25,23 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/models/jupgrade.model.php';
 class jUpgradeProModelRest extends jUpgradeProModel
 {
 	/**
-	 * Get the next step
+	 * Get a single row
 	 *
 	 * @return   step object
 	 */
-	public function getStep() {
+	public function getRow() {
 
-		// Getting the steps
-		$step = $this->_getStep();
+		// Getting the table
+		$table = JRequest::getVar('table');
 
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
+		// Getting the response
+		$response = $this->requestRest('row', $table);
 
-		// JHttp instance
-		jimport('joomla.http.http');
-		$http = new JHttp();
-		$data = $jupgrade->getRestData();
-		
-		// Getting the total
-		$data['task'] = "total";
-		$data['table'] = $step->name;
-		$total = $http->get($jupgrade->params->get('rest_hostname'), $data);
-		$step->total = (int) $total->body;
-
-		if ($step->name == $step->laststep) {
-			$step->end = true;
-		}
-
-		// updating the status flag
-		$this->_updateStep($step);
-
-		// Encoding
-		$json = json_encode($step);
+		if ($response != '') {
+			$row = json_decode($response, true);
+		}	
+	
+		$json = json_encode($row);
 
 		return($json);
 	}
@@ -66,7 +51,7 @@ class jUpgradeProModelRest extends jUpgradeProModel
 	 *
 	 * @return   step object
 	 */
-	public function getRow() {
+	public function requestRest($task = 'total', $table = false) {
 
 		// Initialize jupgrade class
 		$jupgrade = new jUpgrade;
@@ -77,17 +62,10 @@ class jUpgradeProModelRest extends jUpgradeProModel
 		$data = $jupgrade->getRestData();
 		
 		// Getting the total
-		$data['task'] = "row";
-		$data['table'] = JRequest::getVar('table');
-		
-		$response = $http->get($jupgrade->params->get('rest_hostname'), $data);
-		if ($response->body != '') {
-			$row = json_decode($response->body, true);
-		}	
-	
-		$json = json_encode($row);
-
-		return($json);
+		$data['task'] = $task;
+		$data['table'] = $table;
+		$request = $http->get($jupgrade->params->get('rest_hostname'), $data);
+		return $request->body;
 	}
 
 	/**

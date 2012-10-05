@@ -48,7 +48,7 @@ class jUpgradeCategory extends jUpgrade
 	 * @since	0.5.6
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function databaseHook($rows = null)
 	{
 
 /*
@@ -73,9 +73,6 @@ class jUpgradeCategory extends jUpgrade
 			$order
 		);
 */
-
-		$rows = parent::getSourceDatabase();
-
 		// Initialize values
 		$aliases = array();
 		$unique_alias_suffix = 1;
@@ -119,22 +116,21 @@ class jUpgradeCategory extends jUpgrade
 	 * @since	0.5.6
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
-		// Get the source data.
-		$categories	= $this->getSourceData();
-
 		// Remove id
-		foreach ($categories as $category)
+		foreach ($rows as $category)
 		{
 			unset($category->id);
 		}
 
 		// Insert the categories
-		foreach ($categories as $category)
+		foreach ($rows as $category)
 		{
 			$this->insertCategory($category);
 		}
+
+		return false;
 	}
 
 	/**
@@ -201,7 +197,7 @@ class jUpgradeCategory extends jUpgrade
 		}
 
 		// Insert the category
-		if (!$category->store()) {
+		if (!@$category->store()) {
 			echo JError::raiseError(500, $category->getError());
 		}
 

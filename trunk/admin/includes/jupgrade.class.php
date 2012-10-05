@@ -87,23 +87,45 @@ class jUpgrade
 		jimport('legacy.component.helper');
 		jimport('cms.version.version');
 
-		// Getting the parameters
-		$this->params	= JComponentHelper::getParams('com_jupgradepro');
+		if (class_exists('JVersion')) {
+			// Getting the parameters
+			$this->params	= JComponentHelper::getParams('com_jupgradepro');
+		}else{
+			$this->params = new JRegistry(new JConfig);
+		}
+
+		// Getting the Joomla config
+		//$config = new JConfig;
 
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
 
-		// Creating old dabatase instance
-		if ($this->params->get('method') == 'database') {
+		//$config = new JRegistry(new JConfig);
+		//print_r($this->params);
 
-			$db_config['driver'] = $this->params->get('driver');
-			$db_config['host'] = $this->params->get('hostname');
-			$db_config['user'] = $this->params->get('username');
-			$db_config['password'] = $this->params->get('password');
-			$db_config['database'] = $this->params->get('database');
-			$db_config['prefix'] = $this->params->get('prefix');
+		if (class_exists('JVersion')) {
+			// Creating old dabatase instance
+			if ($this->params->get('method') == 'database') {
 
-			$this->_db_old = JDatabase::getInstance($db_config);
+				$db_config['driver'] = $this->params->get('driver');
+				$db_config['host'] = $this->params->get('hostname');
+				$db_config['user'] = $this->params->get('username');
+				$db_config['password'] = $this->params->get('password');
+				$db_config['database'] = $this->params->get('database');
+				$db_config['prefix'] = $this->params->get('prefix');
+
+				$this->_db_old = new jUpgradeDatabase($db_config);
+			}
+		}else{
+
+			$db_config['driver'] = $this->params->get('old_dbtype');
+			$db_config['host'] = $this->params->get('old_host');
+			$db_config['user'] = $this->params->get('old_user');
+			$db_config['password'] = $this->params->get('old_password');
+			$db_config['database'] = $this->params->get('old_db');
+			$db_config['prefix'] = $this->params->get('old_prefix');
+
+			$this->_db_old = new jUpgradeDatabase($db_config);
 		}
 
 		// Set timelimit to 0
@@ -131,19 +153,63 @@ class jUpgrade
 		}
 
 		// Getting the Joomla version
-		$version = new JVersion;
-		$this->_version = $version->RELEASE;
+		if (class_exists('JVersion')) {
+			$version = new JVersion;
+			$this->_version = $version->RELEASE;
+		}else{
+			$this->_version = $this->params->get('RELEASE');;
+		}
 	}
 
 	/**
-	 * Method to set the OAuth message parameters.  This will only set valid OAuth message parameters.  If non-valid
-	 * parameters are in the input array they will be ignored.
 	 *
-	 * @param   array  $parameters  The OAuth message parameters to set.
+	 * @param   stdClass   $options  Parameters to be passed to the database driver.
+	 *
+	 * @return  jUpgrade  A jupgrade object.
+	 *
+	 * @since  3.0.0
+	 */
+	static function getInstance($options = null)
+	{
+		if ($options == null) {
+			return false;
+		}
+
+		// Require the file
+		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$options->name.'.php')) {
+			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$options->name.'.php';
+		}
+
+		// Getting the class name
+		$class = $options->class;
+
+		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
+		if (!class_exists($class))
+		{
+			throw new RuntimeException(sprintf('jUpgrade object not exists: %s', $options->name));
+		}
+
+		// Create our new jUpgrade connector based on the options given.
+		try
+		{
+			$instance = new $class($options);
+		}
+		catch (RuntimeException $e)
+		{
+			throw new RuntimeException(sprintf('Unable to load jUpgrade object: %s', $e->getMessage()));
+		}
+
+		return $instance;
+	}
+
+	/**
+	 * Method to set the parameters. 
+	 *
+	 * @param   array  $parameters  The parameters to set.
 	 *
 	 * @return  void
 	 *
-	 * @since   12.1
+	 * @since   3.0.0
 	 */
 	public function setParameters($data)
 	{
@@ -159,6 +225,11 @@ class jUpgrade
 				}
 			}
 		}
+	}
+
+	public function getStepName()
+	{
+		return $this->_step['name'];
 	}
 
 	/**
@@ -190,12 +261,37 @@ class jUpgrade
 	 */
 	protected function setDestinationData($rows = null)
 	{
+		$method = $this->params->get('method');
+
 		// Get the source data.
 		if ($rows === null) {
-			$rows = $this->loadData();
+			$rows = $this->dataSwitch();
 		}
 
-		$this->insertData($rows);
+		if ( $method == 'database' OR $method == 'database_all') {
+			if (method_exists($this, 'databaseHook')) { 
+				$rows = $this->databaseHook($rows);
+			}
+		}
+
+		$rows = $this->dataHook($rows);
+
+		if ($rows != false) {
+			$this->insertData($rows);
+		}
+	}
+
+	/*
+	 * Fake method of dataHook is it not exists
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function dataHook($rows)
+	{
+		// Do customisation of the params field here for specific data.
+		return $rows;	
 	}
 
 	/**
@@ -205,56 +301,91 @@ class jUpgrade
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	protected function loadData($type = null)
+	protected function dataSwitch($type = null)
 	{
 		$method = $this->params->get('method');
 
 		$rows = array();
 
-		// Get the source data.
-		if ($method == 'rest') {
-			if ( ($type == 'components') OR ($type == 'ext_modules') OR ($type == 'plugins')) {
-				$rows = $this->getSourceDataRest($type);
-			}else{
-				$rows[] = (object) $this->getSourceDataRestIndividual($type);
-			}
-		} else if ($method == 'database') {
-			$rows = $this->getSourceDatabase();
+		switch ($method) {
+			case 'rest':
+				$type = ($type == null) ? $this->getStepName() : $type;
+
+				if ( ($type == 'components') OR ($type == 'ext_modules') OR ($type == 'plugins')) {
+					$rows = $this->getSourceDataRest($type);
+				}else{
+					$rows = $this->getSourceDataRestIndividual($type);
+				}
+		    break;
+			case 'database':
+		    $rows = $this->getSourceDatabase();
+		    break;
+			case 'database_all':
+		    $rows = $this->getSourceDatabaseAll();
+		    break;
 		}
 
 		return $rows;
 	}
 
 	/**
-	 * insertData
+	 * Get total of the rows of the table
 	 *
-	 * @return	void
-	 * @since	3.0.0
-	 * @throws	Exception
+	 * @access	public
+	 * @return	int	The total of rows
 	 */
-	protected function insertData($rows)
-	{	
-		$table = empty($this->destination) ? $this->source : $this->destination;
-	
-		if (is_array($rows)) {
-			foreach ($rows as $row)
-			{
-				// Convert the array into an object.
-				$row = (object) $row;
+	public function getSourceDatabaseAll( )
+	{
+		$key = $this->_tbl_key;
 
-				if (!$this->_db->insertObject($table, $row)) {
-					throw new Exception($this->_db->getErrorMsg());
-				}
-			}
-		}else if (is_object($rows)) {
-		
-			if (!$this->_db->insertObject($table, $rows)) {
-				throw new Exception($this->_db->getErrorMsg());
-			}		
-	
+		$oid = $this->_getStepID();
+
+		if ($oid === null) {
+			return false;
 		}
-	
-		return true;
+
+		// Get the conditions
+		$conditions = $this->getConditionsHook();
+
+		$where = '';
+		if ( isset( $conditions['where'] ) ) {
+			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		}
+		$where_or = '';
+		if (isset($conditions['where_or'])) {
+			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
+		}		
+		$select = isset($conditions['select']) ? $conditions['select'] : '*';
+		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+		$group_by = isset($conditions['group_by']) ? 'GROUP BY '.$conditions['group_by'] : '';
+
+		$join = '';
+		if (isset($conditions['join'])) {
+			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
+		}
+
+		$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
+
+		// Get the row
+		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where}{$where_or} {$group_by} {$order}";
+		$this->_db_old->setQuery( $query );
+		//echo $query;
+		$rows = $this->_db_old->loadObjectList();
+
+		$total = count($rows);
+
+		if ($oid > 0) {
+			$rows = array_slice($rows, $oid, $total, true);
+		}
+
+		if (is_array($rows)) {
+			return $rows;
+		}
+		else
+		{
+			throw new Exception( $this->_db_old->getErrorMsg() );
+			return false;
+		}
 	}
 
 	/**
@@ -299,13 +430,17 @@ class jUpgrade
 		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where}{$where_or} {$group_by} {$order}";
 		$this->_db_old->setQuery( $query );
 		//echo $query;
-		$rows = $this->_db_old->loadAssocList();
 
-		if (array_key_exists($oid, $rows)) {
+		$row = $this->_db_old->loadRowDataSeek( $oid );
+
+		if (is_array($row)) {
 			$this->_updateID($oid+1);
 
 			$return = array();
-			$return[] = $rows[$oid];
+			$return[] = $row;
+
+			// Free up system resources and return.
+			//$this->_db_old->freeResult($cursor);
 
 			return $return;
 		}
@@ -355,7 +490,32 @@ class jUpgrade
 	 * @access	public
 	 * @return	int	The total of rows
 	 */
-	public function getSourceDatabaseTotal()
+	public function getTotal()
+	{
+		$method = $this->params->get('method');
+
+		$total = 0;
+
+		switch ($method) {
+			case 'rest':
+				$total = $this->getTotalRest($this->getStepName());
+		    break;
+			case 'database':
+			case 'database_all':
+		    $total = $this->getTotalDatabase();
+		    break;
+		}
+
+		return $total;
+	}
+
+	/**
+	 * Get total of the rows of the table
+	 *
+	 * @access	public
+	 * @return	int	The total of rows
+	 */
+	public function getTotalDatabase()
 	{
 		$conditions = $this->getConditionsHook();
 
@@ -384,6 +544,18 @@ class jUpgrade
 		return (int)$total;
 	}
 
+	/**
+	 * Get total of the rows of the table using RESTful
+	 *
+	 * @access	public
+	 * @return	int	The total of rows
+	 */
+	public function getTotalRest($table)
+	{
+		$total = $this->requestRest('total', $table);
+
+		return (int)$total;
+	}
 
 	/*
 	 *
@@ -439,6 +611,25 @@ class jUpgrade
 	}
 
 	/**
+	 * Get a single row
+	 *
+	 * @return   step object
+	 */
+	public function requestRest($task = 'total', $table = false) {
+		// JHttp instance
+		jimport('joomla.http.http');
+		$http = new JHttp();
+		$data = $this->getRestData();
+		
+		// Getting the total
+		$data['task'] = $task;
+		$data['table'] = ($table != false) ? $table : '';
+		$request = $http->get($this->params->get('rest_hostname'), $data);
+
+		return $request->body;
+	}
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
@@ -447,33 +638,17 @@ class jUpgrade
 	 */
 	protected function &getSourceDataRest($table = null)
 	{
-		jimport('joomla.http.http');
-
+		// Declare rows
 		$rows = array();
-		$data = array();
-	
-		// JHttp instance
-		$http = new JHttp();
-		
-		$data = $this->getRestData();
-
-		// Cleanup
-		$data['task'] = "cleanup";
-		$data['table'] = ($table == null) ? $this->_step['name'] : $table;
-		$cleanup = $http->get($this->params->get('rest_hostname'), $data);
-		
-		// Getting the total
-		$data['task'] = "total";
-		$total = $http->get($this->params->get('rest_hostname'), $data);
-		$total = (int) $total->body;
-
-		// Getting the rows
-		$data['task'] = "row";
+		// Cleanup		
+		$cleanup = $this->requestRest('cleanup', $table);
+		// Total
+		$total = $this->requestRest('total', $table);
 
 		for ($i=1;$i<=$total;$i++) {		
-			$response = $http->get($this->params->get('rest_hostname'), $data);
-			if ($response->body != '') {
-				$rows[$i] = json_decode($response->body, true);
+			$response = $this->requestRest('row', $table);
+			if ($response != '') {
+				$rows[$i] = json_decode($response);
 			}
 		}
 
@@ -487,29 +662,16 @@ class jUpgrade
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	protected function &getSourceDataRestIndividual($table = null)
+	public function &getSourceDataRestIndividual($table = null)
 	{
-		jimport('joomla.http.http');
+		$rows = array();
+		$response = $this->requestRest('row', $table);
 
-		//$row = array();
-		$data = array();
-	
-		// JHttp instance
-		$http = new JHttp();
-		
-		$data = $this->getRestData();
-	
-		// Getting the rows
-		$data['table'] = ($table == null) ? $this->_step['name'] : $table;
-		$data['task'] = "row";
-
-		$response = $http->get($this->params->get('rest_hostname'), $data);
-
-		if ($response->body != '') {
-			$row = json_decode($response->body, true);
+		if ($response != '') {
+			$rows[] = json_decode($response);
 		}
 
-		return $row;
+		return $rows;
 	}
 
 	protected function getLastId()
@@ -559,7 +721,11 @@ class jUpgrade
 		$conditions = $this->getConditionsHook();
 
 		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
+
+		$where_or = '';
+		if (isset($conditions['where_or'])) {
+			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
+		}
 
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 		$key_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
@@ -581,6 +747,40 @@ class jUpgrade
 		}
 	}
 
+	/**
+	 * insertData
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	protected function insertData($rows)
+	{	
+		$table = empty($this->destination) ? $this->source : $this->destination;
+	
+		if (is_array($rows)) {
+			foreach ($rows as $row)
+			{
+				// Convert the array into an object.
+				$row = (object) $row;
+
+				if (!$this->_db->insertObject($table, $row)) {
+					throw new Exception($this->_db->getErrorMsg());
+				}
+				$cid = $this->_getStepID();
+
+				$this->_updateID($cid+1);
+			}
+		}else if (is_object($rows)) {
+		
+			if (!$this->_db->insertObject($table, $rows)) {
+				throw new Exception($this->_db->getErrorMsg());
+			}		
+	
+		}
+	
+		return true;
+	}
 
 	/**
 	 * populateDatabase

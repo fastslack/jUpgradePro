@@ -59,7 +59,7 @@ class jUpgradeCategories extends jUpgradeCategory
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
 		$params = $this->getParams();
 
@@ -70,9 +70,8 @@ class jUpgradeCategories extends jUpgradeCategory
 		// Content categories
 		$this->section = 'com_content'; 
 
-
 		// Get the source data.
-		$categories = $this->loadData('categories');
+		//$categories = $this->loadData('categories');
 
 		// Initialize values
 		$aliases = array();
@@ -80,7 +79,7 @@ class jUpgradeCategories extends jUpgradeCategory
 		$rootidmap = 0;
 
 		// JTable::store() run an update if id exists so we create them first
-		foreach ($categories as $category)
+		foreach ($rows as $category)
 		{
 			$object = new stdClass();
 
@@ -107,7 +106,7 @@ class jUpgradeCategories extends jUpgradeCategory
 		}
 
 		// Update the category
-		foreach ($categories as $category)
+		foreach ($rows as $category)
 		{
 			$category = (array) $category;
 
@@ -136,5 +135,6 @@ class jUpgradeCategories extends jUpgradeCategory
 			$this->insertCategory($category);
 		}
 
+		return false;
 	}
 }

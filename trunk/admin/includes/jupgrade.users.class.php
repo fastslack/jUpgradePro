@@ -67,15 +67,15 @@ class jUpgradeUsersDefault extends jUpgrade
 	 * @since	0.4.4
 	 * @throws	Exception on database error.
 	 */
-	protected function getUserIdAroMap()
+	protected function getUserIdAroMap($aro_id)
 	{
 		$this->_db_old->setQuery(
-			'SELECT id, value' .
+			'SELECT value' .
 			' FROM #__core_acl_aro' .
-			' ORDER BY id'
+			' WHERE id = '.$aro_id
 		);
 
-		$map	= $this->_db_old->loadAssocList('id', 'value');
+		$return	= $this->_db_old->loadResult();
 		$error	= $this->_db_old->getErrorMsg();
 
 		// Check for query error.
@@ -83,6 +83,6 @@ class jUpgradeUsersDefault extends jUpgrade
 			throw new Exception($error);
 		}
 
-		return $map;
+		return $return;
 	}
 }

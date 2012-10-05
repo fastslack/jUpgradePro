@@ -68,11 +68,8 @@ class jUpgradeModulesMenu extends jUpgrade
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
-		// Get the source data.
-		$rows = $this->loadData('modules_menu');
-
 		$modules_map = $this->getMapList('modules');
 		$menus_map = $this->getMapList('menus');
 
@@ -83,11 +80,8 @@ class jUpgradeModulesMenu extends jUpgrade
 			$row = (object) $row;
 
 			$row->moduleid = isset($modules_map[$row->moduleid]) ? $modules_map[$row->moduleid]->new : $row->moduleid;
-
-			// Insert module
-			if (!$this->_db->insertObject($this->destination, $row)) {
-				throw new Exception($this->_db->getErrorMsg());
-			}
 		}
+
+		return $rows;
 	}
 }

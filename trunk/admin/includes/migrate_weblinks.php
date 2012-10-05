@@ -56,11 +56,8 @@ class jUpgradeWeblinks extends jUpgrade
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function databaseHook($rows = null)
 	{
-		// Getting the rows
-		$rows = parent::getSourceDatabase();
-
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
@@ -77,13 +74,10 @@ class jUpgradeWeblinks extends jUpgrade
 	 * @since	3.0.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
 		// Getting the component parameter with global settings
 		$params = $this->getParams();
-
-		// Get the source data.
-		$rows = $this->loadData('weblinks');
 
 		// Getting the categories id's
 		$categories = $this->getMapList('categories', 'com_weblinks');
@@ -106,6 +100,6 @@ class jUpgradeWeblinks extends jUpgrade
 			}
 		}
 
-		parent::setDestinationData($rows);
+		return $rows;
 	}
 }

@@ -33,41 +33,16 @@ class jUpgradeNewsfeeds extends jUpgrade
 	protected $_tbl_key = 'id';
 
 	/**
-	 * Get the raw data for this part of the upgrade.
-	 *
-	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.5
-	 * @throws	Exception
-	 */
-	public function &getSourceDatabase()
-	{
-/*
-		$rows = parent::getSourceData(
-			'`catid`,`id`,`name`,`alias`,`link`,`filename`,`published`,`numarticles`,`cache_time`, '
-     .'`checked_out`,`checked_out_time`,`ordering`,`rtl`',
-			null,
-			'id'
-		);
-*/
-		$rows = parent::getSourceDatabase();
-
-		return $rows;
-	}
-	
-	/**
 	 * Sets the data in the destination database.
 	 *
 	 * @return	void
 	 * @since	3.0.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
 		// Getting the component parameter with global settings
 		$params = $this->getParams();	
-	
-		// Get the source data.
-		$rows = $this->loadData('newsfeeds');
 
 		// Getting the categories id's
 		$categories = $this->getMapList('categories', 'com_newsfeeds');
@@ -80,5 +55,7 @@ class jUpgradeNewsfeeds extends jUpgrade
 			$cid = $row['catid'];
 			$row['catid'] = &$categories[$cid]->new;
 		}
+
+		return $rows;
 	}
 }

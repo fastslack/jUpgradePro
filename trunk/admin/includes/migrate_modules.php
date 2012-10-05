@@ -60,10 +60,8 @@ class jUpgradeModules extends jUpgrade
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function databaseHook($rows = null)
 	{
-		$rows = parent::getSourceDatabase();
-
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
@@ -103,7 +101,7 @@ class jUpgradeModules extends jUpgrade
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
 		$table	= empty($this->destination) ? $this->source : $this->destination;
 
@@ -111,7 +109,7 @@ class jUpgradeModules extends jUpgrade
 		$params = $this->getParams();
 
 		// Get the source data.
-		$rows = $this->loadData('modules');
+		//$rows = $this->loadData('modules');
 
 		// Set up the mapping table for the old positions to the new positions.
 		$map = self::getPositionsMap();
@@ -148,6 +146,8 @@ class jUpgradeModules extends jUpgrade
 				throw new Exception($this->_db->getErrorMsg());
 			}
 		}
+
+		return false;
 		/*
 		// Require the files
 		require_once JJPATH_COMPONENT_ADMINISTRATOR.'includes'.DS.'helper.php';

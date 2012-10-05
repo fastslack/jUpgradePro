@@ -19,6 +19,15 @@
 				value="rest">COM_JUPGRADEPRO_CONFIG_REST_TITLE</option>
 		</field>
 
+		<field
+			name="cache_limit"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CACHE_LIMIT"
+			description="COM_JUPGRADEPRO_CACHE_LIMIT_DESC"
+			default="4000"
+		/>
+
 	</fieldset>
 
 	<fieldset

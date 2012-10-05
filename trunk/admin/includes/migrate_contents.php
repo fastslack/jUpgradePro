@@ -45,10 +45,8 @@ class jUpgradeContent extends jUpgrade
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
-	{
-		$rows = parent::getSourceDatabase();
-	
+	public function databaseHook($rows = null)
+	{	
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
@@ -106,12 +104,12 @@ class jUpgradeContent extends jUpgrade
 	* @since	0.5.3
 	* @throws	Exception
 	*/
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
 		$params = $this->getParams();
 
 		// Get the source data.
-		$rows = $this->loadData('contents');
+		//$rows = $this->loadData('contents');
 
 		$table	= empty($this->destination) ? $this->source : $this->destination;
 
@@ -191,8 +189,7 @@ class jUpgradeContent extends jUpgrade
 			}
 		}
 
-		$params = $this->getParams();
-
+		return false;
 	}
 
 	protected function updateFeature()

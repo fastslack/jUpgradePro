@@ -5,14 +5,14 @@
  * @version		$Id$
  * @package		MatWare
  * @subpackage	com_jupgrade
- * @copyright	Copyright 2006 - 2011 Matias Aguire. All rights reserved.
+ * @copyright	Copyright 2006 - 2012 Matware. All rights reserved.
  * @license		GNU General Public License version 2 or later.
  * @author		Matias Aguirre <maguirre@matware.com.ar>
  * @link		http://www.matware.com.ar
  */
 
 // Require the category class
-require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.php';
 
 /**
  * Upgrade class for Contacts
@@ -42,10 +42,8 @@ class jUpgradeContacts extends jUpgrade
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function &databaseHook($rows)
 	{
-		$rows = parent::getSourceDatabase();
-
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{

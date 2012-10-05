@@ -50,22 +50,24 @@ class jUpgradeUsergroupMap extends jUpgradeUsersDefault
 	 * @since	0.4.4
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function &databaseHook($rows)
 	{
-		$rows = parent::getSourceDatabase();
+		$remove = array();
 
 		// Set up the mapping table for the old groups to the new groups.
 		$groupMap = $this->getUsergroupIdMap();
 
-		// Set up the mapping table for the ARO id's to the new user id's.
-		$userMap = $this->getUserIdAroMap();
-
 		// Do some custom post processing on the list.
 		// The schema for old group map is: group_id, section_value, aro_id
 		// The schema for new groups is: user_id, group_id
-		foreach ($rows as &$row)
+	
+		$count = count($rows);
+
+		for ($i=0;$i<$count;$i++)
 		{
-			$row['user_id'] = $userMap[$row['aro_id']];
+			$row = (array) $rows[$i];
+
+			$row['user_id'] = $this->getUserIdAroMap($row['aro_id']);
 
 			// Note, if we are here, these are custom groups we didn't know about.
 			if ($row['group_id'] <= 30) {
@@ -80,6 +82,19 @@ class jUpgradeUsergroupMap extends jUpgradeUsersDefault
 			// Remove unused fields.
 			unset($row['section_value']);
 			unset($row['aro_id']);
+
+			if (empty($row['user_id'])) {
+				$remove[] = $i;
+			}
+
+			$rows[$i] = $row;
+		}
+
+		// Remove the failed row's
+		$count_remove = count($remove);
+		for ($y=0;$y<$count_remove;$y++)
+		{
+			unset($rows[$remove[$y]]);
 		}
 
 		return $rows;

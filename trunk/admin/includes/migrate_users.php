@@ -39,26 +39,26 @@ class jUpgradeUsers extends jUpgradeUsersDefault
 	 * @since	0.4.4
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function &databaseHook($rows)
 	{
-		$rows = parent::getSourceDatabase();
-
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
+			$row = (array) $row;
+
 			$row['params'] = $this->convertParams($row['params']);
 
       // Chaging admin username and email
       if ($row['id'] == 62) {
-          $row['username'] = $row['username'].'v15';
-          $row['email'] = $row['email'].'v15';
+        $row['username'] = $row['username'].'v15';
+        $row['email'] = $row['email'].'v15';
       }
 
 			// Remove unused fields. 
 			$gid = 'gid';
 			unset($row[$gid]);
 		}
-
+		
 		return $rows;
 	}
 
@@ -69,11 +69,8 @@ class jUpgradeUsers extends jUpgradeUsersDefault
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows)
 	{
-		// Get the source data.
-		$rows = $this->loadData('users');
-
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
@@ -84,7 +81,7 @@ class jUpgradeUsers extends jUpgradeUsersDefault
 			}
 		}
 
-		$this->insertData($rows);
+		return $rows;
 	}
 
 	/**

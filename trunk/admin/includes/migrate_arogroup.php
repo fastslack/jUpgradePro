@@ -66,10 +66,8 @@ class jUpgradeUsergroups extends jUpgradeUsersDefault
 	 * @since	0.4.4
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function databaseHook($rows = null)
 	{
-		$rows = parent::getSourceDatabase();
-
 		// Set up the mapping table for the old groups to the new groups.
 		$map = $this->getUsergroupIdMap();
 

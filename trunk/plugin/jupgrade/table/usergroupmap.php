@@ -63,14 +63,11 @@ class JUpgradeTableUsergroupmap extends JUpgradeTable
 	 * @access	public
 	 */
 	function migrate( )
-	{		
-		// Set up the mapping table for the ARO id's to the new user id's.
-		$userMap = $this->_getUserIdAroMap();
-
+	{
 		// Do some custom post processing on the list.
 		// The schema for old group map is: group_id, section_value, aro_id
 		// The schema for new groups is: user_id, group_id
-		$this->user_id = $userMap[$this->aro_id]['value'];
+		$this->user_id = $this->_getUserIdAroMap($this->aro_id);
 
 		// Note, if we are here, these are custom groups we didn't know about.
 		if ($this->group_id <= 30) {
@@ -94,17 +91,17 @@ class JUpgradeTableUsergroupmap extends JUpgradeTable
 	 * @since	0.4.4
 	 * @throws	Exception on database error.
 	 */
-	protected function _getUserIdAroMap()
+	protected function _getUserIdAroMap($aro_id)
 	{
 		$db =& $this->getDBO();
-	
+
 		$db->setQuery(
-			'SELECT id, value' .
+			'SELECT value' .
 			' FROM #__core_acl_aro' .
-			' ORDER BY id'
+			' WHERE id = '.$aro_id
 		);
 
-		$map	= $db->loadAssocList('id', 'value');
+		$return	= $db->loadResult();
 		$error	= $db->getErrorMsg();
 
 		// Check for query error.
@@ -112,6 +109,6 @@ class JUpgradeTableUsergroupmap extends JUpgradeTable
 			throw new Exception($error);
 		}
 
-		return $map;
+		return $return;
 	}
 }

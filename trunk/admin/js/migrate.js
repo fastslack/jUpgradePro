@@ -251,7 +251,6 @@ var jUpgrade = new Class({
 			'complete': function(response) {
 				console.log(response);
 				var object = JSON.decode(response);
-				var counter = 0;
 
 				if (object == null) {
 					pb4.finish();
@@ -273,36 +272,36 @@ var jUpgrade = new Class({
 				// Changing title and statusbar
 				pb4.set(object.id*6);
 				status.innerHTML = 'Migrating ' + object.title;
-				currItem.innerHTML = 0;
 				totalItems.innerHTML = object.total;
 
+				// Start the checks
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=migrate&table='+object.name;	
 				// Adding event to the row request
 				row.addEvents({
 					'complete': function(response) {
 						//console.log(response);
-						counter = counter + 1;
-						currItem.innerHTML = counter;
+						var row_object = JSON.decode(response);
+
+						currItem.innerHTML = row_object.cid;
 						
-						if (counter == object.total) {
+						if (row_object.cid == object.stop && object.name == row_object.name) {
 							if (object.end == true) {
 								pb4.finish();
 								this.cancel();
 								self.done();
-							}else{
+							} else {
 								step.send();
 							}
 						}
 					}
 				});
-				
-				// Start the checks
-				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=migrate&table='+object.name;			
-				
-				for (i=1;i<=object.total;i++) {
-					rm.addRequest(i, row);			
+	
+				for (i=object.start;i<=object.stop;i++) {
+					var reqname = object.name+i;
+					rm.addRequest(reqname, row);			
 				}
 
-				rm.runAll();						
+				rm.runAll();
 			}
 		});
 

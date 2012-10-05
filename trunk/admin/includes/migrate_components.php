@@ -69,11 +69,8 @@ class jUpgradeComponents extends jUpgrade
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
+	public function databaseHook($rows = null)
 	{
-		// Getting the rows
-		$rows = parent::getSourceDatabase();
-
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
@@ -87,5 +84,4 @@ class jUpgradeComponents extends jUpgrade
 
 		return $rows;
 	}
-	
 }

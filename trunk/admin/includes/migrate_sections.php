@@ -57,10 +57,8 @@ class jUpgradeSections extends jUpgradeCategory
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function &getSourceDatabase()
-	{
-		$rows = parent::getSourceDatabase();
-	
+	public function databaseHook($rows = null)
+	{	
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
@@ -88,13 +86,10 @@ class jUpgradeSections extends jUpgradeCategory
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	public function dataHook($rows = null)
 	{
-		// Get the source data.
-		$sections = $this->loadData('sections');
-
 		// Insert the sections
-		foreach ($sections as $section)
+		foreach ($rows as $section)
 		{
 			$section = (array) $section;
 
@@ -107,6 +102,7 @@ class jUpgradeSections extends jUpgradeCategory
 			}
 		}
 
+		return false;
 	}
 
 
@@ -140,7 +136,7 @@ class jUpgradeSections extends jUpgradeCategory
 			$table->setLocation($sectionmap[$category->section]->new, 'last-child');
 
 			// Insert the category
-			if (!$table->store()) {
+			if (!@$table->store()) {
 				throw new Exception($table->getError());
 			}
 		}

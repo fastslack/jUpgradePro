@@ -28,7 +28,7 @@ class jUpgradeProModelAjax extends jUpgradeProModel
 	 * Get the next step
 	 *
 	 * @return   step object
-	 */
+	 *
 	public function getStep() {
 
 		$step = $this->_getStep(JRequest::getVar('type'));
@@ -57,8 +57,7 @@ class jUpgradeProModelAjax extends jUpgradeProModel
 		$json = json_encode($step);
 
 		return($json);
-	}
-
+	}*/
 
 	/**
 	 * Migrate

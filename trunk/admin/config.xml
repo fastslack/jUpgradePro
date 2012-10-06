@@ -25,7 +25,7 @@
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_LIMIT"
 			description="COM_JUPGRADEPRO_CONFIG_LIMIT_DESC"
-			default="4000"
+			default="500"
 		/>
 
 	</fieldset>

@@ -20,6 +20,8 @@ define('JPATH_BASE', dirname(__FILE__));
 define('JPATH_SITE', dirname(__FILE__));
 define('JPATH_ROOT', dirname(__FILE__));
 define('JPATH_LIBRARIES', dirname(dirname(dirname(__FILE__))).'/joomla-platform/libraries'   );
+define('JPATH_COMPONENT', dirname(dirname(__FILE__)).'/trunk/admin' );
+define('JPATH_COMPONENT_ADMINISTRATOR', dirname(dirname(__FILE__)).'/trunk/admin');
 
 // Import the Joomla! Platform
 require JPATH_LIBRARIES.'/import.php';
@@ -31,16 +33,4 @@ jimport('joomla.database.database');
 // Require the files
 require_once JPATH_BASE.'/includes/jupgrade.class.php';
 require_once JPATH_BASE.'/includes/jupgrade.category.class.php';
-require_once JPATH_BASE.'/includes/jupgrade.extensions.class.php';
-// Require the files
-require_once JPATH_BASE.'/includes/migrate_users.php';
-require_once JPATH_BASE.'/includes/migrate_modules.php';
-require_once JPATH_BASE.'/includes/migrate_categories.php';
-require_once JPATH_BASE.'/includes/migrate_content.php';
-require_once JPATH_BASE.'/includes/migrate_menus.php';
-require_once JPATH_BASE.'/includes/migrate_banners.php';
-require_once JPATH_BASE.'/includes/migrate_contacts.php';
-require_once JPATH_BASE.'/includes/migrate_newsfeeds.php';
-require_once JPATH_BASE.'/includes/migrate_weblinks.php';
-// Require the files
-require_once JPATH_BASE.'/includes/helper.php';
+

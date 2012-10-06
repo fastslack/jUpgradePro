@@ -41,36 +41,18 @@ class jUpgradeCli extends JApplicationCli
 		// Create the jUpgrade object
 		$this->jupgrade = new jUpgrade;
 
+		// Creating dabatase instance for this installation
+		$this->_db = JFactory::getDBO();
+
 		// Add the logger.
 		JLog::addLogger(
 			// Pass an array of configuration options
 			array(
 				// Set the name of the log file
-				'text_file' => JPATH_SITE.'/logs/jupgrade.log.php'
+				'text_file' => JPATH_SITE.'/logs/jupgradepro.log.php'
 			)
 		);
 
-		// Print a Picasso
-		$this->out();
-		$this->out('                                       /;    ;\              ');
-		$this->out('         jUpgradeCLi v2.5.0        __  \\____//              ');
-		$this->out('                                  /{_\_/   ` \____           ');
-		$this->out('                                  \___   (o)  (o) }          ');
-		$this->out('       _____________________________/          :--]          ');
-		$this->out('   ,-,|`@@@@@@@@       @@@@@@         \_    `__\             ');
-		$this->out('  ;:(  @@@@@@@@@        @@@             \___(o.o)            ');
-		$this->out('  :: )  @@@@          @@@@@@        ,`@@(  `====`            ');
-		$this->out('  :: : @@@@@:          @@@@         `@@@:     \              ');
-		$this->out('  :: \  @@@@@:       @@@@@@@)    (  `@@@`      JLinux Rules! ');
-		$this->out('  ;; /\      /`,    @@@@@@@@@\   :@@@@@)                     ');
-		$this->out('  ::/  )    {_----------------:  :~`,~~;                     ');
-		$this->out(' ;;``; :   )                  :  / `; ;                      ');
-		$this->out(';;;; : :   ;                  :  ;  ; :                      ');
-		$this->out('```` / :  :                   :  :  : :                      ');
-		$this->out('    )_ \__;      ";"          :_ ;  \_\       `,','          ');
-		$this->out('    :__\  \    * `,`*         \  \  :  \   *  8`;`*  *       ');
-		$this->out('        `^`     \ :/           `^`  `-^-`   \ / :  \/        ');
-		$this->out();
 	}
 
 	/**
@@ -83,7 +65,7 @@ class jUpgradeCli extends JApplicationCli
 	{
 		// Print help
 		$this->out();
-		$this->out(' jUpgradeCli v2.5.0');
+		$this->out(' jUpgradeCli v3.0.0');
 		$this->out(' Usage: jUpgradeCli --from your_database.sql --to your_migrate_database.sql [ --only=users|categories|content|modules|menus ] ');
 		$this->out();
 		$this->out(' Author: Matias Aguirre (maguirre@matware.com.ar)');
@@ -101,26 +83,8 @@ class jUpgradeCli extends JApplicationCli
   {
 		// Cleanup 
 		$this->cleanup();
-
-		// Import the user database if exists
-		$from = $this->input->get('from');
-		if (JFile::exists($from)) {
-			// Import the sql file
-		  if (JUpgradeHelper::populateDatabase($this->jupgrade->db_old, $from, $errors) > 0 ) {
-		  	return false;
-		  }
-		}
-
-		// Import Joomla 1.7/2.5 default schema
-		$joomladump = JPATH_BASE.'/sql/joomla.sql';
-		// Import the sql file
-	  if (JUpgradeHelper::populateDatabase($this->jupgrade->db_new, $joomladump, $errors) > 0 ) {
-	  	return false;
-	  }
-
 		// Start migration
 		$this->migrate();
-
 	} // end method
 
 	/**
@@ -131,142 +95,33 @@ class jUpgradeCli extends JApplicationCli
 	 */
 	public function migrate()
 	{
-
 		$finished = false;
+
+		$model = new jUpgradeProModel;
 
 		while (!$finished)
 		{
+			// Getting the current step
+			$step = $model->getStep(false, false);
 
-			$step = $this->getStep();
-
-			if ($step === false){
-				$finished = true;
+			if ($step == false) {
 				break;
 			}
 
-			$this->out("[{$step->id}] Migrating {$step->name}");
+			$this->out("\n===========================================================");
+			$this->out("[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
 
-			if ($step->id <= 10) {
-				$this->processStep($step);
-			}else if ($step->id > 10) {
-				$this->processExtensionStep($step);
+			$start = $step->start;
+			$stop = $step->stop;
+			$total = $step->total;
+
+			for($i=$start;$i<=$stop;$i++) {
+				$result = $model->getMigrate($step->name, false);
+				echo ".";
 			}
-
-			$this->updateStep($step);
 		}
-
-
 
 	} // end method
-
-	/**
-	 * Get the next step
-	 *
-	 * @return   step object
-	 */
-	public function getStep() {
-
-		$step = $this->_getStep(JRequest::getVar('type'));
-
-		// Require the file
-		if (JFile::exists(JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php')) {
-			require_once JPATH_COMPONENT.'/includes/migrate_'.$step->name.'.php';
-		}
-
-		// Getting the class name
-		$class = $step->class;
-
-		// Migrate the process.
-		$jupgrade = new $class($step);
-
-		$step->total = $jupgrade->getSourceDatabaseTotal();
-
-		if ($step->name == $step->laststep) {
-			$step->end = true;
-		}
-
-		// updating the status flag
-		$this->_updateStep($step);
-
-		// Encoding
-		$json = json_encode($step);
-
-		return($json);
-	}
-
-	/**
-	 * Getting the next step
-	 *
-	 * @return   step object
-	 */
-	public function _getStep($key = null) {
-		// Select the steps
-		if (isset($key)) {
-			$query = "SELECT * FROM jupgrade_steps AS s WHERE s.name = '{$key}' ORDER BY s.id ASC LIMIT 1";
-		}else{
-			$query = "SELECT * FROM jupgrade_steps AS s WHERE s.status != 2 ORDER BY s.id ASC LIMIT 1";
-		}
-
-		$this->_db->setQuery($query);
-		$step = $this->_db->loadObject();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Select last step
-		$query = "SELECT name FROM jupgrade_steps WHERE status = 0 ORDER BY id DESC LIMIT 1";
-		$this->_db->setQuery($query);
-		$step->laststep = $this->_db->loadResult();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Check if steps is an object
-		if (is_object($step)) {
-		  return $step;
-		}else{
-			return false;
-		}
-	}
-
-	/**
-	 * updateStep
-	 *
-	 * @return	none
-	 * @since	2.5.2
-	 */
-	public function _updateStep($step, $status = 1, $cache = 0, $cid = false) {
-
-		if ($cache !== false) {
-			$cache = ", cache = {$cache}";
-		}
-		if ($cid !== false) {
-			$cid = ", cid = {$cid}";
-		}
-
-		// updating the status flag
-		$query = "UPDATE jupgrade_steps SET status = {$status} {$cache} {$cid}"
-		." WHERE name = '{$step->name}'";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		return true;
-	}
 
 	/**
 	 * Cleanup
@@ -275,101 +130,124 @@ class jUpgradeCli extends JApplicationCli
 	 * @since	2.5.0
 	 */
 	function cleanup()
-	{	
-		// Set all status to 0 and clear state
-		$query = "UPDATE jupgrade_steps SET status = 0, state = ''";
-		$this->jupgrade->db_new->setQuery($query);
-		$this->jupgrade->db_new->query();
-
-		// Cleanup 3rd extensions
-		$query = "DELETE FROM jupgrade_steps WHERE id > 10";
-		$this->jupgrade->db_new->setQuery($query);
-		$this->jupgrade->db_new->query();
-		
-		// Get the prefix
-		$prefix = $this->jupgrade->db_new->getPrefix();
-		$prefix_old = $this->jupgrade->db_old->getPrefix();
-
-    if ($this->jupgrade->canDrop) {
-
-			// Drop tables 
-			$this->dropTables($prefix);
-			// Drop old tables
-			$this->dropTables($prefix_old);
-
-			$tables = array();
-			$tables[] = 'jupgrade_categories';
-			$tables[] = 'jupgrade_menus';
-			$tables[] = 'jupgrade_modules';
-
-			for ($i=0;$i<count($tables);$i++) {
-				// Truncate mapping tables
-				$query = "TRUNCATE TABLE `{$tables[$i]}`";
-				$this->jupgrade->db_new->setQuery($query);
-				$this->jupgrade->db_new->query();
-			}
-
-			// Check for query error.
-			$error = $this->jupgrade->db_new->getErrorMsg();
-
-			if ($error) {
-				throw new Exception($error);
-			}
-
-		} else {
-
-			$query = "SHOW TABLES LIKE '{$prefix}%'";
-			$this->jupgrade->db_new->setQuery($query);
-			$tables = $this->jupgrade->db_new->loadRowList();
-
-			$tables[][0] = 'jupgrade_categories';
-			$tables[][0] = 'jupgrade_menus';
-			$tables[][0] = 'jupgrade_modules';
-
-			for ($i=0;$i<count($tables);$i++) {
-				// Truncate mapping tables
-				$query = "DELETE FROM `{$tables[$i][0]}`";
-				$this->jupgrade->db_new->setQuery($query);
-				$this->jupgrade->db_new->query();
-
-				// Check for query error.
-				$error = $this->jupgrade->db_new->getErrorMsg();
-
-				if ($error) {
-					throw new Exception($error);
-				}
-			}
-
-		} // end if
-	} // end method
-
-	public function dropTables($prefix) {
-
-		$query = "SHOW TABLES LIKE '{$prefix}%'";
-		$this->jupgrade->db_new->setQuery($query);
-		$tables = $this->jupgrade->db_new->loadRowList();
-
-		for($i=0;$i<count($tables);$i++) {
-			$table = $tables[$i][0];
-			$query = "DROP TABLE {$table}";
-			$this->jupgrade->db_new->setQuery($query);
-			$this->jupgrade->db_new->query();
-
-			// Check for query error.
-			$error = $this->jupgrade->db_new->getErrorMsg();
-
-			if ($error) {
-				throw new Exception($error);
-			}
+	{
+		// If REST is enable, cleanup the source jupgrade_steps table
+		if ($this->jupgrade->params->get('method') == 'rest') {	
+			// Cleanup the rest data
+			$this->jupgrade->requestRest($task = 'cleanup', $table = false);
 		}
-	}
+
+		// Set all cid, status and cache to 0 
+		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, cache = 0";
+		$this->jupgrade->_db->setQuery($query);
+		$this->jupgrade->_db->query();
+	
+		// Get the prefix
+		$prefix = $this->jupgrade->_db->getPrefix();
+		$prefix_old = $this->jupgrade->_db_old->getPrefix();
+
+		// Truncate the selected tables
+		$tables = array();
+		$tables[] = 'jupgrade_categories';
+		$tables[] = 'jupgrade_menus';
+		$tables[] = 'jupgrade_modules';
+		$tables[] = "{$this->jupgrade->_db->getPrefix()}menu_types";
+		$tables[] = "{$this->jupgrade->_db->getPrefix()}content";
+
+		for ($i=0;$i<count($tables);$i++) {
+			if ($this->jupgrade->canDrop) {
+				$query = "TRUNCATE TABLE `{$tables[$i]}`";
+			}else{
+				$query = "DELETE FROM `{$tables[$i]}`";
+			}
+			$this->jupgrade->_db->setQuery($query);
+			$this->jupgrade->_db->query();
+		}
+
+		// Check for query error.
+		$error = $this->jupgrade->_db->getErrorMsg();
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Delete main menu
+		$query = "DELETE FROM {$this->jupgrade->_db->getPrefix()}menu WHERE id > 1";
+		$this->jupgrade->_db->setQuery($query);
+		$this->jupgrade->_db->query();
+
+		// Check for query error.
+		$error = $this->jupgrade->_db->getErrorMsg();
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Insert needed value
+		$query = "INSERT INTO `jupgrade_menus` ( `old`, `new`) VALUES ( 0, 0)";
+		$this->jupgrade->_db->setQuery($query);
+		$this->jupgrade->_db->query();
+
+		// Check for query error.
+		$error = $this->jupgrade->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Insert uncategorized id
+		$query = "INSERT INTO `jupgrade_categories` (`old`, `new`) VALUES (0, 2)";
+		$this->jupgrade->_db->setQuery($query);
+		$this->jupgrade->_db->query();
+
+		// Check for query error.
+		$error = $this->jupgrade->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Delete uncategorized categories
+		$query = "DELETE FROM {$prefix}categories WHERE id > 1";
+		$this->jupgrade->_db->setQuery($query);
+		$this->jupgrade->_db->query();
+
+		// Check for query error.
+		$error = $this->jupgrade->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		// Change the id of the admin user
+		$query = "UPDATE {$prefix}users SET id = 10 WHERE username = 'admin'";
+		$this->jupgrade->_db->setQuery($query);
+		$this->jupgrade->_db->query();
+
+		// Check for query error.
+		$error = $this->jupgrade->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		$query = "UPDATE {$prefix}user_usergroup_map SET user_id = 10 WHERE group_id = 8";
+		$this->jupgrade->_db->setQuery($query);
+		$this->jupgrade->_db->query();
+
+		// Check for query error.
+		$error = $this->jupgrade->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+	} // end method
 
 	/**
 	 * processStep
 	 *
 	 * @return	none
 	 * @since	2.5.0
-	 */
+	 *
 	public function processExtensionStep ($step)
 	{
 		// Get jUpgradeExtensions instance
@@ -381,13 +259,13 @@ class jUpgradeCli extends JApplicationCli
 			// updating the status flag
 			$query = "UPDATE jupgrade_steps SET status = 1"
 			." WHERE name = '{$step->name}'";
-			$this->jupgrade->db_new->setQuery($query);
-			$this->jupgrade->db_new->query();
+			$this->jupgrade->_db->setQuery($query);
+			$this->jupgrade->_db->query();
 
 			// Check for query error.
-			$error = $this->jupgrade->db_new->getErrorMsg();
+			$error = $this->jupgrade->_db->getErrorMsg();
 		}
-	}
+	}*/
 
 } // end class
 
@@ -396,7 +274,7 @@ try
 {
 	// Instantiate the application object, passing the class name to JCli::getInstance
 	// and use chaining to execute the application.
-	JCli::getInstance('jUpgradeCli')->execute();
+	JApplicationCli::getInstance('jUpgradeCli')->execute();
 }
 catch (Exception $e)
 {

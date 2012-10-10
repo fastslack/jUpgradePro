@@ -36,7 +36,7 @@ class JRESTAuthorizer
 		$key	= $parts[0];
 
 		if (!isset($params['AUTH_USER']) && !isset($params['HTTP_USER']) ) {
-			JResponse::setHeader('status', 400);
+			JResponse::setHeader('status', 404);
 			JResponse::setBody('Username headers not found.');
 			JResponse::sendHeaders();
 			exit;
@@ -70,14 +70,14 @@ class JRESTAuthorizer
 		$user_result = $db->loadObject();
 
 		if (!is_object($user_result)) {
-			JResponse::setHeader('status', 400);
+			JResponse::setHeader('status', 403);
 			JResponse::setBody('Username not found.');
 			JResponse::sendHeaders();
 			exit;
 		}
 
 		if ($user_result->gid != 25) {
-			JResponse::setHeader('status', 400);
+			JResponse::setHeader('status', 401);
 			JResponse::setBody('Username is not Super Administrator');
 			JResponse::sendHeaders();
 			exit;

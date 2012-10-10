@@ -91,6 +91,8 @@ class jUpgradeWeblinks extends jUpgrade
 			$cid = $row['catid'];
 			$row['catid'] = &$categories[$cid]->new;
 
+			$row['language'] = '*';
+
 			if ($this->_version == '3.0') {
 				$row['created'] = $row['date'];
 				unset($row['approved']);

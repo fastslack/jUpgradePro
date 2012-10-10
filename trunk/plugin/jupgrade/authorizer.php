@@ -30,13 +30,25 @@ class JRESTAuthorizer
 	 */
 	public function authorize(&$db, $params)
 	{
+		// Getting the client key
+		$plugin =& JPluginHelper::getPlugin('system', 'jupgrade');
+		$pluginParams = new JParameter( $plugin->params );
+		$client_key = trim($pluginParams->get('client_key'));
+
 		// Uncrypt the request
 		$key = base64_decode($params['HTTP_KEY']);
 		$parts	= explode( ':', $key );
-		$key	= $parts[0];
+		$key	= trim($parts[0]);
+
+		if ($key != $client_key) {
+			JResponse::setHeader('status', 402);
+			JResponse::setBody('Client key do not match.');
+			JResponse::sendHeaders();
+			exit;
+		}
 
 		if (!isset($params['AUTH_USER']) && !isset($params['HTTP_USER']) ) {
-			JResponse::setHeader('status', 404);
+			JResponse::setHeader('status', 405);
 			JResponse::setBody('Username headers not found.');
 			JResponse::sendHeaders();
 			exit;
@@ -69,9 +81,22 @@ class JRESTAuthorizer
 		$db->setQuery( $query );
 		$user_result = $db->loadObject();
 
+		// Check the password
+		$parts	= explode( ':', $user_result->password );
+		$crypt	= $parts[0];
+		$salt	= @$parts[1];
+		$testcrypt = JUserHelper::getCryptedPassword($password, $salt);
+
 		if (!is_object($user_result)) {
 			JResponse::setHeader('status', 403);
 			JResponse::setBody('Username not found.');
+			JResponse::sendHeaders();
+			exit;
+		}
+
+		if ($crypt != $testcrypt) {
+			JResponse::setHeader('status', 406);
+			JResponse::setBody('Username or password do not match');
 			JResponse::sendHeaders();
 			exit;
 		}
@@ -83,12 +108,6 @@ class JRESTAuthorizer
 			exit;
 		}
 
-		// Check the password
-		$parts	= explode( ':', $user_result->password );
-		$crypt	= $parts[0];
-		$salt	= @$parts[1];
-		$testcrypt = JUserHelper::getCryptedPassword($password, $salt);
-	
-		return ($crypt == $testcrypt) ? true : false;
+		return true;
 	}
 }

@@ -95,8 +95,8 @@ class JUpgradeTable extends JTable
 
 		$this->reset();	
 
-		// Get the database instance	
-		$db =& $this->getDBO();
+		// Getting the database instance
+		$db = JFactory::getDbo();
 
 		// Get the conditions
 		$conditions = $this->getConditionsHook();
@@ -205,7 +205,8 @@ class JUpgradeTable extends JTable
 	 */
 	public function getTotal()
 	{
-		$db =& $this->getDBO();
+		// Getting the database instance
+		$db = JFactory::getDbo();
 
 		$conditions = $this->getConditionsHook();
 
@@ -241,7 +242,8 @@ class JUpgradeTable extends JTable
 	 */
 	public function getLastid()
 	{
-		$db =& $this->getDBO();
+		// Getting the database instance
+		$db = JFactory::getDbo();
 
 		$key = $this->getKeyName();
 

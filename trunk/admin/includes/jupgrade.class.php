@@ -87,21 +87,15 @@ class jUpgrade
 		jimport('legacy.component.helper');
 		jimport('cms.version.version');
 
+		// Getting the parameters
 		if (class_exists('JVersion')) {
-			// Getting the parameters
 			$this->params	= JComponentHelper::getParams('com_jupgradepro');
 		}else{
 			$this->params = new JRegistry(new JConfig);
 		}
 
-		// Getting the Joomla config
-		//$config = new JConfig;
-
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
-
-		//$config = new JRegistry(new JConfig);
-		//print_r($this->params);
 
 		if (class_exists('JVersion')) {
 			// Creating old dabatase instance
@@ -282,7 +276,7 @@ class jUpgrade
 	}
 
 	/*
-	 * Fake method of dataHook is it not exists
+	 * Fake method of dataHook if it not exists
 	 *
 	 * @return	void
 	 * @since	3.0.0
@@ -626,7 +620,9 @@ class jUpgrade
 		$data['table'] = ($table != false) ? $table : '';
 		$request = $http->get($this->params->get('rest_hostname'), $data);
 
-		return $request->body;
+		$code = $request->code;
+
+		return ($code == 200) ? $request->body : $code;
 	}
 
 	/**

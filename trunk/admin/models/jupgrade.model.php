@@ -106,6 +106,37 @@ class jUpgradeProModel extends JModelLegacy
 				echo json_encode($message);
 				exit;
 			}
+
+			// Checking the RESTful connection
+			$code = $jupgrade->requestRest('check');
+
+			switch ($code) {
+				case 401:
+					$message['number'] = 501;
+					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_501');
+					echo json_encode($message);
+					exit;
+				case 402:
+					$message['number'] = 502;
+					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_502');
+					echo json_encode($message);
+					exit;
+				case 403:
+					$message['number'] = 503;
+					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_503');
+					echo json_encode($message);
+					exit;
+				case 405:
+					$message['number'] = 505;
+					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_505');
+					echo json_encode($message);
+					exit;
+				case 406:
+					$message['number'] = 506;
+					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_506');
+					echo json_encode($message);
+					exit;
+			}
 		}
 
 		// Check for bad configurations
@@ -205,19 +236,7 @@ class jUpgradeProModel extends JModelLegacy
 
 		// If REST is enable, cleanup the source jupgrade_steps table
 		if ($params->method == 'rest') {
-		
-			jimport('joomla.http.http');
-
-			// JHttp instance
-			$http = new JHttp();		
-		
-			// Getting the rest data
-			$data = $jupgrade->getRestData();
-		
-			// Getting the total
-			$data['task'] = "cleanup";
-			$data['files'] = "images";
-			$response = $http->get($params->rest_hostname, $data);
+			$jupgrade->requestRest('cleanup');
 		}
 
 		// Get the prefix

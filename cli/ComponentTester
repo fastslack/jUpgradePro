@@ -1,0 +1,103 @@
+#!/usr/bin/php
+<?php
+/**
+ * @version		    $Id: 
+ * @package		    jUpgrade
+ * @subpackage	  jUpgradeCli
+ * @copyright			CopyRight 2012 Matware All rights reserved.
+ * @author				Matias Aguirre
+ * @email   			maguirre@matware.com.ar
+ * @link					http://www.matware.com.ar/
+ * @license				GNU/GPL http://www.gnu.org/licenses/gpl-2.0-standalone.html
+ */
+// We are a valid Joomla entry point.
+define('_JEXEC', 1);
+
+// Bootstrap the application.
+require './bootstrap.php';
+
+class jUpgradeCliTest extends JApplicationCli
+{
+	/**
+	* Class constructor.
+	*
+	* @return void
+	*
+	* @since 2.5.0
+	*/
+	public function __construct()
+	{
+		// Call the parent __construct method so it bootstraps the application class.
+		parent::__construct();
+
+		// Add the logger.
+		JLog::addLogger(
+			// Pass an array of configuration options
+			array(
+				// Set the name of the log file
+				'text_file' => JPATH_SITE.'/logs/jupgradepro.test.log.php'
+			)
+		);
+
+		// System configuration.
+		$config = JFactory::getConfig();
+
+		// Note, this will throw an exception if there is an error
+		// Creating the database connection.
+		$this->dbo = JDatabase::getInstance(
+			array(
+				'driver' => $config->get('dbtype'),
+				'host' => $config->get('host'),
+				'user' => $config->get('user'),
+				'password' => $config->get('password'),
+				'database' => $config->get('db'),
+				'prefix' => $config->get('dbprefix'),
+			)
+		);
+
+		$_SERVER['REQUEST_METHOD'] = "GET";
+		$_SERVER['HTTP_HOST'] = $config->get('http_host');
+		$_SERVER['SCRIPT_NAME'] = $config->get('script_name');
+	}
+
+	/**
+	 * execute
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+  public function execute()
+  {
+		$application = JFactory::getApplication('administrator');
+
+		$config = array();
+		$config['base_path'] = JPATH_COMPONENT_ADMINISTRATOR;
+
+		$controller	= JControllerLegacy::getInstance('jUpgradePro', $config);
+
+		// set default view if not set
+		JRequest::setVar('view', 'rest');
+		JRequest::setVar('format', 'raw');
+		JRequest::setVar('task', 'checks');
+		//JRequest::setVar('type', 'extensions');
+
+		// call parent behavior
+		$controller->display();
+
+	} // end method
+
+} // end class
+
+// Wrap the execution in a try statement to catch any exceptions thrown anywhere in the script.
+try
+{
+	// Instantiate the application object, passing the class name to JCli::getInstance
+	// and use chaining to execute the application.
+	JApplicationCli::getInstance('jUpgradeCliTest')->execute();
+}
+catch (Exception $e)
+{
+	// An exception has been caught, just echo the message.
+	fwrite(STDOUT, $e->getMessage() . "\n");
+	exit($e->getCode());
+}

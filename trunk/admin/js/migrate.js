@@ -272,6 +272,9 @@ var jUpgrade = new Class({
 				// Changing title and statusbar
 				pb4.set(object.id*6);
 				status.innerHTML = 'Migrating ' + object.title;
+				if (object.middle != true) {
+					currItem.innerHTML = object.cid;
+				}
 				totalItems.innerHTML = object.total;
 
 				// Start the checks
@@ -295,13 +298,17 @@ var jUpgrade = new Class({
 						}
 					}
 				});
-	
-				for (i=object.start;i<=object.stop;i++) {
-					var reqname = object.name+i;
-					rm.addRequest(reqname, row);			
-				}
 
-				rm.runAll();
+				// Running the request[s]
+				if (method == 'ajax') {
+					row.send();
+				} else if (method == 'rest') {
+					for (i=object.start;i<=object.stop;i++) {
+						var reqname = object.name+i;
+						rm.addRequest(reqname, row);			
+					}
+					rm.runAll();
+				}
 			}
 		});
 

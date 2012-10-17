@@ -274,7 +274,8 @@ class jUpgradeProModel extends JModelLegacy
 		$this->runQuery ($query);
 
 		// Done checks
-		$this->returnError (100, 'DONE');
+		if (class_exists('JVersion'))
+			$this->returnError (100, 'DONE');
 	}
 
 	/**
@@ -322,7 +323,8 @@ class jUpgradeProModel extends JModelLegacy
 				$this->_updateStep($step, 1, $step->cache);
 
 				//echo $step->div;
-			} else if ($step->cache == 1 && $step->status == 1) { 
+
+			} else if ($step->cache == 0 && $step->status == 1) { 
 				//echo "[[2]]\n";
 
 				$step->start = $this->_getStartValue($step, $limit);
@@ -339,35 +341,22 @@ class jUpgradeProModel extends JModelLegacy
 				// updating the status flag
 				$this->_updateStep($step, 2, 0);
 
-			} else if ($step->cache == 0 && $step->status == 1) { 
-				//echo "[[3]]\n";
-
-				$step->start = $this->_getStartValue($step, $limit);
-
-				$step->stop = $step->total;
-
-				$step->next = true;
-
-				// Mark if is the end of the step
-				if ($step->name == $step->laststep) {
-					$step->end = true;
-				}
-
-				// updating the status flag
-				$this->_updateStep($step, 2, 0);
-
 			} else if ($step->cache > 0) { 
-				//echo "[[4]]\n";
+				//echo "[[3]]\n";
 		
 				$step->start = $this->_getStartValue($step, $limit);
 
 				$step->stop = ($step->start - 1) + $limit;
 
-				$step->middle = true;
+				if ($step->stop > $step->total) {
+					$step->next = true;
+				}else{
+					$step->middle = true;
+					unset($step->cid);
+				}
 
 				// updating the status flag
 				$this->_updateStep($step, 1, $step->cache - 1);
-
 			}
 
 		}else if ($step->total == 0) {
@@ -392,6 +381,8 @@ class jUpgradeProModel extends JModelLegacy
 			$step->start = 1;
 			$step->stop = $step->total;
 
+			$step->next = true;
+
 			// updating the status flag
 			$this->_updateStep($step, 2, 0);
 		}
@@ -401,7 +392,7 @@ class jUpgradeProModel extends JModelLegacy
 		//print_r($stepo);
 		//echo "\n\n";
 
-		unset($step->cid);
+		//unset($step->cid);
 		unset($step->cache);
 		unset($step->status);
 		unset($step->laststep);
@@ -461,18 +452,19 @@ class jUpgradeProModel extends JModelLegacy
 		$table = ($table == false) ? JRequest::getVar('table') : $table;
 
 		$step = $this->_getStep($table);
-
 		$process = jUpgrade::getInstance($step);
 		$process->upgrade();
 
+		$step = $this->_getStep($table);
+		//$step->cid = $step->cid + 1;
+		//$this->_updateStep($step, 1, false, $step->cid);
+
+		// Getting the total
 		$total = $process->getTotal();
 
-		$step->cid = $step->cid + 1;
-		$this->_updateStep($step, 1, false, $step->cid);
-
-		if ($total == $step->cid) {
+		if ($total <= $step->cid) {
 			$step->last = true;
-			$this->_updateStep($step, 2, false, false);
+			$this->_updateStep($step, 2, false, $total);
 		}
 
 		unset($step->cache);

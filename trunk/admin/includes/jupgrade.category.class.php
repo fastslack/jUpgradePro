@@ -80,6 +80,8 @@ class jUpgradeCategory extends jUpgrade
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
+			$row = (array) $row;
+
 			$row['params'] = $this->convertParams($row['params']);
 			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
 			$row['title'] = str_replace("'", "&#39;", $row['title']);
@@ -200,6 +202,10 @@ class jUpgradeCategory extends jUpgrade
 		if (!@$category->store()) {
 			echo JError::raiseError(500, $category->getError());
 		}
+
+		// Updating the steps table
+		$cid = $this->_getStepID();
+		$this->_updateID($cid+1);
 
 		// Get new id
 		$oldlist->new = $category->id;

@@ -252,8 +252,8 @@ class jUpgradeMenu extends jUpgrade
              		$catid = isset($categories[$id]->new) ? $categories[$id]->new : $id;
         				$row->link = "index.php?option=com_content&view=category&layout=blog&id={$catid}";
         } elseif (strpos($row->link, 'view=section') !== false) {
-        	$catid = isset($sections[$id]->new) ? $sections[$id]->new : $id;
-          $row->link = 'index.php?option=com_content&view=category&layout=blog&id='.$sections[$id]->new;
+        	$sectionid = isset($sections[$id]->new) ? $sections[$id]->new : $id;
+          $row->link = 'index.php?option=com_content&view=category&layout=blog&id='.$sectionid;
         }
       }
 
@@ -271,6 +271,10 @@ class jUpgradeMenu extends jUpgrade
 			if (!$this->_db->insertObject('jupgrade_menus', $menuMap)) {
 				throw new Exception($this->_db->getErrorMsg());
 			}
+
+			// Updating the steps table
+			$cid = $this->_getStepID();
+			$this->_updateID($cid+1);
 
 			if ($row->id == $this->getLastId('menus')) {
 				$this->populateDefaultMenus();
@@ -309,5 +313,4 @@ class jUpgradeMenu extends jUpgrade
 			}
 		}
 	}
-
 }

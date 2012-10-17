@@ -50,6 +50,8 @@ class jUpgradeContent extends jUpgrade
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
+			$row = (array) $row;
+
 			$row['attribs'] = $this->convertParams($row['attribs']);
 			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
 			$row['language'] = '*';
@@ -179,6 +181,10 @@ class jUpgradeContent extends jUpgrade
 			if (!$content->store()) {
 				echo JError::raiseError(500, $content->getError());
 			}
+
+			// Updating the steps table
+			$cid = $this->_getStepID();
+			$this->_updateID($cid+1);
 
 			if ($row['id'] == $this->getLastId('contents')) {
 				$this->updateFeature();

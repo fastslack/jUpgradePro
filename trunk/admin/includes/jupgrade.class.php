@@ -89,26 +89,28 @@ class jUpgrade
 
 		// Getting the Joomla version
 		if (class_exists('JVersion')) {
-			$version = new JVersion;
-			$this->_version = $version->RELEASE;
-
 			// Getting the parameters
 			$this->params	= JComponentHelper::getParams('com_jupgradepro');
-		}else{
-			$this->_version = $this->params->get('RELEASE');
 
+			// Getting the J! version
+			$version = new JVersion;
+			$this->_version = $version->RELEASE;
+		}else{
 			// Getting the parameters
 			$this->params = new JRegistry(new JConfig);
+
+			$this->_version = $this->params->get('RELEASE');
 		}
 
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
 
+		$ver = $this->params->get('client') == 'cli' ? 'cli' : $this->_version;
+		require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.database.class.'.$ver.'.php';
+
 		if (class_exists('JVersion')) {
 			// Creating old dabatase instance
 			if ($this->params->get('method') == 'database') {
-
-				require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.database.class.'.$this->_version.'.php';
 
 				$db_config['driver'] = 'JUpgrade';
 				$db_config['host'] = $this->params->get('hostname');
@@ -128,7 +130,7 @@ class jUpgrade
 			$db_config['database'] = $this->params->get('old_db');
 			$db_config['prefix'] = $this->params->get('old_prefix');
 
-			$this->_db_old = JDatabaseJUpgrade::getInstance($db_config);
+			$this->_db_old = JDatabaseDriverJUpgrade::getInstance($db_config);
 		}
 
 		// Set timelimit to 0
@@ -313,7 +315,7 @@ class jUpgrade
 				}
 		    break;
 			case 'database':
-		    $rows = $this->getSourceDatabase();
+		    $rows = $this->getSourceDatabaseAll();
 		    break;
 			case 'database_all':
 		    $rows = $this->getSourceDatabaseAll();
@@ -331,6 +333,8 @@ class jUpgrade
 	 */
 	public function getSourceDatabaseAll( )
 	{
+		$cache_limit = $this->params->get('cache_limit');
+
 		$key = $this->_tbl_key;
 
 		$oid = $this->_getStepID();
@@ -361,17 +365,13 @@ class jUpgrade
 
 		$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
 
+		$limit = "LIMIT {$oid}, {$cache_limit}";
+
 		// Get the row
-		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where}{$where_or} {$group_by} {$order}";
+		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where}{$where_or} {$group_by} {$order} {$limit}";
 		$this->_db_old->setQuery( $query );
-		//echo $query;
+		//echo "\n$query\n";
 		$rows = $this->_db_old->loadObjectList();
-
-		$total = count($rows);
-
-		if ($oid > 0) {
-			$rows = array_slice($rows, $oid, $total, true);
-		}
 
 		if (is_array($rows)) {
 			return $rows;
@@ -769,11 +769,11 @@ class jUpgrade
 				$this->_updateID($cid+1);
 			}
 		}else if (is_object($rows)) {
-		
+
 			if (!$this->_db->insertObject($table, $rows)) {
 				throw new Exception($this->_db->getErrorMsg());
-			}		
-	
+			}
+
 		}
 	
 		return true;
@@ -895,6 +895,7 @@ class jUpgrade
 	}
 
 	/**
+	 * TODO: Replace this function: get the new id directly
 	 * Internal function to get original database prefix
 	 *
 	 * @return	an original database prefix

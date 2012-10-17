@@ -62,6 +62,8 @@ class jUpgradeSections extends jUpgradeCategory
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
+			$row = (array) $row;
+
 			$row['params'] = $this->convertParams($row['params']);
 			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
 			$row['title'] = str_replace("'", "&#39;", $row['title']);

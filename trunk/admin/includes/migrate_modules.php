@@ -65,6 +65,8 @@ class jUpgradeModules extends jUpgrade
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
+			$row = (array) $row;
+
 			$row['params'] = $this->convertParams($row['params']);
 
 			## Fix access
@@ -145,6 +147,10 @@ class jUpgradeModules extends jUpgrade
 			if (!$this->_db->insertObject('jupgrade_modules', $oldlist)) {
 				throw new Exception($this->_db->getErrorMsg());
 			}
+
+			// Updating the steps table
+			$cid = $this->_getStepID();
+			$this->_updateID($cid+1);
 		}
 
 		return false;

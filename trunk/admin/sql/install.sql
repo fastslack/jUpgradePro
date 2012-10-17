@@ -7,7 +7,7 @@ CREATE TABLE IF NOT EXISTS `jupgrade_categories` (
   `old` int(11) NOT NULL,
   `new` int(11) NOT NULL,
   `section` varchar(255) NOT NULL DEFAULT '0'
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Table structure for table `jupgrade_menus`
@@ -17,7 +17,7 @@ DROP TABLE IF EXISTS `jupgrade_menus`;
 CREATE TABLE IF NOT EXISTS `jupgrade_menus` (
   `old` int(11) NOT NULL,
   `new` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
 -- Dumping data for table `jupgrade_menus`
@@ -40,7 +40,7 @@ CREATE TABLE IF NOT EXISTS `jupgrade_steps` (
   `cache` int(11) NOT NULL,
   `extension` int(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
 
 --
 -- Dumping data for table `jupgrade_steps`
@@ -73,4 +73,4 @@ DROP TABLE IF EXISTS `jupgrade_modules`;
 CREATE TABLE IF NOT EXISTS `jupgrade_modules` (
   `old` int(11) NOT NULL,
   `new` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;

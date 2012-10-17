@@ -286,7 +286,7 @@ var jUpgrade = new Class({
 						var row_object = JSON.decode(response);
 
 						currItem.innerHTML = row_object.cid;
-						
+
 						if (row_object.cid == object.stop && object.name == row_object.name) {
 							if (object.end == true) {
 								pb4.finish();

@@ -310,27 +310,18 @@ class jUpgradeProModel extends JModelLegacy
 		if ($step->total > $limit) {
 
 			if ($step->cache == 0 && $step->status == 0) {
-				//echo "[[1]]\n";
 
 				$step->start = 1;
-
 				$step->cache = round($step->total / $limit) - 1;
 				$step->stop = $limit;
-
 				$step->first = true;
 
 				// updating the status flag
 				$this->_updateStep($step, 1, $step->cache);
 
-				//echo $step->div;
-
 			} else if ($step->cache == 0 && $step->status == 1) { 
-				//echo "[[2]]\n";
 
 				$step->start = $this->_getStartValue($step, $limit);
-
-				$step->stop = $step->total;
-
 				$step->next = true;
 
 				// Mark if is the end of the step
@@ -342,10 +333,8 @@ class jUpgradeProModel extends JModelLegacy
 				$this->_updateStep($step, 2, 0);
 
 			} else if ($step->cache > 0) { 
-				//echo "[[3]]\n";
 		
 				$step->start = $this->_getStartValue($step, $limit);
-
 				$step->stop = ($step->start - 1) + $limit;
 
 				if ($step->stop > $step->total) {
@@ -379,24 +368,20 @@ class jUpgradeProModel extends JModelLegacy
 			}
 
 			$step->start = 1;
-			$step->stop = $step->total;
-
 			$step->next = true;
 
 			// updating the status flag
 			$this->_updateStep($step, 2, 0);
 		}
 
-		//echo "\n\n";
-		//$stepo = $this->_getStep();
-		//print_r($stepo);
-		//echo "\n\n";
+		// Go to the next step
+		if ($step->next == true) {
+			$step->stop = $step->total;
+		}
 
-		//unset($step->cid);
 		unset($step->cache);
 		unset($step->status);
 		unset($step->laststep);
-		//unset($step->class);
 		unset($step->extension);
 
 		// Encoding
@@ -456,8 +441,6 @@ class jUpgradeProModel extends JModelLegacy
 		$process->upgrade();
 
 		$step = $this->_getStep($table);
-		//$step->cid = $step->cid + 1;
-		//$this->_updateStep($step, 1, false, $step->cid);
 
 		// Getting the total
 		$total = $process->getTotal();
@@ -638,74 +621,4 @@ class jUpgradeProModel extends JModelLegacy
 
 		return true;
 	}
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getTemplates() {
-
-		// Require the file
-		require_once JPATH_COMPONENT.'/includes/templates_db.php';
-
-		// Migration 3rd party templates
-		$templates = new jUpgradeTemplates;
-
-		if ($templates->upgrade()) {
-			$message['status'] = "OK";
-			$message['number'] = 100;
-			$message['text'] = "DONE";
-		}
-
-		echo json_encode($message);
-	}
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getTemplatesfiles() {
-
-		// Require the file
-		require_once JPATH_COMPONENT.'/includes/templates_files.php';
-
-		// Migration 3rd party templates
-		$templates = new jUpgradeTemplatesFiles;
-
-		if ($templates->upgrade()) {
-			$message['status'] = "OK";
-			$message['number'] = 100;
-			$message['text'] = "DONE";
-		}
-
-		echo json_encode($message);
-	}
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getFiles() {
-
-		// Require the file
-		require_once JPATH_COMPONENT.'/includes/migrate_files.php';
-
-		// Migration 3rd party templates
-		$templates = new jUpgradeFiles;
-
-		if ($templates->upgrade()) {
-			$message['status'] = "OK";
-			$message['number'] = 100;
-			$message['text'] = "DONE";
-		}
-
-		echo json_encode($message);
-	}
-
-}
+} // end class

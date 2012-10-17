@@ -16,7 +16,7 @@ define('_JEXEC', 1);
 // Bootstrap the application.
 require './bootstrap.php';
 
-class jUpgradeCliTest extends JApplicationCli
+class ComponentTester extends JApplicationCli
 {
 	/**
 	* Class constructor.
@@ -35,7 +35,7 @@ class jUpgradeCliTest extends JApplicationCli
 			// Pass an array of configuration options
 			array(
 				// Set the name of the log file
-				'text_file' => JPATH_SITE.'/logs/jupgradepro.test.log.php'
+				'text_file' => JPATH_SITE.'/logs/ComponentTester.log.php'
 			)
 		);
 
@@ -93,7 +93,7 @@ try
 {
 	// Instantiate the application object, passing the class name to JCli::getInstance
 	// and use chaining to execute the application.
-	JApplicationCli::getInstance('jUpgradeCliTest')->execute();
+	JApplicationCli::getInstance('ComponentTester')->execute();
 }
 catch (Exception $e)
 {

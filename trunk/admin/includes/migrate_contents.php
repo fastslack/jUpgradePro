@@ -108,9 +108,6 @@ class jUpgradeContent extends jUpgrade
 	{
 		$params = $this->getParams();
 
-		// Get the source data.
-		//$rows = $this->loadData('contents');
-
 		$table	= empty($this->destination) ? $this->source : $this->destination;
 
 		//

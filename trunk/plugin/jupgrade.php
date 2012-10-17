@@ -86,7 +86,7 @@ class plgSystemJUpgrade extends JPlugin
 			if ($return !== false) {
 				echo $return;
 			}else{
-				JResponse::setHeader('status', 400);
+				JResponse::setHeader('status', 401);
 				JResponse::setBody('Dispatch error.');
 				JResponse::sendHeaders();
 				exit;		
@@ -113,7 +113,7 @@ class plgSystemJUpgrade extends JPlugin
 		$tables = $db->loadResultArray();
 		
 		if (!in_array('jupgrade_plugin_steps', $tables)) {
-			$this->populateDatabase(& $db, $sqlfile );
+			$this->populateDatabase( $db, $sqlfile );
 		}		
 
 	} // end method

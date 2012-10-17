@@ -105,32 +105,27 @@ class jUpgrade
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
 
-		$ver = $this->params->get('client') == 'cli' ? 'cli' : $this->_version;
-		require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.database.class.'.$ver.'.php';
-
-		if (class_exists('JVersion')) {
-			// Creating old dabatase instance
-			if ($this->params->get('method') == 'database') {
-
-				$db_config['driver'] = 'JUpgrade';
+		// Creating old dabatase instance
+		if ($this->params->get('method') == 'database') {
+			// Web
+			if (class_exists('JVersion')) {
+				$db_config['driver'] = $this->params->get('driver');
 				$db_config['host'] = $this->params->get('hostname');
 				$db_config['user'] = $this->params->get('username');
 				$db_config['password'] = $this->params->get('password');
 				$db_config['database'] = $this->params->get('database');
 				$db_config['prefix'] = $this->params->get('prefix');
-
-				$this->_db_old = JDatabaseJUpgrade::getInstance($db_config);
+			// Cli
+			}else{
+				$db_config['driver'] = $this->params->get('old_dbtype');
+				$db_config['host'] = $this->params->get('old_host');
+				$db_config['user'] = $this->params->get('old_user');
+				$db_config['password'] = $this->params->get('old_password');
+				$db_config['database'] = $this->params->get('old_db');
+				$db_config['prefix'] = $this->params->get('old_prefix');
 			}
-		}else{
 
-			$db_config['driver'] = 'JUpgrade';
-			$db_config['host'] = $this->params->get('old_host');
-			$db_config['user'] = $this->params->get('old_user');
-			$db_config['password'] = $this->params->get('old_password');
-			$db_config['database'] = $this->params->get('old_db');
-			$db_config['prefix'] = $this->params->get('old_prefix');
-
-			$this->_db_old = JDatabaseDriverJUpgrade::getInstance($db_config);
+			$this->_db_old = JDatabase::getInstance($db_config);
 		}
 
 		// Set timelimit to 0
@@ -315,10 +310,7 @@ class jUpgrade
 				}
 		    break;
 			case 'database':
-		    $rows = $this->getSourceDatabaseAll();
-		    break;
-			case 'database_all':
-		    $rows = $this->getSourceDatabaseAll();
+		    $rows = $this->getSourceDatabase();
 		    break;
 		}
 
@@ -331,7 +323,7 @@ class jUpgrade
 	 * @access	public
 	 * @return	int	The total of rows
 	 */
-	public function getSourceDatabaseAll( )
+	public function getSourceDatabase( )
 	{
 		$cache_limit = $this->params->get('cache_limit');
 
@@ -375,69 +367,6 @@ class jUpgrade
 
 		if (is_array($rows)) {
 			return $rows;
-		}
-		else
-		{
-			throw new Exception( $this->_db_old->getErrorMsg() );
-			return false;
-		}
-	}
-
-	/**
-	 * Get total of the rows of the table
-	 *
-	 * @access	public
-	 * @return	int	The total of rows
-	 */
-	public function getSourceDatabase( )
-	{
-		$key = $this->_tbl_key;
-
-		$oid = $this->_getStepID();
-
-		if ($oid === null) {
-			return false;
-		}
-
-		// Get the conditions
-		$conditions = $this->getConditionsHook();
-
-		$where = '';
-		if ( isset( $conditions['where'] ) ) {
-			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		}
-		$where_or = '';
-		if (isset($conditions['where_or'])) {
-			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
-		}		
-		$select = isset($conditions['select']) ? $conditions['select'] : '*';
-		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-		$group_by = isset($conditions['group_by']) ? 'GROUP BY '.$conditions['group_by'] : '';
-
-		$join = '';
-		if (isset($conditions['join'])) {
-			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
-		}
-
-		$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
-
-		// Get the row
-		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where}{$where_or} {$group_by} {$order}";
-		$this->_db_old->setQuery( $query );
-		//echo $query;
-
-		$row = $this->_db_old->loadRowDataSeek( $oid );
-
-		if (is_array($row)) {
-			$this->_updateID($oid+1);
-
-			$return = array();
-			$return[] = $row;
-
-			// Free up system resources and return.
-			//$this->_db_old->freeResult($cursor);
-
-			return $return;
 		}
 		else
 		{

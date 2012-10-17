@@ -81,8 +81,6 @@ class jUpgradeCli extends JApplicationCli
 	 */
   public function execute()
   {
-		// Cleanup 
-		$this->cleanup();
 		// Start migration
 		$this->migrate();
 	} // end method
@@ -99,6 +97,8 @@ class jUpgradeCli extends JApplicationCli
 
 		$model = new jUpgradeProModel;
 
+		$model->getCleanup();
+
 		while (!$finished)
 		{
 			// Getting the current step
@@ -111,133 +111,17 @@ class jUpgradeCli extends JApplicationCli
 			$this->out("\n===========================================================");
 			$this->out("[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
 
-			$start = $step->start;
-			$stop = $step->stop;
-			$total = $step->total;
+			$method = $this->jupgrade->params->get('method');
 
-			for($i=$start;$i<=$stop;$i++) {
+			if ($method == 'database') {
 				$result = $model->getMigrate($step->name, false);
 				echo ".";
+			}else if ($method == 'rest') {
+				for($i=$step->start;$i<=$step->stop;$i++) {
+					$result = $model->getMigrate($step->name, false);
+					echo ".";
+				}
 			}
-		}
-
-	} // end method
-
-	/**
-	 * Cleanup
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function cleanup()
-	{
-		// If REST is enable, cleanup the source jupgrade_steps table
-		if ($this->jupgrade->params->get('method') == 'rest') {	
-			// Cleanup the rest data
-			$this->jupgrade->requestRest($task = 'cleanup', $table = false);
-		}
-
-		// Set all cid, status and cache to 0 
-		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, cache = 0";
-		$this->jupgrade->_db->setQuery($query);
-		$this->jupgrade->_db->query();
-	
-		// Get the prefix
-		$prefix = $this->jupgrade->_db->getPrefix();
-		$prefix_old = $this->jupgrade->_db_old->getPrefix();
-
-		// Truncate the selected tables
-		$tables = array();
-		$tables[] = 'jupgrade_categories';
-		$tables[] = 'jupgrade_menus';
-		$tables[] = 'jupgrade_modules';
-		$tables[] = "{$this->jupgrade->_db->getPrefix()}menu_types";
-		$tables[] = "{$this->jupgrade->_db->getPrefix()}content";
-
-		for ($i=0;$i<count($tables);$i++) {
-			if ($this->jupgrade->canDrop) {
-				$query = "TRUNCATE TABLE `{$tables[$i]}`";
-			}else{
-				$query = "DELETE FROM `{$tables[$i]}`";
-			}
-			$this->jupgrade->_db->setQuery($query);
-			$this->jupgrade->_db->query();
-		}
-
-		// Check for query error.
-		$error = $this->jupgrade->_db->getErrorMsg();
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Delete main menu
-		$query = "DELETE FROM {$this->jupgrade->_db->getPrefix()}menu WHERE id > 1";
-		$this->jupgrade->_db->setQuery($query);
-		$this->jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $this->jupgrade->_db->getErrorMsg();
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Insert needed value
-		$query = "INSERT INTO `jupgrade_menus` ( `old`, `new`) VALUES ( 0, 0)";
-		$this->jupgrade->_db->setQuery($query);
-		$this->jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $this->jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Insert uncategorized id
-		$query = "INSERT INTO `jupgrade_categories` (`old`, `new`) VALUES (0, 2)";
-		$this->jupgrade->_db->setQuery($query);
-		$this->jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $this->jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Delete uncategorized categories
-		$query = "DELETE FROM {$prefix}categories WHERE id > 1";
-		$this->jupgrade->_db->setQuery($query);
-		$this->jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $this->jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Change the id of the admin user
-		$query = "UPDATE {$prefix}users SET id = 10 WHERE username = 'admin'";
-		$this->jupgrade->_db->setQuery($query);
-		$this->jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $this->jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		$query = "UPDATE {$prefix}user_usergroup_map SET user_id = 10 WHERE group_id = 8";
-		$this->jupgrade->_db->setQuery($query);
-		$this->jupgrade->_db->query();
-
-		// Check for query error.
-		$error = $this->jupgrade->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
 		}
 
 	} // end method

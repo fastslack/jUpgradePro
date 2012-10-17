@@ -9,7 +9,7 @@
 # 
 
 PROJECT="jupgradepro-free"
-VERSION="3.0.0-RC1"
+VERSION="3.0.0-RC2"
 
 DIR="com_$PROJECT"
 PACKAGE="com_$PROJECT-$VERSION.zip"
@@ -28,8 +28,8 @@ find $DIR -name ".DS_Store" -exec rm -rf {} \;
 
 # Zipping plugin
 cd $DIR/plugin/
-zip -rq plg_${PROJECT}-${VERSION}.zip .
-mv plg_${PROJECT}-${VERSION}.zip ../../.
+zip -rq plg_${PROJECT}-rest-${VERSION}.zip .
+mv plg_${PROJECT}-rest-${VERSION}.zip ../../.
 cd ../..
 
 # create package

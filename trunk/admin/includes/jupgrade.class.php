@@ -87,10 +87,17 @@ class jUpgrade
 		jimport('legacy.component.helper');
 		jimport('cms.version.version');
 
-		// Getting the parameters
+		// Getting the Joomla version
 		if (class_exists('JVersion')) {
+			$version = new JVersion;
+			$this->_version = $version->RELEASE;
+
+			// Getting the parameters
 			$this->params	= JComponentHelper::getParams('com_jupgradepro');
 		}else{
+			$this->_version = $this->params->get('RELEASE');
+
+			// Getting the parameters
 			$this->params = new JRegistry(new JConfig);
 		}
 
@@ -101,25 +108,27 @@ class jUpgrade
 			// Creating old dabatase instance
 			if ($this->params->get('method') == 'database') {
 
-				$db_config['driver'] = $this->params->get('driver');
+				require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.database.class.'.$this->_version.'.php';
+
+				$db_config['driver'] = 'JUpgrade';
 				$db_config['host'] = $this->params->get('hostname');
 				$db_config['user'] = $this->params->get('username');
 				$db_config['password'] = $this->params->get('password');
 				$db_config['database'] = $this->params->get('database');
 				$db_config['prefix'] = $this->params->get('prefix');
 
-				$this->_db_old = new jUpgradeDatabase($db_config);
+				$this->_db_old = JDatabaseJUpgrade::getInstance($db_config);
 			}
 		}else{
 
-			$db_config['driver'] = $this->params->get('old_dbtype');
+			$db_config['driver'] = 'JUpgrade';
 			$db_config['host'] = $this->params->get('old_host');
 			$db_config['user'] = $this->params->get('old_user');
 			$db_config['password'] = $this->params->get('old_password');
 			$db_config['database'] = $this->params->get('old_db');
 			$db_config['prefix'] = $this->params->get('old_prefix');
 
-			$this->_db_old = new jUpgradeDatabase($db_config);
+			$this->_db_old = JDatabaseJUpgrade::getInstance($db_config);
 		}
 
 		// Set timelimit to 0
@@ -144,14 +153,6 @@ class jUpgrade
 
 		if (strpos($grant, 'DROP') == true || strpos($grant, 'ALL') == true) {
 			$this->canDrop = true;
-		}
-
-		// Getting the Joomla version
-		if (class_exists('JVersion')) {
-			$version = new JVersion;
-			$this->_version = $version->RELEASE;
-		}else{
-			$this->_version = $this->params->get('RELEASE');;
 		}
 	}
 
@@ -622,7 +623,7 @@ class jUpgrade
 
 		$code = $request->code;
 
-		return ($code == 200) ? $request->body : $code;
+		return ($code == 200 || $code == 301) ? $request->body : $code;
 	}
 
 	/**

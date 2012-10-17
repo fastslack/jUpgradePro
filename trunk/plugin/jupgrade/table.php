@@ -224,8 +224,8 @@ class JUpgradeTable extends JTable
 		$db->setQuery( $query );
 		$total = $db->loadResult();
 
-		if ($total) {
-			return (int)$total;
+		if ($total != '') {
+			return $total;
 		}
 		else
 		{

@@ -17,7 +17,6 @@ defined('_JEXEC') or die;
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.users.class.php';
-require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.database.class.php';
 
 /**
  * jUpgradePro Model
@@ -50,31 +49,19 @@ class jUpgradeProModel extends JModelLegacy
 		$message['status'] = "ERROR";
 
 		if (!in_array('jupgrade_categories', $tables)) {
-			$message['number'] = 401;
-			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_CAT");
-			echo json_encode($message);
-			exit;
+			$this->returnError (401, 'COM_JUPGRADEPRO_ERROR_TABLE_CAT');
 		}
 		
 		if (!in_array('jupgrade_menus', $tables)) {
-			$message['number'] = 402;
-			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_MENUS");
-			echo json_encode($message);
-			exit;
+			$this->returnError (402, 'COM_JUPGRADEPRO_ERROR_TABLE_MENUS');
 		}
 		
 		if (!in_array('jupgrade_modules', $tables)) {
-			$message['number'] = 403;
-			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_MODULES");
-			echo json_encode($message);
-			exit;
+			$this->returnError (403, 'COM_JUPGRADEPRO_ERROR_TABLE_MODULES');
 		}
 		
 		if (!in_array('jupgrade_steps', $tables)) {
-			$message['number'] = 404;
-			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NO_EXISTS");
-			echo json_encode($message);
-			exit;
+			$this->returnError (404, 'COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NO_EXISTS');
 		}		
 
 		// Check if jupgrade_steps is fine
@@ -83,28 +70,19 @@ class jUpgradeProModel extends JModelLegacy
 		$nine = $jupgrade->_db->loadResult();
 		
 		if ($nine < 10) {
-			$message['number'] = 405;
-			$message['text'] = JText::_("COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NOT_VALID");
-			echo json_encode($message);
-			exit;
+			$this->returnError (405, 'COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NOT_VALID');
 		}
 	
 		// Check safe_mode_gid
 		if (@ini_get('safe_mode_gid')) {
-			$message['number'] = 411;
-			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DISABLE_SAFE_GID');
-			echo json_encode($message);
-			exit;
+			$this->returnError (411, 'COM_JUPGRADEPRO_ERROR_DISABLE_SAFE_GID');
 		}
 
 		// Check for bad configurations
 		if ($params->method == "rest") {
 			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' || 
 					$params->rest_username == '' || $params->rest_password == '' || $params->rest_key == '') {
-				$message['number'] = 412;
-				$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
-				echo json_encode($message);
-				exit;
+				$this->returnError (412, 'COM_JUPGRADEPRO_ERROR_REST_CONFIG');
 			}
 
 			// Checking the RESTful connection
@@ -112,30 +90,15 @@ class jUpgradeProModel extends JModelLegacy
 
 			switch ($code) {
 				case 401:
-					$message['number'] = 501;
-					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_501');
-					echo json_encode($message);
-					exit;
+					$this->returnError (501, 'COM_JUPGRADEPRO_ERROR_REST_501');
 				case 402:
-					$message['number'] = 502;
-					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_502');
-					echo json_encode($message);
-					exit;
+					$this->returnError (502, 'COM_JUPGRADEPRO_ERROR_REST_502');
 				case 403:
-					$message['number'] = 503;
-					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_503');
-					echo json_encode($message);
-					exit;
+					$this->returnError (503, 'COM_JUPGRADEPRO_ERROR_REST_503');
 				case 405:
-					$message['number'] = 505;
-					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_505');
-					echo json_encode($message);
-					exit;
+					$this->returnError (505, 'COM_JUPGRADEPRO_ERROR_REST_505');
 				case 406:
-					$message['number'] = 506;
-					$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_REST_506');
-					echo json_encode($message);
-					exit;
+					$this->returnError (506, 'COM_JUPGRADEPRO_ERROR_REST_506');
 			}
 		}
 
@@ -143,10 +106,7 @@ class jUpgradeProModel extends JModelLegacy
 		if ($params->method == "database") {
 			if ($params->hostname == 'localhost' || $params->hostname == '' || 
 					$params->username == '' || $params->password == '' || $params->database == '' || $params->prefix == '' ) {
-				$message['number'] = 413;
-				$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
-				echo json_encode($message);
-				exit;
+				$this->returnError (413, 'COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
 			}
 		}
 
@@ -167,55 +127,44 @@ class jUpgradeProModel extends JModelLegacy
 		}
 
 		if ($flag === false) {
-			$message['number'] = 414;
-			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_SKIPS_ALL');
-			echo json_encode($message);
-			exit;			
+			$this->returnError (414, 'COM_JUPGRADEPRO_ERROR_SKIPS_ALL');				
 		}		
 
 		// Checking tables
-		$query = "SELECT COUNT(id) FROM #__categories";
-		$jupgrade->_db->setQuery($query);
-		$categories_count = $jupgrade->_db->loadResult();
+		if ($params->skip_core_categories != 1) {
+			$query = "SELECT COUNT(id) FROM #__categories";
+			$jupgrade->_db->setQuery($query);
+			$categories_count = $jupgrade->_db->loadResult();
 
-		if ($categories_count > 7) {
-			$message['number'] = 415;
-			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_CATEGORIES');
-			echo json_encode($message);
-			exit;
+			if ($categories_count > 7) {
+				$this->returnError (415, 'COM_JUPGRADEPRO_ERROR_DATABASE_CATEGORIES');
+			}
 		}
 
 		// Checking tables
-		$query = "SELECT COUNT(id) FROM #__content";
-		$jupgrade->_db->setQuery($query);
-		$content_count = $jupgrade->_db->loadResult();
+		if ($params->skip_core_contents != 1) {
+			$query = "SELECT COUNT(id) FROM #__content";
+			$jupgrade->_db->setQuery($query);
+			$content_count = $jupgrade->_db->loadResult();
 
-
-		if ($content_count > 0) {
-			$message['number'] = 416;
-			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_CONTENT');
-			echo json_encode($message);
-			exit;
+			if ($content_count > 0) {
+				$this->returnError (416, 'COM_JUPGRADEPRO_ERROR_DATABASE_CONTENT');
+			}
 		}
 
 		// Checking tables
-		$query = "SELECT COUNT(id) FROM #__users";
-		$jupgrade->_db->setQuery($query);
-		$users_count = $jupgrade->_db->loadResult();
+		if ($params->skip_core_users != 1) {
+			$query = "SELECT COUNT(id) FROM #__users";
+			$jupgrade->_db->setQuery($query);
+			$users_count = $jupgrade->_db->loadResult();
 
-		if ($users_count > 1) {
-			$message['number'] = 417;
-			$message['text'] = JText::_('COM_JUPGRADEPRO_ERROR_DATABASE_USERS');
-			echo json_encode($message);
-			exit;
+			if ($users_count > 1) {
+				$this->returnError (417, 'COM_JUPGRADEPRO_ERROR_DATABASE_USERS');
+			}
 		}
 
 		// Done checks
-		$message['status'] = "OK";
-		$message['number'] = 100;
-		$message['text'] = "DONE";
-		echo json_encode($message);
-		exit;
+		$this->returnError (100, 'DONE');
 	}
 
 	/**
@@ -259,17 +208,14 @@ class jUpgradeProModel extends JModelLegacy
 				if ($v == 1) {
 					// Set all status to 0 and clear state
 					$query = "UPDATE jupgrade_steps SET status = 2 WHERE name = '{$name}'";
-					$this->_db->setQuery($query);
-					$this->_db->query();
+					$this->runQuery ($query);
 
 					if ($name == 'users') {
 						$query = "UPDATE jupgrade_steps SET status = 2 WHERE name = 'arogroup'";
-						$this->_db->setQuery($query);
-						$this->_db->query();				
+						$this->runQuery ($query);				
 
 						$query = "UPDATE jupgrade_steps SET status = 2 WHERE name = 'usergroupmap'";
-						$this->_db->setQuery($query);
-						$this->_db->query();		
+						$this->runQuery ($query);		
 					}
 
 				}
@@ -278,16 +224,14 @@ class jUpgradeProModel extends JModelLegacy
 			if ($k == 'skip_extensions') {
 				if ($v == 1) {
 					$query = "UPDATE jupgrade_steps SET status = 2 WHERE name = 'extensions'";
-					$this->_db->setQuery($query);
-					$this->_db->query();					
+					$this->runQuery ($query);				
 				}
 			}
 		}
 
 		// Cleanup 3rd extensions
 		$query = "DELETE FROM jupgrade_steps WHERE id > 18";
-		$this->_db->setQuery($query);
-		//$this->_db->query();
+		//$this->runQuery ($query);
 
 		// Truncate the selected tables
 		$tables = array();
@@ -303,92 +247,34 @@ class jUpgradeProModel extends JModelLegacy
 			}else{
 				$query = "DELETE FROM `{$tables[$i]}`";
 			}
-			$this->_db->setQuery($query);
-			$this->_db->query();
-		}
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-		if ($error) {
-			throw new Exception($error);
+			$this->runQuery ($query);
 		}
 
 		// Delete main menu
 		$query = "DELETE FROM {$this->_db->getPrefix()}menu WHERE id > 1";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-		if ($error) {
-			throw new Exception($error);
-		}
+		$this->runQuery ($query);
 
 		// Insert needed value
 		$query = "INSERT INTO `jupgrade_menus` ( `old`, `new`) VALUES ( 0, 0)";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
+		$this->runQuery ($query);
 
 		// Insert uncategorized id
 		$query = "INSERT INTO `jupgrade_categories` (`old`, `new`) VALUES (0, 2)";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
+		$this->runQuery ($query);
 
 		// Delete uncategorized categories
 		$query = "DELETE FROM {$prefix}categories WHERE id > 1";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
+		$this->runQuery ($query);
 
 		// Change the id of the admin user
 		$query = "UPDATE {$prefix}users SET id = 10 WHERE username = 'admin'";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
+		$this->runQuery ($query);
 
 		$query = "UPDATE {$prefix}user_usergroup_map SET user_id = 10 WHERE group_id = 8";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
+		$this->runQuery ($query);
 
 		// Done checks
-		$message['status'] = "OK";
-		$message['number'] = 100;
-		$message['text'] = "DONE";
-		echo json_encode($message);
-		exit;
+		$this->returnError (100, 'DONE');
 	}
 
 	/**
@@ -724,6 +610,41 @@ class jUpgradeProModel extends JModelLegacy
 		$orig_cache = round($step->total / $limit );
 		$prod = ($orig_cache - $step->cache);
 		return ($limit * $prod) + 1;
+	}
+
+	/**
+	 * returnError
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	public function returnError ($number, $text)
+	{
+		$message['number'] = $number;
+		$message['text'] = JText::_($text);
+		echo json_encode($message);
+		exit;
+	}
+
+	/**
+	 * runQuery
+	 *
+	 * @return	none
+	 * @since	3.0.0
+	 */
+	public function runQuery ($query)
+	{
+		$this->_db->setQuery($query);
+		$this->_db->query();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
+
+		return true;
 	}
 
 	/**

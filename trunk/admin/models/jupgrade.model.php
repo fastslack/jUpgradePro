@@ -250,9 +250,11 @@ class jUpgradeProModel extends JModelLegacy
 			$this->runQuery ($query);
 		}
 
-		// Delete main menu
-		$query = "DELETE FROM {$this->_db->getPrefix()}menu WHERE id > 1";
-		$this->runQuery ($query);
+		// Cleanup the menu table
+		if ($params->skip_core_menus != 1) {
+			$query = "DELETE FROM {$this->_db->getPrefix()}menu WHERE id > 1";
+			$this->runQuery ($query);
+		}
 
 		// Insert needed value
 		$query = "INSERT INTO `jupgrade_menus` ( `old`, `new`) VALUES ( 0, 0)";
@@ -263,15 +265,19 @@ class jUpgradeProModel extends JModelLegacy
 		$this->runQuery ($query);
 
 		// Delete uncategorized categories
-		$query = "DELETE FROM {$prefix}categories WHERE id > 1";
-		$this->runQuery ($query);
+		if ($params->skip_core_categories != 1) {
+			$query = "DELETE FROM {$prefix}categories WHERE id > 1";
+			$this->runQuery ($query);
+		}
 
 		// Change the id of the admin user
-		$query = "UPDATE {$prefix}users SET id = 10 WHERE username = 'admin'";
-		$this->runQuery ($query);
+		if ($params->skip_core_users != 1) {
+			$query = "UPDATE {$prefix}users SET id = 10 WHERE username = 'admin'";
+			$this->runQuery ($query);
 
-		$query = "UPDATE {$prefix}user_usergroup_map SET user_id = 10 WHERE group_id = 8";
-		$this->runQuery ($query);
+			$query = "UPDATE {$prefix}user_usergroup_map SET user_id = 10 WHERE group_id = 8";
+			$this->runQuery ($query);
+		}
 
 		// Done checks
 		if (class_exists('JVersion'))

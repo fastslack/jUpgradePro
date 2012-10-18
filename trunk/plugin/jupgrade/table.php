@@ -115,14 +115,16 @@ class JUpgradeTable extends JTable
 		
 		$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
 
-		// Get the row
-		$query = "SELECT {$select} FROM {$table} {$as} {$join} {$where}{$where_or} {$order}";
-		$db->setQuery( $query );
-		$rows = $db->loadAssocList();
+		$limit = "LIMIT {$oid}, 1";
 
-		if (array_key_exists($oid, $rows)) {
+		// Get the row
+		$query = "SELECT {$select} FROM {$table} {$as} {$join} {$where}{$where_or} {$order} {$limit}";
+		$db->setQuery( $query );
+		$row = $db->loadAssoc();
+
+		if (is_array($row)) {
 			$this->_updateID($oid+1);
-			return $this->bind($rows[$oid]);
+			return $this->bind($row);
 		}
 		else
 		{

@@ -89,7 +89,7 @@ class JUpgradeTable extends JTable
 			return false;
 		}
 
-		if ($oid !== null) {
+		if ($oid !== null AND $key != '') {
 			$this->$key = $oid;
 		}
 
@@ -112,8 +112,11 @@ class JUpgradeTable extends JTable
 		if (isset($conditions['join'])) {
 			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
 		}
-		
-		$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
+
+		$order = '';
+		if ($key != '') {
+			$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
+		}
 
 		$limit = "LIMIT {$oid}, 1";
 
@@ -146,7 +149,9 @@ class JUpgradeTable extends JTable
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($this->_type);
+		$name = $this->_getStepName();
+
+		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($name);
 
 		$db->setQuery( $query );
 		return $db->query();
@@ -164,12 +169,36 @@ class JUpgradeTable extends JTable
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
+		$name = $this->_getStepName();
+
 		$query = 'SELECT `cid` FROM jupgrade_plugin_steps'
-		. ' WHERE name = '.$db->quote($this->_type);
+		. ' WHERE name = '.$db->quote($name);
 		$db->setQuery( $query );
 		$stepid = (int) $db->loadResult();
 
+		if ($stepid == 0) {
+			$query = "INSERT INTO `jupgrade_plugin_steps` (`id` , `name` , `cid` , `tmp`) VALUES (NULL , '{$name}', '0', '');";
+			$db->setQuery( $query );
+			$db->query();
+		}
+
 		return $stepid;
+	}
+
+	/**
+	 * Update the step id
+	 *
+	 * @return  int  The next id
+	 *
+	 * @since   3.0.0
+	 */
+	public function _getStepName()
+	{
+		if ($this->_type == 'generic') {
+			return str_replace('#__', '', $this->_tbl);
+		}else{
+			return $this->_type;
+		}
 	}
 
 	/**
@@ -237,6 +266,76 @@ class JUpgradeTable extends JTable
 	}
 
 	/**
+ 	* Writes to file all the selected database tables structure with SHOW CREATE TABLE
+	* @param string $table The table name
+	*/
+	public function getTableStructure() {
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		$tables = $this->_tbl;
+
+		// Header
+		$structure  = "-- \n";
+		$structure .= "-- Table structure for table `{$tables}`\n";
+		$structure .= "-- \n\n";
+
+		// Initialise variables.
+		$result = array();
+
+		// Sanitize input to an array and iterate over the list.
+		settype($tables, 'array');
+		foreach ($tables as $table)
+		{
+			// Set the query to get the table CREATE statement.
+
+			$query = "SHOW CREATE table {$table}";
+			$db->setQuery($query);
+			$row = $db->loadRow();
+
+			// Populate the result array based on the create statements.
+			$result[$table] = $row[1];
+		}
+
+		$structure .= "{$result[$table]} ;\n\n";
+
+		$structure = str_replace('TYPE', 'ENGINE', $structure);
+		$structure = str_replace($db->getPrefix(), '#__', $structure);
+		//$structure = str_replace('MyISAM', 'InnoDB', $structure);
+
+		return $structure;
+	}
+
+	/**
+	 * Method to get an array of all tables in the database.
+	 *
+	 * @return  array  An array of all the tables in the database.
+	 *
+	 * @since   3.0.0
+	 * @throws  JDatabaseException
+	 */
+	public function getTableexists()
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		$table = $this->_tbl;
+		$prefix = $db->getPrefix();
+
+		$table = str_replace ('#__', $prefix, $table); 
+
+		// Set the query to get the tables statement.
+		$db->setQuery('SHOW TABLES');
+		$tables = $db->loadResultArray();
+
+		if (in_array($table, $tables)) {
+			return 'YES';
+		}else{
+			return 'NO';
+		}
+	}
+
+	/**
 	 * Get the last id
 	 *
 	 * @access	public
@@ -261,7 +360,10 @@ class JUpgradeTable extends JTable
 			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
 		}
 
-		$order = isset($conditions['order']) ? "ORDER BY {$conditions['order']}" : "ORDER BY {$this->getKeyName()} DESC";
+		$order = '';
+		if ($key != '') {
+			$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} DESC";
+		}
 
 		// Get Total
 		$query = "SELECT {$key_as}{$key} FROM {$this->_tbl} {$as} {$where}{$where_or} {$join} {$order} LIMIT 1";

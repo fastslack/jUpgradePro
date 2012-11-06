@@ -24,7 +24,7 @@ class jUpgradeContent extends jUpgrade
 	 * @var		string	The name of the source database table.
 	 * @since	0.4.5
 	 */
-	protected $source = '#__content AS c';
+	protected $source = '#__content';
 
 	/**
 	 * @var		string	The name of the destination database table.
@@ -109,8 +109,7 @@ class jUpgradeContent extends jUpgrade
 	public function dataHook($rows = null)
 	{
 		$params = $this->getParams();
-
-		$table	= empty($this->destination) ? $this->source : $this->destination;
+		$table	= $this->getDestinationTableName();
 
 		//
 		// JTable:store() run an update if id exists so we create them first
@@ -185,6 +184,7 @@ class jUpgradeContent extends jUpgrade
 			// Updating the steps table
 			$cid = $this->_getStepID();
 			$this->_updateID($cid+1);
+			echo $this->isCli() ? "•" : "";
 
 			if ($row['id'] == $this->getLastId('contents')) {
 				$this->updateFeature();

@@ -60,6 +60,11 @@ class JRESTDispatcher
 		if (isset($table)) {
 			JTable::addIncludePath(JPATH_PLUGINS.'/system/jupgrade/table');
 			$class = JUpgradeTable::getInstance($this->_parameters['HTTP_TABLE'], 'JUpgradeTable');
+
+			if (!is_object($class)) {
+				$class = JUpgradeTable::getInstance('generic', 'JUpgradeTable');
+				$class->changeTable($this->_parameters['HTTP_TABLE']);
+			}
 		}
 
 		// Loading files

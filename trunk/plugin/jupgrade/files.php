@@ -62,7 +62,9 @@ class JUpgradeFiles
 
 		$id = ($id == 0) ? 1 : $id;
 
-		$read = JFile::read(JPATH_ROOT.'/images/'.$this->_images[$id]);
+		$image = JPATH_ROOT.'/images/'.$this->_images[$id];
+
+		$read = JFile::read($image);
 
 		$nextid = $id + 1;
 
@@ -104,6 +106,9 @@ class JUpgradeFiles
 	 */
 	public function _processImages()
 	{
+		jimport('joomla.filesystem.file');
+		jimport('joomla.filesystem.folder');
+
 		$path = $this->getImagesPath();
 
 		$clean = array();

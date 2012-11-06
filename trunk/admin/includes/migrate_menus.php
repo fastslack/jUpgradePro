@@ -275,6 +275,7 @@ class jUpgradeMenu extends jUpgrade
 			// Updating the steps table
 			$cid = $this->_getStepID();
 			$this->_updateID($cid+1);
+			echo $this->isCli() ? "•" : "";
 
 			if ($row->id == $this->getLastId('menus')) {
 				$this->populateDefaultMenus();

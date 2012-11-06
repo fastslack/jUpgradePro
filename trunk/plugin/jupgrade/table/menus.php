@@ -90,7 +90,7 @@ class JUpgradeTableMenus extends JUpgradeTable
 		
 		$conditions['as'] = "m";
 		
-		$conditions['select'] = 'm.id, m.menutype, m.name, m.name AS title, m.alias, m.link, m.type, c.option, m.published, m.parent AS parent_id,'
+		$conditions['select'] = 'DISTINCT m.id, m.menutype, m.name, m.name AS title, m.alias, m.link, m.type, c.option, m.published, m.parent AS parent_id,'
 			.' m.sublevel AS level, m.ordering, m.checked_out, m.checked_out_time, m.browserNav, m.access, m.params, m.home';
 		
 		$join = array();

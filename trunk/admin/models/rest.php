@@ -47,62 +47,22 @@ class jUpgradeProModelRest extends jUpgradeProModel
 	}
 
 	/**
-	 * Get a single row
-	 *
-	 * @return   step object
-	 */
-	public function requestRest($task = 'total', $table = false) {
-
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
-
-		// JHttp instance
-		jimport('joomla.http.http');
-		$http = new JHttp();
-		$data = $jupgrade->getRestData();
-		
-		// Getting the total
-		$data['task'] = $task;
-		$data['table'] = $table;
-		$request = $http->get($jupgrade->params->get('rest_hostname'), $data);
-		return $request->body;
-	}
-
-	/**
 	 * Get a list of images to migrate
 	 *
 	 * @return   step object
 	 */
 	public function getImageslist() {
 
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
+		// Getting the response
+		$response = $this->requestRest('imageslist', false, 'images');
 
-		// JHttp instance
-		jimport('joomla.http.http');
-		$http = new JHttp();
-		$data = $jupgrade->getRestData();
-
-		// Getting the total
-		$data['task'] = "imageslist";
-		$data['files'] = 'images';
-
-		$response = $http->get($jupgrade->params->get('rest_hostname'), $data);
-
-		if ($response->body != '') {
-			$row = json_decode($response->body, true);
+		if ($response != '') {
+			$row = json_decode($response, true);
 		}	
 
-		// Delete main menu
+		// Empty files_images table
 		$query = "DELETE FROM jupgrade_files_images WHERE id >= 0";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-		if ($error) {
-			throw new Exception($error);
-		}
+		$this->runQuery ($query);
 
 		// Saving the images list to db
 		$images = $row['images'];
@@ -114,15 +74,7 @@ class jUpgradeProModelRest extends jUpgradeProModel
 
 			// Insert needed value
 			$query = "INSERT INTO `jupgrade_files_images` ( `id`, `name`) VALUES ( {$i}, '{$value}')";
-			$this->_db->setQuery($query);
-			$this->_db->query();
-
-			// Check for query error.
-			$error = $this->_db->getErrorMsg();
-
-			if ($error) {
-				throw new Exception($error);
-			}
+			$this->runQuery ($query);
 		}
 
 		// Return total
@@ -138,25 +90,14 @@ class jUpgradeProModelRest extends jUpgradeProModel
 	 */
 	public function getImage() {
 
-		// Initialize jupgrade class
-		$jupgrade = new jUpgrade;
-
-		// JHttp instance
-		jimport('joomla.http.http');
-		$http = new JHttp();
-		$data = $jupgrade->getRestData();
-		
-		// Getting the total
-		$data['task'] = "image";
-		$data['files'] = 'images';
-		
-		$response = $http->get($jupgrade->params->get('rest_hostname'), $data);
+		// Getting the response
+		$response = $this->requestRest('image', false, 'images');
 
 		$id = $this->_getID('files_images');
 		$id = $id + 1;
 		$name =	$this->_getImageName($id);
 
-		$write = JFile::write(JPATH_ROOT.'/images.new/'.$name, $response->body);
+		$write = JFile::write(JPATH_ROOT.'/images/'.$name, $response);
 
 		$this->_updateID($id, 'files_images');
 	}

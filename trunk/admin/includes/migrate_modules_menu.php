@@ -70,16 +70,16 @@ class jUpgradeModulesMenu extends jUpgrade
 	 */
 	public function dataHook($rows = null)
 	{
-		$modules_map = $this->getMapList('modules');
-		$menus_map = $this->getMapList('menus');
-
 		// 
-		foreach ($rows as $row)
+		foreach ($rows as &$row)
 		{
 			// Convert the array into an object.
 			$row = (object) $row;
 
-			$row->moduleid = isset($modules_map[$row->moduleid]) ? $modules_map[$row->moduleid]->new : $row->moduleid;
+			$custom = "old = {$row->moduleid}";
+			$mapped = $this->getMapListValue("modules", false, $custom);
+
+			$row->moduleid = isset($mapped) ? $mapped[$row->moduleid]->new : $row->moduleid+99999;
 		}
 
 		return $rows;

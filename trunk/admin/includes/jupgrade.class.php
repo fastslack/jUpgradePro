@@ -50,7 +50,7 @@ class jUpgrade
 	 * @var	array
 	 * @since  3.0
 	 */
-	private $_step = array();
+	protected $_step = array();
 
 	/**
 	 * @var    array  List of possible parameters.
@@ -65,11 +65,17 @@ class jUpgrade
 		'class',
 		'category',
 		'status',
-		'extension',
+		'type',
 		'laststep',
 		'state',
 		'xml'
 	);
+
+	/**
+	 * @var    array  List of extensions steps
+	 * @since  12.1
+	 */
+	private $extensions_steps = array('extensions_components', 'extensions_modules', 'extensions_plugins');
 
 	/**
 	 * @var bool Can drop
@@ -81,14 +87,14 @@ class jUpgrade
 	{
 		// Set the step params	
 		$this->setParameters((array) $step);
-			
-		$this->checkTimeout();
+
+		//$this->checkTimeout();
 
 		jimport('legacy.component.helper');
 		jimport('cms.version.version');
 
-		// Getting the Joomla version
-		if (class_exists('JVersion')) {
+		// Getting the params and Joomla version web and cli
+		if (!$this->isCli()) {
 			// Getting the parameters
 			$this->params	= JComponentHelper::getParams('com_jupgradepro');
 
@@ -108,7 +114,7 @@ class jUpgrade
 		// Creating old dabatase instance
 		if ($this->params->get('method') == 'database') {
 			// Web
-			if (class_exists('JVersion')) {
+			if (!$this->isCli()) {
 				$db_config['driver'] = $this->params->get('driver');
 				$db_config['host'] = $this->params->get('hostname');
 				$db_config['user'] = $this->params->get('username');
@@ -163,6 +169,8 @@ class jUpgrade
 	 */
 	static function getInstance($options = null)
 	{
+		$class = '';
+
 		if ($options == null) {
 			return false;
 		}
@@ -170,15 +178,23 @@ class jUpgrade
 		// Require the file
 		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$options->name.'.php')) {
 			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$options->name.'.php';
+		}else if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->name.'.php')) {
+			require_once JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->name.'.php';
+		}else if (isset($options->element)) {
+			if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->element.'.php')) {
+				require_once JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->element.'.php';
+			}
 		}
 
 		// Getting the class name
-		$class = $options->class;
+		if (isset($options->class)) {
+			$class = $options->class;
+		}
 
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
 		if (!class_exists($class))
 		{
-			throw new RuntimeException(sprintf('jUpgrade object not exists: %s', $options->name));
+			$class = 'jUpgrade';
 		}
 
 		// Create our new jUpgrade connector based on the options given.
@@ -192,6 +208,18 @@ class jUpgrade
 		}
 
 		return $instance;
+	}
+
+	/**
+	 * Check if the class is called from CLI
+	 *
+	 * @return  void	True if is running from cli
+	 *
+	 * @since   3.0.0
+	 */
+	public function isCli()
+	{
+		return class_exists('JVersion') ? false : true;
 	}
 
 	/**
@@ -217,11 +245,6 @@ class jUpgrade
 				}
 			}
 		}
-	}
-
-	public function getStepName()
-	{
-		return $this->_step['name'];
 	}
 
 	/**
@@ -253,6 +276,7 @@ class jUpgrade
 	 */
 	protected function setDestinationData($rows = null)
 	{
+		$name = $this->getStepName();
 		$method = $this->params->get('method');
 
 		// Get the source data.
@@ -266,7 +290,12 @@ class jUpgrade
 			}
 		}
 
-		$rows = $this->dataHook($rows);
+		$dataHookFunc = 'dataHook_'.$name;
+		if (method_exists($this, $dataHookFunc)) { 
+			$rows = $this->$dataHookFunc($rows);
+		}else{
+			$rows = $this->dataHook($rows);
+		}
 
 		if ($rows != false) {
 			$this->insertData($rows);
@@ -287,13 +316,13 @@ class jUpgrade
 	}
 
 	/**
-	 * loadData
+	 * dataSwitch
 	 *
-	 * @return	void
+	 * @return	array	The requested data
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	protected function dataSwitch($type = null)
+	protected function dataSwitch($name = null)
 	{
 		$method = $this->params->get('method');
 
@@ -301,12 +330,11 @@ class jUpgrade
 
 		switch ($method) {
 			case 'rest':
-				$type = ($type == null) ? $this->getStepName() : $type;
-
-				if ( ($type == 'components') OR ($type == 'ext_modules') OR ($type == 'plugins')) {
-					$rows = $this->getSourceDataRest($type);
+				$name = ($name == null) ? $this->getStepName() : $name;
+				if ( in_array($name, $this->extensions_steps) ) {
+					$rows = $this->getSourceDataRest($name);
 				}else{
-					$rows = $this->getSourceDataRestIndividual($type);
+					$rows = $this->getSourceDataRestIndividual($name);
 				}
 		    break;
 			case 'database':
@@ -327,22 +355,26 @@ class jUpgrade
 	{
 		$cache_limit = $this->params->get('cache_limit');
 
-		$key = $this->_tbl_key;
+		$key = $this->getKeyName();
+		$name = $this->getStepName();
 
-		$oid = $this->_getStepID();
+		$where = '';		
+		$where_or = '';
+		$join = '';
+		$limit = '';
+		$order = '';
 
-		if ($oid === null) {
-			return false;
+		if ( !in_array($name, $this->extensions_steps) ) {
+			$oid = $this->_getStepID();
+			$limit = "LIMIT {$oid}, {$cache_limit}";
 		}
 
 		// Get the conditions
 		$conditions = $this->getConditionsHook();
 
-		$where = '';
 		if ( isset( $conditions['where'] ) ) {
 			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
 		}
-		$where_or = '';
 		if (isset($conditions['where_or'])) {
 			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
 		}		
@@ -350,14 +382,13 @@ class jUpgrade
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 		$group_by = isset($conditions['group_by']) ? 'GROUP BY '.$conditions['group_by'] : '';
 
-		$join = '';
 		if (isset($conditions['join'])) {
 			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
 		}
 
-		$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
-
-		$limit = "LIMIT {$oid}, {$cache_limit}";
+		if ($key != '') {
+			$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
+		}
 
 		// Get the row
 		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where}{$where_or} {$group_by} {$order} {$limit}";
@@ -384,8 +415,11 @@ class jUpgrade
 	 * @throws  InvalidArgumentException
 	 */
 	public function _updateID($id)
-	{	
-		$query = "UPDATE `jupgrade_steps` SET `cid` = '{$id}' WHERE name = ".$this->_db->quote($this->_step['name']);
+	{
+		$name = $this->getStepName();
+		$table = "jupgrade_{$this->_step['type']}";
+
+		$query = "UPDATE `{$table}` SET `cid` = '{$id}' WHERE name = ".$this->_db->quote($name);
 		$this->_db->setQuery( $query );
 
 		return $this->_db->query();
@@ -400,8 +434,11 @@ class jUpgrade
 	 */
 	public function _getStepID()
 	{
-		$query = 'SELECT `cid` FROM `jupgrade_steps`'
-		. ' WHERE name = '. $this->_db->quote($this->_step['name']);
+		$name = $this->getStepName();
+		$table = "jupgrade_{$this->_step['type']}";
+
+		$query = "SELECT `cid` FROM `{$table}`"
+		. " WHERE name = ". $this->_db->quote($name);
 		 $this->_db->setQuery( $query );
 		$stepid = (int)  $this->_db->loadResult();
 
@@ -441,6 +478,7 @@ class jUpgrade
 	 */
 	public function getTotalDatabase()
 	{
+		$table = $this->getTableName();
 		$conditions = $this->getConditionsHook();
 
 		$where = '';
@@ -461,7 +499,7 @@ class jUpgrade
 		}
 
 		/// Get Total
-		$query = "SELECT COUNT(*) FROM {$this->source} {$as} {$join} {$where}{$where_or}";
+		$query = "SELECT COUNT(*) FROM {$table} {$as} {$join} {$where}{$where_or}";
 		$this->_db_old->setQuery( $query );
 		$total = $this->_db_old->loadResult();
 
@@ -469,16 +507,43 @@ class jUpgrade
 	}
 
 	/**
-	 * Get total of the rows of the table using RESTful
-	 *
-	 * @access	public
-	 * @return	int	The total of rows
-	 */
-	public function getTotalRest($table)
-	{
-		$total = $this->requestRest('total', $table);
+ 	* Writes to file all the selected database tables structure with SHOW CREATE TABLE
+	* @param string $table The table name
+	*/
+	public function getTableStructure() {
 
-		return (int)$total;
+		$method = $this->params->get('method');
+		$table = $this->getTableName();
+		
+		if ($method == 'database') {
+			$result = $this->_db_old->getTableCreate($table);
+			$structure = "{$result[$table]} ;\n\n";
+		}else if ($method == 'rest') {
+			$table = str_replace('#__', '', $table);
+			$structure = $this->requestRest("tablestructure", $table);
+		}
+
+		// Inserting the structure to new site
+		$this->_db->setQuery($structure);
+		$this->_db->query();
+
+		return true;
+	}
+
+	/**
+ 	* 
+	* @param string $table The table name
+	*/
+	function tableExists ($table) { 
+
+		$tables = array();
+		if ($this->params->get('method') == 'database') {
+			$tables = $this->_db_old->getTableList();
+			return (in_array($table, $tables)) ? 'YES' : 'NO';
+		}else if ($this->params->get('method') == 'rest') {
+			return $this->requestRest("tableexists", $table);
+		}
+
 	}
 
 	/*
@@ -600,6 +665,25 @@ class jUpgrade
 		return $rows;
 	}
 
+	/**
+	 * Get total of the rows of the table using RESTful
+	 *
+	 * @access	public
+	 * @return	int	The total of rows
+	 */
+	public function getTotalRest($table)
+	{
+		$total = $this->requestRest('total', $table);
+
+		return (int)$total;
+	}
+
+	/**
+	 * Get the last id
+	 *
+	 * @access	public
+	 * @return	int	The total of rows
+	 */
 	protected function getLastId()
 	{
 		$method = $this->params->get('method');
@@ -659,7 +743,7 @@ class jUpgrade
 		$order = isset($conditions['order']) ? "ORDER BY {$conditions['order']}" : "ORDER BY {$this->getKeyName()} DESC";
 
 		// Get Total
-		$query = "SELECT {$key_as}{$key} FROM {$this->source} {$as} {$where}{$where_or} {$order} LIMIT 1";
+		$query = "SELECT {$key_as}{$key} FROM {$this->getTableName()} {$as} {$where}{$where_or} {$order} LIMIT 1";
 		$this->_db_old->setQuery( $query );
 		$lastid = $this->_db_old->loadResult();
 
@@ -682,20 +766,32 @@ class jUpgrade
 	 */
 	protected function insertData($rows)
 	{	
-		$table = empty($this->destination) ? $this->source : $this->destination;
-	
+		//$key = $this->getDestKeyName();
+		$table = $this->getDestinationTableName();
+
 		if (is_array($rows)) {
 			foreach ($rows as $row)
 			{
 				// Convert the array into an object.
 				$row = (object) $row;
 
-				if (!$this->_db->insertObject($table, $row)) {
-					throw new Exception($this->_db->getErrorMsg());
-				}
-				$cid = $this->_getStepID();
+				//if ($table == "#__modules_menu") {
+				//	$fields = array('moduleid', 'menuid');
+				//}else{
+				//	$fields = array($key);
+				//}
 
-				$this->_updateID($cid+1);
+				//$exists = $key != '' ? $this->valueExists($row, $fields) : true;
+
+				//if ($exists != true) {
+					if (!$this->_db->insertObject($table, $row)) {
+						throw new Exception($this->_db->getErrorMsg());
+					}
+					$cid = $this->_getStepID();
+
+					$this->_updateID($cid+1);
+				//}
+				echo $this->isCli() ? "•" : "";
 			}
 		}else if (is_object($rows)) {
 
@@ -744,7 +840,7 @@ class jUpgrade
 	{
 		// Get the table
 		if ($table == false) {
-			$table	= empty($this->destination) ? $this->source : $this->destination;
+			$table = $this->getTableName();
 		}
 
 		if ($this->canDrop) {
@@ -765,62 +861,119 @@ class jUpgrade
 		}
 
 	}
+	
+	/**
+	 * Internal function to get the component settings
+	 *
+	 * @return	an object with global settings
+	 * @since	0.5.7
+	 */
+	public function getParams()
+	{
+		return $this->params->toObject();
+	}
 
 	/**
-	 * 
-	 * @return  boolean  
+	 * @return  string	The step name  
 	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
+	 * @since   3.0
+	 */
+	public function getStepName()
+	{
+		return $this->_step['name'];
+	}
+
+	/**
+	 * @return  string	The table key name  
+	 *
+	 * @since   3.0
 	 */
 	public function getKeyName()
 	{
-		return $this->_tbl_key;
+		if (empty($this->_tbl_key)) {
+			$table = $this->getTableName();
+
+			$query = "SHOW KEYS FROM {$table} WHERE Key_name = 'PRIMARY'";
+			$this->_db_old->setQuery( $query );
+			$keys = $this->_db_old->loadObjectList();
+
+			return !empty($keys) ? $keys[0]->Column_name : '';
+		}else{
+			return $this->_tbl_key;
+		}
 	}
 
 	/**
-	 * 
-	 * @return  boolean  
+	 * @return  string	The destination table key name  
 	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
+	 * @since   3.0
+	 */
+	public function getDestKeyName()
+	{
+		$table = $this->getDestinationTableName();
+
+		$query = "SHOW KEYS FROM {$table} WHERE Key_name = 'PRIMARY'";
+		$this->_db->setQuery( $query );
+		$keys = $this->_db->loadObjectList();
+
+		return !empty($keys) ? $keys[0]->Column_name : '';
+	}
+
+	/**
+	 * @return  string	The table name  
+	 *
+	 * @since   3.0
 	 */
 	public function getTableName()
 	{
-		return $this->source;
+		if (isset($this->source)) {
+			return $this->source;
+		}else if (isset($this->destination)) {
+			return $this->destination;
+		}else{
+			return '#__'.$this->_step['name'];
+		}
 	}
 
 	/**
-	 * Save internal state.
+	 * @return  string	The table name  
 	 *
-	 * @return	boolean
-	 * @since	1.1.0
+	 * @since   3.0
 	 */
-	public function saveState()
+	public function getDestinationTableName()
 	{
-		// Cannot save state if step is not defined
-		if (!$this->name) return false;
-
-		$state = json_encode($this->state);
-		$query = "UPDATE jupgrade_steps SET state = {$this->_db->quote($state)} WHERE name = {$this->_db->quote($this->name)}";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		return !$error;
+		if (isset($this->destination)) {
+			return $this->destination;
+		}else if (isset($this->source)) {
+			return $this->source;
+		}else{
+			return '#__'.$this->_step['name'];
+		}
 	}
 
 	/**
-	 * Check if this migration has been completed.
+	 * @return  bool	Check if the value exists in the table
 	 *
-	 * @return	boolean
-	 * @since	1.1.0
+	 * @since   3.0
 	 */
-	public function isReady()
+	public function valueExists($row, $fields)
 	{
-		return $this->ready;
+		$table = $this->getTableName();
+		$key = $this->getDestKeyName();	
+		$value = $row->$key;
+
+		$conditions = array();
+		foreach ($fields as $field) {
+			$conditions[] = "{$field} = {$row->$field}";
+		}
+
+		$where = count( $conditions ) ? 'WHERE ' . implode( ' AND ', $conditions ) : '';
+
+		$query = "SELECT `{$key}` FROM {$table} {$where} LIMIT 1";
+		$this->_db->setQuery( $query );
+		$exists = $this->_db->loadResult();
+
+		return empty($exists) ? false : true;
 	}
 
 	/**
@@ -832,6 +985,41 @@ class jUpgrade
 	 * @throws	Exception
 	 */
 	public function getMapList($table = 'categories', $section = false, $custom = false)
+	{
+		// Getting the categories id's
+		$query = "SELECT *"
+		." FROM jupgrade_{$table}";
+
+		if ($section !== false) {
+			$query .= " WHERE section = '{$section}'";
+		}
+
+		if ($custom !== false) {
+			$query .= " WHERE {$custom}";
+		}
+
+		$this->_db->setQuery($query);
+		$data = $this->_db->loadObjectList('old');
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+			return false;
+		}
+
+		return $data;
+	}
+
+	/**
+	 * Internal function to get original database prefix
+	 *
+	 * @return	an original database prefix
+	 * @since	0.5.3
+	 * @throws	Exception
+	 */
+	public function getMapListValue($table = 'categories', $section = false, $custom = false)
 	{
 		// Getting the categories id's
 		$query = "SELECT *"
@@ -891,37 +1079,5 @@ class jUpgrade
 	protected function convertParamsHook(&$object)
 	{
 		// Do customisation of the params field here for specific data.
-	}
-
-	/**
-	 * Internal function to get the component settings
-	 *
-	 * @return	an object with global settings
-	 * @since	0.5.7
-	 * @throws	Exception
-	 */
-	public function getParams()
-	{
-		return $this->params->toObject();
-	}
-
-	/**
-	 * Internal function to check if 5 seconds has been passed
-	 *
-	 * @return	bool	true / false
-	 * @since	1.1.0
-	 */
-	protected function checkTimeout($stop = false) {
-		static $start = null;
-		if ($stop) $start = 0;
-		$time = microtime (true);
-		if ($start === null) {
-			$start = $time;
-			return false;
-		}
-		if ($time - $start < 5)
-			return false;
-
-		return true;
 	}
 }

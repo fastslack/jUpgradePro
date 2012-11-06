@@ -94,6 +94,7 @@ class jUpgradeCli extends JApplicationCli
 	public function migrate()
 	{
 		$finished = false;
+		$method = $this->jupgrade->params->get('method');
 
 		$model = new jUpgradeProModel;
 
@@ -108,19 +109,66 @@ class jUpgradeCli extends JApplicationCli
 				break;
 			}
 
-			$this->out("\n===========================================================");
+			if (isset($step->first)) {
+				$this->out("\n===========================================================\n");
+			}
+
 			$this->out("[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
 
 			$method = $this->jupgrade->params->get('method');
 
 			if ($method == 'database') {
 				$result = $model->getMigrate($step->name, false);
-				echo ".";
 			}else if ($method == 'rest') {
 				for($i=$step->start;$i<=$step->stop;$i++) {
 					$result = $model->getMigrate($step->name, false);
-					echo ".";
 				}
+			}
+		}
+
+		// Check for 3rd party extensions
+		$result = $model->checkExtensions();
+
+		// updating the status flag
+		$query = "SELECT * FROM jupgrade_extensions";
+		$this->jupgrade->_db->setQuery($query);
+		$extensions = $this->jupgrade->_db->loadAssocList();
+		//print_r($extensions);
+
+		// Check for query error.
+		$error = $this->jupgrade->_db->getErrorMsg();
+
+		foreach ($extensions as $extension) 
+		{
+			while (!$finished)
+			{
+
+				// Getting the current step
+				$step = $model->getStep(false, false, 'table');
+
+				if ($step == false) {
+					break;
+				}
+
+				if (isset($step->first)) {
+					$this->out("\n===========================================================\n");
+				}
+
+				echo "[{$step->id}] Migrating {$step->name} (Start: {$step->start} - Stop: {$step->stop} - Total: {$step->total})\n";
+
+				if (isset($step->first)) {
+					$model->migrateStructure($step);
+				}
+
+				if ($method == 'database') {
+					$result = $model->getMigrateExtensions($step->name, false);
+				}else if ($method == 'rest') {
+					for($i=$step->start;$i<=$step->stop;$i++) {
+						$result = $model->getMigrateExtensions($step->name, false);
+					}
+				}
+
+				echo "\n";
 			}
 		}
 
@@ -134,21 +182,7 @@ class jUpgradeCli extends JApplicationCli
 	 *
 	public function processExtensionStep ($step)
 	{
-		// Get jUpgradeExtensions instance
-		$extension = jUpgradeExtensions::getInstance($step);
-		$success = $extension->upgradeExtension();
 
-		if ($extension->isReady())
-		{
-			// updating the status flag
-			$query = "UPDATE jupgrade_steps SET status = 1"
-			." WHERE name = '{$step->name}'";
-			$this->jupgrade->_db->setQuery($query);
-			$this->jupgrade->_db->query();
-
-			// Check for query error.
-			$error = $this->jupgrade->_db->getErrorMsg();
-		}
 	}*/
 
 } // end class

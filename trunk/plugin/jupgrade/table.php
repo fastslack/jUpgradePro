@@ -102,8 +102,16 @@ class JUpgradeTable extends JTable
 		$conditions = $this->getConditionsHook();
 		
 		//
-		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';		
+		$where = '';
+		if (isset($conditions['where'])) {
+			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		}
+
+		$where_or = '';
+		if (isset($conditions['where_or'])) {
+			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
+		}
+	
 		$select = isset($conditions['select']) ? $conditions['select'] : '*';
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 
@@ -241,8 +249,15 @@ class JUpgradeTable extends JTable
 
 		$conditions = $this->getConditionsHook();
 
-		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
+		$where = '';
+		if (isset($conditions['where'])) {
+			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		}
+
+		$where_or = '';
+		if (isset($conditions['where_or'])) {
+			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
+		}
 		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 
 		$join = '';

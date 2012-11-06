@@ -47,9 +47,9 @@ class JRESTDispatcher
 		// Loading params
 		$this->_parameters = $parameters;
 
-		$task = $this->_parameters['HTTP_TASK'];
-		$table = $this->_parameters['HTTP_TABLE'];
-		$files = $this->_parameters['HTTP_FILES'];
+		$task = isset($this->_parameters['HTTP_TASK']) ? $this->_parameters['HTTP_TASK'] : '';
+		$table = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
+		$files = isset($this->_parameters['HTTP_FILES']) ? $this->_parameters['HTTP_FILES'] : '';
 
 		// Check task is only to test the connection
 		if ($task == 'check') {
@@ -65,10 +65,7 @@ class JRESTDispatcher
 				$class = JUpgradeTable::getInstance('generic', 'JUpgradeTable');
 				$class->changeTable($this->_parameters['HTTP_TABLE']);
 			}
-		}
-
-		// Loading files
-		if (isset($files)) {
+		}else if (isset($files)) {
 			require_once JPATH_PLUGINS . '/system/jupgrade/files.php';
 			$class = new JUpgradeFiles();
 		}

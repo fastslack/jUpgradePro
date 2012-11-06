@@ -47,8 +47,32 @@ class jUpgradeContacts extends jUpgrade
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
+			$row = (array) $row;
+
 			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
 			$row['params'] = $this->convertParams($row['params']);
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * Sets the data in the destination database.
+	 *
+	 * @return	void
+	 * @since	3.0.
+	 * @throws	Exception
+	 */
+	public function dataHook($rows = null)
+	{
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
+		{
+			$row = (array) $row;
+
+			if ($this->_version == '3.0') {
+				unset($row['imagepos']);
+			}
 		}
 
 		return $rows;

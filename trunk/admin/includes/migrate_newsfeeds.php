@@ -50,8 +50,14 @@ class jUpgradeNewsfeeds extends jUpgrade
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
+			$row = (array) $row;
+
 			$row['language'] = '*';
-		
+
+			if ($this->_version == '3.0') {
+				unset($row['filename']);
+			}
+
 			$cid = $row['catid'];
 			$row['catid'] = &$categories[$cid]->new;
 		}

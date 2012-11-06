@@ -61,6 +61,8 @@ class jUpgradeWeblinks extends jUpgrade
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
+			$row = (array) $row;
+
 			$row['params'] = $this->convertParams($row['params']);
 		}
 

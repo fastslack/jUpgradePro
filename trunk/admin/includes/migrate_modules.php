@@ -151,6 +151,7 @@ class jUpgradeModules extends jUpgrade
 			// Updating the steps table
 			$cid = $this->_getStepID();
 			$this->_updateID($cid+1);
+			echo $this->isCli() ? "•" : "";
 		}
 
 		return false;

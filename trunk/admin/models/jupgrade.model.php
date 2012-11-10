@@ -164,7 +164,7 @@ class jUpgradeProModel extends JModelLegacy
 		}
 
 		// Done checks
-		if (class_exists('JVersion'))
+		if (!$jupgrade->isCli())
 			$this->returnError (100, 'DONE');
 	}
 
@@ -288,7 +288,7 @@ class jUpgradeProModel extends JModelLegacy
 		}
 
 		// Done checks
-		if (class_exists('JVersion'))
+		if (!$jupgrade->isCli())
 			$this->returnError (100, 'DONE');
 	}
 
@@ -300,7 +300,7 @@ class jUpgradeProModel extends JModelLegacy
 	public function getStep($name = false, $json = true, $extension = false) {
 
 		// Getting the parameters
-		if (class_exists('JVersion')) {
+		if (!defined('SIGHUP')) {
 			$this->params	= JComponentHelper::getParams('com_jupgradepro');
 		}else{
 			$this->params = new JRegistry(new JConfig);

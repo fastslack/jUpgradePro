@@ -157,10 +157,10 @@ class jUpgradeModules extends jUpgrade
 		return false;
 		/*
 		// Require the files
-		require_once JJPATH_COMPONENT_ADMINISTRATOR.'includes'.DS.'helper.php';
+		require_once JPATH_COMPONENT_ADMINISTRATOR.'includes/helper.php';
 
 		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'sql'.DS.'modules.sql';
+		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'sql/modules.sql';
 
 		// Import the sql file
 	  if (JUpgradeHelper::populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {

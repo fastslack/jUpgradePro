@@ -74,11 +74,6 @@ class jUpgradeUsergroupMap extends jUpgradeUsersDefault
 				$row['group_id'] = $groupMap[$row['group_id']];
 			}
 
-      // Chaging admin username and email
-      if ($row['user_id'] == 62) {
-					$row['user_id'] = 60;
-      }
-
 			// Remove unused fields.
 			unset($row['section_value']);
 			unset($row['aro_id']);

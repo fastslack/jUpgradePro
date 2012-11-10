@@ -219,7 +219,7 @@ class jUpgrade
 	 */
 	public function isCli()
 	{
-		return class_exists('JVersion') ? false : true;
+		return defined('SIGHUP') ? true : false;
 	}
 
 	/**
@@ -393,8 +393,8 @@ class jUpgrade
 		// Get the row
 		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where}{$where_or} {$group_by} {$order} {$limit}";
 		$this->_db_old->setQuery( $query );
-		//echo "\n$query\n";
-		$rows = $this->_db_old->loadObjectList();
+		//echo "\nQUERY: $query\n";
+		$rows = $this->_db_old->loadAssocList();
 
 		if (is_array($rows)) {
 			return $rows;

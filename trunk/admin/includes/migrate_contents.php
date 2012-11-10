@@ -46,7 +46,7 @@ class jUpgradeContent extends jUpgrade
 	 * @throws	Exception
 	 */
 	public function databaseHook($rows = null)
-	{	
+	{
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
@@ -111,22 +111,6 @@ class jUpgradeContent extends jUpgrade
 		$params = $this->getParams();
 		$table	= $this->getDestinationTableName();
 
-		//
-		// JTable:store() run an update if id exists so we create them first
-		//
-		foreach ($rows as $row)
-		{
-			$row = (array) $row;
-
-			$object = new stdClass();
-			$object->id = $row['id'];
-
-			// Inserting the menu
-			if (!$this->_db->insertObject($table, $object)) {
-				throw new Exception($this->_db->getErrorMsg());
-			}
-		}
-
 		// Get category mapping
 		$query = "SELECT * FROM jupgrade_categories WHERE section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$' AND old>0";
 		$this->_db->setQuery($query);
@@ -139,7 +123,6 @@ class jUpgradeContent extends jUpgrade
 
 		// Initialize values
 		$aliases = array();
-		$unique_alias_suffix = 1;
 
 		//
 		// Insert content data
@@ -150,13 +133,10 @@ class jUpgradeContent extends jUpgrade
 
 			// Map catid
 			$row['catid'] = isset($catidmap[$row['catid']]) ? $catidmap[$row['catid']]->new : $defaultId;
-								
-			// Getting the asset table
-			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
+			$row['alias'] = JApplication::stringURLSafe($row['alias']);
 
 			// Check if has duplicated aliases
-			$query = "SELECT alias"
-			." FROM #__content"
+			$query = "SELECT alias FROM #__content"
 			." WHERE alias = ".$this->_db->quote($row['alias']);
 			$this->_db->setQuery($query);
 			$aliases = $this->_db->loadAssoc();
@@ -166,19 +146,31 @@ class jUpgradeContent extends jUpgrade
 				$row['alias'] .= "-".rand(0, 99999);
 			}
 
+			// JTable:store() run an update if id exists into the object so we create them first
+			$object = new stdClass();
+			$object->id = $row['id'];
+
+			// Inserting the content
+			if (!$this->_db->insertObject($table, $object)) {
+				throw new Exception($this->_db->getErrorMsg());
+			}
+
+			// Getting the asset table
+			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
+
 			// Bind data to save content
 			if (!$content->bind($row)) {
-				echo JError::raiseError(500, $content->getError());
+				echo $content->getError();
 			}
 
 			// Check the content
 			if (!$content->check()) {
-				echo JError::raiseError(500, $content->getError());
+				echo $content->getError();
 			}
 
 			// Insert the content
 			if (!$content->store()) {
-				echo JError::raiseError(500, $content->getError());
+				echo $content->getError();
 			}
 
 			// Updating the steps table
@@ -187,8 +179,8 @@ class jUpgradeContent extends jUpgrade
 			echo $this->isCli() ? "•" : "";
 
 			if ($row['id'] == $this->getLastId('contents')) {
-				$this->updateFeature();
-				$this->fixComponentConfiguration();
+				//$this->updateFeature();
+				//$this->fixComponentConfiguration();
 			}
 		}
 
@@ -244,8 +236,5 @@ class jUpgradeContent extends jUpgrade
 		if ($error) {
 			throw new Exception($error);
 		}*/
-
-
 	}
-
 }

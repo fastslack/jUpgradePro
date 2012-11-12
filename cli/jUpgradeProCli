@@ -19,12 +19,20 @@ require './bootstrap.php';
 class jUpgradeCli extends JApplicationCli
 {
 	/**
-	* A database object for the application to use.
+	* A jupgrade object for the application to use.
 	*
-	* @var JDatabase
-	* @since 11.3
+	* @var jUpgrade
+	* @since 3.0
 	*/
 	protected $jupgrade = null;
+
+	/**
+	* A model object for the application to use.
+	*
+	* @var JModel
+	* @since 3.0
+	*/
+	protected $model = null;
 
 	/**
 	* Class constructor.
@@ -40,6 +48,8 @@ class jUpgradeCli extends JApplicationCli
 	
 		// Create the jUpgrade object
 		$this->jupgrade = new jUpgrade;
+
+		$this->model = new jUpgradeProModel;
 
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
@@ -93,17 +103,21 @@ class jUpgradeCli extends JApplicationCli
 	 */
 	public function migrate()
 	{
+		$this->model->getCleanup();
+
+		$this->migrateCore();
+		//$this->migrateExtensions();
+	}
+
+	public function migrateCore()
+	{
 		$finished = false;
 		$method = $this->jupgrade->params->get('method');
-
-		$model = new jUpgradeProModel;
-
-		$model->getCleanup();
 
 		while (!$finished)
 		{
 			// Getting the current step
-			$step = $model->getStep(false, false);
+			$step = $this->model->getStep(false, false);
 
 			if ($step == false) {
 				break;
@@ -117,17 +131,30 @@ class jUpgradeCli extends JApplicationCli
 
 			$method = $this->jupgrade->params->get('method');
 
+			// Start benchmark
+			$time_start = microtime(true);
+
 			if ($method == 'database') {
-				$result = $model->getMigrate($step->name, false);
+				$result = $this->model->getMigrate($step->name, false);
 			}else if ($method == 'rest') {
 				for($i=$step->start;$i<=$step->stop;$i++) {
-					$result = $model->getMigrate($step->name, false);
+					$result = $this->model->getMigrate($step->name, false);
 				}
 			}
+
+			$time_end = microtime(true);
+			$time = $time_end - $time_start;
+			echo "\n[Benchmark: {$time}]\n";
 		}
+	} // end method
+
+	public function migrateExtensions()
+	{
+		$finished = false;
+		$method = $this->jupgrade->params->get('method');
 
 		// Check for 3rd party extensions
-		$result = $model->checkExtensions();
+		$result = $this->model->checkExtensions();
 
 		// updating the status flag
 		$query = "SELECT * FROM jupgrade_extensions";
@@ -144,7 +171,7 @@ class jUpgradeCli extends JApplicationCli
 			{
 
 				// Getting the current step
-				$step = $model->getStep(false, false, 'table');
+				$step = $this->model->getStep(false, false, 'table');
 
 				if ($step == false) {
 					break;
@@ -161,10 +188,10 @@ class jUpgradeCli extends JApplicationCli
 				}
 
 				if ($method == 'database') {
-					$result = $model->getMigrateExtensions($step->name, false);
+					$result = $this->model->getMigrateExtensions($step->name, false);
 				}else if ($method == 'rest') {
 					for($i=$step->start;$i<=$step->stop;$i++) {
-						$result = $model->getMigrateExtensions($step->name, false);
+						$result = $this->model->getMigrateExtensions($step->name, false);
 					}
 				}
 

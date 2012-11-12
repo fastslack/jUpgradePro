@@ -19,11 +19,12 @@
 define('JPATH_BASE', dirname(__FILE__));
 define('JPATH_SITE', dirname(__FILE__));
 define('JPATH_ROOT', dirname(__FILE__));
-define('JPATH_LIBRARIES', dirname(dirname(dirname(__FILE__))).'/joomla-platform/libraries'   );
+define('JPATH_LIBRARIES', dirname(dirname(dirname(__FILE__))).'/joomla-cms/libraries'   );
+define('JPATH_CACHE', dirname(dirname(dirname(__FILE__))).'/joomla-cms/cache'   );
 define('JPATH_COMPONENT', dirname(dirname(__FILE__)).'/trunk/admin' );
 define('JPATH_COMPONENT_ADMINISTRATOR', dirname(dirname(__FILE__)).'/trunk/admin');
 
-require_once JPATH_BASE.'/configuration.php';
+//require_once JPATH_BASE.'/configuration.php';
 
 // Import the Joomla! Platform
 require JPATH_LIBRARIES.'/import.legacy.php';
@@ -35,6 +36,8 @@ jimport('joomla.database.database');
 // Require the files
 require_once JPATH_COMPONENT.'/includes/jupgrade.class.php';
 require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
-require_once JPATH_COMPONENT.'/includes/jupgrade.database.class.php';
+//require_once JPATH_COMPONENT.'/includes/jupgrade.extensions.class.php';
 require_once JPATH_COMPONENT.'/models/jupgrade.model.php';
+require_once JPATH_COMPONENT.'/models/rest.php';
+require_once JPATH_COMPONENT.'/models/ajax.php';
 

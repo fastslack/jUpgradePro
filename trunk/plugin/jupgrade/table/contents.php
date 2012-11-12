@@ -120,11 +120,6 @@ class JUpgradeTableContents extends JUpgradeTable
 		{
 			$this->introtext = '&nbsp;';
 		}
-
-		// Chaging created_by id
-		if ($this->created_by == 62) {
-			$this->created_by = 60;
-		}
 	}
 
 	/**

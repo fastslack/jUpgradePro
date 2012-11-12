@@ -74,11 +74,6 @@ class JUpgradeTableUsergroupmap extends JUpgradeTable
 			$this->group_id = $this->usergroup_map[$this->group_id];
 		}
 
-    // Chaging admin username and email
-    if ($this->user_id == 62) {
-				$this->user_id = 60;
-    }
-
 		// Remove unused fields.
 		unset($this->section_value);
 		unset($this->aro_id);

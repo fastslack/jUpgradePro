@@ -123,8 +123,6 @@ class jUpgradeSections extends jUpgradeCategory
 
 	protected function fixParents()
 	{
-
-		$sectionmap = $this->getMapList('categories', 'com_section');
 		$change_parent = $this->getMapList('categories', false, "section != 0");
 
 		// Insert the sections
@@ -134,8 +132,11 @@ class jUpgradeSections extends jUpgradeCategory
 			$table = JTable::getInstance('Category', 'JTable');
 			$table->load($category->new);
 
+			$custom = "old = {$category->section}";
+			$parent = $this->getMapListValue('categories', 'com_section', $custom);
+
 			// Setting the location of the new category
-			$table->setLocation($sectionmap[$category->section]->new, 'last-child');
+			$table->setLocation($parent, 'last-child');
 
 			// Insert the category
 			if (!@$table->store()) {

@@ -178,7 +178,7 @@ class jUpgradeContent extends jUpgrade
 			$this->_updateID($cid+1);
 			echo $this->isCli() ? "•" : "";
 
-			if ($row['id'] == $this->getLastId('contents')) {
+			if ($row['id'] == $this->getLastId()) {
 				//$this->updateFeature();
 				//$this->fixComponentConfiguration();
 			}

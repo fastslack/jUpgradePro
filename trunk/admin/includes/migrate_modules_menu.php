@@ -79,7 +79,7 @@ class jUpgradeModulesMenu extends jUpgrade
 			$custom = "old = {$row->moduleid}";
 			$mapped = $this->getMapListValue("modules", false, $custom);
 
-			$row->moduleid = isset($mapped) ? $mapped[$row->moduleid]->new : $row->moduleid+99999;
+			$row->moduleid = isset($mapped) ? $mapped : $row->moduleid+99999;
 		}
 
 		return $rows;

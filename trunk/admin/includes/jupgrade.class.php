@@ -507,8 +507,7 @@ class jUpgrade
 	}
 
 	/**
- 	* Writes to file all the selected database tables structure with SHOW CREATE TABLE
-	* @param string $table The table name
+ 	* Get the table structure
 	*/
 	public function getTableStructure() {
 
@@ -543,7 +542,6 @@ class jUpgrade
 		}else if ($this->params->get('method') == 'rest') {
 			return $this->requestRest("tableexists", $table);
 		}
-
 	}
 
 	/*
@@ -706,17 +704,11 @@ class jUpgrade
 	 */
 	public function getLastIdRest()
 	{
-		jimport('joomla.http.http');
+		$table = $this->getStepName();
 
-		// JHttp instance
-		$http = new JHttp();		
-		$data = $this->getRestData();
+		$lastid = $this->requestRest('lastid', $table);
 
-		// Getting the total
-		$data['task'] = "lastid";
-		$data['table'] = $this->_step['name'];
-		$lastid = $http->get($this->params->get('rest_hostname'), $data);
-		return (int) $lastid->body;
+		return (int) $lastid;
 	}
 
 	/**
@@ -1022,7 +1014,7 @@ class jUpgrade
 	public function getMapListValue($table = 'categories', $section = false, $custom = false)
 	{
 		// Getting the categories id's
-		$query = "SELECT *"
+		$query = "SELECT new"
 		." FROM jupgrade_{$table}";
 
 		if ($section !== false) {
@@ -1030,11 +1022,15 @@ class jUpgrade
 		}
 
 		if ($custom !== false) {
-			$query .= " WHERE {$custom}";
+			if ($section !== false) {
+				$query .= " AND {$custom}";
+			}else{
+				$query .= " WHERE {$custom}";
+			}
 		}
 
 		$this->_db->setQuery($query);
-		$data = $this->_db->loadObjectList('old');
+		$data = $this->_db->loadResult();
 
 		// Check for query error.
 		$error = $this->_db->getErrorMsg();

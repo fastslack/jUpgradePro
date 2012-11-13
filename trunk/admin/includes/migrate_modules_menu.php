@@ -51,7 +51,7 @@ class jUpgradeModulesMenu extends jUpgrade
 
 		$conditions['as'] = "m";
 
-		$conditions['select'] = "moduleid, menuid";
+		$conditions['select'] = "DISTINCT moduleid, menuid";
 
 		$conditions['join'][] = "LEFT JOIN #__modules AS modules ON modules.id = m.moduleid";
 

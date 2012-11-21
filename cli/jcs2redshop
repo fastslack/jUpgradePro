@@ -1,0 +1,141 @@
+#!/usr/bin/php
+<?php
+/**
+ * @version		    $Id: 
+ * @package		    jUpgrade
+ * @subpackage	  jcs2redshop
+ * @copyright			CopyRight 2011 Matware All rights reserved.
+ * @author				Matias Aguirre
+ * @email   			maguirre@matware.com.ar
+ * @link					http://www.matware.com.ar/
+ * @license				GNU/GPL http://www.gnu.org/licenses/gpl-2.0-standalone.html
+ */
+// We are a valid Joomla entry point.
+define('_JEXEC', 1);
+
+// Bootstrap the application.
+require './bootstrap.php';
+
+class jcs2redshop extends JApplicationCli
+{
+	/**
+	* A database object for the application to use.
+	*
+	* @var JDatabase
+	* @since 11.3
+	*/
+	protected $jupgrade = null;
+
+	/**
+	* Class constructor.
+	*
+	* @return void
+	*
+	* @since 2.5.0
+	*/
+	public function __construct()
+	{
+		// Call the parent __construct method so it bootstraps the application class.
+		parent::__construct();
+	
+		// Create the jUpgrade object
+		//$this->jupgrade = new jUpgrade;
+
+		// Creating dabatase instance for this installation
+		$this->_db = JFactory::getDBO();
+
+		// Add the logger.
+		JLog::addLogger(
+			// Pass an array of configuration options
+			array(
+				// Set the name of the log file
+				'text_file' => JPATH_SITE.'/logs/jupgradepro.log.php'
+			)
+		);
+
+	}
+
+	/**
+	 * execute
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+  public function execute()
+  {
+
+//print_r($this->_db);
+
+		$query = "SELECT s.user_id, s.price AS order_total, s.published AS order_payment_status, UNIX_TIMESTAMP(s.ctime) AS cdate, p.name AS order_item_name, p.id AS product_id
+FROM lqstn_jcs_user_subscr AS s
+LEFT JOIN lqstn_jcs_plans AS p ON p.id = s.subscription_id";
+		$this->_db->setQuery($query);
+		$data = $this->_db->loadAssocList();
+		
+
+			foreach ($data as $key => $row)
+			{
+//print_r($row);
+
+				//1= 214, 2= 215, 3=214
+
+				if ($row['product_id'] == 1) {
+					$row['product_id'] = 214;
+				} else if ($row['product_id'] == 2) {
+					$row['product_id'] = 215;
+				} else if ($row['product_id'] == 4) {
+					$row['product_id'] = 214;
+				}
+
+				if ($row['order_payment_status'] == 1) {
+					$row['order_status'] = 'C';
+					$row['order_payment_status'] = 'Paid';
+				} else if ($row['order_payment_status'] == 0) {
+					$row['order_status'] = 'P';
+					$row['order_payment_status'] = 'Unpaid';
+				}
+
+				// Insert needed value
+				$query = "INSERT INTO `#__redshop_orders` ( `user_id`, `order_total`, `order_status`, `order_payment_status`, `cdate`) 
+									VALUES ( {$row['user_id']}, '{$row['order_total']}', '{$row['order_status']}', '{$row['order_payment_status']}', {$row['cdate']})";
+				$this->_db->setQuery($query);
+				$this->_db->query();
+
+echo $query."\n";
+
+				$order_id = $this->_db->insertid();
+
+				// Insert needed value
+				$query = "INSERT INTO `#__redshop_order_item` ( `order_id`, `order_item_name`, `product_id`, `product_item_price`, `product_final_price`, `cdate`,`order_status`) 
+									VALUES ( {$order_id}, '{$row['order_item_name']}', '{$row['product_id']}', '{$row['order_total']}', '{$row['order_total']}', {$row['cdate']}, '{$row['order_status']}')";
+				$this->_db->setQuery($query);
+				$this->_db->query();
+echo $query."\n\n";
+
+			}
+
+//print_r($data);
+
+
+		// Cleanup 
+		//$this->cleanup();
+		// Start migration
+		//$this->migrate();
+
+	} // end method
+
+} // end class
+
+// Wrap the execution in a try statement to catch any exceptions thrown anywhere in the script.
+try
+{
+	// Instantiate the application object, passing the class name to JCli::getInstance
+	// and use chaining to execute the application.
+	JApplicationCli::getInstance('jcs2redshop')->execute();
+}
+catch (Exception $e)
+{
+	// An exception has been caught, just echo the message.
+	fwrite(STDOUT, $e->getMessage() . "\n");
+	exit($e->getCode());
+}

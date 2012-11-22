@@ -6,6 +6,7 @@
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
+* @based on https://github.com/LouisLandry/joomla-platform/tree/oauth/libraries/joomla/oauth
 * @license GNU General Public License version 2 or later; see LICENSE
 */
 

@@ -274,13 +274,13 @@ class jUpgrade
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
-	protected function setDestinationData($rows = null)
+	protected function setDestinationData($rows = false)
 	{
 		$name = $this->getStepName();
 		$method = $this->params->get('method');
 
 		// Get the source data.
-		if ($rows === null) {
+		if ($rows === false) {
 			$rows = $this->dataSwitch();
 		}
 
@@ -297,7 +297,11 @@ class jUpgrade
 			$rows = $this->dataHook($rows);
 		}
 
-		if ($rows != false) {
+		if ($this->getTotal() == $this->_step['cid']+1) {
+			$this->afterHook($rows);
+		}
+
+		if ($rows !== false) {
 			$this->insertData($rows);
 		}
 	}
@@ -313,6 +317,18 @@ class jUpgrade
 	{
 		// Do customisation of the params field here for specific data.
 		return $rows;	
+	}
+
+	/*
+	 * Fake method after hooks
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function afterHook()
+	{
+		// Do customisation data here
 	}
 
 	/**
@@ -674,79 +690,6 @@ class jUpgrade
 		$total = $this->requestRest('total', $table);
 
 		return (int)$total;
-	}
-
-	/**
-	 * Get the last id
-	 *
-	 * @access	public
-	 * @return	int	The total of rows
-	 */
-	protected function getLastId()
-	{
-		$method = $this->params->get('method');
-	
-		// Get the source data.
-		if ($method == 'rest') {
-			$lastid = $this->getLastIdRest();
-		} else if ($method == 'database') {
-			$lastid = $this->getLastIdDatabase();
-		}
-
-		return $lastid;
-	}
-
-	/**
-	 * Get the last id from RESTful
-	 *
-	 * @access	public
-	 * @return	int	The last id
-	 */
-	public function getLastIdRest()
-	{
-		$table = $this->getStepName();
-
-		$lastid = $this->requestRest('lastid', $table);
-
-		return (int) $lastid;
-	}
-
-	/**
-	 * Get the last id from database
-	 *
-	 * @access	public
-	 * @return	int	The last id
-	 */
-	public function getLastIdDatabase()
-	{
-		$key = $this->getKeyName();
-		$conditions = $this->getConditionsHook();
-
-		$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-
-		$where_or = '';
-		if (isset($conditions['where_or'])) {
-			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
-		}
-
-		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-		$key_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
-
-		$order = isset($conditions['order']) ? "ORDER BY {$conditions['order']}" : "ORDER BY {$this->getKeyName()} DESC";
-
-		// Get Total
-		$query = "SELECT {$key_as}{$key} FROM {$this->getTableName()} {$as} {$where}{$where_or} {$order} LIMIT 1";
-		$this->_db_old->setQuery( $query );
-		$lastid = $this->_db_old->loadResult();
-
-		if ($lastid) {
-			return (int)$lastid;
-		}
-		else
-		{
-			$this->setError( $this->_db_old->getErrorMsg() );
-			return false;
-		}
 	}
 
 	/**

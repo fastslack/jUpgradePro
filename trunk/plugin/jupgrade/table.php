@@ -351,59 +351,6 @@ class JUpgradeTable extends JTable
 	}
 
 	/**
-	 * Get the last id
-	 *
-	 * @access	public
-	 * @return	int	The last id
-	 */
-	public function getLastid()
-	{
-		// Getting the database instance
-		$db = JFactory::getDbo();
-
-		$key = $this->getKeyName();
-
-		$conditions = $this->getConditionsHook();
-
-		$where = '';
-		if (isset($conditions['where'])) {
-			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		}
-
-		$where_or = '';
-		if (isset($conditions['where_or'])) {
-			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
-		}
-
-		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-		$key_as = isset($conditions['as']) ? $conditions['as'].'.' : '';
-
-		$join = '';
-		if (isset($conditions['join'])) {
-			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
-		}
-
-		$order = '';
-		if ($key != '') {
-			$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} DESC";
-		}
-
-		// Get Total
-		$query = "SELECT {$key_as}{$key} FROM {$this->_tbl} {$as} {$where}{$where_or} {$join} {$order} LIMIT 1";
-		$db->setQuery( $query );
-		$lastid = $db->loadResult();
-
-		if ($lastid) {
-			return (int)$lastid;
-		}
-		else
-		{
-			$this->setError( $db->getErrorMsg() );
-			return false;
-		}
-	}
-
-	/**
 	 * Export item list to json
 	 *
 	 * @access public

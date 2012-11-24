@@ -177,14 +177,21 @@ class jUpgradeContent extends jUpgrade
 			$cid = $this->_getStepID();
 			$this->_updateID($cid+1);
 			echo $this->isCli() ? "•" : "";
-
-			if ($row['id'] == $this->getLastId()) {
-				//$this->updateFeature();
-				//$this->fixComponentConfiguration();
-			}
 		}
 
 		return false;
+	}
+
+	/**
+	 * Run custom code after hooks
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 */
+	public function afterHook()
+	{
+		//$this->updateFeature();
+		//$this->fixComponentConfiguration();
 	}
 
 	protected function updateFeature()

@@ -48,7 +48,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		$db_config = array();
 
 		// Web
-		if (!$this->isCli()) {
+		if (!jUpgradeProHelper::isCli()) {
 			$db_config['driver'] = $this->params->get('driver');
 			$db_config['host'] = $this->params->get('hostname');
 			$db_config['user'] = $this->params->get('username');

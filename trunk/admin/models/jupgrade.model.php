@@ -164,7 +164,7 @@ class jUpgradeProModel extends JModelLegacy
 		}
 
 		// Done checks
-		if (!$jupgrade->isCli())
+		if (!jUpgradeProHelper::isCli())
 			$this->returnError (100, 'DONE');
 	}
 
@@ -296,7 +296,7 @@ class jUpgradeProModel extends JModelLegacy
 		}
 
 		// Done checks
-		if (!$jupgrade->isCli())
+		if (!jUpgradeProHelper::isCli())
 			$this->returnError (100, 'DONE');
 	}
 
@@ -307,12 +307,8 @@ class jUpgradeProModel extends JModelLegacy
 	 */
 	public function getStep($name = false, $json = true, $extension = false) {
 
-		// Getting the parameters
-		if (!defined('SIGHUP')) {
-			$this->params	= JComponentHelper::getParams('com_jupgradepro');
-		}else{
-			$this->params = new JRegistry(new JConfig);
-		}
+		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
+		$this->params = jUpgradeProHelper::getParams();
 
 		$limit = $this->params->get('cache_limit');
 

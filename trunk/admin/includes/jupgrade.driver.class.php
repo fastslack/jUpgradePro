@@ -64,18 +64,12 @@ class jUpgradeDriver
 	function __construct($step = null)
 	{
 		jimport('legacy.component.helper');
+		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
 		// Set the step params	
 		$this->setParameters((array) $step);
 
-		// Getting the params and Joomla version web and cli
-		if (!$this->isCli()) {
-			// Getting the parameters
-			$this->params	= JComponentHelper::getParams('com_jupgradepro');
-		}else{
-			// Getting the parameters
-			$this->params = new JRegistry(new JConfig);
-		}
+		$this->params = jUpgradeProHelper::getParams();
 
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
@@ -92,13 +86,7 @@ class jUpgradeDriver
 	static function getInstance($step = null, $conditions = array())
 	{
 		// Getting the params and Joomla version web and cli
-		if (!jUpgradeDriver::isCli()) {
-			// Getting the parameters
-			$params	= JComponentHelper::getParams('com_jupgradepro');
-		}else{
-			// Getting the parameters
-			$params = new JRegistry(new JConfig);
-		}
+		$params = jUpgradeProHelper::getParams();
 
 		// Require the driver file
 		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->get('method').'.php')) {
@@ -125,18 +113,6 @@ class jUpgradeDriver
 		}
 
 		return $instance;
-	}
-
-	/**
-	 * Check if the class is called from CLI
-	 *
-	 * @return  void	True if is running from cli
-	 *
-	 * @since   3.0.0
-	 */
-	static public function isCli()
-	{
-		return defined('SIGHUP') ? true : false;
 	}
 
 	/**

@@ -110,12 +110,11 @@ class jUpgradeModules extends jUpgrade
 		// Getting the component parameter with global settings
 		$params = $this->getParams();
 
-		// Get the source data.
-		//$rows = $this->loadData('modules');
-
 		// Set up the mapping table for the old positions to the new positions.
 		$map = self::getPositionsMap();
 		$map_keys = array_keys($map);
+
+		$total = count($rows);
 
 		// 
 		foreach ($rows as $row)
@@ -149,24 +148,10 @@ class jUpgradeModules extends jUpgrade
 			}
 
 			// Updating the steps table
-			$cid = $this->_getStepID();
-			$this->_updateID($cid+1);
-			echo $this->isCli() ? "•" : "";
+			$this->_nextID($total);
 		}
 
 		return false;
-		/*
-		// Require the files
-		require_once JPATH_COMPONENT_ADMINISTRATOR.'includes/helper.php';
-
-		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'sql/modules.sql';
-
-		// Import the sql file
-	  if (JUpgradeHelper::populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
-	  	return false;
-	  }
-		*/
 	}
 
 	/**

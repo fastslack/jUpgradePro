@@ -38,8 +38,9 @@ class jupgradeProViewCpanel extends JViewLegacy
 		JToolbarHelper::custom('help', 'help.png', 'help_f2.png', 'Help', false, false);
 		JToolbarHelper::spacer();
 
-		// get params
-		$params		= JComponentHelper::getParams('com_jupgradepro');
+		// Get params
+		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
+		$params = jUpgradeProHelper::getParams();
 
 		//
 		// Joomla bug: JInstaller not save the defaults params reading config.xml
@@ -53,8 +54,8 @@ class jupgradeProViewCpanel extends JViewLegacy
 			$db->setQuery( $query );
 			$db->query();
 
-			// get params.. again
-			$params		= JComponentHelper::getParams('com_jupgradepro');
+			// Get params.. again
+			$params		= jUpgradeProHelper::getParams();
 		}
 
 		// Load mooTools

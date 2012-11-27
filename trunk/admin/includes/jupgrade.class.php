@@ -90,23 +90,18 @@ class jUpgrade
 		// Set the step params	
 		$this->setParameters($step);
 
-		//$this->checkTimeout();
-
 		jimport('legacy.component.helper');
 		jimport('cms.version.version');
+		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
+
+		$this->params = jUpgradeProHelper::getParams();
 
 		// Getting the params and Joomla version web and cli
-		if (!$this->isCli()) {
-			// Getting the parameters
-			$this->params	= JComponentHelper::getParams('com_jupgradepro');
-
+		if (!jUpgradeProHelper::isCli()) {
 			// Getting the J! version
 			$version = new JVersion;
 			$this->_version = $version->RELEASE;
 		}else{
-			// Getting the parameters
-			$this->params = new JRegistry(new JConfig);
-
 			$this->_version = $this->params->get('RELEASE');
 		}
 
@@ -461,7 +456,7 @@ class jUpgrade
 		$cid = $this->_getStepID();
 		$update_cid = ($this->params->get('method') == 'database' && $total !== false) ? $cid + $total : $cid + 1;
 		$this->_updateID($update_cid);
-		echo $this->isCli() ? "•" : "";
+		echo jUpgradeProHelper::isCli() ? "•" : "";
 	}
 
 	/**

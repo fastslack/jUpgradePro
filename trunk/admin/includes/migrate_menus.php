@@ -36,7 +36,7 @@ class jUpgradeMenu extends jUpgrade
 	/**
 	 * Setting the conditions hook
 	 *
-	 * @return	void
+	 * @return	array
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */

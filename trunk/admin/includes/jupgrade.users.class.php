@@ -29,6 +29,7 @@ class jUpgradeUsersDefault extends jUpgrade
 			0		=> 0,	// ROOT
 			28		=> 1,	// USERS (=Public)
 			29		=> 1,	// Public Frontend
+			17		=> 2,	// Registered
 			18		=> 2,	// Registered
 			19		=> 3,	// Author
 			20		=> 4,	// Editor
@@ -69,14 +70,14 @@ class jUpgradeUsersDefault extends jUpgrade
 	 */
 	protected function getUserIdAroMap($aro_id)
 	{
-		$this->_db_old->setQuery(
+		$this->_driver->_db_old->setQuery(
 			'SELECT value' .
 			' FROM #__core_acl_aro' .
 			' WHERE id = '.$aro_id
 		);
 
-		$return	= $this->_db_old->loadResult();
-		$error	= $this->_db_old->getErrorMsg();
+		$return	= $this->_driver->_db_old->loadResult();
+		$error	= $this->_driver->_db_old->getErrorMsg();
 
 		// Check for query error.
 		if ($error) {

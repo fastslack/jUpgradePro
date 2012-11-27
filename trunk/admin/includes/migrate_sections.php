@@ -116,14 +116,37 @@ class jUpgradeSections extends jUpgradeCategory
 
 	protected function insertUncategorized()
 	{
-		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'/sql/categories-'.$this->_version.'.sql';
+		$uncategorised = array('com_content', 'com_banners', 'com_contact', 'com_newsfeeds', 'com_weblinks', 'com_users.notes');
 
-		// Import the sql file
-	  if ($this->populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
-	  	return false;
-	  }
-		
+		//for($i=2;$i<=7;$i++) {
+		foreach ($uncategorised as $uncat) {
+			// Rebuild the categories table
+			$table = JTable::getInstance('Category', 'JTable');
+
+			// Setting the data
+			$array = array();
+			$array['extension'] = $uncat;
+			$array['path'] = $array['alias'] = 'uncategorised';
+			$array['title'] = 'Uncategorised';
+			$array['access'] = $array['published'] = 1;
+			$array['params'] = ($uncat == 'com_banners') ? '{"target":"","image":"","foobar":""}' : '{"target":"","image":""}';
+			$array['metadata'] = '{"page_title":"","author":"","robots":""}';
+			$array['created_user_id'] = 42;
+			$array['language'] = '*';
+
+			// Setting the default rules
+			$rules = array();
+			$rules['core.create'] = $rules['core.delete'] = $rules['core.edit'] = $rules['core.edit.state'] = $rules['core.edit.own'] = '';
+			$array['rules'] = $rules;
+
+			// Setting the location of the new category
+			$table->setLocation(1, 'last-child');
+			//
+			$table->bind($array);
+			// Store
+			$table->store();
+		}
+	
 		return true;
 	}
 

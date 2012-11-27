@@ -158,29 +158,34 @@ class jUpgradeCategory extends jUpgrade
 	 * Inserts a category
 	 *
 	 * @access  public
-	 * @param   object  An object whose properties match table fields
+	 * @param   row  An array whose properties match table fields
 	 * @since	0.4.
 	 */
-	public function insertCategory($object, $parent = false)
+	public function insertCategory($row, $parent = false)
 	{
 		// Getting the category table
 		$category = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
 
 		// Get section and old id
 		$oldlist = new stdClass();
-		$oldlist->section = !empty($object['extension']) ? $object['extension'] : 0;
-		$oldlist->old = isset($object['old_id']) ? $object['old_id'] : $object['id'];
-		unset($object['old_id']);
+		$oldlist->section = !empty($row['extension']) ? $row['extension'] : 0;
+		$oldlist->old = isset($row['old_id']) ? $row['old_id'] : $row['id'];
+		unset($row['old_id']);
+
+		// Setting the default rules
+		$rules = array();
+		$rules['core.create'] = $rules['core.delete'] = $rules['core.edit'] = $rules['core.edit.state'] = $rules['core.edit.own'] = '';
+		$row['rules'] = $rules;
 
 		// Correct extension
-		if (isset($object['extension'])) {
-			if (is_numeric($object['extension']) || $object['extension'] == "" || $object['extension'] == "category") {
-				$object['extension'] = "com_content";
+		if (isset($row['extension'])) {
+			if (is_numeric($row['extension']) || $row['extension'] == "" || $row['extension'] == "category") {
+				$row['extension'] = "com_content";
 			}
 
 			// Fixing extension name if it's section
-			if ($object['extension'] == 'com_section') {
-				$object['extension'] = "com_content";
+			if ($row['extension'] == 'com_section') {
+				$row['extension'] = "com_content";
 
 				$category->setLocation(1, 'last-child');
 			}
@@ -194,7 +199,7 @@ class jUpgradeCategory extends jUpgrade
 		}
 
 		// Bind data to save category
-		if (!$category->bind($object)) {
+		if (!$category->bind($row)) {
 			echo JError::raiseError(500, $category->getError());
 		}
 

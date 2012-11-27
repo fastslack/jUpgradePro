@@ -146,6 +146,13 @@ class jUpgradeContent extends jUpgrade
 				$row['alias'] .= "-".rand(0, 99999);
 			}
 
+			// Setting the default rules
+			$rules = array();
+			$rules['core.delete'] = array('6' => true);
+			$rules['core.edit'] = array('6' => true, '4' => 1);
+			$rules['core.edit.state'] = array('6' => true, '5' => 1);
+			$row['rules'] = $rules;
+
 			// JTable:store() run an update if id exists into the object so we create them first
 			$object = new stdClass();
 			$object->id = $row['id'];

@@ -86,7 +86,7 @@ class jUpgradeProModel extends JModelLegacy
 			}
 
 			// Checking the RESTful connection
-			$code = $jupgrade->requestRest('check');
+			$code = $jupgrade->_driver->requestRest('check');
 
 			switch ($code) {
 				case 401:
@@ -186,7 +186,7 @@ class jUpgradeProModel extends JModelLegacy
 
 		// If REST is enable, cleanup the source jupgrade_steps table
 		if ($params->method == 'rest') {
-			$jupgrade->requestRest('cleanup');
+			$jupgrade->_driver->requestRest('cleanup');
 		}
 
 		// Get the prefix
@@ -260,10 +260,18 @@ class jUpgradeProModel extends JModelLegacy
 		$query = "INSERT INTO `jupgrade_categories` (`old`, `new`) VALUES (0, 2)";
 		$this->runQuery ($query);
 
-		// Delete uncategorized categories
+		// Delete uncategorised categories
 		if ($params->skip_core_categories != 1) {
-			$query = "DELETE FROM {$prefix}categories WHERE id > 1";
-			$this->runQuery ($query);
+			for($i=2;$i<=7;$i++) {
+				// Rebuild the categories table
+				$table = JTable::getInstance('Category', 'JTable');
+
+				// Load it before delete. Joomla bug?
+				$table->load($i);
+
+				// Delete
+				$table->delete($i);
+			}
 		}
 
 		// Change the id of the admin user
@@ -321,6 +329,7 @@ class jUpgradeProModel extends JModelLegacy
 
 		$step->cid = $step->cid + 1;
 
+		// _updateStep($step, $status = 1, $cache = 0, $cid = false, $extension = false) 
 		if ($step->total > $limit) {
 
 			if ($step->cache == 0 && $step->status == 0) {

@@ -124,6 +124,8 @@ class jUpgradeContent extends jUpgrade
 		// Initialize values
 		$aliases = array();
 
+		$total = count($rows);
+
 		//
 		// Insert content data
 		//
@@ -181,9 +183,7 @@ class jUpgradeContent extends jUpgrade
 			}
 
 			// Updating the steps table
-			$cid = $this->_getStepID();
-			$this->_updateID($cid+1);
-			echo $this->isCli() ? "•" : "";
+			$this->_nextID($total);
 		}
 
 		return false;

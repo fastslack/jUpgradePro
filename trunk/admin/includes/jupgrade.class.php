@@ -433,13 +433,9 @@ class jUpgrade
 					if (!$this->_db->insertObject($table, $row)) {
 						throw new Exception($this->_db->getErrorMsg());
 					}
-					$cid = $this->_getStepID();
 
-					$update_cid = ($this->params->get('method') == 'database') ? $cid + $total : $cid + 1;
-
-					$this->_updateID($update_cid);
+					$this->_nextID($total);
 				//}
-				echo $this->isCli() ? "•" : "";
 			}
 		}else if (is_object($rows)) {
 
@@ -450,6 +446,22 @@ class jUpgrade
 		}
 	
 		return true;
+	}
+
+	/**
+	 * Updating the steps table
+	 *
+	 * @return  boolean  True if the user and pass are authorized
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function _nextID($total = false)
+	{
+		$cid = $this->_getStepID();
+		$update_cid = ($this->params->get('method') == 'database' && $total !== false) ? $cid + $total : $cid + 1;
+		$this->_updateID($update_cid);
+		echo $this->isCli() ? "•" : "";
 	}
 
 	/**

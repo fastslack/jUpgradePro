@@ -197,6 +197,8 @@ class jUpgradeMenu extends jUpgrade
 		//$aliases = array();
 		$unique_alias_suffix = 1;
 
+		$total = count($rows);
+
 		foreach ($rows as $row)
 		{
 			// Convert the array into an object.
@@ -273,9 +275,7 @@ class jUpgradeMenu extends jUpgrade
 			}
 
 			// Updating the steps table
-			$cid = $this->_getStepID();
-			$this->_updateID($cid+1);
-			echo $this->isCli() ? "•" : "";
+			$this->_nextID($total);
 		}
 
 		return false;

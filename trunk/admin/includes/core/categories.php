@@ -105,6 +105,8 @@ class jUpgradeCategories extends jUpgradeCategory
 			}
 		}
 
+		$total = count($rows);
+
 		// Update the category
 		foreach ($rows as $category)
 		{
@@ -133,6 +135,9 @@ class jUpgradeCategories extends jUpgradeCategory
 			}
 
 			$this->insertCategory($category);
+
+			// Updating the steps table
+			$this->_nextID($total);
 		}
 
 		return false;

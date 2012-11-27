@@ -208,11 +208,6 @@ class jUpgradeCategory extends jUpgrade
 			echo JError::raiseError(500, $category->getError());
 		}
 
-		// Updating the steps table
-		$cid = $this->_getStepID();
-		$this->_updateID($cid+1);
-		echo $this->isCli() ? "•" : "";
-
 		// Get new id
 		$oldlist->new = $category->id;
 

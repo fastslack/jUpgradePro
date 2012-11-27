@@ -46,8 +46,8 @@ class jUpgradeCli extends JApplicationCli
 		// Call the parent __construct method so it bootstraps the application class.
 		parent::__construct();
 	
-		// Create the jUpgrade object
-		$this->jupgrade = new jUpgrade;
+		// Getting the parameters
+		$this->params = new JRegistry(new JConfig);
 
 		$this->model = new jUpgradeProModel;
 
@@ -91,18 +91,7 @@ class jUpgradeCli extends JApplicationCli
 	 */
   public function execute()
   {
-		// Start migration
-		$this->migrate();
-	} // end method
 
-	/**
-	 * migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	public function migrate()
-	{
 		$this->model->getCleanup();
 
 		$this->migrateCore();
@@ -112,7 +101,7 @@ class jUpgradeCli extends JApplicationCli
 	public function migrateCore()
 	{
 		$finished = false;
-		$method = $this->jupgrade->params->get('method');
+		$method = $this->params->get('method');
 
 		while (!$finished)
 		{
@@ -129,7 +118,7 @@ class jUpgradeCli extends JApplicationCli
 
 			$this->out("[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
 
-			$method = $this->jupgrade->params->get('method');
+			$method = $this->params->get('method');
 
 			// Start benchmark
 			$time_start = microtime(true);
@@ -151,7 +140,7 @@ class jUpgradeCli extends JApplicationCli
 	public function migrateExtensions()
 	{
 		$finished = false;
-		$method = $this->jupgrade->params->get('method');
+		$method = $this->params->get('method');
 
 		// Check for 3rd party extensions
 		$result = $this->model->checkExtensions();

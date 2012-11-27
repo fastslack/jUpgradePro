@@ -140,7 +140,8 @@ var jUpgrade = new Class({
 
 					if (self.options.debug == 1) {
 						text = document.getElementById('debug');
-						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[checks]</b><br><br>' +object.text;
+						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[checks]</b><br><br>' +response;
+						console.log(response);
 					}
 
 					if (object.number > 400) {

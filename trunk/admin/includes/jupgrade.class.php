@@ -167,8 +167,8 @@ class jUpgrade
 		}
 
 		// Require the file
-		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$options->name.'.php')) {
-			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/migrate_'.$options->name.'.php';
+		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$options->name.'.php')) {
+			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$options->name.'.php';
 		}else if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->name.'.php')) {
 			require_once JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->name.'.php';
 		}else if (isset($options->element)) {

@@ -224,6 +224,21 @@
 
 	</fieldset>
 
+	<fieldset 
+		name="permissions" 
+		label="JCONFIG_PERMISSIONS_LABEL" 
+		description="JCONFIG_PERMISSIONS_DESC">
+		
+		<field 
+			name="rules" 
+			type="rules" 
+			label="JCONFIG_PERMISSIONS_LABEL" 
+			class="inputbox" 
+			filter="rules" 
+			component="com_jupgradepro" 
+			section="component" />
+	</fieldset>
+
 	<fieldset
 		name="debug"
 		label="COM_JUPGRADEPRO_CONFIG_DEBUG_TITLE"

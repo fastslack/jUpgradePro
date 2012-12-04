@@ -42,10 +42,10 @@ class plgSystemJUpgrade extends JPlugin
 	function onAfterInitialise()
 	{
 		jimport('joomla.user.helper');
-		require_once JPATH_PLUGINS . '/system/jupgrade/rest.php';
-		require_once JPATH_PLUGINS . '/system/jupgrade/authorizer.php';
-		require_once JPATH_PLUGINS . '/system/jupgrade/dispatcher.php';
-		require_once JPATH_PLUGINS . '/system/jupgrade/table.php';
+		require_once JPATH_PLUGINS .DS.'system'.DS.'jupgrade'.DS.'rest.php';
+		require_once JPATH_PLUGINS .DS.'system'.DS.'jupgrade'.DS.'authorizer.php';
+		require_once JPATH_PLUGINS .DS.'system'.DS.'jupgrade'.DS.'dispatcher.php';
+		require_once JPATH_PLUGINS .DS.'system'.DS.'jupgrade'.DS.'table.php';
 
 
 		// Check if jupgrade_steps exists
@@ -105,7 +105,7 @@ class plgSystemJUpgrade extends JPlugin
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$sqlfile = JPATH_PLUGINS.'/system/jupgrade/sql/install.sql';
+		$sqlfile = JPATH_PLUGINS.DS.'system'.DS.'jupgrade'.DS.'sql'.DS.'install.sql';
 	
 		// Checking tables
 		$query = "SHOW TABLES";

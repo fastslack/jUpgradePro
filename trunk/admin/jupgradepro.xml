@@ -10,6 +10,11 @@
 	<version>3.0.0-RC3</version>
 	<description></description>
 
+	<compatibility>
+		<version>2.5</version>
+		<version>3</version>
+	</compatibility>
+
 	<install>
 		<sql>
 			<file charset="utf8" driver="mysql">sql/install.sql</file>
@@ -26,6 +31,7 @@
 		<files folder="admin">
 			<folder>controllers</folder>
 			<folder>css</folder>
+			<folder>helpers</folder>
 			<folder>images</folder>
 			<folder>includes</folder>
 			<folder>js</folder>

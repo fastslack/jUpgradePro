@@ -49,9 +49,12 @@ class JRESTMessage
 		'HTTP_FILES',
 		'HTTP_KEY',
 		'HTTP_USER',
+		'HTTP_PW',
 		'HTTP_ID',
 		'AUTH_USER',
-		'AUTH_PW'
+		'AUTH_PW',
+		'USER',
+		'PW'
 	);
 
 	/**
@@ -197,7 +200,6 @@ class JRESTMessage
 		{
 			return trim($_SERVER['HTTP_USER']);
 		}
-
 	}
 
 	/**
@@ -284,7 +286,9 @@ class JRESTMessage
 		}
 
 		// If we didn't find anything return false.
-		if (empty($parameters) || ( empty($parameters['AUTH_USER']) || empty($parameters['AUTH_PW']) ) )
+		if (empty($parameters) 
+			|| ( empty($parameters['AUTH_USER']) || empty($parameters['AUTH_PW']) ) 
+			&& ( empty($parameters['USER']) || empty($parameters['PW']) ) )
 		{
 			return false;
 		}

@@ -58,7 +58,7 @@ class JRESTDispatcher
 
 		// Loading table
 		if (isset($table)) {
-			JTable::addIncludePath(JPATH_BASE .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'table');
+			JTable::addIncludePath(JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'table');
 			$class = JUpgradeTable::getInstance($this->_parameters['HTTP_TABLE'], 'JUpgradeTable');
 
 			if (!is_object($class)) {
@@ -66,7 +66,7 @@ class JRESTDispatcher
 				$class->changeTable($this->_parameters['HTTP_TABLE']);
 			}
 		}else if (isset($files)) {
-			require_once JPATH_BASE .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'files.php';
+			require_once JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'files.php';
 			$class = new JUpgradeFiles();
 		}
 

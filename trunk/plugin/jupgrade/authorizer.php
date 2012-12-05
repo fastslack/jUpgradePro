@@ -47,7 +47,7 @@ class JRESTAuthorizer
 			exit;
 		}
 
-		if (!isset($params['AUTH_USER']) && !isset($params['HTTP_USER']) ) {
+		if (!isset($params['AUTH_USER']) && !isset($params['HTTP_USER']) && !isset($params['USER'])) {
 			JResponse::setHeader('status', 405);
 			JResponse::setBody('Username headers not found.');
 			JResponse::sendHeaders();
@@ -59,6 +59,8 @@ class JRESTAuthorizer
 			$user_decode = base64_decode($params['AUTH_USER']);
 		} else if (isset($params['HTTP_USER'])) {
 			$user_decode = base64_decode($params['HTTP_USER']);
+		} else if (isset($params['USER'])) {
+			$user_decode = base64_decode($params['USER']);
 		}
 
 		$parts	= explode( ':', $user_decode );
@@ -69,6 +71,8 @@ class JRESTAuthorizer
 			$password_decode = base64_decode($params['AUTH_PW']);
 		} else if (isset($params['HTTP_PW'])) {
 			$password_decode = base64_decode($params['HTTP_PW']);
+		} else if (isset($params['PW'])) {
+			$password_decode = base64_decode($params['PW']);
 		}
 
 		$parts	= explode( ':', $password_decode );

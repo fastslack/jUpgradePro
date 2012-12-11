@@ -134,14 +134,14 @@ class jUpgradeDriverRest extends jUpgradeDriver
 	}
 
 	/**
-	 * Get total of the rows of the table using RESTful
+	 * Get total of the rows of the table
 	 *
 	 * @access	public
 	 * @return	int	The total of rows
 	 */
-	public function getTotalRest($table)
+	public function getTotal()
 	{
-		$total = $this->requestRest('total', $table);
+		$total = $this->requestRest('total', $this->_getStepName());
 
 		return (int)$total;
 	}

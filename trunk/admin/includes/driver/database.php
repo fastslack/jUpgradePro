@@ -135,11 +135,11 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 * @access	public
 	 * @return	int	The total of rows
 	 */
-	public function getTotalDatabase()
+	public function getTotal()
 	{
 		$table = $this->getTableName();
 		$conditions = $this->getConditionsHook();
-//print_r($conditions);
+
 		$where = '';
 		$where_or = '';
 

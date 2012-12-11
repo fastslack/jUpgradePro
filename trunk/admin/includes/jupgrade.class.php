@@ -47,6 +47,12 @@ class jUpgrade
 	public $_version = null;
 
 	/**
+	 * @var      
+	 * @since  3.0
+	 */
+	public $_total = null;
+
+	/**
 	 * @var	array
 	 * @since  3.0
 	 */
@@ -119,6 +125,8 @@ class jUpgrade
 		}
 
 		$this->_driver = JUpgradeDriver::getInstance($step, $conditions);
+
+		$this->_total = $this->_driver->getTotal();
 
 		// Set timelimit to 0
 		if(!@ini_get('safe_mode')) {
@@ -355,21 +363,7 @@ class jUpgrade
 	 */
 	public function getTotal()
 	{
-		$method = $this->params->get('method');
-
-		$total = 0;
-
-		switch ($method) {
-			case 'rest':
-				$total = $this->_driver->getTotalRest($this->_getStepName());
-		    break;
-			case 'database':
-			case 'database_all':
-		    $total = $this->_driver->getTotalDatabase();
-		    break;
-		}
-
-		return $total;
+		return $this->_total;
 	}
 
 	/**

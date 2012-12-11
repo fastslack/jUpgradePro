@@ -90,6 +90,8 @@ class jUpgradeSections extends jUpgradeCategory
 	 */
 	public function dataHook($rows = null)
 	{
+		$total = count($rows);
+
 		// Insert the sections
 		foreach ($rows as $section)
 		{
@@ -97,6 +99,9 @@ class jUpgradeSections extends jUpgradeCategory
 
 			// Inserting the category
 			$this->insertCategory($section);
+
+			// Updating the steps table
+			$this->_nextID($total);
 		}
 
 		return false;

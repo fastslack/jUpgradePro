@@ -17,6 +17,7 @@ defined('_JEXEC') or die;
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.users.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php';
 
 /**
  * jUpgradePro Model
@@ -193,7 +194,7 @@ class jUpgradeProModel extends JModelLegacy
 		$prefix = $this->_db->getPrefix();
 
 		// Set all cid, status and cache to 0 
-		$query = "UPDATE jupgrade_steps SET cid = 1, status = 0, cache = 0";
+		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, cache = 0";
 		$this->runQuery ($query);
 
 		// Convert the params to array
@@ -305,11 +306,11 @@ class jUpgradeProModel extends JModelLegacy
 	 *
 	 * @return   step object
 	 */
-	public function getStep() {
+	public function getStep($name = false, $json = true, $extension = false) {
 
 		$step = jUpgradeStep::getInstance();
 
-		return $step->getStep(false, false);
+		return $step->getStep($name, $json, $extension);
 	}
 
 	/**
@@ -329,8 +330,6 @@ class jUpgradeProModel extends JModelLegacy
 
 		// Getting the total
 		$total = $process->getTotal();
-
-		$step->_refresh();
 
 		if ($total <= $step->cid) {
 			$step->last = true;

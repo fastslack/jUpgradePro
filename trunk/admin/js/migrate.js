@@ -248,10 +248,17 @@ var jUpgrade = new Class({
 			method: 'get'
 		}); // end Request		
 
+		text = document.getElementById('debug');
+
 		step.addEvents({
 			'complete': function(response) {
-				console.log(response);
+				//console.log(response);
 				var object = JSON.decode(response);
+
+				if (self.options.debug == 1) {
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
+					console.log(response);
+				}
 
 				if (object == null) {
 					pb4.finish();
@@ -285,6 +292,11 @@ var jUpgrade = new Class({
 					'complete': function(response) {
 						//console.log(response);
 						var row_object = JSON.decode(response);
+
+						if (self.options.debug == 1) {
+							text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +response;
+							console.log(response);
+						}
 
 						currItem.innerHTML = row_object.cid;
 

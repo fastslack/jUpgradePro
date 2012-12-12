@@ -27,19 +27,24 @@ class jUpgradeStep
 	public $name = null;
 	public $title = null;
 	public $class = null;
-	//public $category = null;
+	public $table = null;
+	public $conditions = null;
 
-	public $cid = 1;
+	public $cid = 0;
 	public $cache = 0;
 	public $status = 0;
 	public $total = 0;
+	public $start = 0;
+	public $stop = 0;
+	public $laststep = '';
+
+	public $first = false;
+	public $next = false;
+	public $middle = false;
+	public $end = false;
 
 	public $type = null;
-	public $laststep = null;
 	public $xml = null;
-	public $table = null;
-	public $conditions = null;
-	public $next = null;
 
 	/**
 	 * @var      
@@ -163,50 +168,42 @@ class jUpgradeStep
 		if ($this->total > $limit) {
 
 			if ($this->cache == 0 && $this->status == 0) {
-				echo "{[[1]]}";
 
-				$this->start = 1;
 				$this->cache = round($this->total / $limit, 0, PHP_ROUND_HALF_DOWN);
-				$this->stop = $limit;
+				$this->stop = $limit - 1;
 				$this->first = true;
-				$this->status = 1;
 
 			} else if ($this->cache == 1 && $this->status == 1) { 
-				echo "{[[2]]}";
 
 				$this->start = $this->cid;
 				$this->next = true;
-				$this->status = 1;
 				$this->cache = 0;
 
 			} else if ($this->cache > 0) { 
-				echo "{[[3]]}";
 
 				$this->start = $this->cid;
 				$this->stop = ($this->start - 1) + $limit;
-				$this->status = 1;
 				$this->cache = $this->cache - 1;
 
 				if ($this->stop > $this->total) {
 					$this->next = true;
 				}else{
 					$this->middle = true;
-					//unset($this->cid);
 				}
 			}
 
-		}else if ($this->total == 0) {
-			echo "{[[4]]}";
+			// Status == 1
+			$this->status = 1;
 
-			$this->start = 0;
+		}else if ($this->total == 0) {
+
 			$this->stop = -1;
 			$this->first = true;
 			$this->status = 2;
 			$this->cache = 0;
 
 		}else{
-			echo "{[[5]]}";
-			$this->start = 1;
+
 			$this->next = true;
 			$this->first = true;
 			//$this->status = 2;
@@ -216,9 +213,14 @@ class jUpgradeStep
 		// updating the status flag
 		$this->_updateStep($extension);
 
-		// Go to the next step
+		// If first step start = 1
+		if ($this->first == true) {
+			$this->start = 0;
+		}
+
+		// If next is true, set stop = total
 		if ($this->next == true) {
-			$this->stop = $this->total;
+			$this->stop = $this->total - 1;
 		}
 
 		// Mark if is the end of the step

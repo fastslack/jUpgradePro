@@ -23,9 +23,9 @@ defined('_JEXEC') or die;
 class jUpgradeDriverRest extends jUpgradeDriver
 {	
 
-	function __construct($step = null)
+	function __construct(jUpgradeStep $step = null)
 	{
-		parent::__construct((array) $step);
+		parent::__construct($step);
 	}
 
 	/**

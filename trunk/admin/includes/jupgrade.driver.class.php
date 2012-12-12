@@ -38,36 +38,15 @@ class jUpgradeDriver
 	 * @var	array
 	 * @since  3.0
 	 */
-	protected $_step = array();
+	protected $_step = null;
 
-	/**
-	 * @var    array  List of possible parameters.
-	 * @since  12.1
-	 */
-	private $_reserved = array(
-		'id',
-		'cid',
-		'lastid',
-		'name',
-		'title',
-		'class',
-		'category',
-		'status',
-		'type',
-		'laststep',
-		'state',
-		'xml',
-		'table',
-		'conditions',
-	);
-
-	function __construct($step = null)
+	function __construct(jUpgradeStep $step = null)
 	{
 		jimport('legacy.component.helper');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
 		// Set the step params	
-		$this->setParameters((array) $step);
+		$this->_step = $step;
 
 		$this->params = jUpgradeProHelper::getParams();
 
@@ -83,7 +62,7 @@ class jUpgradeDriver
 	 *
 	 * @since  3.0.0
 	 */
-	static function getInstance($step = null, $conditions = array())
+	static function getInstance(jUpgradeStep $step = null, $conditions = array())
 	{
 		// Getting the params and Joomla version web and cli
 		$params = jUpgradeProHelper::getParams();
@@ -116,31 +95,6 @@ class jUpgradeDriver
 	}
 
 	/**
-	 * Method to set the parameters. 
-	 *
-	 * @param   array  $parameters  The parameters to set.
-	 *
-	 * @return  void
-	 *
-	 * @since   3.0.0
-	 */
-	public function setParameters($data)
-	{
-		// Ensure that only valid OAuth parameters are set if they exist.
-		if (!empty($data))
-		{
-			foreach ($data as $k => $v)
-			{
-				if (in_array($k, $this->_reserved))
-				{
-					// Perform url decoding so that any use of '+' as the encoding of the space character is correctly handled.
-					$this->_step[$k] = urldecode((string) $v);
-				}
-			}
-		}
-	}
-
-	/**
 	 * Update the step id
 	 *
 	 * @return  int  The next id
@@ -149,7 +103,7 @@ class jUpgradeDriver
 	 */
 	public function _getStepID()
 	{
-		return $this->_step['cid'];
+		return $this->_step->cid;
 	}
 
 	/**
@@ -159,6 +113,6 @@ class jUpgradeDriver
 	 */
 	public function _getStepName()
 	{
-		return $this->_step['name'];
+		return $this->_step->name;
 	}
 }

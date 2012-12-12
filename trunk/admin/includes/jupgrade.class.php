@@ -56,26 +56,7 @@ class jUpgrade
 	 * @var	array
 	 * @since  3.0
 	 */
-	protected $_step = array();
-
-	/**
-	 * @var    array  List of possible parameters.
-	 * @since  12.1
-	 */
-	private $_reserved = array(
-		'id',
-		'cid',
-		'lastid',
-		'name',
-		'title',
-		'class',
-		'category',
-		'status',
-		'type',
-		'laststep',
-		'state',
-		'xml'
-	);
+	protected $_step = null;
 
 	/**
 	 * @var    array  List of extensions steps
@@ -89,12 +70,14 @@ class jUpgrade
 	 */
 	public $canDrop = false;
 
-	function __construct($step = null)
+	function __construct(jUpgradeStep $step = null)
 	{
-		$step = (array) $step;
+		//$step = (array) $step;
 
 		// Set the step params	
-		$this->setParameters($step);
+		//$this->setParameters($step);
+
+		$this->_step = $step;
 
 		jimport('legacy.component.helper');
 		jimport('cms.version.version');
@@ -117,7 +100,9 @@ class jUpgrade
 		// Getting the driver
 		require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php';
 
-		$step['table'] = $this->getTableName();
+		if ($this->_step instanceof jUpgradeStep) {
+			$this->_step->table = $this->getTableName();
+		}
 
 		$conditions = array();
 		if ($this->params->get('method') == 'database') {
@@ -126,7 +111,9 @@ class jUpgrade
 
 		$this->_driver = JUpgradeDriver::getInstance($step, $conditions);
 
-		$this->_total = $this->_driver->getTotal();
+		if (isset($this->_step->total)) {
+			$this->_total = $step->total == false ? $this->_driver->getTotal() : $step->total;
+		}
 
 		// Set timelimit to 0
 		if(!@ini_get('safe_mode')) {
@@ -161,28 +148,28 @@ class jUpgrade
 	 *
 	 * @since  3.0.0
 	 */
-	static function getInstance($options = null)
+	static function getInstance(jUpgradeStep $step = null)
 	{
 		$class = '';
 
-		if ($options == null) {
+		if ($step == null) {
 			return false;
 		}
 
 		// Require the file
-		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$options->name.'.php')) {
-			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$options->name.'.php';
-		}else if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->name.'.php')) {
-			require_once JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->name.'.php';
+		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$step->name.'.php')) {
+			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$step->name.'.php';
+		}else if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$step->name.'.php')) {
+			require_once JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$step->name.'.php';
 		}else if (isset($options->element)) {
-			if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->element.'.php')) {
-				require_once JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$options->element.'.php';
+			if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$step->element.'.php')) {
+				require_once JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$step->element.'.php';
 			}
 		}
 
 		// Getting the class name
-		if (isset($options->class)) {
-			$class = $options->class;
+		if (isset($step->class)) {
+			$class = $step->class;
 		}
 
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
@@ -194,7 +181,7 @@ class jUpgrade
 		// Create our new jUpgrade connector based on the options given.
 		try
 		{
-			$instance = new $class($options);
+			$instance = new $class($step);
 		}
 		catch (RuntimeException $e)
 		{
@@ -202,43 +189,6 @@ class jUpgrade
 		}
 
 		return $instance;
-	}
-
-	/**
-	 * Check if the class is called from CLI
-	 *
-	 * @return  void	True if is running from cli
-	 *
-	 * @since   3.0.0
-	 */
-	public function isCli()
-	{
-		return defined('SIGHUP') ? true : false;
-	}
-
-	/**
-	 * Method to set the parameters. 
-	 *
-	 * @param   array  $parameters  The parameters to set.
-	 *
-	 * @return  void
-	 *
-	 * @since   3.0.0
-	 */
-	public function setParameters($data)
-	{
-		// Ensure that only valid OAuth parameters are set if they exist.
-		if (!empty($data))
-		{
-			foreach ($data as $k => $v)
-			{
-				if (in_array($k, $this->_reserved))
-				{
-					// Perform url decoding so that any use of '+' as the encoding of the space character is correctly handled.
-					$this->_step[$k] = urldecode((string) $v);
-				}
-			}
-		}
 	}
 
 	/**
@@ -291,12 +241,15 @@ class jUpgrade
 			$rows = $this->dataHook($rows);
 		}
 
-		if ($this->getTotal() == $this->_step['cid']+1) {
-			$this->afterHook($rows);
-		}
-
 		if ($rows !== false) {
 			$this->insertData($rows);
+		}
+
+		// Update the step object
+		$this->_step->_refresh();
+
+		if ($this->getTotal() == $this->_step->cid) {
+			$this->afterHook($rows);
 		}
 	}
 
@@ -438,22 +391,6 @@ class jUpgrade
 	}
 
 	/**
-	 * Updating the steps table
-	 *
-	 * @return  boolean  True if the user and pass are authorized
-	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
-	 */
-	public function _nextID($total = false)
-	{
-		$cid = $this->_getStepID();
-		$update_cid = ($this->params->get('method') == 'database' && $total !== false) ? $cid + $total : $cid + 1;
-		$this->_updateID($update_cid);
-		echo jUpgradeProHelper::isCli() ? "•" : "";
-	}
-
-	/**
 	 * populateDatabase
 	 */
 	function populateDatabase(& $db, $sqlfile, & $errors, $nexttask='mainconfig')
@@ -504,6 +441,22 @@ class jUpgrade
 	}
 
 	/**
+	 * Updating the steps table
+	 *
+	 * @return  boolean  True if the user and pass are authorized
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function _nextID($total = false)
+	{
+		$cid = $this->_getStepID();
+		$update_cid = ($this->params->get('method') == 'database' && $total !== false) ? $cid + $total : $cid + 1;
+		$this->_updateID($update_cid);
+		echo jUpgradeProHelper::isCli() ? "•" : "";
+	}
+
+	/**
 	 * 
 	 *
 	 * @return  boolean  True if the user and pass are authorized
@@ -514,7 +467,7 @@ class jUpgrade
 	public function _updateID($id)
 	{
 		$name = $this->_getStepName();
-		$table = "jupgrade_{$this->_step['type']}";
+		$table = "jupgrade_{$this->_step->type}";
 
 		$query = "UPDATE `{$table}` SET `cid` = '{$id}' WHERE name = ".$this->_db->quote($name);
 		$this->_db->setQuery( $query );
@@ -531,7 +484,7 @@ class jUpgrade
 	 */
 	public function _getStepID()
 	{
-		return $this->_step['cid'];
+		return $this->_step->cid;
 	}
 
 	/**
@@ -541,7 +494,7 @@ class jUpgrade
 	 */
 	public function _getStepName()
 	{
-		return $this->_step['name'];
+		return $this->_step->name;
 	}
 
 	/**
@@ -571,8 +524,8 @@ class jUpgrade
 			return $this->source;
 		}else if (isset($this->destination)) {
 			return $this->destination;
-		}else if (isset($this->_step['name'])) {
-			return '#__'.$this->_step['name'];
+		}else if (isset($this->_step->name)) {
+			return '#__'.$this->_step->name;
 		}
 	}
 
@@ -588,7 +541,7 @@ class jUpgrade
 		}else if (isset($this->source)) {
 			return $this->source;
 		}else{
-			return '#__'.$this->_step['name'];
+			return '#__'.$this->_step->name;
 		}
 	}
 

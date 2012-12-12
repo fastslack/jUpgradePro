@@ -193,7 +193,7 @@ class jUpgradeProModel extends JModelLegacy
 		$prefix = $this->_db->getPrefix();
 
 		// Set all cid, status and cache to 0 
-		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, cache = 0";
+		$query = "UPDATE jupgrade_steps SET cid = 1, status = 0, cache = 0";
 		$this->runQuery ($query);
 
 		// Convert the params to array
@@ -305,103 +305,11 @@ class jUpgradeProModel extends JModelLegacy
 	 *
 	 * @return   step object
 	 */
-	public function getStep($name = false, $json = true, $extension = false) {
+	public function getStep() {
 
-		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
-		$this->params = jUpgradeProHelper::getParams();
+		$step = jUpgradeStep::getInstance();
 
-		$limit = $this->params->get('cache_limit');
-
-		// Getting the steps
-		$step = ($name != false) ? $this->_getStep($name, $extension) : $this->_getStep(null, $extension);
-
-		if (empty($step)) {
-			return false;
-		}
-
-		// Getting total
-		$object = jUpgrade::getInstance($step);
-		$step->total = (int) $object->getTotal();
-
-		$step->cid = $step->cid + 1;
-
-		// _updateStep($step, $status = 1, $cache = 0, $cid = false, $extension = false) 
-		if ($step->total > $limit) {
-
-			if ($step->cache == 0 && $step->status == 0) {
-
-				$step->start = 1;
-				$step->cache = round($step->total / $limit, 0, PHP_ROUND_HALF_DOWN);
-				$step->stop = $limit;
-				$step->first = true;
-
-				// updating the status flag
-				$this->_updateStep($step, 1, $step->cache, false, $extension);
-
-			} else if ($step->cache == 1 && $step->status == 1) { 
-
-				$step->start = $step->cid;
-				$step->next = true;
-
-				// updating the status flag
-				$this->_updateStep($step, 2, 0, false, $extension);
-
-			} else if ($step->cache > 0) { 
-
-				$step->start = $step->cid;
-				$step->stop = ($step->start - 1) + $limit;
-
-				if ($step->stop > $step->total) {
-					$step->next = true;
-				}else{
-					$step->middle = true;
-					unset($step->cid);
-				}
-
-				// updating the status flag
-				$this->_updateStep($step, 1, $step->cache - 1, false, $extension);
-			}
-
-		}else if ($step->total == 0) {
-			// updating the status flag
-			$this->_updateStep($step, 2, 0, false, $extension);
-
-			$step->start = 0;
-			$step->stop = -1;
-			$step->first = true;
-
-		}else{
-			$step->start = 1;
-			$step->next = true;
-			$step->first = true;
-
-			// updating the status flag
-			$this->_updateStep($step, 2, 0, false, $extension);
-		}
-
-		// Go to the next step
-		if ($step->next == true) {
-			$step->stop = $step->total;
-		}
-
-		// Mark if is the end of the step
-		if ($step->name == $step->laststep) {
-			$step->end = true;
-		}
-
-		unset($step->cache);
-		unset($step->status);
-		unset($step->laststep);
-		unset($step->extension);
-
-		// Encoding
-		if ($json == true) {
-			$return = json_encode($step);
-		}else{
-			$return = $step;
-		}
-
-		return($return);
+		return $step->getStep(false, false);
 	}
 
 	/**
@@ -414,73 +322,29 @@ class jUpgradeProModel extends JModelLegacy
 
 		$table = ($table == false) ? JRequest::getVar('table') : $table;
 
-		$step = $this->_getStep($table);
+		$step = jUpgradeStep::getInstance();
 
 		$process = jUpgrade::getInstance($step);
 		$process->upgrade();
 
-		$step = $this->_getStep($table);
-
 		// Getting the total
 		$total = $process->getTotal();
 
-		if ($total <= $step->cid) {
-			$step->last = true;
-			$this->_updateStep($step, 2, false, $total);
-		}
-
-		unset($step->cache);
-		unset($step->status);
-		unset($step->laststep);
-		unset($step->class);
-		unset($step->extension);
-
-		// Encoding
-		if ($json == true) {
-			$return = json_encode($step);
-		}else{
-			$return = $step;
-		}
-
-		return $return;
-	}
-
-	/**
-	 * Migrate
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 */
-	function getMigrateExtensions($table = false, $json = true) {
-
-		$table = ($table == false) ? JRequest::getVar('table') : $table;
-
-		$step = $this->_getStep($table, 'table');
-
-		$process = jUpgrade::getInstance($step);
-		$process->upgrade();
-
-		$step = $this->_getStep($table, 'table');
-
-		// Getting the total
-		$total = $process->getTotal();
+		$step->_refresh();
 
 		if ($total <= $step->cid) {
 			$step->last = true;
-			$this->_updateStep($step, 2, false, $total, true);
-		}
+			$step->status = 2;
+			$step->cache = 0;
 
-		unset($step->cache);
-		unset($step->status);
-		unset($step->laststep);
-		unset($step->class);
-		unset($step->extension);
+			$step->_updateStep();
+		}
 
 		// Encoding
 		if ($json == true) {
-			$return = json_encode($step);
+			$return = json_encode($step->getParameters());
 		}else{
-			$return = $step;
+			$return = $step->getParameters();
 		}
 
 		return $return;
@@ -497,106 +361,6 @@ class jUpgradeProModel extends JModelLegacy
 		$structure = $jupgrade->getTableStructure();
 
 		return $structure;
-	}
-
-	/**
-	 * Getting the next step
-	 *
-	 * @return   step object
-	 */
-	public function _getStep($key = null, $extension = false) {
-
-		if ($extension == false) {
-			$table = 'jupgrade_steps';
-		}else if($extension == 'table') {
-			$table = 'jupgrade_extensions_tables';
-		}else if($extension == true) {
-			$table = 'jupgrade_extensions';
-		}
-
-		// Select the steps
-		if (isset($key)) {
-			$query = "SELECT * FROM {$table} AS s WHERE s.name = '{$key}' ORDER BY s.id ASC LIMIT 1";
-		}else{
-			$query = "SELECT * FROM {$table} AS s WHERE s.status != 2 ORDER BY s.id ASC LIMIT 1";
-		}
-
-		$this->_db->setQuery($query);
-		$step = $this->_db->loadObject();
-
-		if ($step == '') {
-			return false;
-		}
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Select last step
-		$query = "SELECT name FROM {$table} WHERE status = 0 ORDER BY id DESC LIMIT 1";
-		$this->_db->setQuery($query);
-		$step->laststep = $this->_db->loadResult();
-
-		// Next
-		$step->next = false;
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		if ($extension == false) {
-			$step->type = 'steps';
-		}else if($extension == 'table') {
-			$step->type = 'extensions_tables';
-		}else if($extension == true) {
-			$step->type = 'extensions';
-		}
-
-		// Check if steps is an object
-		if (is_object($step)) {
-		  return $step;
-		}else{
-			return false;
-		}
-	}
-
-	/**
-	 * updateStep
-	 *
-	 * @return	none
-	 * @since	2.5.2
-	 */
-	public function _updateStep($step, $status = 1, $cache = 0, $cid = false, $extension = false) {
-
-		if ($cache !== false) {
-			$cache = ", cache = {$cache}";
-		}
-		if ($cid !== false) {
-			$cid = ", cid = {$cid}";
-		}
-
-		$table = $extension == false ? 'jupgrade_steps' : 'jupgrade_extensions_tables';
-
-		// updating the status flag
-		$query = "UPDATE {$table} SET status = {$status} {$cache} {$cid}"
-		." WHERE name = '{$step->name}'";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		return true;
 	}
 
 	/**

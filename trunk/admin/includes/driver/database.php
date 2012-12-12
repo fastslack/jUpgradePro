@@ -39,9 +39,9 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	private $extensions_steps = array('extensions_components', 'extensions_modules', 'extensions_plugins');
 
-	function __construct($step = null, $conditions = array())
+	function __construct(jUpgradeStep $step = null, $conditions = array())
 	{
-		parent::__construct((array) $step);
+		parent::__construct($step);
 
 		$this->_conditions = $conditions;
 
@@ -197,7 +197,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	public function getTableName()
 	{
-		return $this->_step['table'];
+		return $this->_step->table;
 	}
 
 	/**

@@ -81,6 +81,11 @@ class jUpgradeProModel extends JModelLegacy
 
 		// Check for bad configurations
 		if ($params->method == "rest") {
+
+			if (!isset($params->rest_hostname) || !isset($params->rest_username) || !isset($params->rest_password) || !isset($params->rest_key) ) {
+				$this->returnError (412, 'COM_JUPGRADEPRO_ERROR_REST_CONFIG');
+			}
+
 			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' || 
 					$params->rest_username == '' || $params->rest_password == '' || $params->rest_key == '') {
 				$this->returnError (412, 'COM_JUPGRADEPRO_ERROR_REST_CONFIG');
@@ -105,8 +110,8 @@ class jUpgradeProModel extends JModelLegacy
 
 		// Check for bad configurations
 		if ($params->method == "database") {
-			if ($params->hostname == 'localhost' || $params->hostname == '' || 
-					$params->username == '' || $params->password == '' || $params->database == '' || $params->prefix == '' ) {
+			if ($params->old_hostname == 'localhost' || $params->old_hostname == '' || 
+					$params->old_username == '' || $params->old_password == '' || $params->old_db == '' || $params->old_dbprefix == '' ) {
 				$this->returnError (413, 'COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
 			}
 		}
@@ -321,16 +326,17 @@ class jUpgradeProModel extends JModelLegacy
 	 */
 	function getMigrate($table = false, $json = true) {
 
-		$table = ($table == false) ? JRequest::getVar('table') : $table;
-
+		// Init the jUpgrade instance
 		$step = jUpgradeStep::getInstance();
+		$jupgrade = jUpgrade::getInstance($step);
 
-		$process = jUpgrade::getInstance($step);
-		$process->upgrade();
+		// Run the upgrade
+		$jupgrade->upgrade();
 
 		// Getting the total
-		$total = $process->getTotal();
+		$total = $jupgrade->getTotal();
 
+		// Update jupgrade_steps table if id = last_id
 		if ($total <= $step->cid) {
 			$step->last = true;
 			$step->status = 2;
@@ -339,14 +345,7 @@ class jUpgradeProModel extends JModelLegacy
 			$step->_updateStep();
 		}
 
-		// Encoding
-		if ($json == true) {
-			$return = json_encode($step->getParameters());
-		}else{
-			$return = $step->getParameters();
-		}
-
-		return $return;
+		return $step->getParameters($json);
 	}
 
 	/**

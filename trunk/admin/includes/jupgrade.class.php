@@ -246,7 +246,7 @@ class jUpgrade
 		}
 
 		// Update the step object
-		$this->_step->_refresh();
+		$this->_step->_update();
 
 		if ($this->getTotal() == $this->_step->cid) {
 			$this->afterHook($rows);

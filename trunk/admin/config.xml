@@ -78,13 +78,13 @@
 		label="COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE"
 		description="COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE_DESC">
 
-		<field name="driver" type="list" default="mysql" label="Database driver" description="Database driver">
+		<field name="old_dbtype" type="list" default="mysql" label="Database driver" description="Database driver">
 			<option value="mysql">MySQL</option>
 			<option value="mysqli">MySQLi</option>
 		</field>
 
 		<field
-			name="hostname"
+			name="old_hostname"
 			type="text"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_HOSTNAME"
@@ -93,7 +93,7 @@
 		/>
 
 		<field
-			name="username"
+			name="old_username"
 			type="text"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_USERNAME"
@@ -102,7 +102,7 @@
 		/>
 
 		<field
-			name="password"
+			name="old_password"
 			type="password"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_PASSWORD"
@@ -111,7 +111,7 @@
 		/>
 
 		<field
-			name="database"
+			name="old_db"
 			type="text"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_DATABASE"
@@ -120,7 +120,7 @@
 		/>
 
 		<field
-			name="prefix"
+			name="old_dbprefix"
 			type="text"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_PREFIX"

@@ -252,7 +252,7 @@ var jUpgrade = new Class({
 
 		step.addEvents({
 			'complete': function(response) {
-				//console.log(response);
+
 				var object = JSON.decode(response);
 
 				if (self.options.debug == 1) {
@@ -290,7 +290,7 @@ var jUpgrade = new Class({
 				// Adding event to the row request
 				row.addEvents({
 					'complete': function(response) {
-						//console.log(response);
+
 						var row_object = JSON.decode(response);
 
 						if (self.options.debug == 1) {

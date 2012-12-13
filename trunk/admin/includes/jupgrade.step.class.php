@@ -23,11 +23,11 @@ defined('_JEXEC') or die;
 class jUpgradeStep
 {	
 	public $id = null;
-	public $lastid = null;
 	public $name = null;
 	public $title = null;
 	public $class = null;
 	public $table = null;
+	public $type = null;
 	public $conditions = null;
 
 	public $cid = 0;
@@ -43,14 +43,7 @@ class jUpgradeStep
 	public $middle = false;
 	public $end = false;
 
-	public $type = null;
 	public $xml = null;
-
-	/**
-	 * @var      
-	 * @since  3.0
-	 */
-	public $params = null;
 	
 	/**
 	 * @var      
@@ -58,18 +51,16 @@ class jUpgradeStep
 	 */
 	public $_db = null;
 
-	function __construct($step = null)
+	function __construct()
 	{
 		jimport('legacy.component.helper');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
-		// Set the step params	
-		$this->setParameters((array) $step);
-
-		//$this->params = jUpgradeProHelper::getParams();
-
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
+
+		// Update the last step from database
+		$this->_update();
 	}
 
 	/**
@@ -82,13 +73,10 @@ class jUpgradeStep
 	 */
 	static function getInstance($key = null, $extension = null)
 	{
-
-		$step = jUpgradeStep::_getStep($key, $extension);
-
 		// Create our new jUpgrade connector based on the options given.
 		try
 		{
-			$instance = new JUpgradeStep($step);
+			$instance = new JUpgradeStep();
 		}
 		catch (RuntimeException $e)
 		{
@@ -130,7 +118,7 @@ class jUpgradeStep
 	 *
 	 * @since   3.0.0
 	 */
-	public function getParameters()
+	public function getParameters($json = true)
 	{
 		$return = array();
 
@@ -143,6 +131,11 @@ class jUpgradeStep
 					$return[$k] = urldecode((string) $v);
 				}
 			}
+		}
+
+		// Encoding to JSON
+		if ($json == true) {
+			$return = json_encode($return);
 		}
 
 		return $return;
@@ -228,29 +221,25 @@ class jUpgradeStep
 			$this->end = true;
 		}
 
-		// Encoding
-		if ($json == true) {
-			$return = json_encode($this->getParameters());
-		}else{
-			$return = (object) $this->getParameters();
-		}
-
-		return($return);
+		return $this->getParameters($json);
 	}
 
 	/**
-	 * Getting the next step
+	 * Getting the current step from database and put it into object properties
 	 *
 	 * @return   step object
 	 */
-	public function _refresh($key = null, $extension = false) {
+	public function _update($key = null, $extension = false) {
 
 		if ($extension == false) {
 			$table = 'jupgrade_steps';
+			$this->type = 'steps';
 		}else if($extension == 'table') {
 			$table = 'jupgrade_extensions_tables';
+			$this->type = 'extensions_tables';
 		}else if($extension == true) {
 			$table = 'jupgrade_extensions';
+			$this->type = 'extensions';
 		}
 
 		// Select the steps
@@ -263,76 +252,25 @@ class jUpgradeStep
 		$this->_db->setQuery($query);
 		$step = $this->_db->loadAssoc();
 
-		$this->setParameters($step);
-	}
-
-	/**
-	 * Getting the next step
-	 *
-	 * @return   step object
-	 */
-	static public function _getStep($key = null, $extension = false) {
-
-		$db = JFactory::getDBO();
-
-		if ($extension == false) {
-			$table = 'jupgrade_steps';
-		}else if($extension == 'table') {
-			$table = 'jupgrade_extensions_tables';
-		}else if($extension == true) {
-			$table = 'jupgrade_extensions';
-		}
-
-		// Select the steps
-		if (isset($key)) {
-			$query = "SELECT * FROM {$table} AS s WHERE s.name = '{$key}' ORDER BY s.id ASC LIMIT 1";
-		}else{
-			$query = "SELECT * FROM {$table} AS s WHERE s.status != 2 ORDER BY s.id ASC LIMIT 1";
-		}
-
-		$db->setQuery($query);
-		$step = $db->loadObject();
-
-		if ($step == '') {
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+		if ($error) {
 			return false;
 		}
 
-		// Check for query error.
-		$error = $db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
+		// Check if step is an array
+		if (!is_array($step)) {
+			return false;
 		}
 
 		// Select last step
 		$query = "SELECT name FROM {$table} WHERE status = 0 ORDER BY id DESC LIMIT 1";
-		$db->setQuery($query);
-		$step->laststep = $db->loadResult();
+		$this->_db->setQuery($query);
+		$step['laststep'] = $this->_db->loadResult();
 
-		// Next
-		$step->next = false;
+		$this->setParameters($step);
 
-		// Check for query error.
-		$error = $db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		if ($extension == false) {
-			$step->type = 'steps';
-		}else if($extension == 'table') {
-			$step->type = 'extensions_tables';
-		}else if($extension == true) {
-			$step->type = 'extensions';
-		}
-
-		// Check if steps is an object
-		if (is_object($step)) {
-		  return $step;
-		}else{
-			return false;
-		}
+		return true;
 	}
 
 	/**

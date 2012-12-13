@@ -46,24 +46,12 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		$this->_conditions = $conditions;
 
 		$db_config = array();
-
-		// Web
-		if (!jUpgradeProHelper::isCli()) {
-			$db_config['driver'] = $this->params->get('driver');
-			$db_config['host'] = $this->params->get('hostname');
-			$db_config['user'] = $this->params->get('username');
-			$db_config['password'] = $this->params->get('password');
-			$db_config['database'] = $this->params->get('database');
-			$db_config['prefix'] = $this->params->get('prefix');
-		// Cli
-		}else{
-			$db_config['driver'] = $this->params->get('old_dbtype');
-			$db_config['host'] = $this->params->get('old_host');
-			$db_config['user'] = $this->params->get('old_user');
-			$db_config['password'] = $this->params->get('old_password');
-			$db_config['database'] = $this->params->get('old_db');
-			$db_config['prefix'] = $this->params->get('old_prefix');
-		}
+		$db_config['driver'] = $this->params->get('old_dbtype');
+		$db_config['host'] = $this->params->get('old_hostname');
+		$db_config['user'] = $this->params->get('old_username');
+		$db_config['password'] = $this->params->get('old_password');
+		$db_config['database'] = $this->params->get('old_db');
+		$db_config['prefix'] = $this->params->get('old_prefix');
 
 		$this->_db_old = JDatabase::getInstance($db_config);
 	}

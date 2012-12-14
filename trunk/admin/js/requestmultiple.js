@@ -7,6 +7,9 @@ Script: Request.Multiple.js
 
 	Authors:
 		IvÃ¡n RodrÃ­guez
+
+	Modified (Mootools 1.3 compatibility):
+		Matias Aguirre
 		
 	Example:
 		var rm = new Request.Multiple({
@@ -59,9 +62,8 @@ Request.Multiple = new Class({
 		var chains = [];
 		chains.include(this.request);
 		
-		console.log(this.requests);
-
 		Object.each(this.requests, function(request, k) {
+
 			var req = function() {
 				request.addEvent('complete', function() {
 					this.callChain();
@@ -90,7 +92,7 @@ Request.Multiple = new Class({
 	},
 		
 	addRequests : function(requests) {
-		$each(requests, function(request, key) {
+		Object.each(requests, function(request, key) {
 			this.addRequest(key, request);
 		}, this);
 	},
@@ -101,6 +103,11 @@ Request.Multiple = new Class({
 	
 	removeRequest : function(key) {
 		this.requests.erase(key);
+	},
+
+	cleanRequests : function(requests) {
+		Object.each(requests, function(request, key) {
+			this.removeRequest(key);
+		}, this);
 	}
 });
-

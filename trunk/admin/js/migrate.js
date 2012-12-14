@@ -133,7 +133,7 @@ var jUpgrade = new Class({
 
 			checks.addEvents({
 				'complete': function(response) {
-
+					console.log(response);
 					pb0.set(66);
 
 					var object = JSON.decode(response);
@@ -222,6 +222,44 @@ var jUpgrade = new Class({
 		// Declare counter
 		var counter = 0;
 
+		//
+		// 
+		//
+		var row = new Request({
+			link: 'chain',
+			method: 'get'
+		}); // end Request
+
+		// Adding event to the row request
+		row.addEvents({
+			'complete': function(row_response) {
+
+				var row_object = JSON.decode(row_response);
+
+				currItem.innerHTML = row_object.cid;
+
+				if (self.options.debug == 1) {
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
+					console.log(row_response);
+				}
+
+				if (row_object.cid == row_object.stop || row_object.last == 1) {
+					if (row_object.end == 1) {
+						pb4.finish();
+						this.cancel();
+						// Finish migrate()
+						if (self.options.skip_files == 1) {
+							self.done();
+						}else{
+							self.files();
+						}
+					} else {
+						step.send();
+					}
+				}
+			}
+		});
+
 		var rm = new Request.Multiple({
 			onRequest : function() {
 				//console.log('RM request init');
@@ -231,14 +269,6 @@ var jUpgrade = new Class({
 			}
 		});
 
-		//
-		// 
-		//
-		var row = new Request({
-			link: 'chain',
-			method: 'get'
-		}); // end Request
-	
 		//
 		// 
 		//
@@ -255,15 +285,15 @@ var jUpgrade = new Class({
 
 				var object = JSON.decode(response);
 
-				if (self.options.debug == 1) {
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
-					console.log(response);
-				}
-
 				if (object == null) {
 					pb4.finish();
 					this.cancel();
 					self.done();
+				}
+
+				if (self.options.debug == 1) {
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
+					console.log('DEBUG:STEP: '+object.debug);
 				}
 
 				// Redirect if total == 0
@@ -287,30 +317,6 @@ var jUpgrade = new Class({
 
 				// Start the checks
 				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=migrate&table='+object.name;	
-				// Adding event to the row request
-				row.addEvents({
-					'complete': function(response) {
-
-						var row_object = JSON.decode(response);
-
-						if (self.options.debug == 1) {
-							text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +response;
-							console.log(response);
-						}
-
-						currItem.innerHTML = row_object.cid;
-
-						if (row_object.cid == object.stop && object.name == row_object.name) {
-							if (object.end == true) {
-								pb4.finish();
-								this.cancel();
-								self.done();
-							} else {
-								step.send();
-							}
-						}
-					}
-				});
 
 				// Running the request[s]
 				if (method == 'ajax') {
@@ -318,7 +324,7 @@ var jUpgrade = new Class({
 				} else if (method == 'rest') {
 					for (i=object.start;i<=object.stop;i++) {
 						var reqname = object.name+i;
-						rm.addRequest(reqname, row);			
+						rm.addRequest(reqname, row);
 					}
 					rm.runAll();
 				}

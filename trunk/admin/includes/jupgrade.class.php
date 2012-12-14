@@ -72,11 +72,7 @@ class jUpgrade
 
 	function __construct(jUpgradeStep $step = null)
 	{
-		//$step = (array) $step;
-
-		// Set the step params	
-		//$this->setParameters($step);
-
+		// Set the current step
 		$this->_step = $step;
 
 		jimport('legacy.component.helper');
@@ -351,7 +347,6 @@ class jUpgrade
 	 */
 	protected function insertData($rows)
 	{	
-		//$key = $this->getDestKeyName();
 		$table = $this->getDestinationTableName();
 
 		if (is_array($rows)) {
@@ -363,81 +358,21 @@ class jUpgrade
 				// Convert the array into an object.
 				$row = (object) $row;
 
-				//if ($table == "#__modules_menu") {
-				//	$fields = array('moduleid', 'menuid');
-				//}else{
-				//	$fields = array($key);
-				//}
+				if (!$this->_db->insertObject($table, $row)) {
+					$this->_step->error = $this->_db->getErrorMsg();
+				}
 
-				//$exists = $key != '' ? $this->valueExists($row, $fields) : true;
-
-				//if ($exists != true) {
-					if (!$this->_db->insertObject($table, $row)) {
-						throw new Exception($this->_db->getErrorMsg());
-					}
-
-					$this->_nextID($total);
-				//}
+				$this->_nextID($total);
 			}
 		}else if (is_object($rows)) {
 
 			if (!$this->_db->insertObject($table, $rows)) {
-				throw new Exception($this->_db->getErrorMsg());
+				$this->_step->error = $this->_db->getErrorMsg();
 			}
 
 		}
 	
 		return true;
-	}
-
-	/**
-	 * populateDatabase
-	 */
-	function populateDatabase(& $db, $sqlfile, & $errors, $nexttask='mainconfig')
-	{
-		if( !($buffer = file_get_contents($sqlfile)) )
-		{
-			return -1;
-		}
-
-		$queries = $db->splitSql($buffer);
-
-		foreach ($queries as $query)
-		{
-			$query = trim($query);
-			if ($query != '' && $query {0} != '#')
-			{
-				$db->setQuery($query);
-				$db->query() or die($db->getErrorMsg());
-			}
-		}
-
-		return true;
-	}
-	
-	/**
-	 * Internal function to get the component settings
-	 *
-	 * @return	an object with global settings
-	 * @since	0.5.7
-	 */
-	public function getParams()
-	{
-		return $this->params->toObject();
-	}
-
-	/*
-	 *
-	 * @return	void
-	 * @since	3.0.0
-	 * @throws	Exception
-	 */
-	public function getConditionsHook()
-	{
-		$conditions = array();		
-		$conditions['where'] = array();
-		// Do customisation of the params field here for specific data.
-		return $conditions;	
 	}
 
 	/**
@@ -451,8 +386,10 @@ class jUpgrade
 	public function _nextID($total = false)
 	{
 		$cid = $this->_getStepID();
+
 		$update_cid = ($this->params->get('method') == 'database' && $total !== false) ? $cid + $total : $cid + 1;
 		$this->_updateID($update_cid);
+
 		echo jUpgradeProHelper::isCli() ? "•" : "";
 	}
 
@@ -646,6 +583,31 @@ class jUpgrade
 	}
 
 	/**
+	 * populateDatabase
+	 */
+	function populateDatabase(& $db, $sqlfile, & $errors, $nexttask='mainconfig')
+	{
+		if( !($buffer = file_get_contents($sqlfile)) )
+		{
+			return -1;
+		}
+
+		$queries = $db->splitSql($buffer);
+
+		foreach ($queries as $query)
+		{
+			$query = trim($query);
+			if ($query != '' && $query {0} != '#')
+			{
+				$db->setQuery($query);
+				$db->query() or die($db->getErrorMsg());
+			}
+		}
+
+		return true;
+	}
+
+	/**
 	 * Converts the params fields into a JSON string.
 	 *
 	 * @param	string	$params	The source text definition for the parameter field.
@@ -677,5 +639,30 @@ class jUpgrade
 	protected function convertParamsHook(&$object)
 	{
 		// Do customisation of the params field here for specific data.
+	}
+
+	/**
+	 * Internal function to get the component settings
+	 *
+	 * @return	an object with global settings
+	 * @since	0.5.7
+	 */
+	public function getParams()
+	{
+		return $this->params->toObject();
+	}
+
+	/*
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function getConditionsHook()
+	{
+		$conditions = array();		
+		$conditions['where'] = array();
+		// Do customisation of the params field here for specific data.
+		return $conditions;	
 	}
 }

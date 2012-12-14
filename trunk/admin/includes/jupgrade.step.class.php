@@ -30,6 +30,8 @@ class jUpgradeStep
 	public $type = null;
 	public $conditions = null;
 
+	public $debug = '';
+
 	public $cid = 0;
 	public $cache = 0;
 	public $status = 0;
@@ -43,7 +45,7 @@ class jUpgradeStep
 	public $middle = false;
 	public $end = false;
 
-	public $xml = null;
+	public $error = '';
 	
 	/**
 	 * @var      
@@ -51,7 +53,7 @@ class jUpgradeStep
 	 */
 	public $_db = null;
 
-	function __construct()
+	function __construct($key = null)
 	{
 		jimport('legacy.component.helper');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
@@ -60,7 +62,7 @@ class jUpgradeStep
 		$this->_db = JFactory::getDBO();
 
 		// Update the last step from database
-		$this->_update();
+		$this->_update($key);
 	}
 
 	/**
@@ -76,7 +78,7 @@ class jUpgradeStep
 		// Create our new jUpgrade connector based on the options given.
 		try
 		{
-			$instance = new JUpgradeStep();
+			$instance = new JUpgradeStep($key);
 		}
 		catch (RuntimeException $e)
 		{
@@ -127,8 +129,10 @@ class jUpgradeStep
 			if (property_exists ( $this , $k ))
 			{
 				if (!is_object($v)) {
-					// Perform url decoding so that any use of '+' as the encoding of the space character is correctly handled.
-					$return[$k] = urldecode((string) $v);
+					if ($v != "" || $k == 'total') {
+						// Perform url decoding so that any use of '+' as the encoding of the space character is correctly handled.
+						$return[$k] = urldecode((string) $v);
+					}
 				}
 			}
 		}
@@ -161,12 +165,12 @@ class jUpgradeStep
 		if ($this->total > $limit) {
 
 			if ($this->cache == 0 && $this->status == 0) {
-
+				
 				$this->cache = round($this->total / $limit, 0, PHP_ROUND_HALF_DOWN);
-				$this->stop = $limit - 1;
+				$this->stop = $limit;
 				$this->first = true;
 
-			} else if ($this->cache == 1 && $this->status == 1) { 
+			} else if ($this->cache == 1 && $this->status == 1) {
 
 				$this->start = $this->cid;
 				$this->next = true;
@@ -175,7 +179,9 @@ class jUpgradeStep
 			} else if ($this->cache > 0) { 
 
 				$this->start = $this->cid;
+
 				$this->stop = ($this->start - 1) + $limit;
+
 				$this->cache = $this->cache - 1;
 
 				if ($this->stop > $this->total) {
@@ -201,25 +207,29 @@ class jUpgradeStep
 			$this->first = true;
 			//$this->status = 2;
 			$this->cache = 0;
-		}
 
-		// updating the status flag
-		$this->_updateStep($extension);
+			if ($this->start == 1 && $this->stop == 1 && $this->total == 1) {
+				$this->status = 2;
+			}
+		}
 
 		// If first step start = 1
 		if ($this->first == true) {
-			$this->start = 0;
+			$this->start = 1;
 		}
 
 		// If next is true, set stop = total
 		if ($this->next == true) {
-			$this->stop = $this->total - 1;
+			$this->stop = $this->total;
 		}
 
 		// Mark if is the end of the step
 		if ($this->name == $this->laststep) {
 			$this->end = true;
 		}
+
+		// updating the status flag
+		$this->_updateStep($extension);
 
 		return $this->getParameters($json);
 	}
@@ -281,7 +291,7 @@ class jUpgradeStep
 	 */
 	public function _updateStep($extension = false) {
 
-		$cache = $cid = $total = '';
+		$cache = $cid = $total = $start = $stop = '';
 
 		$status = "status = {$this->status}";
 		$cache = ", cache = {$this->cache}";
@@ -292,11 +302,17 @@ class jUpgradeStep
 		if (!empty($this->total)) {
 			$total = ", total = {$this->total}";
 		}
+		if (!empty($this->start)) {
+			$start = ", start = {$this->start}";
+		}
+		if (!empty($this->stop)) {
+			$stop = ", stop = {$this->stop}";
+		}
 
 		$table = $extension == false ? 'jupgrade_steps' : 'jupgrade_extensions_tables';
 
 		// updating the status flag
-		$query = "UPDATE {$table} SET {$status} {$cache} {$cid} {$total}"
+		$query = "UPDATE {$table} SET {$status} {$cache} {$cid} {$total} {$start} {$stop}"
 		." WHERE name = '{$this->name}'";
 		$this->_db->setQuery($query);
 		$this->_db->query();

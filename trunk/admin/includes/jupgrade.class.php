@@ -386,10 +386,8 @@ class jUpgrade
 	public function _nextID($total = false)
 	{
 		$cid = $this->_getStepID();
-
-		$update_cid = ($this->params->get('method') == 'database' && $total !== false) ? $cid + $total : $cid + 1;
+		$update_cid = $cid + 1;
 		$this->_updateID($update_cid);
-
 		echo jUpgradeProHelper::isCli() ? "•" : "";
 	}
 
@@ -421,6 +419,7 @@ class jUpgrade
 	 */
 	public function _getStepID()
 	{
+		$this->_step->_update();
 		return $this->_step->cid;
 	}
 

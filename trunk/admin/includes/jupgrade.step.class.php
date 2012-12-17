@@ -82,7 +82,7 @@ class jUpgradeStep
 		}
 		catch (RuntimeException $e)
 		{
-			throw new RuntimeException(sprintf('Unable to load jUpgrade object: %s', $e->getMessage()));
+			throw new RuntimeException(sprintf('Unable to load jUpgradeStep object: %s', $e->getMessage()));
 		}
 
 		return $instance;
@@ -129,7 +129,7 @@ class jUpgradeStep
 			if (property_exists ( $this , $k ))
 			{
 				if (!is_object($v)) {
-					if ($v != "" || $k == 'total') {
+					if ($v != "" || $k == 'total' || $k == 'start' || $k == 'stop') {
 						// Perform url decoding so that any use of '+' as the encoding of the space character is correctly handled.
 						$return[$k] = urldecode((string) $v);
 					}
@@ -152,6 +152,11 @@ class jUpgradeStep
 	 */
 	public function getStep($name = false, $json = true, $extension = false) {
 
+		// Check if step is loaded
+		if (empty($this->name)) {
+			return false;
+		}
+
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 		$this->params = jUpgradeProHelper::getParams();
 
@@ -165,9 +170,9 @@ class jUpgradeStep
 		if ($this->total > $limit) {
 
 			if ($this->cache == 0 && $this->status == 0) {
-				
-				$this->cache = round($this->total / $limit, 0, PHP_ROUND_HALF_DOWN);
-				$this->stop = $limit;
+
+				$this->cache = round( ($this->total-1) / $limit, 0, PHP_ROUND_HALF_DOWN);
+				$this->stop = $limit - 1;
 				$this->first = true;
 
 			} else if ($this->cache == 1 && $this->status == 1) {
@@ -175,13 +180,12 @@ class jUpgradeStep
 				$this->start = $this->cid;
 				$this->next = true;
 				$this->cache = 0;
+				$this->stop = $this->total - 1;
 
 			} else if ($this->cache > 0) { 
 
 				$this->start = $this->cid;
-
 				$this->stop = ($this->start - 1) + $limit;
-
 				$this->cache = $this->cache - 1;
 
 				if ($this->stop > $this->total) {
@@ -198,29 +202,20 @@ class jUpgradeStep
 
 			$this->stop = -1;
 			$this->first = true;
-			$this->status = 2;
 			$this->cache = 0;
+			$this->status = 2;
 
 		}else{
 
 			$this->next = true;
 			$this->first = true;
-			//$this->status = 2;
 			$this->cache = 0;
-
-			if ($this->start == 1 && $this->stop == 1 && $this->total == 1) {
-				$this->status = 2;
-			}
+			$this->stop = $this->total - 1;
 		}
 
 		// If first step start = 1
 		if ($this->first == true) {
-			$this->start = 1;
-		}
-
-		// If next is true, set stop = total
-		if ($this->next == true) {
-			$this->stop = $this->total;
+			$this->start = 0;
 		}
 
 		// Mark if is the end of the step

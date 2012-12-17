@@ -199,7 +199,7 @@ class jUpgradeProModel extends JModelLegacy
 		$prefix = $this->_db->getPrefix();
 
 		// Set all cid, status and cache to 0 
-		$query = "UPDATE jupgrade_steps SET cid = 1, status = 0, cache = 0";
+		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, cache = 0";
 		$this->runQuery ($query);
 
 		// Convert the params to array
@@ -331,16 +331,15 @@ class jUpgradeProModel extends JModelLegacy
 		$jupgrade = jUpgrade::getInstance($step);
 
 		// Run the upgrade
-		$jupgrade->upgrade();
-
-		// Getting the total
-		$total = $jupgrade->getTotal();
+		if ($step->total > 0) {
+			$jupgrade->upgrade();
+		}
 
 		// Update jupgrade_steps table if id = last_id
-		if ($total < $step->cid) {
-			$step->last = true;
+		if ($step->total <= $step->cid || $step->stop == -1) {
+
+			$step->next = true;
 			$step->status = 2;
-			$step->cache = 0;
 
 			$step->_updateStep();
 		}

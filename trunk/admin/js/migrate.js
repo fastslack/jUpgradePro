@@ -243,17 +243,13 @@ var jUpgrade = new Class({
 					console.log(row_response);
 				}
 
-				if (row_object.cid == row_object.stop || row_object.last == 1) {
+				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
 					if (row_object.end == 1) {
 						pb4.finish();
 						this.cancel();
-						// Finish migrate()
-						if (self.options.skip_files == 1) {
-							self.done();
-						}else{
-							self.files();
-						}
-					} else {
+						step.cancel();
+						self.done();
+					} else if (row_object.next == 1) {
 						step.send();
 					}
 				}
@@ -261,12 +257,8 @@ var jUpgrade = new Class({
 		});
 
 		var rm = new Request.Multiple({
-			onRequest : function() {
-				//console.log('RM request init');
-			},
-			onComplete : function() {
-				//console.log('RM complete');
-			}
+			onRequest : function() {},
+			onComplete : function() {}
 		});
 
 		//
@@ -285,17 +277,6 @@ var jUpgrade = new Class({
 
 				var object = JSON.decode(response);
 
-				if (object == null) {
-					pb4.finish();
-					this.cancel();
-					self.done();
-				}
-
-				if (self.options.debug == 1) {
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
-					console.log('DEBUG:STEP: '+object.debug);
-				}
-
 				// Redirect if total == 0
 				if (object.total == 0) {
 					if (object.end == true) {
@@ -305,6 +286,10 @@ var jUpgrade = new Class({
 					}else{
 						step.send();
 					}
+				}
+
+				if (self.options.debug == 1) {
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
 				}
 
 				// Changing title and statusbar

@@ -63,6 +63,12 @@ class jUpgradeCli extends JApplicationCli
 			)
 		);
 
+		$this->red = "\033[0;31m";
+		$this->yellow = "\033[1;33m";
+		$this->white = "\033[1;37m";
+		$this->green = "\033[0;32m";
+		$this->cyan = "\033[0;36m";
+		$this->lightgray = "\033[0;34m";
 	}
 
 	/**
@@ -91,7 +97,7 @@ class jUpgradeCli extends JApplicationCli
 	 */
   public function execute()
   {
-
+		$this->model->getChecks();
 		$this->model->getCleanup();
 
 		$this->migrateCore();
@@ -103,38 +109,47 @@ class jUpgradeCli extends JApplicationCli
 		$finished = false;
 		$method = $this->params->get('method');
 
+		// Start benchmark
+		$benchmark_start = microtime(true);
+
 		while (!$finished)
 		{
-			// Getting the current step
-			$step = $this->model->getStep(false, false);
+			$this->out("{$this->white}-------------------------------------------------------------------------------------------------");
 
-			if ($step == false) {
+			// Getting the current step
+			$step = (object) $this->model->getStep(false, false);
+
+			if ( empty($step->id) || !isset($step->stop)) {
 				break;
 			}
 
-			if (isset($step->first)) {
-				$this->out("\n===========================================================\n");
-			}
-
-			$this->out("[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
+			$this->out("{$this->white}|  {$this->green}[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
 
 			$method = $this->params->get('method');
 
 			// Start benchmark
 			$time_start = microtime(true);
 
+			echo "{$this->white}|  {$this->red}[{$this->yellow}";
 			if ($method == 'database') {
 				$result = $this->model->getMigrate($step->name, false);
 			}else if ($method == 'rest') {
+
 				for($i=$step->start;$i<=$step->stop;$i++) {
-					$result = $this->model->getMigrate($step->name, false);
+					$response = $this->model->getMigrate($step->name, false);
 				}
 			}
+			$this->out( "{$this->red}]" );
 
 			$time_end = microtime(true);
 			$time = $time_end - $time_start;
-			echo "\n[Benchmark: {$time}]\n";
+			$this->out( "{$this->white}|  {$this->cyan}[Benchmark] ".round($time, 3)." seconds." );
 		}
+
+		$benchmark_end = microtime(true);
+		$benchmark = $benchmark_end - $benchmark_start;
+		$this->out( "\n{$this->cyan}[[TOTAL Benchmark]] ".round($benchmark, 3)." seconds" );
+
 	} // end method
 
 	public function migrateExtensions()
@@ -189,17 +204,6 @@ class jUpgradeCli extends JApplicationCli
 		}
 
 	} // end method
-
-	/**
-	 * processStep
-	 *
-	 * @return	none
-	 * @since	2.5.0
-	 *
-	public function processExtensionStep ($step)
-	{
-
-	}*/
 
 } // end class
 

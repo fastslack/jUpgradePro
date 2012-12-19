@@ -9,7 +9,7 @@
 # 
 
 PROJECT="jupgradepro-free"
-VERSION="3.0.0-RC2"
+VERSION="3.0.0"
 
 DIR="com_$PROJECT"
 PACKAGE="com_$PROJECT-$VERSION.zip"

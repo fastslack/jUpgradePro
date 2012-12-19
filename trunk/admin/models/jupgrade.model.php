@@ -336,16 +336,21 @@ class jUpgradeProModel extends JModelLegacy
 		}
 
 		// Javascript flags
-		if ($step->cid == $step->stop+1) {
+		if ( $step->cid == $step->stop+1 ) {
 			$step->next = true;
 		}
 		if ($step->name == $step->laststep) {
 			$step->end = true;
 		}
 
-		// Update jupgrade_steps table if id = last_id
-		if ($step->total <= $step->cid || $step->stop == -1) {
+		$empty = false;
+		if ($step->cid == 0 && $step->total == 0 && $step->start == 0 && $step->stop == 0) {
+			$empty = true;
+		} 
 
+		// Update jupgrade_steps table if id = last_id
+		if ( (($step->total <= $step->cid) || ($step->stop == -1)) && ($empty == false) ) 
+		{
 			$step->next = true;
 			$step->status = 2;
 

@@ -178,7 +178,7 @@ class jUpgradeStep
 			} else if ($this->cache == 1 && $this->status == 1) {
 
 				$this->start = $this->cid;
-				$this->next = true;
+				//$this->next = true;
 				$this->cache = 0;
 				$this->stop = $this->total - 1;
 
@@ -207,7 +207,7 @@ class jUpgradeStep
 
 		}else{
 
-			$this->next = true;
+			//$this->next = true;
 			$this->first = true;
 			$this->cache = 0;
 			$this->stop = $this->total - 1;
@@ -219,7 +219,7 @@ class jUpgradeStep
 		}
 
 		// Mark if is the end of the step
-		if ($this->name == $this->laststep) {
+		if ($this->name == $this->laststep && $this->cache == 1) {
 			$this->end = true;
 		}
 

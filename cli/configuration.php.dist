@@ -1,0 +1,93 @@
+<?php
+/**
+ * @version		    $Id: 
+ * @package		    jUpgrade
+ * @subpackage	  jUpgradeCli
+ * @copyright			CopyRight 2012 Matware All rights reserved.
+ * @author				Matias Aguirre
+ * @email   			maguirre@matware.com.ar
+ * @link					http://www.matware.com.ar/
+ * @license				GNU/GPL http://www.gnu.org/licenses/gpl-3.0-standalone.html
+ */
+
+// Prevent direct access to this file outside of a calling application.
+defined('_JEXEC') or die;
+
+/**
+* jUpgradeCli configuration class.
+*
+* @package jUpgrade
+* @since 3.0
+*/
+final class JConfig
+{
+	/**
+	* The method of the migration 
+	*
+	* @var string	The method name. 'database' || 'rest'
+	*/
+	public $method = 'rest';
+	/**
+	* The limit of the cache system.
+	*
+	* @var int	The row limit. Defaults: 250 (database) ; 100 (rest)
+	*/
+	public $cache_limit = '100';
+	/**
+	* Joomla version TO migrate
+	*
+	* @var double	The Joomla! version
+	*/
+	public $RELEASE = '3.0';
+	/**
+	* The database configuration.
+	*
+	* @vars strings
+	*/
+	public $dbtype = 'mysqli';
+	public $host = 'localhost';
+	public $user = '';
+	public $password = '';
+	public $db = '';
+	public $dbprefix = 'jos_';
+	/**
+	* The old database configuration.
+	*
+	* @vars strings
+	*/
+	public $old_dbtype = 'mysqli';
+	public $old_hostname = 'localhost';
+	public $old_username = '';
+	public $old_password = '';
+	public $old_db = '';
+	public $old_dbprefix = 'jos_';
+	/**
+	* The rest configuration.
+	*
+	* @vars strings
+	*/
+	public $rest_hostname = 'http://8.8.8.8/';
+	public $rest_username = 'admin';
+	public $rest_password = 'adminpass';
+	public $rest_key = 'beer';
+	/**
+	* Skip steps
+	*
+	* @vars ints
+	*/
+	public $skip_core_users = 0;
+	public $skip_core_categories = 0;
+	public $skip_core_sections = 0;
+	public $skip_core_contents = 0;
+	public $skip_core_contents_frontpage = 0;
+	public $skip_core_menus = 0;
+	public $skip_core_menus_types = 0;
+	public $skip_core_modules = 0;
+	public $skip_core_modules_menu = 0;
+	public $skip_core_banners = 0;
+	public $skip_core_banners_clients = 0;
+	public $skip_core_banners_tracks = 0;
+	public $skip_core_contacts = 0;
+	public $skip_core_newsfeeds = 0;
+	public $skip_core_weblinks = 0;
+}

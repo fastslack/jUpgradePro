@@ -132,13 +132,7 @@
 
 	<fieldset
 		name="skips"
-		label="COM_JUPGRADEPRO_CONFIG_SKIPS_TITLE"
-		description="COM_JUPGRADEPRO_CONFIG_SKIPS_TITLE_DESC">
-
-		<field name="skip_checks" type="radio" default="0" label="Skip checks" description="">
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
-		</field>
+		label="COM_JUPGRADEPRO_CONFIG_SKIPS_TITLE">
 
 		<field name="spacer1" type="spacer" class="text" label="&lt;b&gt;Core skips&lt;/b&gt;" />
 

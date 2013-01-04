@@ -110,8 +110,7 @@ class jUpgradeProModel extends JModelLegacy
 
 		// Check for bad configurations
 		if ($params->method == "database") {
-			if ($params->old_hostname == 'localhost' || $params->old_hostname == '' || 
-					$params->old_username == '' || $params->old_password == '' || $params->old_db == '' || $params->old_dbprefix == '' ) {
+			if ($params->old_hostname == '' || $params->old_username == '' || $params->old_password == '' || $params->old_db == '' || $params->old_dbprefix == '' ) {
 				$this->returnError (413, 'COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
 			}
 		}
@@ -287,18 +286,6 @@ class jUpgradeProModel extends JModelLegacy
 
 			$query = "UPDATE {$prefix}user_usergroup_map SET user_id = 10 WHERE group_id = 8";
 			$this->runQuery ($query);
-		}
-
-		jimport('joomla.filesystem.folder');
-
-		// Rename the images/media directory
-		if ($params->skip_files != 1) {
-			$img_folder = JPATH_ROOT.'/images/';
-			$backup_folder = JPATH_ROOT.'/images.backup/';
-
-			if (JFolder::exists($img_folder)) {
-				JFolder::move($img_folder, $backup_folder);
-			}
 		}
 
 		// Done checks

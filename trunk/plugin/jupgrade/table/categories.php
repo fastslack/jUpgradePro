@@ -87,7 +87,7 @@ class JUpgradeTableCategories extends JUpgradeTable
 		$where_or[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
 		$where_or[] = "section IN ('com_banner', 'com_contact', 'com_contact_details', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
 
-		$conditions['order'] = "section DESC, ordering DESC";		
+		$conditions['order'] = "id DESC, section DESC, ordering DESC";		
 		$conditions['where_or'] = $where_or;
 		
 		return $conditions;

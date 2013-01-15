@@ -52,6 +52,7 @@ class jUpgradeNewsfeeds extends jUpgrade
 		{
 			$row = (array) $row;
 
+			$row['access'] = 1;
 			$row['language'] = '*';
 
 			if ($this->_version == '3.0') {

@@ -49,6 +49,7 @@ class jUpgradeContacts extends jUpgrade
 		{
 			$row = (array) $row;
 
+			$row['language'] = '*';
 			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
 			$row['params'] = $this->convertParams($row['params']);
 		}

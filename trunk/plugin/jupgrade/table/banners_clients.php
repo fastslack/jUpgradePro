@@ -31,6 +31,8 @@ class JUpgradeTableBanners_Clients extends JUpgradeTable {
 	/** @var text */
 	var $extrainfo = null;
 	/** @var tinyint(1) */
+	var $state = null;
+	/** @var tinyint(1) */
 	var $checked_out = null;
 	/** @var time */
 	var $checked_out_time = null;

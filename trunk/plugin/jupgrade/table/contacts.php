@@ -91,6 +91,8 @@ class JUpgradeTableContacts extends JUpgradeTable {
 	{	
 		// Fixing access
 		$this->access = $this->access == 0 ? 1 : $this->access + 1;
+		// Fixing language
+		$this->language = '*';
     // Converting params to JSON
     $this->params = $this->convertParams($this->params);
 	}

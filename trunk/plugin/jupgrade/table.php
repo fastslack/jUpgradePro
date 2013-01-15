@@ -322,7 +322,7 @@ class JUpgradeTable extends JTable
 	}
 
 	/**
-	 * Method to get an array of all tables in the database.
+	 * Method to get bool if table exists
 	 *
 	 * @return  array  An array of all the tables in the database.
 	 *
@@ -348,6 +348,34 @@ class JUpgradeTable extends JTable
 		}else{
 			return 'NO';
 		}
+	}
+
+	/**
+	 * Method to get the parameters of one table
+	 *
+	 * @return  string  JSON parameters
+	 *
+	 * @since   3.0.0
+	 * @throws  JDatabaseException
+	 */
+	public function getTableParams()
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		$table = $this->_tbl;
+		$prefix = $db->getPrefix();
+
+		$table = str_replace ('#__', $prefix, $table); 
+
+		// Set the query to get the tables statement.
+		$query = "SELECT params FROM {$table} WHERE `option` = 'com_content' LIMIT 1";
+		$db->setQuery($query);
+		$params = $db->loadResult();
+
+		$params = $this->convertParams($params);
+
+		return $params;
 	}
 
 	/**

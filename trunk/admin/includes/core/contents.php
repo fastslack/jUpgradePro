@@ -168,6 +168,7 @@ class jUpgradeContent extends jUpgrade
 			// JTable:store() run an update if id exists into the object so we create them first
 			$object = new stdClass();
 			$object->id = $row['id'];
+			$object->modified_by = $row['modified_by'];
 
 			// Inserting the content
 			if (!$this->_db->insertObject($table, $object)) {
@@ -207,8 +208,50 @@ class jUpgradeContent extends jUpgrade
 	 */
 	public function afterHook()
 	{
+		$this->fixComponentConfiguration();
 		//$this->updateFeature();
-		//$this->fixComponentConfiguration();
+	}
+
+	/*
+	 * Upgrading the content configuration
+	 */
+	protected function fixComponentConfiguration()
+	{
+		if ($this->params->get('method') == 'database') {
+
+			$query = "SELECT params FROM #__components WHERE `option` = 'com_content'";
+			$this->_driver->_db_old->setQuery($query);
+			$articles_config = $this->_driver->_db_old->loadResult();
+
+			// Check for query error.
+			$error = $this->_driver->_db_old->getErrorMsg();
+
+			if ($error) {
+				throw new Exception($error);
+			}
+
+			// Convert params to JSON
+			$articles_config = $this->convertParams($articles_config);
+
+		}else if ($this->params->get('method') == 'rest') {
+
+			$task = "tableparams";
+			$table = "components";
+
+			$articles_config = $this->_driver->requestRest($task, $table);
+		}
+
+		// Update the params on extensions table
+		$query = "UPDATE #__extensions SET `params` = '{$articles_config}' WHERE `element` = 'com_content'";
+		$this->_driver->_db->setQuery($query);
+		$this->_driver->_db->query();
+
+		// Check for query error.
+		$error = $this->_driver->_db->getErrorMsg();
+
+		if ($error) {
+			throw new Exception($error);
+		}
 	}
 
 	protected function updateFeature()
@@ -218,39 +261,6 @@ class jUpgradeContent extends jUpgrade
 		 *
 		$query = "UPDATE `#__content`, `{$this->config_old['prefix']}content_frontpage`"
 		." SET `{$params->prefix_new}content`.featured = 1 WHERE `{$params->prefix_new}content`.id = `{$this->config_old['prefix']}content_frontpage`.content_id";
-		$this->_db->setQuery($query);
-		$this->_db->query();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}*/
-	}
-
-
-	protected function fixComponentConfiguration()
-	{
-		/*
-		 * Upgrading the content configuration
-		 *
-		$query = "SELECT params FROM #__components WHERE `option` = 'com_content'";
-		$this->db_old->setQuery($query);
-		$articles_config = $this->db_old->loadResult();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		// Convert params to JSON
-		$articles_config = $this->convertParams($articles_config);
-
-		// Update the params on extensions table
-		$query = "UPDATE #__extensions SET `params` = '{$articles_config}' WHERE `element` = 'com_content'";
 		$this->_db->setQuery($query);
 		$this->_db->query();
 

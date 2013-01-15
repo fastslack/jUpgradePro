@@ -59,7 +59,7 @@ class JUpgradeTableBanners_Clients extends JUpgradeTable {
 	{
 		$conditions = array();
 		
-		$conditions['select'] = '`cid` AS id, `name`, `contact`, `email`, `extrainfo`, `checked_out`, `checked_out_time`';
+		$conditions['select'] = '`cid` AS id, `name`, 1 AS `state`, `contact`, `email`, `extrainfo`, `checked_out`, `checked_out_time`';
 		
 		$conditions['where'] = array();
 		

@@ -35,6 +35,10 @@ class JUpgradeTableWeblinks extends JUpgradeTable {
 	/** @var int(11) */
 	var $hits = null;
 	/** @var int(11) */
+	var $state = null;
+	/** @var int(11) */
+	var $published = null;
+	/** @var int(11) */
 	var $checked_out = null;
 	/** @var datetime */
 	var $checked_out_time = null;
@@ -56,5 +60,15 @@ class JUpgradeTableWeblinks extends JUpgradeTable {
 
 	function __construct(&$_db) {
 		parent::__construct('#__weblinks', 'id', $_db);
+	}
+
+	/**
+	 * Weblinks migration
+	 */
+	function migrate ()
+	{
+		// Fixing state
+		$this->state = $this->published;
+		unset($this->published);
 	}
 }

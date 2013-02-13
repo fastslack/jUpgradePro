@@ -184,12 +184,6 @@ class JUpgradeTable extends JTable
 		$db->setQuery( $query );
 		$stepid = (int) $db->loadResult();
 
-		if ($stepid == 0) {
-			$query = "INSERT INTO `jupgrade_plugin_steps` (`id` , `name` , `cid` , `tmp`) VALUES (NULL , '{$name}', '0', '');";
-			$db->setQuery( $query );
-			$db->query();
-		}
-
 		return $stepid;
 	}
 
@@ -265,7 +259,7 @@ class JUpgradeTable extends JTable
 			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
 		}
 
-		/// Get Total
+		// Get Total
 		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$as} {$join} {$where}{$where_or}";
 		$db->setQuery( $query );
 		$total = $db->loadResult();

@@ -48,8 +48,11 @@ class JRESTDispatcher
 		$this->_parameters = $parameters;
 
 		$task = isset($this->_parameters['HTTP_TASK']) ? $this->_parameters['HTTP_TASK'] : '';
-		$table = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
+		$name = $table = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
 		$files = isset($this->_parameters['HTTP_FILES']) ? $this->_parameters['HTTP_FILES'] : '';
+
+		// Fixing table if is extension
+		$table = (substr($table, 0, 4) == 'ext_') ? substr($table, 4) : $table;
 
 		// Check task is only to test the connection
 		if ($task == 'check') {
@@ -59,11 +62,11 @@ class JRESTDispatcher
 		// Loading table
 		if (isset($table)) {
 			JTable::addIncludePath(JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'table');
-			$class = JUpgradeTable::getInstance($this->_parameters['HTTP_TABLE'], 'JUpgradeTable');
+			$class = JUpgradeTable::getInstance($name, 'JUpgradeTable');
 
 			if (!is_object($class)) {
 				$class = JUpgradeTable::getInstance('generic', 'JUpgradeTable');
-				$class->changeTable($this->_parameters['HTTP_TABLE']);
+				$class->changeTable($table);
 			}
 		}else if (isset($files)) {
 			require_once JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'files.php';
@@ -82,5 +85,6 @@ class JRESTDispatcher
 		{
 			return false;	
 		}
+
 	}
 }

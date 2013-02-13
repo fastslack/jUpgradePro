@@ -112,6 +112,8 @@ class jUpgradeContent extends jUpgrade
 		unset($object->language);
 		unset($object->keyref);
 		unset($object->readmore);
+		unset($object->urls_position);
+		unset($object->feed_show_readmore);
 	}
 
 	/**
@@ -173,7 +175,6 @@ class jUpgradeContent extends jUpgrade
 			// JTable:store() run an update if id exists into the object so we create them first
 			$object = new stdClass();
 			$object->id = $row['id'];
-			$object->modified_by = $row['modified_by'];
 
 			// Inserting the content
 			if (!$this->_db->insertObject($table, $object)) {

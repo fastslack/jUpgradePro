@@ -163,5 +163,7 @@ class JUpgradeTableContents extends JUpgradeTable
 		unset($object->language);
 		unset($object->keyref);
 		unset($object->readmore);
+		unset($object->urls_position);
+		unset($object->feed_show_readmore);
 	}
 }

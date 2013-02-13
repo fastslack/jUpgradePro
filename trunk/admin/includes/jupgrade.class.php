@@ -62,7 +62,7 @@ class jUpgrade
 	 * @var    array  List of extensions steps
 	 * @since  12.1
 	 */
-	private $extensions_steps = array('extensions_components', 'extensions_modules', 'extensions_plugins');
+	private $extensions_steps = array('extensions', 'ext_components', 'ext_modules', 'ext_plugins');
 
 	/**
 	 * @var bool Can drop
@@ -107,7 +107,7 @@ class jUpgrade
 
 		$this->_driver = JUpgradeDriver::getInstance($step, $conditions);
 
-		if (isset($this->_step->total)) {
+		if (isset($this->_step->total) && !in_array($this->_step->name, $this->extensions_steps) ) {
 			$this->_total = $step->total == false ? $this->_driver->getTotal() : $step->total;
 		}
 
@@ -155,11 +155,17 @@ class jUpgrade
 		// Require the file
 		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$step->name.'.php')) {
 			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$step->name.'.php';
-		}else if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$step->name.'.php')) {
-			require_once JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$step->name.'.php';
-		}else if (isset($options->element)) {
-			if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$step->element.'.php')) {
-				require_once JPATH_COMPONENT_ADMINISTRATOR.'/extensions/'.$step->element.'.php';
+		}else if (JFile::exists(JPATH_PLUGINS."/jupgradepro/jupgradepro_{$step->name}/extensions/{$step->name}.php")) {
+			require_once JPATH_PLUGINS."/jupgradepro/jupgradepro_{$step->name}/extensions/{$step->name}.php";
+		// Checks
+		}else if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$step->name}.php")) {
+			require_once JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$step->name}.php";
+		// Cli
+		}else if (JFile::exists(JPATH_ROOT."/extensions/{$step->name}.php")) {
+			require_once JPATH_ROOT."/extensions/{$step->name}.php";
+		}else if (isset($step->element)) {
+			if (JFile::exists(JPATH_PLUGINS."/jupgradepro/jupgradepro_{$step->name}/extensions/{$step->element}.php")) {
+				require_once JPATH_PLUGINS."/jupgradepro/jupgradepro_{$step->name}/extensions/{$step->element}.php";
 			}
 		}
 
@@ -300,7 +306,7 @@ class jUpgrade
 		    $rows = $this->_driver->getSourceDatabase();
 		    break;
 		}
-
+//print_r($rows);
 		return $rows;
 	}
 
@@ -348,7 +354,7 @@ class jUpgrade
 	protected function insertData($rows)
 	{	
 		$table = $this->getDestinationTableName();
-
+echo "dsds";
 		if (is_array($rows)) {
 
 			$total = count($rows);
@@ -357,7 +363,8 @@ class jUpgrade
 			{
 				// Convert the array into an object.
 				$row = (object) $row;
-
+print_r($row);
+echo "\n\n";
 				if (!$this->_db->insertObject($table, $row)) {
 					$this->_step->error = $this->_db->getErrorMsg();
 				}

@@ -79,6 +79,27 @@ window.addEvent('domready', function() {
 					</div>
 				</div>
 
+				<div id="files">
+					<p class="text"><?php echo JText::_('Copying images/media files...'); ?></p>
+					<div id="pb5"></div>
+					<div><small><i><span id="files_status"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
+					<div id="files_counter">
+						<i><small><b><span id="files_currItem">0</span></b> items /
+						<b><span id="files_totalItems">0</span></b> items</small></i>
+					</div>
+				</div>
+
+				<div id="templates">
+					<p class="text"><?php echo JText::_('Copying templates...'); ?></p>
+					<div id="pb6"></div>
+				</div>
+
+				<div id="extensions">
+					<p class="text"><?php echo JText::_('Upgrading 3rd extensions...'); ?></p>
+					<div id="pb7"></div>
+					<div><small><i><span id="status_ext"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
+				</div>
+
 				<div id="done">
 					<h2 class="done"><?php echo JText::_('Migration Successful!'); ?></h2>
 				</div>

@@ -7,7 +7,7 @@
  * @subpackage	com_jupgrade
  * @author      Matias Aguirre <maguirre@matware.com.ar>
  * @link        http://www.matware.com.ar
- * @copyright		Copyright 2006 - 2011 Matias Aguire. All rights reserved.
+ * @copyright		Copyright 2004 - 2013 Matias Aguirre. All rights reserved.
  * @license		  GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -30,7 +30,7 @@ class jUpgradeProHelper
 	 */
 	public static function isCli()
 	{
-		return defined('SIGHUP') ? true : false;
+		return (PHP_SAPI === 'cli') ? true : false;
 	}
 
 	/**
@@ -44,13 +44,32 @@ class jUpgradeProHelper
 	{
 		// Getting the params and Joomla version web and cli
 		if (!jUpgradeProHelper::isCli()) {
-			// Getting the parameters
 			$params	= JComponentHelper::getParams('com_jupgradepro');
 		}else{
-			// Getting the parameters
 			$params = new JRegistry(new JConfig);
 		}
 
 		return $params;
+	}
+
+	/**
+	 * Getting the total 
+	 *
+	 * @return  int	The total number
+	 *
+	 * @since   3.0.0
+	 */
+	public static function getTotal()
+	{
+
+/*
+		// Getting the params and Joomla version web and cli
+		if (!jUpgradeProHelper::isCli()) {
+			$params	= JComponentHelper::getParams('com_jupgradepro');
+		}else{
+			$params = new JRegistry(new JConfig);
+		}
+*/
+		return $total;
 	}
 }

@@ -32,4 +32,6 @@ INSERT INTO `jupgrade_plugin_steps` (`id`, `name`, `cid`) VALUES
 (15, 'contacts', 0),
 (16, 'newsfeeds', 0),
 (17, 'weblinks', 0),
-(18, 'extensions', 0);
+(18, 'ext_components', 0),
+(19, 'ext_modules', 0),
+(20, 'ext_plugins', 0);

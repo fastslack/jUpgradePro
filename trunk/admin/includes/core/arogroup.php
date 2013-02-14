@@ -104,7 +104,7 @@ class jUpgradeUsergroups extends jUpgradeUsersDefault
 	 * @return	void
 	 * @since	0.4.4
 	 * @throws	Exception
-	 */
+	 *
 	public function upgrade()
 	{
 		if (parent::upgrade()) {
@@ -115,5 +115,5 @@ class jUpgradeUsergroups extends jUpgradeUsersDefault
 				echo JError::raiseError(500, $table->getError());
 			}
 		}
-	}
+	}*/
 }

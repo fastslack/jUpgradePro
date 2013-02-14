@@ -83,6 +83,8 @@ class jUpgradeDriverRest extends jUpgradeDriver
 		$data['table'] = ($table != false) ? $table : '';
 		$request = $http->get($this->params->get('rest_hostname').'/index.php', $data);
 
+//print_r($request);
+
 		$code = $request->code;
 
 		return ($code == 200 || $code == 301) ? $request->body : $code;
@@ -95,7 +97,7 @@ class jUpgradeDriverRest extends jUpgradeDriver
 	 * @since 3.0.0
 	 * @throws	Exception
 	 */
-	protected function &getSourceDataRest($table = null)
+	public function &getSourceDataRest($table = null)
 	{
 		// Declare rows
 		$rows = array();

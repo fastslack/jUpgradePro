@@ -7,7 +7,7 @@
  * @subpackage	com_jupgrade
  * @author      Matias Aguirre <maguirre@matware.com.ar>
  * @link        http://www.matware.com.ar
- * @copyright		Copyright 2006 - 2011 Matias Aguirre. All rights reserved.
+ * @copyright		Copyright 2004 - 2013 Matias Aguirre. All rights reserved.
  * @license		  GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -37,7 +37,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 * @var    array  List of extensions steps
 	 * @since  12.1
 	 */
-	private $extensions_steps = array('extensions_components', 'extensions_modules', 'extensions_plugins');
+	private $extensions_steps = array('extensions', 'ext_components', 'ext_modules', 'ext_plugins');
 
 	function __construct(jUpgradeStep $step = null, $conditions = array())
 	{
@@ -69,7 +69,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		$key = $this->getKeyName();
 		$name = $this->_getStepName();
 
-		$where = '';		
+		$where = '';
 		$where_or = '';
 		$join = '';
 		$limit = '';
@@ -106,7 +106,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		$this->_db_old->setQuery( $query );
 		//echo "\nQUERY: $query\n";
 		$rows = $this->_db_old->loadAssocList();
-
+//print_r($rows);
 		if (is_array($rows)) {
 			return $rows;
 		}
@@ -126,6 +126,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	public function getTotal()
 	{
 		$table = $this->getTableName();
+
 		$conditions = $this->getConditionsHook();
 
 		$where = '';

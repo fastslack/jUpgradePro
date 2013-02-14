@@ -75,7 +75,7 @@ class jUpgradeProModel extends JModelLegacy
 		}
 	
 		// Check safe_mode_gid
-		if (@ini_get('safe_mode_gid')) {
+		if (@ini_get('safe_mode_gid') && @ini_get('safe_mode')) {
 			$this->returnError (411, 'COM_JUPGRADEPRO_ERROR_DISABLE_SAFE_GID');
 		}
 
@@ -347,6 +347,46 @@ class jUpgradeProModel extends JModelLegacy
 		return $step->getParameters($json);
 	}
 
+	/**
+	 * Migrate
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	function checkExtensions() {
+
+		// Require the file
+		require_once JPATH_COMPONENT.'/includes/extensions/extensions.php';	
+
+		// Get the step
+		$step = jUpgradeStep::getInstance('extensions', true);
+
+		// Get jUpgradeExtensions instance
+		$extensions = jUpgrade::getInstance($step);
+		$success = $extensions->upgrade();
+
+		// Update
+		$step->status = 2;
+		$step->_updateStep(true);
+	}
+
+	/**
+	 * getExtensionsList
+	 *
+	 * @return	none
+	 * @since	3.0.0
+	 */
+	function getExtensionsList() {
+		// updating the status flag
+		$query = "SELECT * FROM jupgrade_extensions";
+		$this->_db->setQuery($query);
+		$extensions = $this->_db->loadAssocList();
+
+		// Check for query error.
+		$error = $this->_db->getErrorMsg();
+
+		return $extensions;
+	}
 
 	public function testRest($task, $table) {
 

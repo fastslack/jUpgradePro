@@ -7,7 +7,7 @@
  * @subpackage	com_jupgrade
  * @author      Matias Aguirre <maguirre@matware.com.ar>
  * @link        http://www.matware.com.ar
- * @copyright		Copyright 2006 - 2013 Matias Aguirre. All rights reserved.
+ * @copyright		Copyright 2004 - 2013 Matias Aguirre. All rights reserved.
  * @license		  GNU General Public License version 2 or later; see LICENSE.txt
  */
 
@@ -53,7 +53,7 @@ class jUpgradeStep
 	 */
 	public $_db = null;
 
-	function __construct($key = null)
+	function __construct($key = null, $extensions = false)
 	{
 		jimport('legacy.component.helper');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
@@ -62,7 +62,7 @@ class jUpgradeStep
 		$this->_db = JFactory::getDBO();
 
 		// Update the last step from database
-		$this->_update($key);
+		$this->_update($key, $extensions);
 	}
 
 	/**
@@ -73,12 +73,12 @@ class jUpgradeStep
 	 *
 	 * @since  3.0.0
 	 */
-	static function getInstance($key = null, $extension = null)
+	static function getInstance($key = null, $extensions = null)
 	{
 		// Create our new jUpgrade connector based on the options given.
 		try
 		{
-			$instance = new JUpgradeStep($key);
+			$instance = new JUpgradeStep($key, $extensions);
 		}
 		catch (RuntimeException $e)
 		{
@@ -234,15 +234,15 @@ class jUpgradeStep
 	 *
 	 * @return   step object
 	 */
-	public function _update($key = null, $extension = false) {
+	public function _update($key = null, $extensions = false) {
 
-		if ($extension == false) {
+		if ($extensions == false) {
 			$table = 'jupgrade_steps';
 			$this->type = 'steps';
-		}else if($extension == 'table') {
+		}else if($extensions === 'table') {
 			$table = 'jupgrade_extensions_tables';
 			$this->type = 'extensions_tables';
-		}else if($extension == true) {
+		}else if($extensions == true) {
 			$table = 'jupgrade_extensions';
 			$this->type = 'extensions';
 		}
@@ -284,7 +284,7 @@ class jUpgradeStep
 	 * @return	none
 	 * @since	2.5.2
 	 */
-	public function _updateStep($extension = false) {
+	public function _updateStep($extensions = false) {
 
 		$cache = $cid = $total = $start = $stop = '';
 
@@ -304,7 +304,15 @@ class jUpgradeStep
 			$stop = ", stop = {$this->stop}";
 		}
 
-		$table = $extension == false ? 'jupgrade_steps' : 'jupgrade_extensions_tables';
+		//$table = $extension == false ? 'jupgrade_steps' : 'jupgrade_extensions_tables';
+
+		if ($extensions == false) {
+			$table = 'jupgrade_steps';
+		}else if($extensions === 'table') {
+			$table = 'jupgrade_extensions_tables';
+		}else if($extensions == true) {
+			$table = 'jupgrade_extensions';
+		}
 
 		// updating the status flag
 		$query = "UPDATE {$table} SET {$status} {$cache} {$cid} {$total} {$start} {$stop}"

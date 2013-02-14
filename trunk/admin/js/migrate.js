@@ -26,10 +26,12 @@ var jUpgrade = new Class({
 		this.setOptions(options);
 
 		$('warning').setStyle('display', 'none');
-		$('info').setStyle('display', 'none');
 		$('error').setStyle('display', 'none');
 		$('checks').setStyle('display', 'none');
 		$('migration').setStyle('display', 'none');
+		$('files').setStyle('display', 'none');
+		$('templates').setStyle('display', 'none');
+		$('extensions').setStyle('display', 'none');
 		$('done').setStyle('display', 'none');
 
 		$('update').addEvent('click', function(e) {
@@ -248,7 +250,7 @@ var jUpgrade = new Class({
 						pb4.finish();
 						this.cancel();
 						step.cancel();
-						self.done();
+						self.extensions();
 					} else if (row_object.next == 1) {
 						step.send();
 					}
@@ -282,7 +284,7 @@ var jUpgrade = new Class({
 					if (object.end == true) {
 						pb4.finish();
 						this.cancel();
-						self.done();
+						self.extensions();
 					}else{
 						step.send();
 					}
@@ -320,6 +322,284 @@ var jUpgrade = new Class({
 
 		// Scroll the window
 		//var myScroll = new Fx.Scroll(window).toBottom();
+
+	}, // end function
+
+	/**
+	 * Run the extensions
+	 *
+	 * @return	bool
+	 * @since	1.2.0
+	 */
+	extensions: function(e) {
+		var self = this;
+
+		var ext_request = new Request({
+			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=extensions',
+			method: 'get',
+			noCache: true,
+			data: 'directory=' + self.options.directory,
+			onComplete: function(response) {
+
+				//alert(response);
+
+				var object = JSON.decode(response);
+
+				if (self.options.debug_php == 1) {
+					text = document.getElementById('debug');
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>['+object.step+'] ['+object.name+']</b><br><br>'+object.text;
+				}
+
+				pb7.set(100);
+				text = document.getElementById('status_ext');
+				text.innerHTML = 'Migrating ' + object.name;
+
+				if (object.step == object.lastid) {
+					pb7.finish();
+
+					// Shutdown periodical
+					$clear(extension_periodical);
+
+					// Run templates step
+					self.done();
+				}
+			}
+
+		});
+
+		var runExtensionsMigration = function() {
+			ext_request.send();
+		};
+
+		var mySlideExt = new Fx.Slide('extensions');
+		mySlideExt.hide();
+		$('extensions').setStyle('display', 'block');
+		mySlideExt.toggle();
+
+		pb7 = new dwProgressBar({
+			container: $('pb7'),
+			startPercentage: 50,
+			speed: 1000,
+			boxID: 'pb7-box',
+			percentageID: 'pb7-perc',
+			displayID: 'text',
+			displayText: false
+		});
+
+		var myScroll = new Fx.Scroll(window).toBottom();
+
+		extension_periodical = runExtensionsMigration.periodical(2000);
+
+	}, // end function
+
+	/**
+	 * Run the files copying
+	 *
+	 * @return	bool
+	 * @since	1.2.0
+	 */
+	files: function(e) {
+		var self = this;
+
+		var method = self.options.method;
+
+		if (method == 'database') {
+			method = 'ajax';
+		}
+
+		// CSS stuff
+		$('files').setStyle('display', 'block');
+
+		var pb5 = new dwProgressBar({
+			container: $('pb5'),
+			startPercentage: 10,
+			speed: 1000,
+			boxID: 'pb5-box',
+			percentageID: 'pb5-perc',
+			displayID: 'text',
+			displayText: false
+		});
+
+		// Get the status element
+		status = document.getElementById('files_status');
+		// Get the migration_text element
+		migration_text = document.getElementById('files_text');
+		// Get the currItem element
+		currItem = document.getElementById('files_currItem');
+		// Get the totalItems element
+		totalItems = document.getElementById('files_totalItems');
+
+		// Declare counter
+		var counter = 0;
+
+		var rm = new Request.Multiple({
+			onRequest : function() {
+				//console.log('RM request init');
+			},
+			onComplete : function() {
+				//console.log('RM complete');
+			}
+		});
+
+		//
+		// basename function
+		//
+		basename = function(path) {
+			return path.replace(/.*\/|\.[^.]*$/g, '');
+		}
+
+		//
+		// 
+		//
+		var file = new Request({
+			link: 'chain',
+			method: 'get'
+		}); // end Request
+	
+		//
+		// 
+		//
+		var step = new Request({
+			link: 'chain',
+			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=imageslist',
+			method: 'get'
+		}); // end Request		
+
+		step.addEvents({
+			'complete': function(response) {
+				//console.log(response);
+				var object = JSON.decode(response);
+				var counter = 0;
+
+				// Changing title and statusbar
+				status.innerHTML = 'Getting image list';
+				currItem.innerHTML = 0;
+				totalItems.innerHTML = object.total;
+
+				// Adding event to the row request
+				file.addEvents({
+					'complete': function(response) {
+						//console.log(response);
+						counter = counter + 1;
+						currItem.innerHTML = counter;
+						status.innerHTML = 'Getting ' + basename(object.images[counter]);						
+
+						percent = (counter / object.total) * 100;
+
+						pb5.set(percent);
+
+						if (counter == object.total) {
+							self.done();
+						}
+						
+					}
+				});
+				
+				// Start the checks
+				file.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=image&files=images';			
+				
+				for (i=1;i<=object.total;i++) {
+					rm.addRequest(i, file);			
+				}
+		
+				rm.runAll();			
+			}
+		});
+
+		step.send();
+
+		// Scroll the window
+		var myScroll = new Fx.Scroll(window).toBottom();
+
+	}, // end function
+
+
+	/**
+	 * Run the templates
+	 *
+	 * @return	bool
+	 * @since	1.2.0
+	 */
+	templates: function(e) {
+		var self = this;
+
+		var mySlideTem = new Fx.Slide('templates');
+		mySlideTem.hide();
+		$('templates').setStyle('display', 'block');
+		mySlideTem.toggle();
+
+		var pb5 = new dwProgressBar({
+			container: $('pb5'),
+			startPercentage: 10,
+			speed: 1000,
+			boxID: 'pb5-box',
+			percentageID: 'pb5-perc',
+			displayID: 'text',
+			displayText: false
+		});
+
+		var myScroll = new Fx.Scroll(window).toBottom();
+
+		//
+		// Templates Files
+		//
+		var templates_files = new Request({
+			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=templatesfiles',
+			method: 'get',
+			noCache: true
+		}); // end Request		
+
+		templates_files.addEvents({
+			'complete': function(response) {
+
+				pb5.set(100);
+				pb5.finish();
+
+				var object = JSON.decode(response);
+
+				if (self.options.debug_php == 1) {
+					text = document.getElementById('debug');
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[templates_files]</b><br><br>' +object.text;
+				}
+
+				if (object.number == 100) {
+					self.extensions();
+					//self.done();
+				}
+
+			}
+		});
+
+		//
+		// Templates 
+		//
+		var templates = new Request({
+			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=templates',
+			method: 'get',
+			noCache: true
+		}); // end Request		
+
+		templates.addEvents({
+			'complete': function(response) {
+
+				pb5.set(50);
+
+				var object = JSON.decode(response);
+
+				if (self.options.debug_php == 1) {
+					text = document.getElementById('debug');
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[templates_db]</b><br><br>' +object.text;
+				}
+
+				if (object.number == 100) {
+					templates_files.send();
+				}
+
+			}
+		});
+
+		// Start the checks
+		templates.send();
 
 	}, // end function
 

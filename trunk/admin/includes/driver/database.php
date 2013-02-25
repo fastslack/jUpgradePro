@@ -106,7 +106,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		$this->_db_old->setQuery( $query );
 		//echo "\nQUERY: $query\n";
 		$rows = $this->_db_old->loadAssocList();
-//print_r($rows);
+
 		if (is_array($rows)) {
 			return $rows;
 		}
@@ -174,8 +174,10 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	*/
 	function tableExists ($table) { 
 		$tables = array();
-
 		$tables = $this->_db_old->getTableList();
+
+		$table = $this->_db_old->getPrefix().$table;
+
 		return (in_array($table, $tables)) ? 'YES' : 'NO';
 	}
 

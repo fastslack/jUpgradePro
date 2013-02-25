@@ -19,7 +19,7 @@ defined('JPATH_BASE') or die();
  * @subpackage		Table
  * @since	1.0
  */
-class JUpgradeTableExtensions_components extends JUpgradeTable
+class JUpgradeTableExt_Components extends JUpgradeTable
 {
 	/** @var int Primary key */
 	var $id					= null;
@@ -57,7 +57,7 @@ class JUpgradeTableExtensions_components extends JUpgradeTable
 	 *
 	 * @var string
 	 */	
-	var $_type = 'components';
+	var $_type = 'ext_components';
 
 	/**
 	 * Constructor

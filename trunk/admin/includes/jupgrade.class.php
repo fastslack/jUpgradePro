@@ -155,17 +155,15 @@ class jUpgrade
 		// Require the file
 		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$step->name.'.php')) {
 			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$step->name.'.php';
-		}else if (JFile::exists(JPATH_PLUGINS."/jupgradepro/jupgradepro_{$step->name}/extensions/{$step->name}.php")) {
-			require_once JPATH_PLUGINS."/jupgradepro/jupgradepro_{$step->name}/extensions/{$step->name}.php";
 		// Checks
 		}else if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$step->name}.php")) {
 			require_once JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$step->name}.php";
-		// Cli
-		}else if (JFile::exists(JPATH_ROOT."/extensions/{$step->name}.php")) {
-			require_once JPATH_ROOT."/extensions/{$step->name}.php";
+		// 3rd party extensions
 		}else if (isset($step->element)) {
-			if (JFile::exists(JPATH_PLUGINS."/jupgradepro/jupgradepro_{$step->name}/extensions/{$step->element}.php")) {
-				require_once JPATH_PLUGINS."/jupgradepro/jupgradepro_{$step->name}/extensions/{$step->element}.php";
+			$extension_name = substr($step->element, 4);
+
+			if (JFile::exists(JPATH_PLUGINS."/jupgradepro/jupgradepro_{$extension_name}/extensions/{$step->element}.php")) {
+				require_once JPATH_PLUGINS."/jupgradepro/jupgradepro_{$extension_name}/extensions/{$step->element}.php";
 			}
 		}
 
@@ -237,6 +235,7 @@ class jUpgrade
 		}
 
 		$dataHookFunc = 'dataHook_'.$name;
+
 		if (method_exists($this, $dataHookFunc)) { 
 			$rows = $this->$dataHookFunc($rows);
 		}else{
@@ -306,7 +305,7 @@ class jUpgrade
 		    $rows = $this->_driver->getSourceDatabase();
 		    break;
 		}
-//print_r($rows);
+
 		return $rows;
 	}
 

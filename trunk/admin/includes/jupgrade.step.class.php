@@ -28,6 +28,7 @@ class jUpgradeStep
 	public $class = null;
 	public $table = null;
 	public $type = null;
+	public $element = null;
 	public $conditions = null;
 
 	public $debug = '';

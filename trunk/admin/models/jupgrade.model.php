@@ -298,11 +298,11 @@ class jUpgradeProModel extends JModelLegacy
 	 *
 	 * @return   step object
 	 */
-	public function getStep($name = false, $json = true, $extension = false) {
+	public function getStep($name = false, $json = true, $extensions = false) {
 
-		$step = jUpgradeStep::getInstance();
+		$step = jUpgradeStep::getInstance(NULL, $extensions);
 
-		return $step->getStep($name, $json, $extension);
+		return $step->getStep($name, $json);
 	}
 
 	/**
@@ -311,10 +311,10 @@ class jUpgradeProModel extends JModelLegacy
 	 * @return	none
 	 * @since	2.5.0
 	 */
-	function getMigrate($table = false, $json = true) {
+	function getMigrate($table = false, $json = true, $extensions = false) {
 
 		// Init the jUpgrade instance
-		$step = jUpgradeStep::getInstance();
+		$step = jUpgradeStep::getInstance(NULL, $extensions);
 		$jupgrade = jUpgrade::getInstance($step);
 
 		// Run the upgrade
@@ -402,10 +402,12 @@ class jUpgradeProModel extends JModelLegacy
  	* Writes to file all the selected database tables structure with SHOW CREATE TABLE
 	* @param string $table The table name
 	*/
-	public function migrateStructure($options) {
+	public function migrateStructure() {
+
+		$step = jUpgradeStep::getInstance(null, 'tables');
 
 		// Get jUpgradeExtensions instance
-		$jupgrade = jUpgrade::getInstance($options);
+		$jupgrade = jUpgrade::getInstance($step);
 		$structure = $jupgrade->getTableStructure();
 
 		return $structure;

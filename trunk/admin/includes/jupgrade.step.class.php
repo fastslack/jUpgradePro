@@ -45,6 +45,8 @@ class jUpgradeStep
 	public $middle = false;
 	public $end = false;
 
+	public $extensions = false;
+
 	public $error = '';
 	
 	/**
@@ -61,8 +63,11 @@ class jUpgradeStep
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
 
+		// Set extensions flag
+		$this->extensions = $extensions;
+
 		// Update the last step from database
-		$this->_update($key, $extensions);
+		$this->_update($key, $this->extensions);
 	}
 
 	/**
@@ -73,7 +78,7 @@ class jUpgradeStep
 	 *
 	 * @since  3.0.0
 	 */
-	static function getInstance($key = null, $extensions = null)
+	static function getInstance($key = null, $extensions = false)
 	{
 		// Create our new jUpgrade connector based on the options given.
 		try
@@ -150,7 +155,7 @@ class jUpgradeStep
 	 *
 	 * @return   step object
 	 */
-	public function getStep($name = false, $json = true, $extension = false) {
+	public function getStep($name = false, $json = true) {
 
 		// Check if step is loaded
 		if (empty($this->name)) {
@@ -224,7 +229,7 @@ class jUpgradeStep
 		}
 
 		// updating the status flag
-		$this->_updateStep($extension);
+		$this->_updateStep();
 
 		return $this->getParameters($json);
 	}
@@ -234,15 +239,15 @@ class jUpgradeStep
 	 *
 	 * @return   step object
 	 */
-	public function _update($key = null, $extensions = false) {
+	public function _update($key = null) {
 
-		if ($extensions == false) {
+		if ($this->extensions == false) {
 			$table = 'jupgrade_steps';
 			$this->type = 'steps';
-		}else if($extensions === 'table') {
+		}else if($this->extensions === 'tables') {
 			$table = 'jupgrade_extensions_tables';
 			$this->type = 'extensions_tables';
-		}else if($extensions == true) {
+		}else if($this->extensions == true) {
 			$table = 'jupgrade_extensions';
 			$this->type = 'extensions';
 		}
@@ -284,10 +289,12 @@ class jUpgradeStep
 	 * @return	none
 	 * @since	2.5.2
 	 */
-	public function _updateStep($extensions = false) {
+	public function _updateStep() {
 
+		// Initialize
 		$cache = $cid = $total = $start = $stop = '';
 
+		// Setting the statements
 		$status = "status = {$this->status}";
 		$cache = ", cache = {$this->cache}";
 
@@ -304,17 +311,16 @@ class jUpgradeStep
 			$stop = ", stop = {$this->stop}";
 		}
 
-		//$table = $extension == false ? 'jupgrade_steps' : 'jupgrade_extensions_tables';
-
-		if ($extensions == false) {
+		// Select the correct table
+		if ($this->extensions == false) {
 			$table = 'jupgrade_steps';
-		}else if($extensions === 'table') {
+		}else if($this->extensions === 'tables') {
 			$table = 'jupgrade_extensions_tables';
-		}else if($extensions == true) {
+		}else if($this->extensions == true) {
 			$table = 'jupgrade_extensions';
 		}
 
-		// updating the status flag
+		// Updating the status flag
 		$query = "UPDATE {$table} SET {$status} {$cache} {$cid} {$total} {$start} {$stop}"
 		." WHERE name = '{$this->name}'";
 		$this->_db->setQuery($query);

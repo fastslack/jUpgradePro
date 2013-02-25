@@ -331,7 +331,9 @@ class jUpgrade
 		
 		if ($method == 'database') {
 			$result = $this->_driver->_db_old->getTableCreate($table);
+			$result[$table] = str_replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $result[$table]);
 			$structure = "{$result[$table]} ;\n\n";
+
 		}else if ($method == 'rest') {
 			$table = str_replace('#__', '', $table);
 			$structure = $this->_driver->requestRest("tablestructure", $table);
@@ -354,7 +356,7 @@ class jUpgrade
 	protected function insertData($rows)
 	{	
 		$table = $this->getDestinationTableName();
-echo "dsds";
+
 		if (is_array($rows)) {
 
 			$total = count($rows);
@@ -363,8 +365,7 @@ echo "dsds";
 			{
 				// Convert the array into an object.
 				$row = (object) $row;
-print_r($row);
-echo "\n\n";
+
 				if (!$this->_db->insertObject($table, $row)) {
 					$this->_step->error = $this->_db->getErrorMsg();
 				}

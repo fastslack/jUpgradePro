@@ -148,7 +148,7 @@ class jUpgradeModules extends jUpgrade
 			}
 
 			// Updating the steps table
-			$this->_nextID($total);
+			$this->_step->_nextID($total);
 		}
 
 		return false;

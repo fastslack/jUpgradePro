@@ -101,7 +101,7 @@ class jUpgradeSections extends jUpgradeCategory
 			$this->insertCategory($section);
 
 			// Updating the steps table
-			$this->_nextID($total);
+			$this->_step->_nextID($total);
 		}
 
 		return false;

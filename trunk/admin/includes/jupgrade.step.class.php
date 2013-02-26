@@ -27,7 +27,6 @@ class jUpgradeStep
 	public $title = null;
 	public $class = null;
 	public $table = null;
-	public $type = null;
 	public $element = null;
 	public $conditions = null;
 
@@ -48,6 +47,8 @@ class jUpgradeStep
 
 	public $extensions = false;
 
+	public $_table = false;
+
 	public $error = '';
 	
 	/**
@@ -64,11 +65,17 @@ class jUpgradeStep
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
 
-		// Set extensions flag
-		$this->extensions = $extensions;
+		// Set step table
+		if ($extensions == false) {
+			$this->_table = 'jupgrade_steps';
+		}else if($extensions === 'tables') {
+			$this->_table = 'jupgrade_extensions_tables';
+		}else if($extensions == true) {
+			$this->_table = 'jupgrade_extensions';
+		}
 
-		// Update the last step from database
-		$this->_update($key, $this->extensions);
+		// Load the last step from database
+		$this->_load($key, $this->extensions);
 	}
 
 	/**
@@ -240,24 +247,13 @@ class jUpgradeStep
 	 *
 	 * @return   step object
 	 */
-	public function _update($key = null) {
-
-		if ($this->extensions == false) {
-			$table = 'jupgrade_steps';
-			$this->type = 'steps';
-		}else if($this->extensions === 'tables') {
-			$table = 'jupgrade_extensions_tables';
-			$this->type = 'extensions_tables';
-		}else if($this->extensions == true) {
-			$table = 'jupgrade_extensions';
-			$this->type = 'extensions';
-		}
+	public function _load($key = null) {
 
 		// Select the steps
 		if (isset($key)) {
-			$query = "SELECT * FROM {$table} AS s WHERE s.name = '{$key}' ORDER BY s.id ASC LIMIT 1";
+			$query = "SELECT * FROM {$this->_table} AS s WHERE s.name = '{$key}' ORDER BY s.id ASC LIMIT 1";
 		}else{
-			$query = "SELECT * FROM {$table} AS s WHERE s.status != 2 ORDER BY s.id ASC LIMIT 1";
+			$query = "SELECT * FROM {$this->_table} AS s WHERE s.status != 2 ORDER BY s.id ASC LIMIT 1";
 		}
 
 		$this->_db->setQuery($query);
@@ -275,7 +271,7 @@ class jUpgradeStep
 		}
 
 		// Select last step
-		$query = "SELECT name FROM {$table} WHERE status = 0 ORDER BY id DESC LIMIT 1";
+		$query = "SELECT name FROM {$this->_table} WHERE status = 0 ORDER BY id DESC LIMIT 1";
 		$this->_db->setQuery($query);
 		$step['laststep'] = $this->_db->loadResult();
 
@@ -312,17 +308,8 @@ class jUpgradeStep
 			$stop = ", stop = {$this->stop}";
 		}
 
-		// Select the correct table
-		if ($this->extensions == false) {
-			$table = 'jupgrade_steps';
-		}else if($this->extensions === 'tables') {
-			$table = 'jupgrade_extensions_tables';
-		}else if($this->extensions == true) {
-			$table = 'jupgrade_extensions';
-		}
-
 		// Updating the status flag
-		$query = "UPDATE {$table} SET {$status} {$cache} {$cid} {$total} {$start} {$stop}"
+		$query = "UPDATE {$this->_table} SET {$status} {$cache} {$cid} {$total} {$start} {$stop}"
 		." WHERE name = '{$this->name}'";
 		$this->_db->setQuery($query);
 		$this->_db->query();
@@ -338,6 +325,39 @@ class jUpgradeStep
 	}
 
 	/**
+	 * 
+	 *
+	 * @return  boolean  True if the user and pass are authorized
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function _updateID($id)
+	{
+		$name = $this->_getStepName();
+
+		$query = "UPDATE `{$this->_table}` SET `cid` = '{$id}' WHERE name = ".$this->_db->quote($name);
+		$this->_db->setQuery( $query );
+
+		return $this->_db->query();
+	}
+
+	/**
+	 * Updating the steps table
+	 *
+	 * @return  boolean  True if the user and pass are authorized
+	 *
+	 * @since   1.0
+	 * @throws  InvalidArgumentException
+	 */
+	public function _nextID($total = false)
+	{
+		$update_cid = $this->_getStepID() + 1;
+		$this->_updateID($update_cid);
+		echo jUpgradeProHelper::isCli() ? "•" : "";
+	}
+
+	/**
 	 * Update the step id
 	 *
 	 * @return  int  The next id
@@ -346,7 +366,8 @@ class jUpgradeStep
 	 */
 	public function _getStepID()
 	{
-		return $this->_step->cid;
+		$this->_load();
+		return $this->cid;
 	}
 
 	/**
@@ -356,6 +377,6 @@ class jUpgradeStep
 	 */
 	public function _getStepName()
 	{
-		return $this->_step->name;
+		return $this->name;
 	}
 }

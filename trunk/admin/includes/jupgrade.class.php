@@ -220,7 +220,7 @@ class jUpgrade
 	 */
 	protected function setDestinationData($rows = false)
 	{
-		$name = $this->_getStepName();
+		$name = $this->_step->_getStepName();
 		$method = $this->params->get('method');
 
 		// Get the source data.
@@ -246,8 +246,8 @@ class jUpgrade
 			$this->insertData($rows);
 		}
 
-		// Update the step object
-		$this->_step->_update();
+		// Load the step object
+		$this->_step->_load();
 
 		if ($this->getTotal() == $this->_step->cid) {
 			$this->afterHook($rows);
@@ -294,7 +294,7 @@ class jUpgrade
 
 		switch ($method) {
 			case 'rest':
-				$name = ($name == null) ? $this->_getStepName() : $name;
+				$name = ($name == null) ? $this->_step->_getStepName() : $name;
 				if ( in_array($name, $this->extensions_steps) ) {
 					$rows = $this->_driver->getSourceDataRest($name);
 				}else{
@@ -369,7 +369,7 @@ class jUpgrade
 					$this->_step->error = $this->_db->getErrorMsg();
 				}
 
-				$this->_nextID($total);
+				$this->_step->_nextID($total);
 			}
 		}else if (is_object($rows)) {
 
@@ -380,64 +380,6 @@ class jUpgrade
 		}
 	
 		return true;
-	}
-
-	/**
-	 * Updating the steps table
-	 *
-	 * @return  boolean  True if the user and pass are authorized
-	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
-	 */
-	public function _nextID($total = false)
-	{
-		$cid = $this->_getStepID();
-		$update_cid = $cid + 1;
-		$this->_updateID($update_cid);
-		echo jUpgradeProHelper::isCli() ? "•" : "";
-	}
-
-	/**
-	 * 
-	 *
-	 * @return  boolean  True if the user and pass are authorized
-	 *
-	 * @since   1.0
-	 * @throws  InvalidArgumentException
-	 */
-	public function _updateID($id)
-	{
-		$name = $this->_getStepName();
-		$table = "jupgrade_{$this->_step->type}";
-
-		$query = "UPDATE `{$table}` SET `cid` = '{$id}' WHERE name = ".$this->_db->quote($name);
-		$this->_db->setQuery( $query );
-
-		return $this->_db->query();
-	}
-
-	/**
-	 * Update the step id
-	 *
-	 * @return  int  The next id
-	 *
-	 * @since   3.0.0
-	 */
-	public function _getStepID()
-	{
-		$this->_step->_update();
-		return $this->_step->cid;
-	}
-
-	/**
-	 * @return  string	The step name  
-	 *
-	 * @since   3.0
-	 */
-	public function _getStepName()
-	{
-		return $this->_step->name;
 	}
 
 	/**

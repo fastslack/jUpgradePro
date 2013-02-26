@@ -25,7 +25,7 @@ class jUpgradeExtensions extends jUpgrade
 	{
 		parent::__construct($step);
 
-		$name = $this->_getStepName();
+		$name = $this->_step->_getStepName();
 
 		// Find xml file from jUpgrade
 		$default_xmlfile = JPATH_PLUGINS."/jupgradepro/jupgradepro_{$name}/extensions/{$name}.xml";
@@ -498,10 +498,10 @@ class jUpgradeExtensions extends jUpgrade
 	{
 		// Get component object
 		$component = JTable::getInstance ( 'extension', 'JTable', array('dbo'=>$this->_db) );
-		$component->load(array('type'=>'component', 'element'=>$this->_getStepName()));
+		$component->load(array('type'=>'component', 'element'=>$this->_step->_getStepName()));
 
 		// First fix all broken menu items
-		$query = "UPDATE #__menu SET component_id={$this->_db->quote($component->extension_id)} WHERE type = 'component' AND link LIKE '%option={$this->_getStepName()}%'";
+		$query = "UPDATE #__menu SET component_id={$this->_db->quote($component->extension_id)} WHERE type = 'component' AND link LIKE '%option={$this->_step->_getStepName()}%'";
 		$this->_db->setQuery ( $query );
 		$this->_db->query ();
 

@@ -16,6 +16,7 @@ defined('_JEXEC') or die;
 
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.php';
+require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.extensions.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.users.class.php';
 require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php';
 
@@ -268,7 +269,7 @@ class jUpgradeProModel extends JModelLegacy
 		// Delete uncategorised categories
 		if ($params->skip_core_categories != 1) {
 			for($i=2;$i<=7;$i++) {
-				// Rebuild the categories table
+				// Getting the categories table
 				$table = JTable::getInstance('Category', 'JTable');
 
 				// Load it before delete. Joomla bug?
@@ -300,6 +301,8 @@ class jUpgradeProModel extends JModelLegacy
 	 */
 	public function getStep($name = false, $json = true, $extensions = false) {
 
+		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', '');
+
 		$step = jUpgradeStep::getInstance(NULL, $extensions);
 
 		return $step->getStep($name, $json);
@@ -312,6 +315,8 @@ class jUpgradeProModel extends JModelLegacy
 	 * @since	2.5.0
 	 */
 	function getMigrate($table = false, $json = true, $extensions = false) {
+
+		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', '');
 
 		// Init the jUpgrade instance
 		$step = jUpgradeStep::getInstance(NULL, $extensions);
@@ -335,6 +340,10 @@ class jUpgradeProModel extends JModelLegacy
 			$empty = true;
 		} 
 
+		if ($step->total == 0) {
+			$step->total = -1;
+		}
+
 		// Update jupgrade_steps table if id = last_id
 		if ( (($step->total <= $step->cid) || ($step->stop == -1)) && ($empty == false) ) 
 		{
@@ -353,10 +362,7 @@ class jUpgradeProModel extends JModelLegacy
 	 * @return	none
 	 * @since	2.5.0
 	 */
-	function checkExtensions() {
-
-		// Require the file
-		require_once JPATH_COMPONENT.'/includes/extensions/extensions.php';	
+	function getExtensions() {
 
 		// Get the step
 		$step = jUpgradeStep::getInstance('extensions', true);
@@ -365,9 +371,11 @@ class jUpgradeProModel extends JModelLegacy
 		$extensions = jUpgrade::getInstance($step);
 		$success = $extensions->upgrade();
 
-		// Update
-		$step->status = 2;
-		$step->_updateStep(true);
+		if ($success === true) {
+			$step->status = 2;
+			$step->_updateStep();
+			return true;
+		}
 	}
 
 	/**

@@ -187,7 +187,6 @@ var jUpgrade = new Class({
 		$('warning').setStyle('display', 'block');
 
 		var mySlideWarning = new Fx.Slide('warning');
-		var mySlideJoke = new Fx.Slide('info');
 
 		setTimeout(function() {
 			mySlideWarning.slideOut();
@@ -196,10 +195,6 @@ var jUpgrade = new Class({
 		setTimeout(function() {
 			mySlideJoke.slideIn();
 		}, 120000);
-
-		setTimeout(function() {
-			mySlideJoke.slideOut();
-		}, 135000);
 
 		// Progress bar
 		pb4 = new dwProgressBar({
@@ -280,8 +275,8 @@ var jUpgrade = new Class({
 				var object = JSON.decode(response);
 
 				// Redirect if total == 0
-				if (object.total == 0) {
-					if (object.end == true) {
+				if (object.total == 0 || object.total == -1) {
+					if (object.end == 1) {
 						pb4.finish();
 						this.cancel();
 						self.extensions();
@@ -326,7 +321,7 @@ var jUpgrade = new Class({
 	}, // end function
 
 	/**
-	 * Run the extensions
+	 * Run the migration
 	 *
 	 * @return	bool
 	 * @since	1.2.0
@@ -334,51 +329,19 @@ var jUpgrade = new Class({
 	extensions: function(e) {
 		var self = this;
 
-		var ext_request = new Request({
-			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=extensions',
-			method: 'get',
-			noCache: true,
-			data: 'directory=' + self.options.directory,
-			onComplete: function(response) {
+		var method = self.options.method;
 
-				//alert(response);
+		if (method == 'database') {
+			method = 'ajax';
+		}
 
-				var object = JSON.decode(response);
-
-				if (self.options.debug_php == 1) {
-					text = document.getElementById('debug');
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>['+object.step+'] ['+object.name+']</b><br><br>'+object.text;
-				}
-
-				pb7.set(100);
-				text = document.getElementById('status_ext');
-				text.innerHTML = 'Migrating ' + object.name;
-
-				if (object.step == object.lastid) {
-					pb7.finish();
-
-					// Shutdown periodical
-					$clear(extension_periodical);
-
-					// Run templates step
-					self.done();
-				}
-			}
-
-		});
-
-		var runExtensionsMigration = function() {
-			ext_request.send();
-		};
-
-		var mySlideExt = new Fx.Slide('extensions');
-		mySlideExt.hide();
+		// CSS stuff
 		$('extensions').setStyle('display', 'block');
-		mySlideExt.toggle();
 
+		// Progress bar
 		pb7 = new dwProgressBar({
 			container: $('pb7'),
-			startPercentage: 50,
+			startPercentage: 5,
 			speed: 1000,
 			boxID: 'pb7-box',
 			percentageID: 'pb7-perc',
@@ -386,9 +349,135 @@ var jUpgrade = new Class({
 			displayText: false
 		});
 
-		var myScroll = new Fx.Scroll(window).toBottom();
+		// Get the status element
+		status = document.getElementById('ext_status');
+		// Get the migration_text element
+		migration_text = document.getElementById('ext_migration_text');
+		// Get the currItem element
+		currItem = document.getElementById('ext_currItem');
+		// Get the totalItems element
+		totalItems = document.getElementById('ext_totalItems');
 
-		extension_periodical = runExtensionsMigration.periodical(2000);
+		// Declare counter
+		var counter = 0;
+
+		//
+		// Declare the row request
+		//
+		var row = new Request({
+			link: 'chain',
+			method: 'get'
+		}); // end Request
+
+		// Adding event to the row request
+		row.addEvents({
+			'complete': function(row_response) {
+
+				var row_object = JSON.decode(row_response);
+
+				currItem.innerHTML = row_object.cid;
+
+				if (self.options.debug == 1) {
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
+					console.log(row_response);
+				}
+
+				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
+					if (row_object.end == 1) {
+						pb4.finish();
+						this.cancel();
+						step.cancel();
+						self.extensions();
+					} else if (row_object.next == 1) {
+						step.send();
+					}
+				}
+			}
+		});
+
+		var rm = new Request.Multiple({
+			onRequest : function() {},
+			onComplete : function() {}
+		});
+
+		//
+		// 
+		//
+		var step = new Request({
+			link: 'chain',
+			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=step&extensions=true',
+			method: 'get'
+		}); // end Request		
+
+		text = document.getElementById('debug');
+
+		step.addEvents({
+			'complete': function(response) {
+
+				var object = JSON.decode(response);
+
+				// Redirect if total == 0
+				if (object.total == 0) {
+					if (object.end == 1) {
+						pb4.finish();
+						this.cancel();
+						self.extensions();
+					}else{
+						step.send();
+					}
+				}
+
+				if (self.options.debug == 1) {
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
+				}
+
+				// Changing title and statusbar
+				pb4.set(object.id*6);
+				status.innerHTML = 'Migrating ' + object.title;
+				if (object.middle != true) {
+					currItem.innerHTML = object.cid;
+				}
+				totalItems.innerHTML = object.total;
+
+				// Start the checks
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=migrate&extensions=true&table='+object.name;	
+
+				// Running the request[s]
+				if (method == 'ajax') {
+					row.send();
+				} else if (method == 'rest') {
+					for (i=object.start;i<=object.stop;i++) {
+						var reqname = object.name+i;
+						rm.addRequest(reqname, row);
+					}
+					rm.runAll();
+				}
+			}
+		});
+
+		//
+		// Initialize the checks
+		//
+		var check = new Request({
+			link: 'chain',
+			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=extensions',
+			method: 'get'
+		}); // end Request
+
+		// Adding event to the row request
+		check.addEvents({
+			'complete': function(response) {
+
+				if (response == 1) {
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[CHECK]</b><br><br>' +response;
+					console.log(response);
+					step.send();
+				}
+			}
+		});
+
+		// Run the check
+		check.send();
 
 	}, // end function
 

@@ -214,7 +214,11 @@ class jUpgradeStep
 		}else if ($this->total == 0) {
 
 			$this->stop = -1;
-			$this->first = true;
+			if ($this->name == $this->laststep) {
+				$this->end = true;
+			}else{
+				$this->first = true;
+			}
 			$this->cache = 0;
 			$this->status = 2;
 

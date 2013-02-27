@@ -54,10 +54,6 @@ window.addEvent('domready', function() {
 					<?php echo JText::_('COM_JUPGRADEPRO_WARNING_SLOW'); ?>
 				</div>
 
-				<div id="info" class="info">
-					<?php echo JText::_('COM_JUPGRADEPRO_JOKE'); ?>
-				</div>
-
 				<div id="update">
 					<br /><img src="components/com_jupgradepro/images/update.png" align="middle" border="0"/><br />
 					<h2><?php echo JText::_('START UPGRADE'); ?></h2><br />
@@ -97,12 +93,17 @@ window.addEvent('domready', function() {
 				<div id="extensions">
 					<p class="text"><?php echo JText::_('Upgrading 3rd extensions...'); ?></p>
 					<div id="pb7"></div>
-					<div><small><i><span id="status_ext"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
+					<div><small><i><span id="ext_status"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
+					<div id="ext_counter">
+						<i><small><b><span id="ext_currItem">0</span></b> items /
+						<b><span id="ext_totalItems">0</span></b> items</small></i>
+					</div>
 				</div>
 
 				<div id="done">
 					<h2 class="done"><?php echo JText::_('Migration Successful!'); ?></h2>
 				</div>
+
 				<div id="info">
 					<div id="info_version"><?php echo JText::_('jUpgradePro'); ?> <?php echo JText::_('Version').' <b>'.$this->version.'</b>'; ?></div>
 					<div id="info_thanks">

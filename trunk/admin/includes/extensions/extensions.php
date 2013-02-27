@@ -182,6 +182,8 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 	 */
 	protected function _processExtensions()
 	{
+		jimport('joomla.filesystem.folder');
+
 		$types = array(
 			'/^com_(.+)$/e',									// com_componentname
 			'/^mod_(.+)$/e',									// mod_modulename

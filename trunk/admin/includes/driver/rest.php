@@ -77,13 +77,11 @@ class jUpgradeDriverRest extends jUpgradeDriver
 		jimport('joomla.http.http');
 		$http = new JHttp();
 		$data = $this->getRestData();
-		
+
 		// Getting the total
 		$data['task'] = $task;
 		$data['table'] = ($table != false) ? $table : '';
 		$request = $http->get($this->params->get('rest_hostname').'/index.php', $data);
-
-//print_r($request);
 
 		$code = $request->code;
 

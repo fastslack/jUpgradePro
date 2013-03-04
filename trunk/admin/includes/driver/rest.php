@@ -81,7 +81,7 @@ class jUpgradeDriverRest extends jUpgradeDriver
 		// Getting the total
 		$data['task'] = $task;
 		$data['table'] = ($table != false) ? $table : '';
-		$request = $http->get($this->params->get('rest_hostname').'/index.php', $data);
+		$request = $http->get($this->params->get('rest_hostname').'index.php', $data);
 
 		$code = $request->code;
 

@@ -316,10 +316,11 @@ class jUpgradeProModel extends JModelLegacy
 	 */
 	function getMigrate($table = false, $json = true, $extensions = false) {
 
+		$table = (bool) ($table != false) ? $table : JRequest::getCmd('table', '');
 		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', '');
 
 		// Init the jUpgrade instance
-		$step = jUpgradeStep::getInstance(NULL, $extensions);
+		$step = jUpgradeStep::getInstance($table, $extensions);
 		$jupgrade = jUpgrade::getInstance($step);
 
 		// Run the upgrade
@@ -328,7 +329,7 @@ class jUpgradeProModel extends JModelLegacy
 		}
 
 		// Javascript flags
-		if ( $step->cid == $step->stop+1 ) {
+		if ( $step->cid == $step->stop+1 && $step->total != 0) {
 			$step->next = true;
 		}
 		if ($step->name == $step->laststep) {
@@ -340,12 +341,12 @@ class jUpgradeProModel extends JModelLegacy
 			$empty = true;
 		} 
 
-		if ($step->total == 0) {
-			$step->total = -1;
+		if ($step->stop == 0) {
+			$step->stop = -1;
 		}
 
 		// Update jupgrade_steps table if id = last_id
-		if ( (($step->total <= $step->cid) || ($step->stop == -1)) && ($empty == false) ) 
+		if ( ( ($step->total <= $step->cid) || ($step->stop == -1) && ($empty == false) ) )
 		{
 			$step->next = true;
 			$step->status = 2;
@@ -410,7 +411,7 @@ class jUpgradeProModel extends JModelLegacy
  	* Writes to file all the selected database tables structure with SHOW CREATE TABLE
 	* @param string $table The table name
 	*/
-	public function migrateStructure() {
+	public function getStructure() {
 
 		$step = jUpgradeStep::getInstance(null, 'tables');
 

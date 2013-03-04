@@ -192,10 +192,6 @@ var jUpgrade = new Class({
 			mySlideWarning.slideOut();
 		}, 10000); 
 
-		setTimeout(function() {
-			mySlideJoke.slideIn();
-		}, 120000);
-
 		// Progress bar
 		pb4 = new dwProgressBar({
 			container: $('pb4'),
@@ -237,7 +233,6 @@ var jUpgrade = new Class({
 
 				if (self.options.debug == 1) {
 					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
-					console.log(row_response);
 				}
 
 				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
@@ -275,7 +270,7 @@ var jUpgrade = new Class({
 				var object = JSON.decode(response);
 
 				// Redirect if total == 0
-				if (object.total == 0 || object.total == -1) {
+				if (object.total == 0) {
 					if (object.end == 1) {
 						pb4.finish();
 						this.cancel();
@@ -302,7 +297,9 @@ var jUpgrade = new Class({
 
 				// Running the request[s]
 				if (method == 'ajax') {
-					row.send();
+					if (object.total != 0) {
+						row.send();
+					}
 				} else if (method == 'rest') {
 					for (i=object.start;i<=object.stop;i++) {
 						var reqname = object.name+i;
@@ -350,13 +347,15 @@ var jUpgrade = new Class({
 		});
 
 		// Get the status element
-		status = document.getElementById('ext_status');
+		ext_status = document.getElementById('ext_status');
 		// Get the migration_text element
-		migration_text = document.getElementById('ext_migration_text');
+		ext_migration_text = document.getElementById('ext_migration_text');
 		// Get the currItem element
-		currItem = document.getElementById('ext_currItem');
+		ext_currItem = document.getElementById('ext_currItem');
 		// Get the totalItems element
-		totalItems = document.getElementById('ext_totalItems');
+		ext_totalItems = document.getElementById('ext_totalItems');
+		// Get the debug
+		ext_text = document.getElementById('debug');
 
 		// Declare counter
 		var counter = 0;
@@ -364,54 +363,61 @@ var jUpgrade = new Class({
 		//
 		// Declare the row request
 		//
-		var row = new Request({
+		var ext_row = new Request({
 			link: 'chain',
 			method: 'get'
 		}); // end Request
 
 		// Adding event to the row request
-		row.addEvents({
+		ext_row.addEvents({
 			'complete': function(row_response) {
 
 				var row_object = JSON.decode(row_response);
 
-				currItem.innerHTML = row_object.cid;
+				ext_currItem.innerHTML = row_object.cid;
 
 				if (self.options.debug == 1) {
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
+					ext_text.innerHTML = ext_text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
 					console.log(row_response);
 				}
 
 				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
 					if (row_object.end == 1) {
-						pb4.finish();
+						pb7.finish();
 						this.cancel();
-						step.cancel();
-						self.extensions();
+						ext_step.cancel();
+						self.done();
 					} else if (row_object.next == 1) {
-						step.send();
+						ext_step.send();
 					}
 				}
 			}
 		});
 
-		var rm = new Request.Multiple({
+		var ext_rm = new Request.Multiple({
 			onRequest : function() {},
 			onComplete : function() {}
 		});
 
 		//
-		// 
+		// Declare get structure ajax call
 		//
-		var step = new Request({
+		var structure = new Request({
+			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=structure',
+			method: 'get'
+		}); // end Request
+
+		//
+		// Declare the step event
+		//
+		var ext_step = new Request({
 			link: 'chain',
-			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=step&extensions=true',
+			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=step&extensions=tables',
 			method: 'get'
 		}); // end Request		
 
-		text = document.getElementById('debug');
 
-		step.addEvents({
+		ext_step.addEvents({
 			'complete': function(response) {
 
 				var object = JSON.decode(response);
@@ -419,38 +425,45 @@ var jUpgrade = new Class({
 				// Redirect if total == 0
 				if (object.total == 0) {
 					if (object.end == 1) {
-						pb4.finish();
+						pb7.finish();
 						this.cancel();
-						self.extensions();
+						self.done();
 					}else{
-						step.send();
+						ext_step.send();
 					}
+				}
+
+				if (object.first == 1) {
+					structure.send();
 				}
 
 				if (self.options.debug == 1) {
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
+					console.log(response);
+					ext_text.innerHTML = ext_text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
 				}
 
 				// Changing title and statusbar
-				pb4.set(object.id*6);
-				status.innerHTML = 'Migrating ' + object.title;
+				//pb7.set(object.id*6);
+				ext_status.innerHTML = 'Migrating ' + object.name;
 				if (object.middle != true) {
-					currItem.innerHTML = object.cid;
+					ext_currItem.innerHTML = object.cid;
 				}
-				totalItems.innerHTML = object.total;
+				ext_totalItems.innerHTML = object.total;
 
 				// Start the checks
-				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=migrate&extensions=true&table='+object.name;	
+				ext_row.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=migrate&extensions=tables&table='+object.name;	
 
 				// Running the request[s]
 				if (method == 'ajax') {
-					row.send();
+					if (object.total != 0) {
+						ext_row.send();
+					}
 				} else if (method == 'rest') {
 					for (i=object.start;i<=object.stop;i++) {
 						var reqname = object.name+i;
-						rm.addRequest(reqname, row);
+						ext_rm.addRequest(reqname, row);
 					}
-					rm.runAll();
+					ext_rm.runAll();
 				}
 			}
 		});
@@ -471,7 +484,7 @@ var jUpgrade = new Class({
 				if (response == 1) {
 					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[CHECK]</b><br><br>' +response;
 					console.log(response);
-					step.send();
+					ext_step.send();
 				}
 			}
 		});

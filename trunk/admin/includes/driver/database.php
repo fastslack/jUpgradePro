@@ -151,6 +151,12 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		$this->_db_old->setQuery( $query );
 		$total = $this->_db_old->loadResult();
 
+		$error = $this->_db_old->getErrorMsg();
+
+		if ($error) {
+			throw new Exception( $error );
+		}
+
 		return (int)$total;
 	}
 
@@ -188,7 +194,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	public function getTableName()
 	{
-		return $this->_step->table;
+		return str_replace('com_', '', $this->_step->table);
 	}
 
 	/**

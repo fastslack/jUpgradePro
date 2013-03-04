@@ -55,7 +55,7 @@ class jUpgradeStep
 	 * @var      
 	 * @since  3.0
 	 */
-	public $_db = null;
+	protected $_db = null;
 
 	function __construct($key = null, $extensions = false)
 	{
@@ -75,7 +75,7 @@ class jUpgradeStep
 		}
 
 		// Load the last step from database
-		$this->_load($key, $this->extensions);
+		$this->_load($key);
 	}
 
 	/**
@@ -214,10 +214,9 @@ class jUpgradeStep
 		}else if ($this->total == 0) {
 
 			$this->stop = -1;
+			$this->next = 1;
 			if ($this->name == $this->laststep) {
 				$this->end = true;
-			}else{
-				$this->first = true;
 			}
 			$this->cache = 0;
 			$this->status = 2;

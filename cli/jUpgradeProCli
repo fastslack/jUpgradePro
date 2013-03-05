@@ -4,7 +4,7 @@
  * @version		    $Id: 
  * @package		    jUpgrade
  * @subpackage	  jUpgradeCli
- * @copyright			CopyRight 2011 Matware All rights reserved.
+ * @copyright			CopyRight 2004-2013 Matware All rights reserved.
  * @author				Matias Aguirre
  * @email   			maguirre@matware.com.ar
  * @link					http://www.matware.com.ar/
@@ -16,7 +16,7 @@ define('_JEXEC', 1);
 // Bootstrap the application.
 require './bootstrap.php';
 
-class jUpgradeCli extends JApplicationCli
+class jUpgradeProCli extends JApplicationCli
 {
 	/**
 	* A jupgrade object for the application to use.
@@ -77,12 +77,12 @@ class jUpgradeCli extends JApplicationCli
 	 * @return	none
 	 * @since	2.5.0
 	 */
-  public function help()
+	public function help()
 	{
 		// Print help
 		$this->out();
 		$this->out(' jUpgradeCli v3.0.0');
-		$this->out(' Usage: jUpgradeCli --from your_database.sql --to your_migrate_database.sql [ --only=users|categories|content|modules|menus ] ');
+		$this->out(' Usage: jUpgradeCli [ --only=users|categories|content|modules|menus ] ');
 		$this->out();
 		$this->out(' Author: Matias Aguirre (maguirre@matware.com.ar)');
 		$this->out(' License: GNU/GPL http://www.gnu.org/licenses/gpl-2.0-standalone.html');
@@ -95,13 +95,13 @@ class jUpgradeCli extends JApplicationCli
 	 * @return	none
 	 * @since	2.5.0
 	 */
-  public function execute()
-  {
+	public function execute()
+	{
 		$this->model->getChecks();
 		$this->model->getCleanup();
 
 		$this->migrateCore();
-		//$this->migrateExtensions();
+		$this->migrateExtensions();
 	}
 
 	public function migrateCore()
@@ -125,18 +125,18 @@ class jUpgradeCli extends JApplicationCli
 
 			$this->out("{$this->white}|  {$this->green}[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
 
-			$method = $this->params->get('method');
-
 			// Start benchmark
 			$time_start = microtime(true);
 
 			echo "{$this->white}|  {$this->red}[{$this->yellow}";
-			if ($method == 'database') {
-				$result = $this->model->getMigrate($step->name, false);
-			}else if ($method == 'rest') {
+			if ($step->stop != -1) {
+				if ($method == 'database') {
+					$result = $this->model->getMigrate($step->name, false);
+				}else if ($method == 'rest') {
 
-				for($i=$step->start;$i<=$step->stop;$i++) {
-					$response = $this->model->getMigrate($step->name, false);
+					for($i=$step->start;$i<=$step->stop;$i++) {
+						$response = $this->model->getMigrate($step->name, false);
+					}
 				}
 			}
 			$this->out( "{$this->red}]" );
@@ -158,50 +158,45 @@ class jUpgradeCli extends JApplicationCli
 		$method = $this->params->get('method');
 
 		// Check for 3rd party extensions
-		$result = $this->model->checkExtensions();
+		$result = $this->model->getExtensions();
 
-		// updating the status flag
-		$query = "SELECT * FROM jupgrade_extensions";
-		$this->jupgrade->_db->setQuery($query);
-		$extensions = $this->jupgrade->_db->loadAssocList();
-		//print_r($extensions);
-
-		// Check for query error.
-		$error = $this->jupgrade->_db->getErrorMsg();
-
-		foreach ($extensions as $extension) 
+		while (!$finished)
 		{
-			while (!$finished)
-			{
+			$this->out("{$this->white}-------------------------------------------------------------------------------------------------");
 
-				// Getting the current step
-				$step = $this->model->getStep(false, false, 'table');
+			// Getting the current step
+			$step = (object) $this->model->getStep(false, false, 'tables');
 
-				if ($step == false) {
-					break;
-				}
+			if ( empty($step->id) || !isset($step->stop)) {
+				break;
+			}	
 
-				if (isset($step->first)) {
-					$this->out("\n===========================================================\n");
-				}
+			$this->out("{$this->white}|  {$this->green}[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
 
-				echo "[{$step->id}] Migrating {$step->name} (Start: {$step->start} - Stop: {$step->stop} - Total: {$step->total})\n";
+			// Start benchmark
+			$time_start = microtime(true);
 
-				if (isset($step->first)) {
-					$model->migrateStructure($step);
-				}
-
+			echo "{$this->white}|  {$this->red}[{$this->yellow}";
+			if ($step->stop != -1) {
 				if ($method == 'database') {
-					$result = $this->model->getMigrateExtensions($step->name, false);
+					$result = $this->model->getMigrate($step->name, false, 'tables');
 				}else if ($method == 'rest') {
+
 					for($i=$step->start;$i<=$step->stop;$i++) {
-						$result = $this->model->getMigrateExtensions($step->name, false);
+						$response = $this->model->getMigrate($step->name, false, 'tables');
 					}
 				}
-
-				echo "\n";
 			}
+			$this->out( "{$this->red}]" );
+
+			$time_end = microtime(true);
+			$time = $time_end - $time_start;
+			$this->out( "{$this->white}|  {$this->cyan}[Benchmark] ".round($time, 3)." seconds." );
 		}
+
+		$benchmark_end = microtime(true);
+		$benchmark = $benchmark_end - $benchmark_start;
+		$this->out( "\n{$this->cyan}[[TOTAL Extensions Benchmark]] ".round($benchmark, 3)." seconds" );
 
 	} // end method
 
@@ -212,7 +207,7 @@ try
 {
 	// Instantiate the application object, passing the class name to JCli::getInstance
 	// and use chaining to execute the application.
-	JApplicationCli::getInstance('jUpgradeCli')->execute();
+	JApplicationCli::getInstance('jUpgradeProCli')->execute();
 }
 catch (Exception $e)
 {

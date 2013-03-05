@@ -378,11 +378,11 @@ var jUpgrade = new Class({
 
 				if (self.options.debug == 1) {
 					ext_text.innerHTML = ext_text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
-					console.log(row_response);
 				}
 
 				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
 					if (row_object.end == 1) {
+						pb7.set(100);
 						pb7.finish();
 						this.cancel();
 						ext_step.cancel();
@@ -403,6 +403,7 @@ var jUpgrade = new Class({
 		// Declare get structure ajax call
 		//
 		var structure = new Request({
+			link: 'chain',
 			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=structure',
 			method: 'get'
 		}); // end Request
@@ -433,10 +434,6 @@ var jUpgrade = new Class({
 					}
 				}
 
-				if (object.first == 1) {
-					structure.send();
-				}
-
 				if (self.options.debug == 1) {
 					console.log(response);
 					ext_text.innerHTML = ext_text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
@@ -461,7 +458,7 @@ var jUpgrade = new Class({
 				} else if (method == 'rest') {
 					for (i=object.start;i<=object.stop;i++) {
 						var reqname = object.name+i;
-						ext_rm.addRequest(reqname, row);
+						ext_rm.addRequest(reqname, ext_row);
 					}
 					ext_rm.runAll();
 				}

@@ -458,7 +458,7 @@ var jUpgrade = new Class({
 				} else if (method == 'rest') {
 					for (i=object.start;i<=object.stop;i++) {
 						var reqname = object.name+i;
-						ext_rm.addRequest(reqname, row);
+						ext_rm.addRequest(reqname, ext_row);
 					}
 					ext_rm.runAll();
 				}

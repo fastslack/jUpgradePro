@@ -8,7 +8,7 @@ CREATE TABLE IF NOT EXISTS `jupgrade_plugin_steps` (
   `name` varchar(255) NOT NULL,
   `cid` int(11) NOT NULL DEFAULT '0',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=19 ;
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
 
 --
 -- Dumping data for table `jupgrade_plugin_steps`

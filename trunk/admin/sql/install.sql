@@ -133,8 +133,11 @@ CREATE TABLE IF NOT EXISTS `jupgrade_extensions_tables` (
   `cid` int(11) NOT NULL DEFAULT '0',
   `status` int(11) NOT NULL DEFAULT '0',
   `cache` int(11) NOT NULL,
+  `total` int(11) NOT NULL,
+  `start` int(11) NOT NULL,
+  `stop` int(11) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=25 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 
 --
 -- Table structure for table `jupgrade_files_images`

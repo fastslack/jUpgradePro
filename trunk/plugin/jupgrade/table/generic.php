@@ -48,6 +48,7 @@ class JUpgradeTableGeneric extends JUpgradeTable
 	public function changeTable($table)
 	{
 		// Getting table
+		$name = $table;
 		$table = '#__'.$table;
 
 		// Getting key
@@ -64,6 +65,11 @@ class JUpgradeTableGeneric extends JUpgradeTable
 			$colname = $column->Field;
 			$this->$colname = '';
 		}
+
+		// Getting key
+		$query = "INSERT INTO jupgrade_plugin_steps (`name`) VALUES ( '{$name}' )  ";
+		$this->_db->setQuery( $query );
+		$this->_db->query();
 
 		parent::__construct( $table, $key, $this->_db );
 	}

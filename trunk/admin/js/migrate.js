@@ -403,6 +403,7 @@ var jUpgrade = new Class({
 		// Declare get structure ajax call
 		//
 		var structure = new Request({
+			link: 'chain',
 			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=structure',
 			method: 'get'
 		}); // end Request
@@ -431,10 +432,6 @@ var jUpgrade = new Class({
 					}else{
 						ext_step.send();
 					}
-				}
-
-				if (object.first == 1) {
-					structure.send();
 				}
 
 				if (self.options.debug == 1) {

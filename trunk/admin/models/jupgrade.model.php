@@ -305,7 +305,15 @@ class jUpgradeProModel extends JModelLegacy
 
 		$step = jUpgradeStep::getInstance(NULL, $extensions);
 
-		return $step->getStep($name, $json);
+		$step->getStep($name);
+
+		// Get the database structure
+		if ($step->first == true && $extensions == 'tables') {
+			$jupgrade = jUpgrade::getInstance($step);
+			$structure = $jupgrade->getTableStructure();
+		}
+
+		return $step->getParameters($json);
 	}
 
 	/**

@@ -191,7 +191,6 @@ class jUpgradeStep
 			} else if ($this->cache == 1 && $this->status == 1) {
 
 				$this->start = $this->cid;
-				//$this->next = true;
 				$this->cache = 0;
 				$this->stop = $this->total - 1;
 
@@ -200,6 +199,10 @@ class jUpgradeStep
 				$this->start = $this->cid;
 				$this->stop = ($this->start - 1) + $limit;
 				$this->cache = $this->cache - 1;
+
+				if ($this->stop > $this->total) {
+					$this->stop = $this->total - 1;
+				}
 
 				if ($this->stop > $this->total) {
 					$this->next = true;

@@ -479,8 +479,11 @@ var jUpgrade = new Class({
 			'complete': function(response) {
 
 				if (response == 1) {
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[CHECK]</b><br><br>' +response;
-					console.log(response);
+
+					if (self.options.debug == 1) {
+						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[CHECK]</b><br><br>' +response;
+					}
+
 					ext_step.send();
 				}
 			}

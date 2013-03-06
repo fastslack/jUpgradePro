@@ -202,9 +202,6 @@ class jUpgradeStep
 
 				if ($this->stop > $this->total) {
 					$this->stop = $this->total - 1;
-				}
-
-				if ($this->stop > $this->total) {
 					$this->next = true;
 				}else{
 					$this->middle = true;

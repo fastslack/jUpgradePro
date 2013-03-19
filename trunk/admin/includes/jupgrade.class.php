@@ -327,10 +327,11 @@ class jUpgrade
 
 		$method = $this->params->get('method');
 		$table = $this->getTableName();
-		
+
 		if ($method == 'database') {
 			$result = $this->_driver->_db_old->getTableCreate($table);
 			$result[$table] = str_replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $result[$table]);
+			$result[$table] = str_replace($this->_driver->_db_old->getPrefix(), $this->_db->getPrefix(), $result[$table]);
 			$structure = "{$result[$table]} ;\n\n";
 
 		}else if ($method == 'rest') {

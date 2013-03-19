@@ -235,7 +235,7 @@ class jUpgradeMenu extends jUpgrade
 			// Fixes
 			$row->title = $row->name;
 
-			if ($this->_version == '3.0') {
+			if (version_compare(PHP_VERSION, '3.0', '>=')) {
 				unset($row->ordering);
 			}
 

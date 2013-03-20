@@ -332,9 +332,6 @@ var jUpgrade = new Class({
 			method = 'ajax';
 		}
 
-		// CSS stuff
-		$('extensions').setStyle('display', 'block');
-
 		// Progress bar
 		pb7 = new dwProgressBar({
 			container: $('pb7'),
@@ -479,12 +476,14 @@ var jUpgrade = new Class({
 			'complete': function(response) {
 
 				if (response == 1) {
-
-					if (self.options.debug == 1) {
-						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[CHECK]</b><br><br>' +response;
-					}
+					// CSS stuff
+					$('extensions').setStyle('display', 'block');
 
 					ext_step.send();
+				}else if (response == 0){
+					pb7.finish();
+					this.cancel();
+					self.done();					
 				}
 			}
 		});

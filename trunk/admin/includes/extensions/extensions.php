@@ -42,9 +42,7 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 			return false;
 		}
 
-		$this->_processExtensions();
-
-		return true;
+		return ($this->_processExtensions() == 0) ? false : true;
 	}
 
 	/**
@@ -326,5 +324,7 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 				unset ($row);
 			} //end if
 		}
+
+		return $this->count;
 	}
 } // end class

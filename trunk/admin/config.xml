@@ -209,7 +209,7 @@
 			type="list"
 			label="COM_JUPGRADEPRO_CONFIG_POSITIONS"
 			description="COM_JUPGRADEPRO_CONFIG_POSITIONS_DESC"
-			default="0">
+			default="1">
 			<option
 				value="0">JNO</option>
 			<option

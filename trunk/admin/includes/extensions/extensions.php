@@ -223,9 +223,7 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 			$default_path = JPATH_COMPONENT_ADMINISTRATOR;
 
 			if (empty($state->xmlfile)) {
-				// Find xml file from jUpgrade
-				//$default_xmlfile = "{$default_path}/includes/extensions/{$name}.xml";
-
+				// Find xml file from plugins
 				$basename = substr($name, 4);
 
 				$default_xmlfile = JPATH_PLUGINS."/jupgradepro/jupgradepro_{$basename}/extensions/{$name}.xml";
@@ -259,7 +257,7 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 			}
 
 
-			if (!empty($state->phpfile) || !empty($state->xmlfile)) {
+			if ( (!empty($state->phpfile) || !empty($state->xmlfile)) && JPluginHelper::isEnabled("jupgradepro", "jupgradepro_{$basename}") ) {
 
 				$query = "INSERT INTO jupgrade_extensions (name, title, class) VALUES('{$name}', '{$xml->name}', '{$state->class}' )";
 				$this->_db->setQuery($query);

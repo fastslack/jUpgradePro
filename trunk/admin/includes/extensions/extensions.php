@@ -198,130 +198,136 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 			"'jUpgradePlugin'.ucfirst('\\1').ucfirst('\\2')",	// jUpgradePluginPluginname
 			"'jUpgradeTemplate'.ucfirst('\\1')");				// jUpgradeTemplateTemplatename
 
+		// Getting the plugins list
+		$query = $this->_db->getQuery(true);
+		$query->select('*');
+		$query->from('#__extensions');
+		$query->where("type = 'plugin'");
+		$query->where("folder = 'jupgradepro'");
+		$query->where("enabled = 1");
+
+		// Setting the query and getting the result
+		$this->_db->setQuery($query);
+		$plugins = $this->_db->loadObjectList();
+
 		// Do some custom post processing on the list.
-		foreach ($this->extensions as $name=>&$row)
+		foreach ($plugins as $plugin)
 		{
-			$state = new StdClass();
-			$state->xmlfile = null;
-			$state->phpfile = null;
-			$state->extensions = null;
+			// Looking for xml files
+			$files = (array) JFolder::files(JPATH_PLUGINS."/jupgradepro/{$plugin->element}/extensions", '\.xml$', true, true);
 
-			$path = preg_replace($types, $directories, $name);
+			foreach ($files as $xmlfile)
+			{
+				if (!empty($xmlfile)) {
 
-			if (is_dir(JPATH_ROOT."/administrator/{$path}")) {
-				// Find j16upgrade.xml from the extension's administrator folders
-				$files = (array) JFolder::files(JPATH_ROOT."/administrator/{$path}", '^jupgrade\.xml$', true, true);
-				$state->xmlfile = array_shift( $files );
-			}
-			if (empty($state->xmlfile) && is_dir(JPATH_ROOT.'/'.$path)) {
-				// Find j16upgrade.xml from the extension's folders
-				$files = (array) JFolder::files(JPATH_ROOT.'/'.$path, '^jupgrade\.xml$', true, true);
-				$state->xmlfile = array_shift( $files );
-			}
+					$element = JFile::stripExt(basename($xmlfile));
 
-			// Check default path for extensions files
-			$default_path = JPATH_COMPONENT_ADMINISTRATOR;
+					if (array_key_exists($element, $this->extensions)) {
 
-			if (empty($state->xmlfile)) {
-				// Find xml file from plugins
-				$basename = substr($name, 4);
+						$extension = $this->extensions[$element];
 
-				$default_xmlfile = JPATH_PLUGINS."/jupgradepro/jupgradepro_{$basename}/extensions/{$name}.xml";
+						// Read xml definition file
+						$xml = simplexml_load_file($xmlfile);
 
-				if (file_exists($default_xmlfile)) {
-					$state->xmlfile = $default_xmlfile;
-				}
-			}
-
-			if (!empty($state->xmlfile)) {
-				// Read xml definition file
-				$xml = simplexml_load_file($state->xmlfile);
-
-				if (!empty($xml->installer->file[0])) {
-					$state->phpfile = JPATH_ROOT.'/'.trim($xml->installer->file[0]);
-				}
-				if (!empty($xml->installer->class[0])) {
-					$state->class = trim($xml->installer->class[0]);
-				}
-			}
-			if (empty($state->phpfile)) {
-				// Find adapter from jUpgrade
-				$default_phpfile = "{$default_path}/extensions/{$name}.php";
-				if (file_exists($default_phpfile)) {
-					$state->phpfile = $default_phpfile;
-				}
-			}
-			if (empty($state->class)) {
-				// Set default class name
-				$state->class = preg_replace($types, $classes, $row->element);
-			}
-
-
-			if ( (!empty($state->phpfile) || !empty($state->xmlfile)) && JPluginHelper::isEnabled("jupgradepro", "jupgradepro_{$basename}") ) {
-
-				$query = "INSERT INTO jupgrade_extensions (name, title, class) VALUES('{$name}', '{$xml->name}', '{$state->class}' )";
-				$this->_db->setQuery($query);
-				$this->_db->query();
-
-				if (isset($xml->name) && isset($xml->collection)) {
-					$query = "INSERT INTO #__update_sites (name, type, location, enabled) VALUES({$this->_db->quote($xml->name)}, 'collection',  {$this->_db->quote($xml->collection)}, 1 )";
-					$this->_db->setQuery($query);
-					$this->_db->query();
-				}
-
-				$row->params = $this->convertParams($row->params);
-
-				if (!$this->_db->insertObject('#__extensions', $row)) {
-					throw new Exception($this->_db->getErrorMsg());
-				}
-
-				// Adding +1 to count
-				$this->count = $this->count+1;
-
-				// Getting the extension id
-				$row->id = $this->_db->insertid();
-
-				// Adding tables to migrate
-				if (!empty($xml->tables[0])) {
-
-					foreach ($xml->tables[0]->table as $xml_ext) {
-						//
-						$table = new StdClass();
-						$table->name = (string) $xml_ext;
-						$table->eid = $row->id;
-						$table->element = $row->element;
-						$table->class = $state->class;
-
-						$exists = $this->_driver->tableExists($table->name);
-
-						if ($exists == 'YES'){
-							if (!$this->_db->insertObject('jupgrade_extensions_tables', $table)) {
-								throw new Exception($this->_db->getErrorMsg());
-							}
+						// Getting the php file
+						if (!empty($xml->installer->file[0])) {
+							$phpfile = JPATH_ROOT.'/'.trim($xml->installer->file[0]);
 						}
-					}
-				}
+						if (empty($phpfile)) {
+							$default_phpfile = JPATH_PLUGINS."/jupgradepro/{$plugin->element}/extensions/{$element}.php";
+							$phpfile = file_exists($default_phpfile) ? $default_phpfile : null;
+						}
 
-				// Add other extensions from the package
-				if (!empty($xml->package[0])) {
-					foreach ($xml->package[0]->extension as $xml_ext) {
-						if (isset($this->extensions[(string) $xml_ext->name])) {
-							$extension = $this->extensions[(string) $xml_ext->name];
-							$state->extensions[] = (string) $xml_ext->name;
+						// Getting the class
+						if (!empty($xml->installer->class[0])) {
+							$class = trim($xml->installer->class[0]);
+						}
+						if (empty($class)) {
+							$class = preg_replace($types, $classes, $element);
+						}
 
+						// Saving the extensions and migrating the tables
+						if ( (!empty($phpfile) || !empty($xmlfile)) && JPluginHelper::isEnabled("jupgradepro", "{$plugin->element}") ) {
+
+							// Adding +1 to count
+							$this->count = $this->count+1;
+
+							// Reset the $query object
+							$query->clear();
+
+							// Inserting the step to jupgrade_extensions table
+							$query->insert('jupgrade_extensions')->columns('name, title, class')->values("'{$element}', '{$xml->name}', '{$class}'");
+							$this->_db->setQuery($query);
+							$this->_db->execute();
+
+							// Inserting the collection if exists
+							if (isset($xml->name) && isset($xml->collection)) {
+								$query->insert('#__update_sites')->columns('name, type, location, enabled')
+									->values("'{$xml->name}', 'collection',  '{$xml->collection}, 1");
+								$this->_db->setQuery($query);
+								$this->_db->execute();
+							}
+
+							// Converting the params
 							$extension->params = $this->convertParams($extension->params);
+
+							// Saving the extension to #__extensions table
 							if (!$this->_db->insertObject('#__extensions', $extension)) {
 								throw new Exception($this->_db->getErrorMsg());
 							}
-							unset ($this->extensions[(string) $xml_ext->name]);
-						}
-					}
-				}
 
-				// Cleanup
-				unset ($row);
-			} //end if
-		}
+							// Getting the extension id
+							$extension->id = $this->_db->insertid();
+
+							// Adding tables to migrate
+							if (!empty($xml->tables[0])) {
+
+								foreach ($xml->tables[0]->table as $xml_ext) {
+									//
+									$table = new StdClass();
+									$table->name = (string) $xml_ext;
+									$table->eid = $extension->id;
+									$table->element = $element;
+									$table->class = $class;
+
+									$exists = $this->_driver->tableExists($table->name);
+
+									if ($exists == 'YES'){
+										if (!$this->_db->insertObject('jupgrade_extensions_tables', $table)) {
+											throw new Exception($this->_db->getErrorMsg());
+										}
+									}
+								}
+							}
+
+							// Add other extensions from the package
+							if (!empty($xml->package[0])) {
+								foreach ($xml->package[0]->extension as $xml_ext) {
+									if (isset($this->extensions[(string) $xml_ext->name])) {
+										$extension = $this->extensions[(string) $xml_ext->name];
+										$state->extensions[] = (string) $xml_ext->name;
+
+										$extension->params = $this->convertParams($extension->params);
+										if (!$this->_db->insertObject('#__extensions', $extension)) {
+											throw new Exception($this->_db->getErrorMsg());
+										}
+										unset ($this->extensions[(string) $xml_ext->name]);
+									}
+								}
+							}
+
+						} //end if
+
+					} // end if
+
+				} // end if
+
+				unset($class);
+				unset($phpfile);
+				unset($xmlfile);
+
+			} // end foreach
+		} // end foreach
 
 		return $this->count;
 	}

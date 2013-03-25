@@ -247,7 +247,7 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 						}
 
 						// Saving the extensions and migrating the tables
-						if ( (!empty($phpfile) || !empty($xmlfile)) && JPluginHelper::isEnabled("jupgradepro", "{$plugin->element}") ) {
+						if ( !empty($phpfile) || !empty($xmlfile) ) {
 
 							// Adding +1 to count
 							$this->count = $this->count+1;

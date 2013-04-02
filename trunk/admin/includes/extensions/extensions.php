@@ -187,11 +187,7 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 			'/^mod_(.+)$/e',									// mod_modulename
 			'/^plg_(.+)_(.+)$/e',								// plg_folder_pluginname
 			'/^tpl_(.+)$/e');									// tpl_templatename
-		$directories = array(
-			"'components/com_\\1'",								// compontens/com_componentname
-			"'modules/mod_\\1'",								// modules/mod_modulename
-			"'plugins/\\1/\\2'",								// plugins/type/pluginname
-			"'templates/\\1'");									// templates/templatename
+
 		$classes = array(
 			"'jUpgradeComponent'.ucfirst('\\1')",				// jUpgradeComponentComponentname
 			"'jUpgradeModule'.ucfirst('\\1')",					// jUpgradeModuleModulename
@@ -256,7 +252,7 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 							$query->clear();
 
 							// Inserting the step to jupgrade_extensions table
-							$query->insert('jupgrade_extensions')->columns('name, title, class')->values("'{$element}', '{$xml->name}', '{$class}'");
+							$query->insert('jupgrade_extensions')->columns('`name`, `title`, `class`')->values("'{$element}', '{$xml->name}', '{$class}'");
 							$this->_db->setQuery($query);
 							$this->_db->execute();
 
@@ -282,13 +278,20 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 							// Adding tables to migrate
 							if (!empty($xml->tables[0])) {
 
-								foreach ($xml->tables[0]->table as $xml_ext) {
+								// Check if tables must to be replaced
+								$main_replace = (string) $xml->tables->attributes()->replace;
+
+								$count = count($xml->tables[0]->table);
+
+								for($i=0;$i<$count;$i++) {
 									//
 									$table = new StdClass();
-									$table->name = (string) $xml_ext;
+									$table->name = (string) $xml->tables->table[$i];
 									$table->eid = $extension->id;
 									$table->element = $element;
 									$table->class = $class;
+									$table->replace = (string) $xml->tables->table[$i]->attributes()->replace;
+									$table->replace = !empty($table->replace) ? $table->replace : $main_replace;
 
 									$exists = $this->_driver->tableExists($table->name);
 

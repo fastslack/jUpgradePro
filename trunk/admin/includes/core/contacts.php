@@ -71,7 +71,7 @@ class jUpgradeContacts extends jUpgrade
 		{
 			$row = (array) $row;
 
-			if ($this->_version == '3.0') {
+			if (version_compare(PHP_VERSION, '3.0', '>=')) {
 				unset($row['imagepos']);
 			}
 		}

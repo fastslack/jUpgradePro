@@ -136,6 +136,7 @@ CREATE TABLE IF NOT EXISTS `jupgrade_extensions_tables` (
   `total` int(11) NOT NULL,
   `start` int(11) NOT NULL,
   `stop` int(11) NOT NULL,
+  `replace` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
 

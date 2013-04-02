@@ -330,13 +330,22 @@ class jUpgrade
 
 		if ($method == 'database') {
 			$result = $this->_driver->_db_old->getTableCreate($table);
-			$result[$table] = str_replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $result[$table]);
-			$result[$table] = str_replace($this->_driver->_db_old->getPrefix(), $this->_db->getPrefix(), $result[$table]);
 			$structure = "{$result[$table]} ;\n\n";
 
+			$structure = str_replace($this->_driver->_db_old->getPrefix(), "#__", $structure);
+
 		}else if ($method == 'rest') {
-			$table = str_replace('#__', '', $table);
-			$structure = $this->_driver->requestRest("tablestructure", $table);
+			$structure = $this->_driver->requestRest("tablestructure", str_replace('#__', '', $table));
+		}
+
+		$structure = str_replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $structure);
+
+		// Replace table name from xml
+		$replace = explode("|", $this->_step->replace);
+
+		if (count($replace) > 1) {
+			$replace_table = str_replace($replace[0], $replace[1], $table);
+			$structure = str_replace($table, $replace_table, $structure);
 		}
 
 		// Inserting the structure to new site
@@ -356,6 +365,13 @@ class jUpgrade
 	protected function insertData($rows)
 	{	
 		$table = $this->getDestinationTableName();
+
+		// Replace table name from xml
+		$replace = explode("|", $this->_step->replace);
+
+		if (count($replace) > 1) {
+			$table = str_replace($replace[0], $replace[1], $table);
+		}
 
 		if (is_array($rows)) {
 

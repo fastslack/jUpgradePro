@@ -27,6 +27,7 @@ class jUpgradeStep
 	public $title = null;
 	public $class = null;
 	public $table = null;
+	public $replace = '';
 	public $element = null;
 	public $conditions = null;
 
@@ -215,6 +216,7 @@ class jUpgradeStep
 
 			$this->stop = -1;
 			$this->next = 1;
+			$this->first = true;
 			if ($this->name == $this->laststep) {
 				$this->end = true;
 			}
@@ -252,12 +254,19 @@ class jUpgradeStep
 	 */
 	public function _load($key = null) {
 
-		// Select the steps
+		// Getting the data
+		$query = $this->_db->getQuery(true);
+		$query->select('*');
+		$query->from($this->_table);
+
 		if (isset($key)) {
-			$query = "SELECT * FROM {$this->_table} AS s WHERE s.name = '{$key}' ORDER BY s.id ASC LIMIT 1";
+			$query->where("name = '{$key}'");
 		}else{
-			$query = "SELECT * FROM {$this->_table} AS s WHERE s.status != 2 ORDER BY s.id ASC LIMIT 1";
+			$query->where("status != 2");
 		}
+
+		$query->order('id ASC');
+		$query->limit(1);
 
 		$this->_db->setQuery($query);
 		$step = $this->_db->loadAssoc();
@@ -273,8 +282,16 @@ class jUpgradeStep
 			return false;
 		}
 
+		// Reset the $query object
+		$query->clear();
+
 		// Select last step
-		$query = "SELECT name FROM {$this->_table} WHERE status = 0 ORDER BY id DESC LIMIT 1";
+		$query->select('name');
+		$query->from($this->_table);
+		$query->where("status = 0");
+		$query->order('id DESC');
+		$query->limit(1);
+
 		$this->_db->setQuery($query);
 		$step['laststep'] = $this->_db->loadResult();
 

@@ -160,6 +160,9 @@ class jUpgrade
 			require_once JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$step->name}.php";
 		// 3rd party extensions
 		}else if (isset($step->element)) {
+
+			$step->class = 'jUpgradeExtensions';
+
 			$extension_name = substr($step->element, 4);
 
 			if (JFile::exists(JPATH_PLUGINS."/jupgradepro/jupgradepro_{$extension_name}/extensions/{$step->element}.php")) {
@@ -252,6 +255,12 @@ class jUpgrade
 		if ($this->getTotal() == $this->_step->cid) {
 			$this->afterHook($rows);
 		}
+
+		if ($this->_step->name == $this->_step->laststep && $this->_step->cache == 0) {
+			$this->afterAllStepsHook();
+		}
+
+		return true;
 	}
 
 	/*
@@ -277,6 +286,25 @@ class jUpgrade
 	public function afterHook()
 	{
 		// Do customisation data here
+	}
+
+	/**
+	 * Hook to do custom migration after all steps
+	 *
+	 * @return	boolean Ready
+	 * @since	1.1.0
+	 */
+	protected function afterAllStepsHook()
+	{
+		// The sql file with menus
+		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'/sql/menus-'.$this->_version.'.sql';
+
+		// Import the sql file
+	  if ($this->populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
+	  	return false;
+	  }
+
+		return true;
 	}
 
 	/**
@@ -340,12 +368,11 @@ class jUpgrade
 
 		$structure = str_replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $structure);
 
-		// Replace table name from xml
-		$replace = explode("|", $this->_step->replace);
+		// Replacing the table name from xml
+		$replaced_table = $this->replaceTable($table);
 
-		if (count($replace) > 1) {
-			$replace_table = str_replace($replace[0], $replace[1], $table);
-			$structure = str_replace($table, $replace_table, $structure);
+		if ($replaced_table != $table) {
+			$structure = str_replace($table, $replaced_table, $structure);
 		}
 
 		// Inserting the structure to new site
@@ -366,12 +393,8 @@ class jUpgrade
 	{	
 		$table = $this->getDestinationTableName();
 
-		// Replace table name from xml
-		$replace = explode("|", $this->_step->replace);
-
-		if (count($replace) > 1) {
-			$table = str_replace($replace[0], $replace[1], $table);
-		}
+		// Replacing the table name if xml exists
+		$table = $this->replaceTable($table);
 
 		if (is_array($rows)) {
 
@@ -397,6 +420,27 @@ class jUpgrade
 		}
 	
 		return true;
+	}
+
+	/**
+	 * Replace table name
+	 *
+	 * @return	string The replaced table
+	 * @since 3.0.3
+	 * @throws	Exception
+	 */
+	protected function replaceTable($table, $structure = null) {
+
+		$replaced_table = $table;
+
+		// Replace table name from xml
+		$replace = explode("|", $this->_step->replace);
+
+		if (count($replace) > 1) {
+			$replaced_table = str_replace($replace[0], $replace[1], $table);
+		}
+
+		return $replaced_table;
 	}
 
 	/**

@@ -251,8 +251,10 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 							// Reset the $query object
 							$query->clear();
 
+							$xmlpath = "{$plugin->element}/extensions/{$element}.xml";
+
 							// Inserting the step to jupgrade_extensions table
-							$query->insert('jupgrade_extensions')->columns('`name`, `title`, `class`')->values("'{$element}', '{$xml->name}', '{$class}'");
+							$query->insert('jupgrade_extensions')->columns('`name`, `title`, `class`, `xmlpath`')->values("'{$element}', '{$xml->name}', '{$class}', '{$xmlpath}'");
 							$this->_db->setQuery($query);
 							$this->_db->execute();
 

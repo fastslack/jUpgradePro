@@ -28,6 +28,7 @@ class jUpgradeStep
 	public $class = null;
 	public $table = null;
 	public $replace = '';
+	public $xmlpath = '';
 	public $element = null;
 	public $conditions = null;
 
@@ -256,16 +257,21 @@ class jUpgradeStep
 
 		// Getting the data
 		$query = $this->_db->getQuery(true);
-		$query->select('*');
-		$query->from($this->_table);
+		$query->select('e.*');
+		$query->from($this->_table.' AS e');
 
-		if (isset($key)) {
-			$query->where("name = '{$key}'");
-		}else{
-			$query->where("status != 2");
+		if ($this->_table == 'jupgrade_extensions_tables') {
+			$query->leftJoin('`jupgrade_extensions` AS ext ON ext.name = e.element');
+			$query->select('ext.xmlpath');
 		}
 
-		$query->order('id ASC');
+		if (isset($key)) {
+			$query->where("e.name = '{$key}'");
+		}else{
+			$query->where("e.status != 2");
+		}
+
+		$query->order('e.id ASC');
 		$query->limit(1);
 
 		$this->_db->setQuery($query);
@@ -295,6 +301,7 @@ class jUpgradeStep
 		$this->_db->setQuery($query);
 		$step['laststep'] = $this->_db->loadResult();
 
+		// Set the parameters
 		$this->setParameters($step);
 
 		return true;

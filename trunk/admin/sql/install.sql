@@ -106,6 +106,7 @@ CREATE TABLE IF NOT EXISTS `jupgrade_extensions` (
   `class` varchar(255) NOT NULL,
   `status` int(11) NOT NULL DEFAULT '0',
   `cache` int(11) NOT NULL,
+  `xmlpath` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
@@ -113,11 +114,11 @@ CREATE TABLE IF NOT EXISTS `jupgrade_extensions` (
 -- Dumping data for table `jupgrade_extensions`
 --
 
-INSERT INTO `jupgrade_extensions` (`id`, `name`, `title`, `cid`, `class`, `status`, `cache`) VALUES
-(1, 'extensions', 'Check extensions', 0, 'jUpgradeCheckExtensions', 0, 0),
-(2, 'ext_components', 'Check components', 0, 'jUpgradeExtensionsComponents', 0, 0),
-(3, 'ext_modules', 'Check modules', 0, 'jUpgradeExtensionsModules', 0, 0),
-(4, 'ext_plugins', 'Check plugins', 0, 'jUpgradeExtensionsPlugins', 0, 0);
+INSERT INTO `jupgrade_extensions` (`id`, `name`, `title`, `cid`, `class`, `status`, `cache`, `xmlpath`) VALUES
+(1, 'extensions', 'Check extensions', 0, 'jUpgradeCheckExtensions', 0, 0, ''),
+(2, 'ext_components', 'Check components', 0, 'jUpgradeExtensionsComponents', 0, 0, ''),
+(3, 'ext_modules', 'Check modules', 0, 'jUpgradeExtensionsModules', 0, 0, ''),
+(4, 'ext_plugins', 'Check plugins', 0, 'jUpgradeExtensionsPlugins', 0, 0, '');
 
 --
 -- Table structure for table `jupgrade_extensions_tables`

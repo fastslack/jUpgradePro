@@ -282,28 +282,6 @@ class jUpgradeMenu extends jUpgrade
 	}
 
 	/**
-	 * Run custom code after hooks
-	 *
-	 * @return	void
-	 * @since	3.0.0
-	 */
-	public function afterHook()
-	{
-		$this->populateDefaultMenus();
-	}
-
-	public function populateDefaultMenus()
-	{
-		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'/sql/menus-'.$this->_version.'.sql';
-
-		// Import the sql file
-	  if ($this->populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
-	  	return false;
-	  }
-	}
-
-	/**
 	 * The public entry point for the class.
 	 *
 	 * @return	void

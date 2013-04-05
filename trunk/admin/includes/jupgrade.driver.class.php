@@ -62,7 +62,7 @@ class jUpgradeDriver
 	 *
 	 * @since  3.0.0
 	 */
-	static function getInstance(jUpgradeStep $step = null, $conditions = array())
+	static function getInstance(jUpgradeStep $step = null)
 	{
 		// Getting the params and Joomla version web and cli
 		$params = jUpgradeProHelper::getParams();
@@ -81,10 +81,10 @@ class jUpgradeDriver
 			throw new RuntimeException(sprintf('Unable to load JUpgrade Driver: %s', $params->get('method')));
 		}
 
-		// Create our new jUpgrade connector based on the options given.
+		// Create our new jUpgradeDriver connector based on the options given.
 		try
 		{
-			$instance = new $class($step, $conditions);
+			$instance = new $class($step);
 		}
 		catch (RuntimeException $e)
 		{

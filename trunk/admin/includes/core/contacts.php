@@ -24,25 +24,13 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.ph
 class jUpgradeContacts extends jUpgrade
 {
 	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.5
-	 */
-	protected $source = '#__contact_details';
-
-	/**
-	 * @var		string	The key of the table
-	 * @since	3.0.0
-	 */
-	protected $_tbl_key = 'id';
-
-	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
 	 * @since	0.4.5
 	 * @throws	Exception
 	 */
-	public function &databaseHook($rows)
+	public function databaseHook($rows)
 	{
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)

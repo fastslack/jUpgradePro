@@ -27,6 +27,12 @@ class jUpgrade
 	 * @since  3.0
 	 */
 	public $params = null;
+
+	/**
+	 * @var      
+	 * @since  3.0
+	 */
+	public $ready = true;
 	
 	/**
 	 * @var      
@@ -97,19 +103,11 @@ class jUpgrade
 		require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php';
 
 		if ($this->_step instanceof jUpgradeStep) {
-			$this->_step->table = $this->getTableName();
+			$this->_step->table = $this->getSourceTable();
 		}
 
-		$conditions = array();
-		if ($this->params->get('method') == 'database') {
-			$conditions = $this->getConditionsHook();
-		}
-
-		$this->_driver = JUpgradeDriver::getInstance($step, $conditions);
-
-		if (isset($this->_step->total) && !in_array($this->_step->name, $this->extensions_steps) ) {
-			$this->_total = $step->total == false ? $this->_driver->getTotal() : $step->total;
-		}
+		// Initialize the driver
+		$this->_driver = JUpgradeDriver::getInstance($step);
 
 		// Set timelimit to 0
 		if(!@ini_get('safe_mode')) {
@@ -152,22 +150,12 @@ class jUpgrade
 			return false;
 		}
 
-		// Require the file
-		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$step->name.'.php')) {
-			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/'.$step->name.'.php';
-		// Checks
-		}else if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$step->name}.php")) {
-			require_once JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$step->name}.php";
-		// 3rd party extensions
-		}else if (isset($step->element)) {
+		// Require the correct file
+		jUpgradeProHelper::requireClass($step->name);
 
-			$step->class = 'jUpgradeExtensions';
-
-			$extension_name = substr($step->element, 4);
-
-			if (JFile::exists(JPATH_PLUGINS."/jupgradepro/jupgradepro_{$extension_name}/extensions/{$step->element}.php")) {
-				require_once JPATH_PLUGINS."/jupgradepro/jupgradepro_{$extension_name}/extensions/{$step->element}.php";
-			}
+		// Correct the 3rd party extensions class name
+		if (isset($step->element)) {
+			$step->class = empty($step->class) ? 'jUpgradeExtensions' : $step->class;
 		}
 
 		// Getting the class name
@@ -202,6 +190,7 @@ class jUpgrade
 	 */
 	public function upgrade()
 	{
+
 		try
 		{
 			$this->setDestinationData();
@@ -237,6 +226,17 @@ class jUpgrade
 			}
 		}
 
+/*
+		// Calling the data modificator hook
+		$structureHookFunc = 'structureHookFunc_'.$name;
+
+		if (method_exists($this, $structureHookFunc)) { 
+			$rows = $this->$structureHookFunc($rows);
+		}else{
+			$rows = $this->dataHook($rows);
+		}
+*/
+		// Calling the data modificator hook
 		$dataHookFunc = 'dataHook_'.$name;
 
 		if (method_exists($this, $dataHookFunc)) { 
@@ -246,21 +246,21 @@ class jUpgrade
 		}
 
 		if ($rows !== false) {
-			$this->insertData($rows);
+			$this->ready = $this->insertData($rows);
 		}
 
 		// Load the step object
 		$this->_step->_load();
 
 		if ($this->getTotal() == $this->_step->cid) {
-			$this->afterHook($rows);
+			$this->ready = $this->afterHook($rows);
 		}
 
 		if ($this->_step->name == $this->_step->laststep && $this->_step->cache == 0) {
-			$this->afterAllStepsHook();
+			$this->ready = $this->afterAllStepsHook();
 		}
 
-		return true;
+		return $this->ready;
 	}
 
 	/*
@@ -354,7 +354,7 @@ class jUpgrade
 	public function getTableStructure() {
 
 		$method = $this->params->get('method');
-		$table = $this->getTableName();
+		$table = $this->getSourceTable();
 
 		if ($method == 'database') {
 			$result = $this->_driver->_db_old->getTableCreate($table);
@@ -391,7 +391,7 @@ class jUpgrade
 	 */
 	protected function insertData($rows)
 	{	
-		$table = $this->getDestinationTableName();
+		$table = $this->getDestinationTable();
 
 		// Replacing the table name if xml exists
 		$table = $this->replaceTable($table);
@@ -419,7 +419,7 @@ class jUpgrade
 
 		}
 	
-		return true;
+		return !empty($this->_step->error) ? false : true;
 	}
 
 	/**
@@ -450,7 +450,7 @@ class jUpgrade
 	 */
 	public function getDestKeyName()
 	{
-		$table = $this->getDestinationTableName();
+		$table = $this->getDestinationTable();
 
 		$query = "SHOW KEYS FROM {$table} WHERE Key_name = 'PRIMARY'";
 		$this->_db->setQuery( $query );
@@ -464,15 +464,9 @@ class jUpgrade
 	 *
 	 * @since   3.0
 	 */
-	public function getTableName()
+	public function getSourceTable()
 	{
-		if (isset($this->source)) {
-			return $this->source;
-		}else if (isset($this->destination)) {
-			return $this->destination;
-		}else if (isset($this->_step->name)) {
-			return '#__'.$this->_step->name;
-		}
+		return '#__'.$this->_step->source;
 	}
 
 	/**
@@ -480,15 +474,9 @@ class jUpgrade
 	 *
 	 * @since   3.0
 	 */
-	public function getDestinationTableName()
+	public function getDestinationTable()
 	{
-		if (isset($this->destination)) {
-			return $this->destination;
-		}else if (isset($this->source)) {
-			return $this->source;
-		}else{
-			return '#__'.$this->_step->name;
-		}
+		return '#__'.$this->_step->destination;
 	}
 
 	/**
@@ -498,7 +486,7 @@ class jUpgrade
 	 */
 	public function valueExists($row, $fields)
 	{
-		$table = $this->getTableName();
+		$table = $this->getSourceTable();
 		$key = $this->getDestKeyName();	
 		$value = $row->$key;
 
@@ -667,7 +655,7 @@ class jUpgrade
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function getConditionsHook()
+	public static function getConditionsHook()
 	{
 		$conditions = array();		
 		$conditions['where'] = array();

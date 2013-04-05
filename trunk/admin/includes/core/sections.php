@@ -24,19 +24,13 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.ph
 class jUpgradeSections extends jUpgradeCategory
 {
 	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.5
-	 */
-	protected $source = '#__sections';
-
-	/**
 	 * Setting the conditions hook
 	 *
 	 * @return	void
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function getConditionsHook()
+	public static function getConditionsHook()
 	{
 		$conditions = array();
 

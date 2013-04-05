@@ -21,25 +21,13 @@
 class jUpgradeWeblinks extends jUpgrade
 {
 	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.5
-	 */
-	protected $source = '#__weblinks';
-
-	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.4
-	 */
-	protected $_tbl_key = 'id';
-
-	/**
 	 * Setting the conditions hook
 	 *
 	 * @return	void
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function getConditionsHook()
+	public static function getConditionsHook()
 	{
 		$conditions = array();
 

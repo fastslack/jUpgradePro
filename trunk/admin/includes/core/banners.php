@@ -21,31 +21,13 @@
 class jUpgradeBanners extends jUpgrade
 {
 	/**
-	 * @var         string  The name of the source database table.
-	 * @since       0.4.5
-	 */
-	protected $source = '#__banner';
-
-	/**
-	 * @var         string  The name of the destination database table.
-	 * @since       0.4.5
-	 */
-	protected $destination = '#__banners';
-
-	/**
-	 * @var		string	The key of the table
-	 * @since	3.0.0
-	 */
-	protected $_tbl_key = 'id';
-
-	/**
 	 * Setting the conditions hook
 	 *
 	 * @return	void
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function getConditionsHook()
+	public static function getConditionsHook()
 	{
 		$conditions = array();
 		

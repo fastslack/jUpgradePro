@@ -21,25 +21,13 @@
 class jUpgradeModules extends jUpgrade
 {
 	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.5
-	 */
-	protected $source = '#__modules';
-
-	/**
-	 * @var		string	The key of the table
-	 * @since	3.0.0
-	 */
-	protected $_tbl_key = 'id';
-
-	/**
 	 * Setting the conditions hook
 	 *
 	 * @return	void
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function getConditionsHook()
+	public static function getConditionsHook()
 	{
 		$conditions = array();
 
@@ -105,8 +93,8 @@ class jUpgradeModules extends jUpgrade
 	 */
 	public function dataHook($rows = null)
 	{
-		$table	= empty($this->destination) ? $this->source : $this->destination;
-
+		// Getting the source table
+		$table = $this->getSourceTable();
 		// Getting the component parameter with global settings
 		$params = $this->getParams();
 

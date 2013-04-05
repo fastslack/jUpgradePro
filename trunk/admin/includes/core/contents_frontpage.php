@@ -19,15 +19,4 @@
  */
 class jUpgradeContentFrontpage extends jUpgrade
 {
-	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.4
-	 */
-	protected $source = '#__content_frontpage';
-
-	/**
-	 * @var		string	The key of the table
-	 * @since	3.0.0
-	 */
-	protected $_tbl_key = 'content_id';
 }

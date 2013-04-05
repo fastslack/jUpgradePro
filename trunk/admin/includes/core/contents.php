@@ -21,24 +21,6 @@
 class jUpgradeContent extends jUpgrade
 {
 	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.5
-	 */
-	protected $source = '#__content';
-
-	/**
-	 * @var		string	The name of the destination database table.
-	 * @since	0.4.5
-	 */
-	protected $destination = '#__content';
-
-	/**
-	 * @var		string	The key of the table
-	 * @since	3.0.0
-	 */
-	protected $_tbl_key = 'id';
-
-	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
@@ -126,7 +108,7 @@ class jUpgradeContent extends jUpgrade
 	public function dataHook($rows = null)
 	{
 		$params = $this->getParams();
-		$table	= $this->getDestinationTableName();
+		$table	= $this->getDestinationTable();
 
 		// Get category mapping
 		$query = "SELECT * FROM jupgrade_categories WHERE section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$' AND old>0";

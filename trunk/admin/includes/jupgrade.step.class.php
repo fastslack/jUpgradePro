@@ -26,14 +26,14 @@ class jUpgradeStep
 	public $name = null;
 	public $title = null;
 	public $class = null;
-	public $table = null;
 	public $replace = '';
 	public $xmlpath = '';
 	public $element = null;
 	public $conditions = null;
 
-	public $debug = '';
-
+	public $tbl_key = '';
+	public $source = '';
+	public $destination = '';
 	public $cid = 0;
 	public $cache = 0;
 	public $status = 0;
@@ -42,7 +42,7 @@ class jUpgradeStep
 	public $stop = 0;
 	public $laststep = '';
 
-	public $first = false;
+	public $first = true;
 	public $next = false;
 	public $middle = false;
 	public $end = false;
@@ -51,6 +51,7 @@ class jUpgradeStep
 
 	public $_table = false;
 
+	public $debug = '';
 	public $error = '';
 	
 	/**
@@ -59,7 +60,7 @@ class jUpgradeStep
 	 */
 	protected $_db = null;
 
-	function __construct($key = null, $extensions = false)
+	function __construct($name = null, $extensions = false)
 	{
 		jimport('legacy.component.helper');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
@@ -77,7 +78,7 @@ class jUpgradeStep
 		}
 
 		// Load the last step from database
-		$this->_load($key);
+		$this->_load($name);
 	}
 
 	/**
@@ -88,12 +89,12 @@ class jUpgradeStep
 	 *
 	 * @since  3.0.0
 	 */
-	static function getInstance($key = null, $extensions = false)
+	static function getInstance($name = null, $extensions = false)
 	{
 		// Create our new jUpgrade connector based on the options given.
 		try
 		{
-			$instance = new JUpgradeStep($key, $extensions);
+			$instance = new JUpgradeStep($name, $extensions);
 		}
 		catch (RuntimeException $e)
 		{
@@ -177,9 +178,8 @@ class jUpgradeStep
 
 		$limit = $this->params->get('cache_limit');
 
-		// Getting total
-		$object = jUpgrade::getInstance($this);
-		$this->total = (int) $object->getTotal();
+		// Getting the total
+		$this->total = jUpgradeProHelper::getTotal($this);
 
 		// We must to fragment the steps
 		if ($this->total > $limit) {
@@ -253,7 +253,7 @@ class jUpgradeStep
 	 *
 	 * @return   step object
 	 */
-	public function _load($key = null) {
+	public function _load($name = null) {
 
 		// Getting the data
 		$query = $this->_db->getQuery(true);
@@ -265,8 +265,8 @@ class jUpgradeStep
 			$query->select('ext.xmlpath');
 		}
 
-		if (isset($key)) {
-			$query->where("e.name = '{$key}'");
+		if (isset($name)) {
+			$query->where("e.name = '{$name}'");
 		}else{
 			$query->where("e.status != 2");
 		}
@@ -295,6 +295,9 @@ class jUpgradeStep
 		$query->select('name');
 		$query->from($this->_table);
 		$query->where("status = 0");
+		if ($this->_table == 'jupgrade_extensions_tables') {
+			$query->where("element = '{$step['element']}'");
+		}
 		$query->order('id DESC');
 		$query->limit(1);
 
@@ -316,7 +319,7 @@ class jUpgradeStep
 	public function _updateStep() {
 
 		// Initialize
-		$cache = $cid = $total = $start = $stop = '';
+		$cache = $cid = $total = $start = $stop = $first ='';
 
 		// Setting the statements
 		$status = "status = {$this->status}";
@@ -334,9 +337,12 @@ class jUpgradeStep
 		if (!empty($this->stop)) {
 			$stop = ", stop = {$this->stop}";
 		}
+		if (!empty($this->first)) {
+			$first = ", first = {$this->first}";
+		}
 
 		// Updating the status flag
-		$query = "UPDATE {$this->_table} SET {$status} {$cache} {$cid} {$total} {$start} {$stop}"
+		$query = "UPDATE {$this->_table} SET {$status} {$cache} {$cid} {$total} {$start} {$stop} {$first}"
 		." WHERE name = '{$this->name}'";
 		$this->_db->setQuery($query);
 		$this->_db->query();

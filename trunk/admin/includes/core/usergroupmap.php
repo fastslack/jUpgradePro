@@ -26,24 +26,6 @@
 class jUpgradeUsergroupMap extends jUpgradeUsersDefault
 {
 	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.4
-	 */
-	protected $source = '#__core_acl_groups_aro_map';
-
-	/**
-	 * @var		string	The name of the destination database table.
-	 * @since	0.4.4
-	 */
-	protected $destination = '#__user_usergroup_map';
-
-	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.4
-	 */
-	protected $_tbl_key = 'aro_id';
-
-	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array

@@ -24,19 +24,13 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.ph
 class jUpgradeCategories extends jUpgradeCategory
 {
 	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.5
-	 */
-	protected $source = '#__categories';
-
-	/**
 	 * Setting the conditions hook
 	 *
 	 * @return	void
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function getConditionsHook()
+	public static function getConditionsHook()
 	{
 		$conditions = array();
 
@@ -61,6 +55,9 @@ class jUpgradeCategories extends jUpgradeCategory
 	 */
 	public function dataHook($rows = null)
 	{
+		// Getting the destination table
+		$table = $this->getDestinationTable();
+		// Getting the component parameter with global settings
 		$params = $this->getParams();
 
 		/**
@@ -69,9 +66,6 @@ class jUpgradeCategories extends jUpgradeCategory
 		 */
 		// Content categories
 		$this->section = 'com_content'; 
-
-		// Get the source data.
-		//$categories = $this->loadData('categories');
 
 		// Initialize values
 		$aliases = array();
@@ -100,7 +94,7 @@ class jUpgradeCategories extends jUpgradeCategory
 			}
 
 			// Inserting the menu
-			if (!$this->_db->insertObject($this->destination, $object)) {
+			if (!$this->_db->insertObject($table, $object)) {
 				echo $this->_db->getErrorMsg();
 			}
 		}

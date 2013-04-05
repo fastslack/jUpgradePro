@@ -19,15 +19,4 @@
  */
 class jUpgradeMenusTypes extends jUpgrade
 {
-	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.5
-	 */
-	protected $source = '#__menu_types';
-
-	/**
-	 * @var		string	The key of the table
-	 * @since	3.0.0
-	 */
-	protected $_tbl_key = 'id';
 }

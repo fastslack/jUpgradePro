@@ -32,11 +32,13 @@ class jUpgradeExtensions extends jUpgrade
 
 		$name = $this->_step->_getStepName();
 
-		// Find xml file from jUpgrade
-		$default_xmlfile = JPATH_PLUGINS."/jupgradepro/{$this->_step->xmlpath}";
+		if (!empty($this->_step->xmlpath)) {
+			// Find xml file from jUpgrade
+			$default_xmlfile = JPATH_PLUGINS."/jupgradepro/{$this->_step->xmlpath}";
 
-		if (file_exists($default_xmlfile)) {
-			$this->xml = simplexml_load_file($default_xmlfile);
+			if (file_exists($default_xmlfile)) {
+				$this->xml = simplexml_load_file($default_xmlfile);
+			}
 		}
 	}
 
@@ -72,7 +74,7 @@ class jUpgradeExtensions extends jUpgrade
 				//$this->ready = $this->migrateExtensionCustom();
 			}
 
-			$debug = $this->_step->getParameters(false);
+			//$debug = $this->_step->getParameters(false);
 
 			//print_r($debug);
 

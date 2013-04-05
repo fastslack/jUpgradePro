@@ -21,18 +21,6 @@
 class jUpgradeUsers extends jUpgradeUsersDefault
 {
 	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.4
-	 */
-	protected $source = '#__users';
-
-	/**
-	 * @var		string	The name of the source database table.
-	 * @since	0.4.4
-	 */
-	protected $_tbl_key = 'id';
-
-	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.

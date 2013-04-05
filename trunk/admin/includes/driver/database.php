@@ -39,11 +39,17 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	private $extensions_steps = array('extensions', 'ext_components', 'ext_modules', 'ext_plugins');
 
-	function __construct(jUpgradeStep $step = null, $conditions = array())
+	function __construct(jUpgradeStep $step = null)
 	{
 		parent::__construct($step);
 
-		$this->_conditions = $conditions;
+		$class = (!empty($step->class)) ? $step->class : 'jUpgrade';
+		$name = (!empty($step->name)) ? $step->name : '';
+
+		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
+		jUpgradeProHelper::requireClass($name);
+
+		$this->_conditions = $class::getConditionsHook();
 
 		$db_config = array();
 		$db_config['driver'] = $this->params->get('old_dbtype');
@@ -102,7 +108,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		}
 
 		// Get the row
-		$query = "SELECT {$select} FROM {$this->getTableName()} {$as} {$join} {$where}{$where_or} {$group_by} {$order} {$limit}";
+		$query = "SELECT {$select} FROM {$this->getSourceTable()} {$as} {$join} {$where}{$where_or} {$group_by} {$order} {$limit}";
 		$this->_db_old->setQuery( $query );
 		//echo "\nQUERY: $query\n";
 		$rows = $this->_db_old->loadAssocList();
@@ -125,8 +131,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	public function getTotal()
 	{
-		$table = $this->getTableName();
-
+		$table = $this->getSourceTable();
 		$conditions = $this->getConditionsHook();
 
 		$where = '';
@@ -148,6 +153,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 
 		/// Get Total
 		$query = "SELECT COUNT(*) FROM {$table} {$as} {$join} {$where}{$where_or}";
+
 		$this->_db_old->setQuery( $query );
 		$total = $this->_db_old->loadResult();
 
@@ -168,9 +174,6 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	public function getConditionsHook()
 	{
-		//$conditions = array();		
-		//$conditions['where'] = array();
-		// Do customisation of the params field here for specific data.
 		return $this->_conditions;	
 	}
 
@@ -188,13 +191,29 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	}
 
 	/**
-	 * @return  string	The table name  
+	 * Get the source table
 	 *
-	 * @since   3.0
+	 * @access	public
+	 * @return	string	The source table
 	 */
-	public function getTableName()
+	public function getSourceTable()
 	{
-		return str_replace('com_', '', $this->_step->table);
+		$table = $this->_db_old->getPrefix().$this->_step->source;
+
+		return $table;
+	}
+
+	/**
+	 * Get the destination table
+	 *
+	 * @access	public
+	 * @return	string	The destination table
+	 */
+	public function getDestinationTable()
+	{
+		$table = $this->_db->getPrefix().$this->_step->destination;
+
+		return $table;
 	}
 
 	/**
@@ -205,7 +224,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	public function getKeyName()
 	{
 		if (empty($this->_tbl_key)) {
-			$table = $this->getTableName();
+			$table = $this->getSourceTable();
 
 			$query = "SHOW KEYS FROM {$table} WHERE Key_name = 'PRIMARY'";
 			$this->_db_old->setQuery( $query );
@@ -228,7 +247,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	{
 		// Get the table
 		if ($table == false) {
-			$table = $this->getTableName();
+			$table = $this->getDestinationTable();
 		}
 
 		if ($this->canDrop) {

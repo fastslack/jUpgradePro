@@ -53,23 +53,50 @@ class jUpgradeProHelper
 	}
 
 	/**
+	 * Require the correct file from step
+	 *
+	 * @return  int	The total number
+	 *
+	 * @since   3.0.0
+	 */
+	public static function requireClass($name)
+	{
+
+		if (!empty($name)) {
+
+			$file_core = JPATH_COMPONENT_ADMINISTRATOR."/includes/core/{$name}.php";
+			$file_checks = JPATH_COMPONENT_ADMINISTRATOR."/includes/core/{$name}.php";
+
+			// Require the file
+			if (JFile::exists($file_core)) {
+				require_once $file_core;
+			// Checks
+			}else if (JFile::exists($file_checks)) {
+				require_once $file_checks;
+			// 3rd party extensions
+			}else if (isset($step->element)) {
+
+				//$step->class = empty($step->class) ? 'jUpgradeExtensions' : $step->class;
+
+				$phpfile_strip = JFile::stripExt(JPATH_PLUGINS."/jupgradepro/".$step->xmlpath);
+
+				if (JFile::exists("{$phpfile_strip}.php")) {
+					require_once "{$phpfile_strip}.php";
+				}
+			}
+		}
+	}
+
+	/**
 	 * Getting the total 
 	 *
 	 * @return  int	The total number
 	 *
 	 * @since   3.0.0
 	 */
-	public static function getTotal()
+	public static function getTotal($step)
 	{
-
-/*
-		// Getting the params and Joomla version web and cli
-		if (!jUpgradeProHelper::isCli()) {
-			$params	= JComponentHelper::getParams('com_jupgradepro');
-		}else{
-			$params = new JRegistry(new JConfig);
-		}
-*/
-		return $total;
+		$driver = JUpgradeDriver::getInstance($step);
+		return $driver->getTotal();
 	}
 }

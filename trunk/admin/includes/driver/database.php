@@ -45,9 +45,10 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 
 		$class = (!empty($step->class)) ? $step->class : 'jUpgrade';
 		$name = (!empty($step->name)) ? $step->name : '';
+		$xmlpath = (!empty($step->xmlpath)) ? $step->xmlpath : '';
 
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
-		jUpgradeProHelper::requireClass($name);
+		jUpgradeProHelper::requireClass($name, $xmlpath);
 
 		$this->_conditions = $class::getConditionsHook();
 

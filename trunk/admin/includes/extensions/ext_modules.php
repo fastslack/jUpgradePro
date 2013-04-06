@@ -45,7 +45,7 @@ class jUpgradeExtensionsModules extends jUpgrade
 	 * @since	3.0.0
 	 * @throws	Exception
 	 */
-	public function getConditionsHook()
+	public static function getConditionsHook()
 	{
 		$conditions = array();
 		

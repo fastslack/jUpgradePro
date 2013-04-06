@@ -59,13 +59,13 @@ class jUpgradeProHelper
 	 *
 	 * @since   3.0.0
 	 */
-	public static function requireClass($name)
+	public static function requireClass($name, $xmlpath)
 	{
 
 		if (!empty($name)) {
 
 			$file_core = JPATH_COMPONENT_ADMINISTRATOR."/includes/core/{$name}.php";
-			$file_checks = JPATH_COMPONENT_ADMINISTRATOR."/includes/core/{$name}.php";
+			$file_checks = JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$name}.php";
 
 			// Require the file
 			if (JFile::exists($file_core)) {
@@ -74,11 +74,9 @@ class jUpgradeProHelper
 			}else if (JFile::exists($file_checks)) {
 				require_once $file_checks;
 			// 3rd party extensions
-			}else if (isset($step->element)) {
+			}else if (isset($xmlpath)) {
 
-				//$step->class = empty($step->class) ? 'jUpgradeExtensions' : $step->class;
-
-				$phpfile_strip = JFile::stripExt(JPATH_PLUGINS."/jupgradepro/".$step->xmlpath);
+				$phpfile_strip = JFile::stripExt(JPATH_PLUGINS."/jupgradepro/".$xmlpath);
 
 				if (JFile::exists("{$phpfile_strip}.php")) {
 					require_once "{$phpfile_strip}.php";

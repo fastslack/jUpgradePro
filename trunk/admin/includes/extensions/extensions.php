@@ -288,7 +288,7 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 								for($i=0;$i<$count;$i++) {
 									//
 									$table = new StdClass();
-									$table->name = (string) $xml->tables->table[$i];
+									$table->name = $table->source = $table->destination = (string) $xml->tables->table[$i];
 									$table->eid = $extension->id;
 									$table->element = $element;
 									$table->class = $class;

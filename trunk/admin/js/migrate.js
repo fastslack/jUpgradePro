@@ -9,7 +9,7 @@
  * @copyright		  Copyright 2004 - 2013 Matias Aguirre. All rights reserved.
  * @license		    GNU General Public License version 2 or later; see LICENSE.txt
  */
-var jUpgradePro = new Class({
+var jUpgradepro = new Class({
 
   Implements: [Options, Events],
 

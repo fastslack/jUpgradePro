@@ -48,6 +48,107 @@ class jUpgradeMenu extends jUpgrade
 	}
 
 	/**
+	 * Insert the default menus deleted on cleanups to maintain the original id's
+	 *
+	 * @return	void
+	 * @since	0.5.2
+	 * @throws	Exception
+	 */
+	public static function insertDefaultMenus()
+	{
+		jimport('joomla.table.table');
+
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		// Getting the data
+		$query = $db->getQuery(true);
+		$query->select('extension_id');
+		$query->from('#__extensions');
+		$query->where("element = 'com_jupgradepro'");
+		$query->order('extension_id ASC');
+		$query->limit(1);
+
+		$db->setQuery($query);
+		$jupgradepro_id = $db->loadResult();
+		$jupgradepro_id = isset($jupgradepro_id) ? $jupgradepro_id : 10001;
+
+		// Default menus
+		$menus = array(
+			array('com_banners', 'Banners', 'index.php?option=com_banners', 'class:banners', 4),
+			array('com_banners', 'Banners/Banners', 'index.php?option=com_banners', 'class:banners', 4),
+			array('com_banners_categories', 'Banners/Categories', 'index.php?option=com_categories&extension=com_banners', 'class:banners-cat', 6),
+			array('com_banners_clients', 'Banners/Clients', 'index.php?option=com_banners&view=clients', 'class:banners-clients', 4),
+			array('com_banners_tracks', 'Banners/Tracks', 'index.php?option=com_banners&view=tracks', 'class:banners-tracks', 4),
+			array('com_contact', 'Contacts', 'index.php?option=com_contact', 'class:contact', 8),
+			array('com_contact', 'Contacts/Contacts', 'index.php?option=com_contact', 'class:contact', 8),
+			array('com_contact_categories', 'Contacts/Categories', 'index.php?option=com_categories&extension=com_contact', 'class:contact-cat', 6),
+			array('com_messages', 'Messaging', 'index.php?option=com_messages', 'class:messages', 15),
+			array('com_messages_add', 'Messaging/New Private Message', 'index.php?option=com_messages&task=message.add', 'class:messages-add', 15),
+			array('com_messages_read', 'Messaging/Read Private Message', 'index.php?option=com_messages', 'class:messages-read', 15),
+			array('com_newsfeeds', 'News Feeds', 'index.php?option=com_newsfeeds', 'class:newsfeeds', 17),
+			array('com_newsfeeds_feeds', 'News Feeds/Feeds', 'index.php?option=com_newsfeeds', 'class:newsfeeds', 17),
+			array('com_newsfeeds_categories', 'News Feeds/Categories', 'index.php?option=com_categories&extension=com_newsfeeds', 'class:newsfeeds-cat', 6),
+			array('com_redirect', 'Redirect', 'index.php?option=com_redirect', 'class:redirect', 24),
+			array('com_search', 'Basic Search', 'index.php?option=com_search', 'class:search', 19),
+			array('com_weblinks', 'Weblinks', 'index.php?option=com_weblinks', 'class:weblinks', 21),
+			array('com_weblinks_links', 'Weblinks/Links', 'index.php?option=com_weblinks', 'class:weblinks', 21),
+			array('com_weblinks_categories', 'Weblinks/Categories', 'index.php?option=com_categories&extension=com_weblinks', 'class:weblinks-cat', 6),
+			array('com_finder', 'Smart Search', 'index.php?option=com_finder', 'class:finder', 27),
+			array('com_joomlaupdate', 'Joomla! Update', 'index.php?option=com_joomlaupdate', 'class:joomlaupdate', 28),
+			array('com_jupgradepro', 'jUpgradePro', 'index.php?option=com_jupgradepro', 'class:jupgradepro', $jupgradepro_id )
+		);
+
+
+		foreach ($menus as $menu) {
+
+			$parent = 1;
+
+			// Rebuild the categories table
+			$table = JTable::getInstance('Menu', 'JTable');
+
+			$explode = explode("/", $menu[1]);
+
+			// Setting the data
+			$array = array();
+			$array['menutype'] = 'menu';
+			$array['type'] = 'component';
+			$array['title'] = $menu[0];
+			$array['alias'] = (count($explode) > 1) ? $explode[1] :$menu[1];
+			$array['path'] = $menu[1];
+			$array['link'] = $menu[2];
+			$array['img'] = $menu[3];
+			$array['published'] = 0;
+			$array['component_id'] = $menu[4];
+			$array['client_id'] = 1;
+			$array['language'] = '*';
+
+			if (count($explode) > 1) {
+
+				// Getting the data
+				$query = $db->getQuery(true);
+				$query->select('id');
+				$query->from('#__menu');
+				$query->where("path = '{$explode[0]}'");
+				$query->order('id ASC');
+				$query->limit(1);
+
+				$db->setQuery($query);
+				$parent = $db->loadResult();
+
+			}
+
+			// Setting the location of the new category
+			$table->setLocation($parent, 'last-child');
+			//
+			$table->bind($array);
+			// Store
+			$table->store();
+		}
+
+	}
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.

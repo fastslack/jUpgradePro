@@ -109,6 +109,11 @@ class jUpgrade
 		// Initialize the driver
 		$this->_driver = JUpgradeDriver::getInstance($step);
 
+		// Getting the total
+		if (!empty($step->source)) {
+			$this->_total = jUpgradeProHelper::getTotal($step);
+		}
+
 		// Set timelimit to 0
 		if(!@ini_get('safe_mode')) {
 			if (!empty($this->params->timelimit)) {
@@ -151,7 +156,7 @@ class jUpgrade
 		}
 
 		// Require the correct file
-		jUpgradeProHelper::requireClass($step->name);
+		jUpgradeProHelper::requireClass($step->name, $step->xmlpath);
 
 		// Correct the 3rd party extensions class name
 		if (isset($step->element)) {
@@ -256,7 +261,7 @@ class jUpgrade
 			$this->ready = $this->afterHook($rows);
 		}
 
-		if ($this->_step->name == $this->_step->laststep && $this->_step->cache == 0) {
+		if ($this->_step->name == $this->_step->laststep && $this->_step->cache == 0 && $this->getTotal() == $this->_step->cid) {
 			$this->ready = $this->afterAllStepsHook();
 		}
 
@@ -296,13 +301,9 @@ class jUpgrade
 	 */
 	protected function afterAllStepsHook()
 	{
-		// The sql file with menus
-		$sqlfile = JPATH_COMPONENT_ADMINISTRATOR.'/sql/menus-'.$this->_version.'.sql';
-
-		// Import the sql file
-	  if ($this->populateDatabase($this->_db, $sqlfile, $errors) > 0 ) {
-	  	return false;
-	  }
+		// Restore the deleted menu's
+		require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/menus.php';
+		$return = jUpgradeMenu::insertDefaultMenus();
 
 		return true;
 	}

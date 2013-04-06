@@ -42,7 +42,7 @@ class jUpgradeStep
 	public $stop = 0;
 	public $laststep = '';
 
-	public $first = true;
+	public $first = false;
 	public $next = false;
 	public $middle = false;
 	public $end = false;
@@ -179,7 +179,9 @@ class jUpgradeStep
 		$limit = $this->params->get('cache_limit');
 
 		// Getting the total
-		$this->total = jUpgradeProHelper::getTotal($this);
+		if (isset($this->source)) {
+			$this->total = jUpgradeProHelper::getTotal($this);
+		}
 
 		// We must to fragment the steps
 		if ($this->total > $limit) {
@@ -227,14 +229,9 @@ class jUpgradeStep
 		}else{
 
 			//$this->next = true;
-			$this->first = true;
+			$this->first = 1;
 			$this->cache = 0;
 			$this->stop = $this->total - 1;
-		}
-
-		// If first step start = 1
-		if ($this->first == true) {
-			$this->start = 0;
 		}
 
 		// Mark if is the end of the step
@@ -318,34 +315,20 @@ class jUpgradeStep
 	 */
 	public function _updateStep() {
 
-		// Initialize
-		$cache = $cid = $total = $start = $stop = $first ='';
+		$query = $this->_db->getQuery(true);
+		$query->update($this->_table);
 
-		// Setting the statements
-		$status = "status = {$this->status}";
-		$cache = ", cache = {$this->cache}";
+		$columns = array('status', 'cache', 'cid', 'total', 'start', 'stop', 'first');
 
-		if (!empty($this->cid)) {
-			$cid = ", cid = {$this->cid}";
-		}
-		if (!empty($this->total)) {
-			$total = ", total = {$this->total}";
-		}
-		if (!empty($this->start)) {
-			$start = ", start = {$this->start}";
-		}
-		if (!empty($this->stop)) {
-			$stop = ", stop = {$this->stop}";
-		}
-		if (!empty($this->first)) {
-			$first = ", first = {$this->first}";
+		foreach ($columns as $column) {
+			if (!empty($this->$column)) {
+				$query->set("{$column} = {$this->$column}");
+			}
 		}
 
-		// Updating the status flag
-		$query = "UPDATE {$this->_table} SET {$status} {$cache} {$cid} {$total} {$start} {$stop} {$first}"
-		." WHERE name = '{$this->name}'";
-		$this->_db->setQuery($query);
-		$this->_db->query();
+		$query->where("name = {$this->_db->quote($this->name)}");
+		// Execute the query
+		$this->_db->setQuery($query)->execute();
 
 		// Check for query error.
 		$error = $this->_db->getErrorMsg();
@@ -369,10 +352,12 @@ class jUpgradeStep
 	{
 		$name = $this->_getStepName();
 
-		$query = "UPDATE `{$this->_table}` SET `cid` = '{$id}' WHERE name = ".$this->_db->quote($name);
-		$this->_db->setQuery( $query );
-
-		return $this->_db->query();
+		$query = $this->_db->getQuery(true);
+		$query->update($this->_table);
+		$query->set("`cid` = '{$id}'");
+		$query->where("name = {$this->_db->quote($name)}");
+		// Execute the query
+		return $this->_db->setQuery($query)->execute();
 	}
 
 	/**

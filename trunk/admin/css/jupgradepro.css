@@ -146,6 +146,13 @@ h2.done {
 	font-size: 8pt;
 }
 
+#debug {
+	border: 0px solid #000;
+	max-width: 800px;
+	word-wrap: break-word;
+	overflow:hidden;
+}
+
 /* Bootstrap */
 
 .info, .success, .warning, .error {

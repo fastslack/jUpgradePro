@@ -95,7 +95,8 @@ class jUpgradeMenu extends jUpgrade
 			array('com_weblinks_categories', 'Weblinks/Categories', 'index.php?option=com_categories&extension=com_weblinks', 'class:weblinks-cat', 6),
 			array('com_finder', 'Smart Search', 'index.php?option=com_finder', 'class:finder', 27),
 			array('com_joomlaupdate', 'Joomla! Update', 'index.php?option=com_joomlaupdate', 'class:joomlaupdate', 28),
-			array('com_jupgradepro', 'jUpgradePro', 'index.php?option=com_jupgradepro', 'class:jupgradepro', $jupgradepro_id )
+			// @TODO Fix image class
+			array('com_jupgradepro', 'jUpgradePro', 'index.php?option=com_jupgradepro', 'components/com_jupgradepro/images/jupgradepro.png', $jupgradepro_id )
 		);
 
 

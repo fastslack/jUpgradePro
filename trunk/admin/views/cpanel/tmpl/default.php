@@ -28,8 +28,8 @@ $document->addStyleSheet("components/com_jupgradepro/css/jupgrade.css");
 
 window.addEvent('domready', function() {
 
-	/* Init jUpgrade */
-	var jupgrade = new jUpgrade({
+	/* Init jUpgradePro */
+	var jUpgradePro = new jUpgradePro({
 		method: '<?php echo $params->get("method") ? $params->get("method") : 0; ?>',
 		skip_checks: <?php echo $params->get("skip_checks") ? $params->get("skip_checks") : 0; ?>,
     skip_templates: <?php echo $params->get("skip_templates") ? $params->get("skip_templates") : 0; ?>,

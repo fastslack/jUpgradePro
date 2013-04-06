@@ -22,20 +22,19 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php';
 /**
  * jUpgradePro Model
  *
- * @package		MatWare
- * @subpackage	com_jupgrade
+ * @package		jUpgradePro
  */
 class jUpgradeProModel extends JModelLegacy
 {
 	/**
-	 * Initial checks in jUpgrade
+	 * Initial checks in jUpgradePro
 	 *
 	 * @return	none
 	 * @since	1.2.0
 	 */
 	function getChecks()
 	{
-		// Initialize jupgrade class
+		// Initialize jUpgradePro class
 		$jupgrade = new jUpgrade;
 		
 		// Getting the component parameter with global settings
@@ -182,7 +181,7 @@ class jUpgradeProModel extends JModelLegacy
 	function getCleanup()
 	{
 		/**
-		 * Initialize jupgrade class
+		 * Initialize jUpgradePro class
 		 */
 		$jupgrade = new jUpgrade;
 

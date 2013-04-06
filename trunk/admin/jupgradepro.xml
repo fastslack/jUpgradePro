@@ -4,10 +4,10 @@
 	<author>Matias Aguirre</author>
 	<authorEmail>maguirre@matware.com.ar</authorEmail>
 	<authorUrl>http://www.matware.com.ar</authorUrl>
-	<copyright>Copyright 2006 - 2012 Matias Aguirre. All rights reserved.</copyright>
+	<copyright>Copyright 2006 - 2013 Matias Aguirre. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later.</license>
 	<creationDate>2012-08-30</creationDate>
-	<version>3.0.1-beta2</version>
+	<version>3.0.3beta1</version>
 	<description></description>
 
 	<install>
@@ -21,7 +21,7 @@
 	</files>
 
 	<administration>
-		<menu img="components/com_jupgradepro/images/jupgrade.png">COM_JUPGRADEPRO</menu>
+		<menu img="components/com_jupgradepro/images/jupgradepro.png">COM_JUPGRADEPRO</menu>
 
 		<files folder="admin">
 			<folder>controllers</folder>

@@ -14,7 +14,7 @@
 defined('_JEXEC') or die;
 
 /**
- * jUpgrade utility class for migrations
+ * jUpgradePro utility class for migrations
  *
  * @package		MatWare
  * @subpackage	com_jupgrade
@@ -142,7 +142,7 @@ class jUpgrade
 	 *
 	 * @param   stdClass   $options  Parameters to be passed to the database driver.
 	 *
-	 * @return  jUpgrade  A jupgrade object.
+	 * @return  jUpgradePro  A jUpgradePro object.
 	 *
 	 * @since  3.0.0
 	 */
@@ -173,14 +173,14 @@ class jUpgrade
 			$class = 'jUpgrade';
 		}
 
-		// Create our new jUpgrade connector based on the options given.
+		// Create our new jUpgradePro connector based on the options given.
 		try
 		{
 			$instance = new $class($step);
 		}
 		catch (RuntimeException $e)
 		{
-			throw new RuntimeException(sprintf('Unable to load jUpgrade object: %s', $e->getMessage()));
+			throw new RuntimeException(sprintf('Unable to load jUpgradePro object: %s', $e->getMessage()));
 		}
 
 		return $instance;

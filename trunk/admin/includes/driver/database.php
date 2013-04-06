@@ -14,10 +14,9 @@
 defined('_JEXEC') or die;
 
 /**
- * jUpgrade database utility class
+ * jUpgradePro database utility class
  *
- * @package		MatWare
- * @subpackage	com_jupgrade
+ * @package		jUpgradePro
  */
 class jUpgradeDriverDatabase extends jUpgradeDriver
 {

@@ -14,7 +14,7 @@
 defined('_JEXEC') or die;
 
 /**
- * jUpgrade driver class
+ * jUpgradePro driver class
  *
  * @package		MatWare
  * @subpackage	com_jupgrade
@@ -57,7 +57,7 @@ class jUpgradeDriver
 	 *
 	 * @param   stdClass   $options  Parameters to be passed to the database driver.
 	 *
-	 * @return  jUpgrade  A jupgrade object.
+	 * @return  jUpgradePro  A jUpgradePro object.
 	 *
 	 * @since  3.0.0
 	 */
@@ -77,7 +77,7 @@ class jUpgradeDriver
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
 		if (!class_exists($class))
 		{
-			throw new RuntimeException(sprintf('Unable to load JUpgrade Driver: %s', $params->get('method')));
+			throw new RuntimeException(sprintf('Unable to load JUpgradePro Driver: %s', $params->get('method')));
 		}
 
 		// Create our new jUpgradeDriver connector based on the options given.
@@ -87,7 +87,7 @@ class jUpgradeDriver
 		}
 		catch (RuntimeException $e)
 		{
-			throw new RuntimeException(sprintf('Unable to load jUpgrade object: %s', $e->getMessage()));
+			throw new RuntimeException(sprintf('Unable to load jUpgradePro object: %s', $e->getMessage()));
 		}
 
 		return $instance;

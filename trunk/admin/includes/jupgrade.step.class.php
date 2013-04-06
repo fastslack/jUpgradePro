@@ -14,10 +14,9 @@
 defined('_JEXEC') or die;
 
 /**
- * jUpgrade step class
+ * jUpgradePro step class
  *
- * @package		MatWare
- * @subpackage	com_jupgrade
+ * @package		jUpgradePro
  */
 class jUpgradeStep
 {	
@@ -84,13 +83,13 @@ class jUpgradeStep
 	 *
 	 * @param   stdClass   $options  Parameters to be passed to the database driver.
 	 *
-	 * @return  jUpgrade  A jupgrade object.
+	 * @return  jUpgradePro  A jUpgradePro object.
 	 *
 	 * @since  3.0.0
 	 */
 	static function getInstance($name = null, $extensions = false)
 	{
-		// Create our new jUpgrade connector based on the options given.
+		// Create our new jUpgradePro connector based on the options given.
 		try
 		{
 			$instance = new JUpgradeStep($name, $extensions);

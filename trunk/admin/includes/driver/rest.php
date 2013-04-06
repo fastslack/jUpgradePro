@@ -14,10 +14,9 @@
 defined('_JEXEC') or die;
 
 /**
- * jUpgrade RESTful utility class
+ * jUpgradePro RESTful utility class
  *
- * @package		MatWare
- * @subpackage	com_jupgrade
+ * @package		jUpgradePro
  */
 class jUpgradeDriverRest extends jUpgradeDriver
 {	

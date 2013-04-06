@@ -154,9 +154,6 @@ class jUpgrade
 			return false;
 		}
 
-		// Require the correct file
-		jUpgradeProHelper::requireClass($step->name, $step->xmlpath);
-
 		// Correct the 3rd party extensions class name
 		if (isset($step->element)) {
 			$step->class = empty($step->class) ? 'jUpgradeExtensions' : $step->class;
@@ -166,6 +163,9 @@ class jUpgrade
 		if (isset($step->class)) {
 			$class = $step->class;
 		}
+
+		// Require the correct file
+		jUpgradeProHelper::requireClass($step->name, $step->xmlpath, $step->class);
 
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
 		if (!class_exists($class))

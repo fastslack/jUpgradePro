@@ -58,9 +58,8 @@ class jUpgradeProHelper
 	 *
 	 * @since   3.0.0
 	 */
-	public static function requireClass($name, $xmlpath)
+	public static function requireClass($name, $xmlpath, $class)
 	{
-
 		if (!empty($name)) {
 
 			$file_core = JPATH_COMPONENT_ADMINISTRATOR."/includes/core/{$name}.php";
@@ -68,17 +67,23 @@ class jUpgradeProHelper
 
 			// Require the file
 			if (JFile::exists($file_core)) {
-				require_once $file_core;
+
+				if ($name = 'users' || $name = 'usergroupmap' || $name = 'arogroup') {
+					JLoader::register("jUpgradeUsersDefault", JPATH_COMPONENT_ADMINISTRATOR."/includes/jupgrade.users.class.php");
+				}
+
+				JLoader::register($class, $file_core);
+
 			// Checks
 			}else if (JFile::exists($file_checks)) {
-				require_once $file_checks;
+				JLoader::register($class, $file_checks);
 			// 3rd party extensions
 			}else if (isset($xmlpath)) {
 
 				$phpfile_strip = JFile::stripExt(JPATH_PLUGINS."/jupgradepro/".$xmlpath);
 
 				if (JFile::exists("{$phpfile_strip}.php")) {
-					require_once "{$phpfile_strip}.php";
+					JLoader::register($class, "{$phpfile_strip}.php");
 				}
 			}
 		}
@@ -93,7 +98,10 @@ class jUpgradeProHelper
 	 */
 	public static function getTotal($step)
 	{
+		JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
+
 		$driver = JUpgradeDriver::getInstance($step);
+
 		return $driver->getTotal();
 	}
 }

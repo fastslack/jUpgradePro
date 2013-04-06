@@ -13,7 +13,7 @@
 // No direct access.
 defined('_JEXEC') or die;
 
-require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php';
+JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
 
 /**
  * jUpgradePro Model
@@ -163,7 +163,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 				$this->returnError (417, 'COM_JUPGRADEPRO_ERROR_DATABASE_USERS');
 			}
 		}
-$this->returnError (100, 'DONE');
+
 		// Done checks
 		if (!jUpgradeProHelper::isCli())
 			$this->returnError (100, 'DONE');

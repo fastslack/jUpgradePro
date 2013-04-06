@@ -23,7 +23,7 @@ class jUpgradeProControllerAjax extends JControllerLegacy
 {
 	/**
 	 * @var		string	The context for persistent state.
-	 * @since   1.6
+	 * @since   3.0.3
 	 */
 	protected $context = 'com_jupgradepro.ajax';
 

@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
 JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
+JLoader::register('jUpgradeExtensions', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.extensions.class.php');
 
 /**
  * jUpgradePro Model

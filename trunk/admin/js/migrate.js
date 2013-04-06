@@ -100,7 +100,7 @@ var jUpgradepro = new Class({
 			// Cleanup call
 			//
 			var cleanup = new Request({
-				url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=cleanup',
+				url: 'index.php?option=com_jupgradepro&format=raw&task=ajax.cleanup',
 				method: 'get',
 				noCache: true
 			}); // end Request		
@@ -128,7 +128,7 @@ var jUpgradepro = new Class({
 			// Checks
 			//
 			var checks = new Request({
-				url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=checks',
+				url: 'index.php?option=com_jupgradepro&format=raw&task=ajax.checks',
 				method: 'get',
 				noCache: true
 			}); // end Request		
@@ -204,9 +204,7 @@ var jUpgradepro = new Class({
 		});
 
 		// Get the status element
-		status = document.getElementById('status');
-		// Get the migration_text element
-		migration_text = document.getElementById('migration_text');
+		migrate_status = document.getElementById('migrate_status');
 		// Get the currItem element
 		currItem = document.getElementById('currItem');
 		// Get the totalItems element
@@ -258,7 +256,7 @@ var jUpgradepro = new Class({
 		//
 		var step = new Request({
 			link: 'chain',
-			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=step',
+			url: 'index.php?option=com_jupgradepro&format=raw&task=ajax.step',
 			method: 'get'
 		}); // end Request		
 
@@ -281,19 +279,20 @@ var jUpgradepro = new Class({
 				}
 
 				if (self.options.debug == 1) {
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
+					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP '+object.name+']</b><br><br>' +response;
 				}
 
 				// Changing title and statusbar
 				pb4.set(object.id*6);
-				status.innerHTML = 'Migrating ' + object.title;
+
+				migrate_status.innerHTML = 'Migrating ' + object.title;
 				if (object.middle != true) {
 					currItem.innerHTML = object.cid;
 				}
 				totalItems.innerHTML = object.total;
 
 				// Start the checks
-				row.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=migrate&table='+object.name;	
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&table='+object.name;	
 
 				// Running the request[s]
 				if (method == 'ajax') {
@@ -345,8 +344,6 @@ var jUpgradepro = new Class({
 
 		// Get the status element
 		ext_status = document.getElementById('ext_status');
-		// Get the migration_text element
-		ext_migration_text = document.getElementById('ext_migration_text');
 		// Get the currItem element
 		ext_currItem = document.getElementById('ext_currItem');
 		// Get the totalItems element
@@ -397,20 +394,11 @@ var jUpgradepro = new Class({
 		});
 
 		//
-		// Declare get structure ajax call
-		//
-		var structure = new Request({
-			link: 'chain',
-			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=structure',
-			method: 'get'
-		}); // end Request
-
-		//
 		// Declare the step event
 		//
 		var ext_step = new Request({
 			link: 'chain',
-			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=step&extensions=tables',
+			url: 'index.php?option=com_jupgradepro&format=raw&task=ajax.step&extensions=tables',
 			method: 'get'
 		}); // end Request		
 
@@ -445,7 +433,7 @@ var jUpgradepro = new Class({
 				ext_totalItems.innerHTML = object.total;
 
 				// Start the checks
-				ext_row.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=migrate&extensions=tables&table='+object.name;	
+				ext_row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&extensions=tables&table='+object.name;	
 
 				// Running the request[s]
 				if (method == 'ajax') {
@@ -467,7 +455,7 @@ var jUpgradepro = new Class({
 		//
 		var check = new Request({
 			link: 'chain',
-			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=extensions',
+			url: 'index.php?option=com_jupgradepro&format=raw&task=ajax.extensions',
 			method: 'get'
 		}); // end Request
 

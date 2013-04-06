@@ -67,7 +67,7 @@ window.addEvent('domready', function() {
 				<div id="migration">
 					<p class="text"><?php echo JText::_('Upgrading progress...'); ?></p>
 					<div id="pb4"></div>
-					<div><small><i><span id="status"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
+					<div><small><i><span id="migrate_status"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
 					<div id="counter">
 						<i><small><b><span id="currItem">0</span></b> items /
 						<b><span id="totalItems">0</span></b> items</small></i>

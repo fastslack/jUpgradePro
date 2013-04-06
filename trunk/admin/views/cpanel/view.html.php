@@ -30,7 +30,7 @@ class jupgradeProViewCpanel extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		JToolbarHelper::title(JText::_( 'jUpgradePro' ), 'jupgrade');
+		JToolbarHelper::title(JText::_( 'jUpgradePro' ), 'jupgradepro');
 		JToolbarHelper::custom('cpanel', 'back.png', 'back_f2.png', 'Back', false, false);
 		JToolbarHelper::preferences('com_jupgradepro', '500');
 		JToolbarHelper::spacer();

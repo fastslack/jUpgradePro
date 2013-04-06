@@ -167,7 +167,7 @@ class jUpgradeStep
 	public function getStep($name = false, $json = true) {
 
 		// Check if step is loaded
-		if (empty($this->name)) {
+		if (empty($name)) {
 			return false;
 		}
 
@@ -260,7 +260,7 @@ class jUpgradeStep
 			$query->select('ext.xmlpath');
 		}
 
-		if (isset($name)) {
+		if (!empty($name)) {
 			$query->where("e.name = '{$name}'");
 		}else{
 			$query->where("e.status != 2");

@@ -230,16 +230,15 @@ class jUpgrade
 			}
 		}
 
-/*
-		// Calling the data modificator hook
-		$structureHookFunc = 'structureHookFunc_'.$name;
+		if ($this->_step->first == true && $this->_step->cid == 0) {
+			// Calling the structure modificator hook
+			$structureHook = 'structureHook_'.$name;
 
-		if (method_exists($this, $structureHookFunc)) { 
-			$rows = $this->$structureHookFunc($rows);
-		}else{
-			$rows = $this->dataHook($rows);
+			if (method_exists($this, $structureHook)) { 
+				$this->$structureHook();
+			}
 		}
-*/
+
 		// Calling the data modificator hook
 		$dataHookFunc = 'dataHook_'.$name;
 

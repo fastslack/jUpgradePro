@@ -1,15 +1,15 @@
 <?php
 /**
- * @version       $Id: 
- * @package       jUpgrade
- * @subpackage    jUpgradeCli
- * @copyright     CopyRight 2006-2012 Matware All rights reserved.
- * @author        Matias Aguirre
- * @email         maguirre@matware.com.ar
- * @link          http://www.matware.com.ar/
- * @license       GNU/GPL http://www.gnu.org/licenses/gpl-2.0-standalone.html
- */
-
+* jUpgradePro
+*
+* @version $Id:
+* @package jUpgradePro
+* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @author Matias Aguirre
+* @email maguirre@matware.com.ar
+* @link http://www.matware.com.ar/
+* @license GNU General Public License version 2 or later; see LICENSE
+*/
 /*
  * Change the following path to suit where you have cloned or installed the Joomla Platform repository.
  * The default setting assumes you have the joomla platform and examples folder at the same level.
@@ -32,12 +32,10 @@ jimport('joomla.application.cli');
 // Require the files
 jimport('joomla.filesystem.file');
 jimport('joomla.database.database');
+
 // Require the files
-require_once JPATH_COMPONENT.'/includes/jupgrade.step.class.php';
-require_once JPATH_COMPONENT.'/includes/jupgrade.class.php';
-require_once JPATH_COMPONENT.'/includes/jupgrade.category.class.php';
-require_once JPATH_COMPONENT.'/includes/jupgrade.extensions.class.php';
-require_once JPATH_COMPONENT.'/includes/extensions/extensions.php';
-require_once JPATH_COMPONENT.'/models/jupgrade.model.php';
-require_once JPATH_COMPONENT.'/models/rest.php';
-require_once JPATH_COMPONENT.'/models/ajax.php';
+require_once JPATH_COMPONENT.'/models/checks.php';
+require_once JPATH_COMPONENT.'/models/cleanup.php';
+require_once JPATH_COMPONENT.'/models/step.php';
+require_once JPATH_COMPONENT.'/models/migrate.php';
+require_once JPATH_COMPONENT.'/models/extensions.php';

@@ -94,9 +94,9 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 		for ($i=0;$i<count($tables);$i++) {
 			if ($jupgrade->canDrop) {
-				$this->_db->truncateTable('`{$tables[$i]}`');
+				$this->_db->truncateTable("{$tables[$i]}");
 			}else{
-				$query->delete()->from(`{$tables[$i]}`);
+				$query->delete()->from("{$tables[$i]}");
 			}
 			$this->runQuery ($query);
 		}

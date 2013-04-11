@@ -67,13 +67,7 @@ class jUpgradeProHelper
 
 			// Require the file
 			if (JFile::exists($file_core)) {
-
-				if ($name = 'users' || $name = 'usergroupmap' || $name = 'arogroup') {
-					JLoader::register("jUpgradeUsersDefault", JPATH_COMPONENT_ADMINISTRATOR."/includes/jupgrade.users.class.php");
-				}
-
 				JLoader::register($class, $file_core);
-
 			// Checks
 			}else if (JFile::exists($file_checks)) {
 				JLoader::register($class, $file_checks);

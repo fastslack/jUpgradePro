@@ -130,11 +130,32 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 		// Change the id of the admin user
 		if ($params->skip_core_users != 1) {
-			$query = "UPDATE {$prefix}users SET id = 10 WHERE username = 'admin'";
-			$this->runQuery ($query);
 
-			$query = "UPDATE {$prefix}user_usergroup_map SET user_id = 10 WHERE group_id = 8";
-			$this->runQuery ($query);
+			// Getting the data
+			$query = $this->_db->getQuery(true);
+			$query->select("username");
+			$query->from("{$prefix}users");
+			$query->where("name = 'Super User'");
+			$query->order('id ASC');
+			$query->limit(1);
+			$this->_db->setQuery($query);
+			$superuser = $this->_db->loadResult();
+
+			// Updating the super user id to 10
+			$query->clear();
+			$query->update("{$prefix}users");
+			$query->set("`id` = 10");
+			$query->where("username = '{$superuser}'");
+			// Execute the query
+			$this->_db->setQuery($query)->execute();
+
+			// Updating the user_usergroup_map
+			$query->clear();
+			$query->update("{$prefix}user_usergroup_map");
+			$query->set("`user_id` = 10");
+			$query->where("`group_id` = 8");
+			// Execute the query
+			$this->_db->setQuery($query)->execute();
 		}
 
 		// Done checks

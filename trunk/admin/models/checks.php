@@ -30,7 +30,6 @@ class jUpgradeProModelChecks extends JModelLegacy
 	 */
 	function checks()
 	{
-
 		// Initialize jUpgradePro class
 		$jupgrade = new jUpgrade;
 
@@ -61,11 +60,13 @@ class jUpgradeProModelChecks extends JModelLegacy
 			$this->returnError (404, 'COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NO_EXISTS');
 		}		
 
-		// Check if jupgrade_steps is fine
-		$query = "SELECT COUNT(id) FROM `jupgrade_steps`";
+		// Getting the data
+		$query = $this->_db->getQuery(true);
+		$query->select('COUNT(id)');
+		$query->from("`jupgrade_steps`");
 		$jupgrade->_db->setQuery($query);
 		$nine = $jupgrade->_db->loadResult();
-		
+
 		if ($nine < 10) {
 			$this->returnError (405, 'COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NOT_VALID');
 		}
@@ -133,7 +134,9 @@ class jUpgradeProModelChecks extends JModelLegacy
 
 		// Checking tables
 		if ($params->skip_core_categories != 1) {
-			$query = "SELECT COUNT(id) FROM #__categories";
+			$query->clear();
+			$query->select('COUNT(id)');
+			$query->from("`#__categories`");
 			$jupgrade->_db->setQuery($query);
 			$categories_count = $jupgrade->_db->loadResult();
 
@@ -144,9 +147,12 @@ class jUpgradeProModelChecks extends JModelLegacy
 
 		// Checking tables
 		if ($params->skip_core_contents != 1) {
-			$query = "SELECT COUNT(id) FROM #__content";
+			$query->clear();
+			$query->select('COUNT(id)');
+			$query->from("`#__content`");
 			$jupgrade->_db->setQuery($query);
 			$content_count = $jupgrade->_db->loadResult();
+
 
 			if ($content_count > 0) {
 				$this->returnError (416, 'COM_JUPGRADEPRO_ERROR_DATABASE_CONTENT');
@@ -155,7 +161,9 @@ class jUpgradeProModelChecks extends JModelLegacy
 
 		// Checking tables
 		if ($params->skip_core_users != 1) {
-			$query = "SELECT COUNT(id) FROM #__users";
+			$query->clear();
+			$query->select('COUNT(id)');
+			$query->from("`#__users`");
 			$jupgrade->_db->setQuery($query);
 			$users_count = $jupgrade->_db->loadResult();
 

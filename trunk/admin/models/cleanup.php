@@ -46,8 +46,9 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		// Get the prefix
 		$prefix = $this->_db->getPrefix();
 
-		// Set all cid, status and cache to 0 
-		$query = "UPDATE jupgrade_steps SET cid = 0, status = 0, cache = 0";
+		// Set all cid, status and cache to 0
+		$query = $this->_db->getQuery(true);
+		$query->update('jupgrade_steps')->set('cid = 0, status = 0, cache = 0');
 		$this->runQuery ($query);
 
 		// Convert the params to array
@@ -61,14 +62,14 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			if ($core == "skip_core") {
 				if ($v == 1) {
 					// Set all status to 0 and clear state
-					$query = "UPDATE jupgrade_steps SET status = 2 WHERE name = '{$name}'";
+					$query->update('jupgrade_steps')->set('status = 2')->where("name = '{$name}'");
 					$this->runQuery ($query);
 
 					if ($name == 'users') {
-						$query = "UPDATE jupgrade_steps SET status = 2 WHERE name = 'arogroup'";
+						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'arogroup\'');
 						$this->runQuery ($query);				
 
-						$query = "UPDATE jupgrade_steps SET status = 2 WHERE name = 'usergroupmap'";
+						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'usergroupmap\'');
 						$this->runQuery ($query);		
 					}
 
@@ -77,7 +78,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			if ($k == 'skip_extensions') {
 				if ($v == 1) {
-					$query = "UPDATE jupgrade_steps SET status = 2 WHERE name = 'extensions'";
+					$query->update('jupgrade_steps')->set('status = 2')->where('name = \'extensions\'');
 					$this->runQuery ($query);				
 				}
 			}
@@ -93,26 +94,29 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 		for ($i=0;$i<count($tables);$i++) {
 			if ($jupgrade->canDrop) {
-				$query = "TRUNCATE TABLE `{$tables[$i]}`";
+				$this->_db->truncateTable('`{$tables[$i]}`');
 			}else{
-				$query = "DELETE FROM `{$tables[$i]}`";
+				$query->delete()->from(`{$tables[$i]}`);
 			}
 			$this->runQuery ($query);
 		}
 
 		// Cleanup the menu table
 		if ($params->skip_core_menus != 1) {
-			$query = "DELETE FROM {$this->_db->getPrefix()}menu WHERE id > 1";
-			$this->runQuery ($query);
+			$query->delete()->from('#__menu')->where('id > 1');
 		}
 
 		// Insert needed value
-		$query = "INSERT INTO `jupgrade_menus` ( `old`, `new`) VALUES ( 0, 0)";
-		$this->runQuery ($query);
+		$query->clear();
+		$query->insert('jupgrade_menus')->columns('`old`, `new`')->values("0, 0");
+		$this->_db->setQuery($query);
+		$this->_db->execute();
 
 		// Insert uncategorized id
-		$query = "INSERT INTO `jupgrade_categories` (`old`, `new`) VALUES (0, 2)";
-		$this->runQuery ($query);
+		$query->clear();
+		$query->insert('jupgrade_categories')->columns('`old`, `new`')->values("0, 2");
+		$this->_db->setQuery($query);
+		$this->_db->execute();
 
 		// Delete uncategorised categories
 		if ($params->skip_core_categories != 1) {
@@ -172,7 +176,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 	public function runQuery ($query)
 	{
 		$this->_db->setQuery($query);
-		$this->_db->query();
+		$this->_db->execute();
 
 		// Check for query error.
 		$error = $this->_db->getErrorMsg();

@@ -43,13 +43,10 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$jupgrade->_driver->requestRest('cleanup');
 		}
 
-		// Get the prefix
-		$prefix = $this->_db->getPrefix();
-
 		// Set all cid, status and cache to 0
 		$query = $this->_db->getQuery(true);
 		$query->update('jupgrade_steps')->set('cid = 0, status = 0, cache = 0');
-		$this->runQuery ($query);
+		$this->_db->setQuery($query)->execute();
 
 		// Convert the params to array
 		$core_skips = (array) $params;
@@ -61,16 +58,19 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			if ($core == "skip_core") {
 				if ($v == 1) {
+					$query->clear();
 					// Set all status to 0 and clear state
 					$query->update('jupgrade_steps')->set('status = 2')->where("name = '{$name}'");
-					$this->runQuery ($query);
+					$this->_db->setQuery($query)->execute();
 
 					if ($name == 'users') {
+						$query->clear();
 						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'arogroup\'');
-						$this->runQuery ($query);				
+						$this->_db->setQuery($query)->execute();
 
+						$query->clear();
 						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'usergroupmap\'');
-						$this->runQuery ($query);		
+						$this->_db->setQuery($query)->execute();
 					}
 
 				}
@@ -78,8 +78,9 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			if ($k == 'skip_extensions') {
 				if ($v == 1) {
+					$query->clear();
 					$query->update('jupgrade_steps')->set('status = 2')->where('name = \'extensions\'');
-					$this->runQuery ($query);				
+					$this->_db->setQuery($query)->execute();
 				}
 			}
 		}
@@ -89,34 +90,31 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		$tables[] = 'jupgrade_categories';
 		$tables[] = 'jupgrade_menus';
 		$tables[] = 'jupgrade_modules';
-		$tables[] = "{$this->_db->getPrefix()}menu_types";
-		$tables[] = "{$this->_db->getPrefix()}content";
+		$tables[] = '#__menu_types';
+		$tables[] = '#__content';
 
 		for ($i=0;$i<count($tables);$i++) {
-			if ($jupgrade->canDrop) {
-				$this->_db->truncateTable("{$tables[$i]}");
-			}else{
-				$query->delete()->from("{$tables[$i]}");
-			}
-			$this->runQuery ($query);
+			$query->clear();
+			$query->delete()->from("{$tables[$i]}");
+			$this->_db->setQuery($query)->execute();
 		}
 
 		// Cleanup the menu table
 		if ($params->skip_core_menus != 1) {
+			$query->clear();
 			$query->delete()->from('#__menu')->where('id > 1');
+			$this->_db->setQuery($query)->execute();
 		}
 
 		// Insert needed value
 		$query->clear();
 		$query->insert('jupgrade_menus')->columns('`old`, `new`')->values("0, 0");
-		$this->_db->setQuery($query);
-		$this->_db->execute();
+		$this->_db->setQuery($query)->execute();
 
 		// Insert uncategorized id
 		$query->clear();
 		$query->insert('jupgrade_categories')->columns('`old`, `new`')->values("0, 2");
-		$this->_db->setQuery($query);
-		$this->_db->execute();
+		$this->_db->setQuery($query)->execute();
 
 		// Delete uncategorised categories
 		if ($params->skip_core_categories != 1) {
@@ -136,9 +134,9 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		if ($params->skip_core_users != 1) {
 
 			// Getting the data
-			$query = $this->_db->getQuery(true);
+			$query->clear();
 			$query->select("username");
-			$query->from("{$prefix}users");
+			$query->from("#__users");
 			$query->where("name = 'Super User'");
 			$query->order('id ASC');
 			$query->limit(1);
@@ -147,7 +145,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			// Updating the super user id to 10
 			$query->clear();
-			$query->update("{$prefix}users");
+			$query->update("#__users");
 			$query->set("`id` = 10");
 			$query->where("username = '{$superuser}'");
 			// Execute the query
@@ -155,7 +153,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			// Updating the user_usergroup_map
 			$query->clear();
-			$query->update("{$prefix}user_usergroup_map");
+			$query->update("#__user_usergroup_map");
 			$query->set("`user_id` = 10");
 			$query->where("`group_id` = 8");
 			// Execute the query
@@ -165,27 +163,6 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		// Done checks
 		if (!jUpgradeProHelper::isCli())
 			$this->returnError (100, 'DONE');
-	}
-
-	/**
-	 * runQuery
-	 *
-	 * @return	none
-	 * @since	3.0.0
-	 */
-	public function runQuery ($query)
-	{
-		$this->_db->setQuery($query);
-		$this->_db->execute();
-
-		// Check for query error.
-		$error = $this->_db->getErrorMsg();
-
-		if ($error) {
-			throw new Exception($error);
-		}
-
-		return true;
 	}
 
 	/**

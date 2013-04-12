@@ -187,6 +187,27 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$this->_db->setQuery($query)->execute();
 		}
 
+		// Checking if modules were added.
+		if ($params->skip_core_modules != 1) {
+			$query->clear();
+			$query->select('id');
+			$query->from("`#__modules`");
+			$query->order('id DESC');
+			$query->limit(1);
+			$jupgrade->_db->setQuery($query);
+			$modules_id = $jupgrade->_db->loadResult();
+
+			if ($modules_id > 86) {
+					$query->clear();
+					$query->update('jupgrade_steps')->set('status = 2')->where('name = \'modules\'');
+					$this->_db->setQuery($query)->execute();
+
+					$query->clear();
+					$query->update('jupgrade_steps')->set('status = 2')->where('name = \'modules_menu\'');
+					$this->_db->setQuery($query)->execute();
+			}
+		}
+
 		// Done checks
 		if (!jUpgradeProHelper::isCli())
 			$this->returnError (100, 'DONE');

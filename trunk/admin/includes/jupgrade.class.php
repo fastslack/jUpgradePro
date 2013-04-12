@@ -288,7 +288,7 @@ class jUpgrade
 	 */
 	public function afterHook()
 	{
-		// Do customisation data here
+		return true;
 	}
 
 	/**
@@ -299,14 +299,6 @@ class jUpgrade
 	 */
 	protected function afterAllStepsHook()
 	{
-		$params = $this->getParams();
-
-		// Restore the deleted menu's only if menus not skipped
-		if ($params->skip_core_menus != 1) {
-			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/core/menus.php';
-			$return = jUpgradeMenu::insertDefaultMenus();
-		}
-
 		return true;
 	}
 

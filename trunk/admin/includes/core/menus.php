@@ -46,6 +46,18 @@ class jUpgradeMenu extends jUpgrade
 		return $conditions;
 	}
 
+	/*
+	 * Fake method after hooks
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function afterHook()
+	{
+		$this->insertDefaultMenus();
+	}
+
 	/**
 	 * Insert the default menus deleted on cleanups to maintain the original id's
 	 *
@@ -157,24 +169,6 @@ class jUpgradeMenu extends jUpgrade
 	 */
 	public function databaseHook($rows = null)
 	{
-/*
-		// Creating the query
-		$join = array();
-		$join[] = "LEFT JOIN #__components AS c ON c.id = m.componentid";
-		//$join[] = "LEFT JOIN #__extensions AS e ON e.element = c.option";
-
-		$rows = parent::getSourceData(
-			 ' m.id, m.menutype, m.name AS title, m.alias, m.link, m.type, c.option,'
-			//.' m.published, m.parent AS parent_id, e.extension_id AS component_id,'
-			.' m.published, m.parent AS parent_id,'
-			.' m.sublevel AS level, m.ordering, m.checked_out, m.checked_out_time, m.browserNav,'
-			.' m.access, m.params, m.lft, m.rgt, m.home',
-			$join,
-			null,
-			'm.id DESC'
-		);
- */
-
 		// Do some custom post processing on the list.
 		foreach ($rows as $key => &$row) {
  

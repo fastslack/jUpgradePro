@@ -89,6 +89,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		$tables = array();
 		$tables[] = 'jupgrade_categories';
 		$tables[] = 'jupgrade_menus';
+		$tables[] = 'jupgrade_menus_default';
 		$tables[] = 'jupgrade_modules';
 		$tables[] = '#__menu_types';
 		$tables[] = '#__content';
@@ -101,6 +102,24 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 		// Cleanup the menu table
 		if ($params->skip_core_menus != 1) {
+
+			// Getting the menus
+			$query->clear();
+			$query->select("title, path, link, img, component_id");
+			$query->from("#__menu");
+			$query->where("id > 1");
+			$query->order('id ASC');
+			$this->_db->setQuery($query);
+			$menus = $this->_db->loadObjectList();
+
+			foreach ($menus as $menu)
+			{
+				// Convert the array into an object.
+				$menu = (object) $menu;
+
+				$this->_db->insertObject('jupgrade_menus_default', $menu);
+			}
+
 			$query->clear();
 			$query->delete()->from('#__menu')->where('id > 1');
 			$this->_db->setQuery($query)->execute();
@@ -115,7 +134,15 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		$query->clear();
 		$query->insert('jupgrade_categories')->columns('`old`, `new`')->values("0, 2");
 		$this->_db->setQuery($query)->execute();
-
+			// Getting the data
+			$query->clear();
+			$query->select("username");
+			$query->from("#__users");
+			$query->where("name = 'Super User'");
+			$query->order('id ASC');
+			$query->limit(1);
+			$this->_db->setQuery($query);
+			$superuser = $this->_db->loadResult();
 		// Delete uncategorised categories
 		if ($params->skip_core_categories != 1) {
 			for($i=2;$i<=7;$i++) {

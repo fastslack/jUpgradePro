@@ -203,3 +203,20 @@ INSERT INTO `jupgrade_steps` (`id`, `name`, `title`, `tbl_key`, `source`, `desti
 (15, 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'jUpgradeContacts', 0, 0, 0, 0, 0, 0, 0),
 (16, 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'jUpgradeNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
 (17, 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'jUpgradeWeblinks', 0, 0, 0, 0, 0, 0, 0);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `jupgrade_menus_default`
+--
+
+DROP TABLE IF EXISTS `jupgrade_menus_default`;
+CREATE TABLE IF NOT EXISTS `jupgrade_menus_default` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `path` varchar(255) NOT NULL,
+  `link` varchar(255) NOT NULL,
+  `img` varchar(255) NOT NULL,
+  `component_id` int(11) NOT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;

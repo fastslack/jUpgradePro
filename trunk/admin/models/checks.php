@@ -133,19 +133,6 @@ class jUpgradeProModelChecks extends JModelLegacy
 		}		
 
 		// Checking tables
-		if ($params->skip_core_categories != 1) {
-			$query->clear();
-			$query->select('COUNT(id)');
-			$query->from("`#__categories`");
-			$jupgrade->_db->setQuery($query);
-			$categories_count = $jupgrade->_db->loadResult();
-
-			if ($categories_count > 7) {
-				$this->returnError (415, 'COM_JUPGRADEPRO_ERROR_DATABASE_CATEGORIES');
-			}
-		}
-
-		// Checking tables
 		if ($params->skip_core_contents != 1) {
 			$query->clear();
 			$query->select('COUNT(id)');

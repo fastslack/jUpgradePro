@@ -220,3 +220,26 @@ CREATE TABLE IF NOT EXISTS `jupgrade_menus_default` (
   `component_id` int(11) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 AUTO_INCREMENT=1 ;
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `d3rs1_categories`
+--
+
+DROP TABLE IF EXISTS `jupgrade_categories_default`;
+CREATE TABLE IF NOT EXISTS `jupgrade_categories_default` (
+  `id` int(11) NOT NULL AUTO_INCREMENT,
+  `title` varchar(255) NOT NULL,
+  `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
+  `parent_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `path` varchar(255) NOT NULL DEFAULT '',
+  `extension` varchar(50) NOT NULL DEFAULT '',
+  `note` varchar(255) NOT NULL DEFAULT '',
+  `description` mediumtext NOT NULL,
+  `published` tinyint(1) NOT NULL DEFAULT '0',
+  `params` text NOT NULL,
+  `created_user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  PRIMARY KEY (`id`)
+) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
+

@@ -100,6 +100,11 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$this->_db->setQuery($query)->execute();
 		}
 
+		// Insert needed value
+		$query->clear();
+		$query->insert('jupgrade_menus')->columns('`old`, `new`')->values("0, 0");
+		$this->_db->setQuery($query)->execute();
+
 		// Cleanup the menu table
 		if ($params->skip_core_menus != 1) {
 
@@ -125,35 +130,37 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$this->_db->setQuery($query)->execute();
 		}
 
-		// Insert needed value
-		$query->clear();
-		$query->insert('jupgrade_menus')->columns('`old`, `new`')->values("0, 0");
-		$this->_db->setQuery($query)->execute();
-
 		// Insert uncategorized id
 		$query->clear();
 		$query->insert('jupgrade_categories')->columns('`old`, `new`')->values("0, 2");
 		$this->_db->setQuery($query)->execute();
-			// Getting the data
-			$query->clear();
-			$query->select("username");
-			$query->from("#__users");
-			$query->where("name = 'Super User'");
-			$query->order('id ASC');
-			$query->limit(1);
-			$this->_db->setQuery($query);
-			$superuser = $this->_db->loadResult();
+
 		// Delete uncategorised categories
 		if ($params->skip_core_categories != 1) {
-			for($i=2;$i<=7;$i++) {
+
+			// Getting the menus
+			$query->clear();
+			$query->select("id, title, alias, parent_id, path, extension, note, description, published, params, created_user_id");
+			$query->from("#__categories");
+			$query->where("id > 1");
+			$query->order('id ASC');
+			$this->_db->setQuery($query);
+			$categories = $this->_db->loadObjectList();
+
+			foreach ($categories as $category)
+			{
+				$id = $category->id;
+				unset($category->id);
+				
+				// Inserting the category to upgrade_categories_default
+				$this->_db->insertObject('jupgrade_categories_default', $category);
+
 				// Getting the categories table
 				$table = JTable::getInstance('Category', 'JTable');
-
 				// Load it before delete. Joomla bug?
-				$table->load($i);
-
+				$table->load($id);
 				// Delete
-				$table->delete($i);
+				$table->delete($id);
 			}
 		}
 

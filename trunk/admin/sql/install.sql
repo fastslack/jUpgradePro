@@ -224,22 +224,33 @@ CREATE TABLE IF NOT EXISTS `jupgrade_menus_default` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `d3rs1_categories`
+-- Table structure for table `jupgrade_categories_default`
 --
 
 DROP TABLE IF EXISTS `jupgrade_categories_default`;
 CREATE TABLE IF NOT EXISTS `jupgrade_categories_default` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
-  `title` varchar(255) NOT NULL,
-  `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
   `parent_id` int(10) unsigned NOT NULL DEFAULT '0',
   `path` varchar(255) NOT NULL DEFAULT '',
   `extension` varchar(50) NOT NULL DEFAULT '',
+  `title` varchar(255) NOT NULL,
+  `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL DEFAULT '',
   `note` varchar(255) NOT NULL DEFAULT '',
   `description` mediumtext NOT NULL,
   `published` tinyint(1) NOT NULL DEFAULT '0',
+  `checked_out` int(11) unsigned NOT NULL DEFAULT '0',
+  `checked_out_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `access` int(10) unsigned NOT NULL DEFAULT '0',
   `params` text NOT NULL,
+  `metadesc` varchar(1024) NOT NULL COMMENT 'The meta description for the page.',
+  `metakey` varchar(1024) NOT NULL COMMENT 'The meta keywords for the page.',
+  `metadata` varchar(2048) NOT NULL COMMENT 'JSON encoded metadata properties.',
   `created_user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `created_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `modified_user_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `modified_time` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
+  `hits` int(10) unsigned NOT NULL DEFAULT '0',
+  `language` char(7) NOT NULL,
+  `version` int(10) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM  DEFAULT CHARSET=utf8 ;
-
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;

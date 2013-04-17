@@ -30,11 +30,12 @@ class jupgradeProViewCpanel extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
+		$url = 'http://wiki.redcomponent.com/index.php?title=JUpgradePRO:Table_of_Contents';
+
 		JToolbarHelper::title(JText::_( 'jUpgradePro' ), 'jupgradepro');
-		JToolbarHelper::custom('cpanel', 'back.png', 'back_f2.png', 'Back', false, false);
 		JToolbarHelper::preferences('com_jupgradepro', '500');
 		JToolbarHelper::spacer();
-		JToolbarHelper::custom('help', 'help.png', 'help_f2.png', 'Help', false, false);
+		JToolbarHelper::help('help', false, $url);
 		JToolbarHelper::spacer();
 
 		// Get params

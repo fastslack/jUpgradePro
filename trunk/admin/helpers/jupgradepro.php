@@ -29,7 +29,7 @@ class jUpgradeProHelper
 	 */
 	public static function isCli()
 	{
-		return (PHP_SAPI === 'cli') ? true : false;
+		return (php_sapi_name() === 'cli') ? true : false;
 	}
 
 	/**
@@ -41,10 +41,14 @@ class jUpgradeProHelper
 	 */
 	public static function getParams()
 	{
+		// Getting the type of interface between web server and PHP
+		$sapi = php_sapi_name();
+
 		// Getting the params and Joomla version web and cli
-		if (!jUpgradeProHelper::isCli()) {
+		if ($sapi != 'cli') {
 			$params	= JComponentHelper::getParams('com_jupgradepro');
-		}else{
+			$params = $params->toObject();
+		}else if ($sapi == 'cli') {
 			$params = new JRegistry(new JConfig);
 		}
 

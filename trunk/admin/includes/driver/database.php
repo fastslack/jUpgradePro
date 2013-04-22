@@ -191,29 +191,23 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	}
 
 	/**
-	 * Get the source table
+	 * @return  string	The table name  
 	 *
-	 * @access	public
-	 * @return	string	The source table
+	 * @since   3.0
 	 */
 	public function getSourceTable()
 	{
-		$table = $this->_db_old->getPrefix().$this->_step->source;
-
-		return $table;
+		return '#__'.$this->_step->source;
 	}
 
 	/**
-	 * Get the destination table
+	 * @return  string	The table name  
 	 *
-	 * @access	public
-	 * @return	string	The destination table
+	 * @since   3.0
 	 */
 	public function getDestinationTable()
 	{
-		$table = $this->_db->getPrefix().$this->_step->destination;
-
-		return $table;
+		return '#__'.$this->_step->destination;
 	}
 
 	/**

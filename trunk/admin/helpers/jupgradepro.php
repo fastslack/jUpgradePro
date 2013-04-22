@@ -47,12 +47,11 @@ class jUpgradeProHelper
 		// Getting the params and Joomla version web and cli
 		if ($sapi != 'cli') {
 			$params	= JComponentHelper::getParams('com_jupgradepro');
-			$params = $params->toObject();
 		}else if ($sapi == 'cli') {
 			$params = new JRegistry(new JConfig);
 		}
 
-		return $params;
+		return $params->toObject();;
 	}
 
 	/**

@@ -235,6 +235,7 @@ var jUpgradepro = new Class({
 
 				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
 					if (row_object.end == 1) {
+						pb4.set(100);
 						pb4.finish();
 						this.cancel();
 						step.cancel();
@@ -270,6 +271,7 @@ var jUpgradepro = new Class({
 				// Redirect if total == 0
 				if (object.total == 0) {
 					if (object.end == 1) {
+						pb4.set(100);
 						pb4.finish();
 						this.cancel();
 						self.extensions();

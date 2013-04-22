@@ -144,7 +144,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			// Getting the menus
 			$query->clear();
-			$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`, `metadesc`, `metakey`, `metadata`, `created_user_id`, `created_time`, `modified_user_id`, `modified_time`, `hits`, `language`, `version`");
+			$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`,  `params`, `created_user_id`");
 			$query->from("#__categories");
 			$query->where("id > 1");
 			$query->order('id ASC');

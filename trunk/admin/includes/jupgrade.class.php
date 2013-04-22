@@ -92,7 +92,7 @@ class jUpgrade
 			$version = new JVersion;
 			$this->_version = $version->RELEASE;
 		}else{
-			$this->_version = $this->params->get('RELEASE');
+			$this->_version = $this->params->RELEASE;
 		}
 
 		// Creating dabatase instance for this installation

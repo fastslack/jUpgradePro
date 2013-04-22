@@ -57,7 +57,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		$db_config['user'] = $this->params->old_username;
 		$db_config['password'] = $this->params->old_password;
 		$db_config['database'] = $this->params->old_db;
-		$db_config['prefix'] = $this->params->old_prefix;
+		$db_config['prefix'] = $this->params->old_dbprefix;
 
 		$this->_db_old = JDatabase::getInstance($db_config);
 	}

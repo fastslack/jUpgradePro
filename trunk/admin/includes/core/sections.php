@@ -108,46 +108,18 @@ class jUpgradeSections extends jUpgradeCategory
 	 */
 	public function afterHook()
 	{
+		// Fixing the parents
 		$this->fixParents();
-		$this->insertUncategorized();
+		// Insert existing catgories
+		$this->insertExisting();
 	}
 
-	protected function insertUncategorized()
-	{
-		$uncategorised = array('com_content', 'com_banners', 'com_contact', 'com_newsfeeds', 'com_weblinks', 'com_users.notes');
-
-		//for($i=2;$i<=7;$i++) {
-		foreach ($uncategorised as $uncat) {
-			// Rebuild the categories table
-			$table = JTable::getInstance('Category', 'JTable');
-
-			// Setting the data
-			$array = array();
-			$array['extension'] = $uncat;
-			$array['path'] = $array['alias'] = 'uncategorised';
-			$array['title'] = 'Uncategorised';
-			$array['access'] = $array['published'] = 1;
-			$array['params'] = ($uncat == 'com_banners') ? '{"target":"","image":"","foobar":""}' : '{"target":"","image":""}';
-			$array['metadata'] = '{"page_title":"","author":"","robots":""}';
-			$array['created_user_id'] = 42;
-			$array['language'] = '*';
-
-			// Setting the default rules
-			$rules = array();
-			$rules['core.create'] = $rules['core.delete'] = $rules['core.edit'] = $rules['core.edit.state'] = $rules['core.edit.own'] = '';
-			$array['rules'] = $rules;
-
-			// Setting the location of the new category
-			$table->setLocation(1, 'last-child');
-			//
-			$table->bind($array);
-			// Store
-			$table->store();
-		}
-	
-		return true;
-	}
-
+	/**
+	 * Update the categories parent's
+	 *
+	 * @return	void
+	 * @since	3.0
+	 */
 	protected function fixParents()
 	{
 		$change_parent = $this->getMapList('categories', false, "section != 0");
@@ -171,4 +143,68 @@ class jUpgradeSections extends jUpgradeCategory
 			}
 		}
 	}
-}
+
+	/**
+	 * Insert existing categories saved in cleanup step
+	 *
+	 * @return	void
+	 * @since	3.0
+	 */
+	protected function insertExisting()
+	{
+		jimport('joomla.table.table');
+
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		// Getting the data
+		$query = $db->getQuery(true);
+		$query->select('*');
+		$query->from('jupgrade_categories_default');
+		$query->order('id ASC');
+		$db->setQuery($query);
+		$categories = $db->loadAssocList();
+
+		foreach ($categories as $category) {
+
+			$parent = 1;
+
+			// Rebuild the categories table
+			$table = JTable::getInstance('Category', 'JTable');
+
+			$explode = explode("/", $category['path']);
+
+			// Setting the data into an array to bind into the table
+			$array = array();
+			foreach ($category as $key => $value) {
+				//if (!empty($category[$key])) {
+					$array[$key] = $category[$key];
+				//}
+			}
+
+			if (count($explode) > 1) {
+
+				// Getting the data
+				$query = $db->getQuery(true);
+				$query->select('id');
+				$query->from('#__categories');
+				$query->where("path = '{$explode[0]}'");
+				$query->order('id ASC');
+				$query->limit(1);
+
+				$db->setQuery($query);
+				$parent = $db->loadResult();
+
+			}
+
+			// Setting the location of the new category
+			$table->setLocation($parent, 'last-child');
+			// Bind
+			$table->bind($array);
+			// Store
+			$table->store();
+		}
+	
+		return true;
+	} // end method
+} // end class

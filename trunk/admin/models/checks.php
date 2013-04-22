@@ -30,16 +30,15 @@ class jUpgradeProModelChecks extends JModelLegacy
 	 */
 	function checks()
 	{
-		// Initialize jUpgradePro class
-		$jupgrade = new jUpgrade;
+		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
 		// Getting the component parameter with global settings
-		$params = $jupgrade->getParams();
+		$params = jUpgradeProHelper::getParams();
 
 		// Checking tables
 		$query = "SHOW TABLES";
-		$jupgrade->_db->setQuery($query);
-		$tables = $jupgrade->_db->loadColumn();
+		$this->_db->setQuery($query);
+		$tables = $this->_db->loadColumn();
 
 		$message = array();
 		$message['status'] = "ERROR";
@@ -64,8 +63,8 @@ class jUpgradeProModelChecks extends JModelLegacy
 		$query = $this->_db->getQuery(true);
 		$query->select('COUNT(id)');
 		$query->from("`jupgrade_steps`");
-		$jupgrade->_db->setQuery($query);
-		$nine = $jupgrade->_db->loadResult();
+		$this->_db->setQuery($query);
+		$nine = $this->_db->loadResult();
 
 		if ($nine < 10) {
 			$this->returnError (405, 'COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NOT_VALID');
@@ -89,7 +88,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 			}
 
 			// Checking the RESTful connection
-			$code = $jupgrade->_driver->requestRest('check');
+			$code = $this->_driver->requestRest('check');
 
 			switch ($code) {
 				case 401:
@@ -137,9 +136,8 @@ class jUpgradeProModelChecks extends JModelLegacy
 			$query->clear();
 			$query->select('COUNT(id)');
 			$query->from("`#__content`");
-			$jupgrade->_db->setQuery($query);
-			$content_count = $jupgrade->_db->loadResult();
-
+			$this->_db->setQuery($query);
+			$content_count = $this->_db->loadResult();
 
 			if ($content_count > 0) {
 				$this->returnError (416, 'COM_JUPGRADEPRO_ERROR_DATABASE_CONTENT');
@@ -151,8 +149,8 @@ class jUpgradeProModelChecks extends JModelLegacy
 			$query->clear();
 			$query->select('COUNT(id)');
 			$query->from("`#__users`");
-			$jupgrade->_db->setQuery($query);
-			$users_count = $jupgrade->_db->loadResult();
+			$this->_db->setQuery($query);
+			$users_count = $this->_db->loadResult();
 
 			if ($users_count > 1) {
 				$this->returnError (417, 'COM_JUPGRADEPRO_ERROR_DATABASE_USERS');

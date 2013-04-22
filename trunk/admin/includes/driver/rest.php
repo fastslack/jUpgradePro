@@ -38,9 +38,9 @@ class jUpgradeDriverRest extends jUpgradeDriver
 		$data = array();
 	
 		// Setting the headers for REST
-		$rest_username = $this->params->get('rest_username');
-		$rest_password = $this->params->get('rest_password');
-		$rest_key = $this->params->get('rest_key');
+		$rest_username = $this->params->rest_username;
+		$rest_password = $this->params->rest_password;
+		$rest_key = $this->params->rest_key;
 
 		// Setting the headers for REST
 		$str = $rest_username.":".$rest_password;
@@ -79,7 +79,7 @@ class jUpgradeDriverRest extends jUpgradeDriver
 		// Getting the total
 		$data['task'] = $task;
 		$data['table'] = ($table != false) ? $table : '';
-		$request = $http->get($this->params->get('rest_hostname').'/index.php', $data);
+		$request = $http->get($this->params->rest_hostname.'/index.php', $data);
 
 		$code = $request->code;
 

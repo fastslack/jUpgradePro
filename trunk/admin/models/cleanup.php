@@ -35,8 +35,11 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		 */
 		$jupgrade = new jUpgrade;
 
+		// Loading the helper
+		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
+
 		// Getting the component parameter with global settings
-		$params = $jupgrade->getParams();
+		$params = jUpgradeProHelper::getParams();
 
 		// If REST is enable, cleanup the source jupgrade_steps table
 		if ($params->method == 'rest') {
@@ -88,6 +91,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		// Truncate the selected tables
 		$tables = array();
 		$tables[] = 'jupgrade_categories';
+		$tables[] = 'jupgrade_categories_default';
 		$tables[] = 'jupgrade_menus';
 		$tables[] = 'jupgrade_menus_default';
 		$tables[] = 'jupgrade_modules';
@@ -140,7 +144,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			// Getting the menus
 			$query->clear();
-			$query->select("id, title, alias, parent_id, path, extension, note, description, published, params, created_user_id");
+			$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`, `metadesc`, `metakey`, `metadata`, `created_user_id`, `created_time`, `modified_user_id`, `modified_time`, `hits`, `language`, `version`");
 			$query->from("#__categories");
 			$query->where("id > 1");
 			$query->order('id ASC');

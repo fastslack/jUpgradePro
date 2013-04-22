@@ -174,7 +174,7 @@ class jUpgradeStep
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 		$this->params = jUpgradeProHelper::getParams();
 
-		$limit = $this->params->get('cache_limit');
+		$limit = $this->params->cache_limit;
 
 		// Getting the total
 		if (isset($this->source)) {

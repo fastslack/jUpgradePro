@@ -204,7 +204,7 @@ class jUpgradeContent extends jUpgrade
 	 */
 	protected function fixComponentConfiguration()
 	{
-		if ($this->params->get('method') == 'database') {
+		if ($this->params->method == 'database') {
 
 			$query = "SELECT params FROM #__components WHERE `option` = 'com_content'";
 			$this->_driver->_db_old->setQuery($query);
@@ -220,7 +220,7 @@ class jUpgradeContent extends jUpgrade
 			// Convert params to JSON
 			$articles_config = $this->convertParams($articles_config);
 
-		}else if ($this->params->get('method') == 'rest') {
+		}else if ($this->params->method == 'rest') {
 
 			$task = "tableparams";
 			$table = "components";

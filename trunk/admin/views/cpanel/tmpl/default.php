@@ -30,12 +30,12 @@ window.addEvent('domready', function() {
 
 	/* Init jUpgradePro */
 	var jUpgradePro = new jUpgradepro({
-		method: '<?php echo $params->get("method") ? $params->get("method") : 0; ?>',
-		skip_checks: <?php echo $params->get("skip_checks") ? $params->get("skip_checks") : 0; ?>,
-    skip_templates: <?php echo $params->get("skip_templates") ? $params->get("skip_templates") : 0; ?>,
-    skip_extensions: <?php echo $params->get("skip_extensions") ? $params->get("skip_extensions") : 0; ?>,
-    positions: <?php echo $params->get("positions") ? $params->get("positions") : 0; ?>,
-    debug: <?php echo $params->get("debug") ? $params->get("debug") : 0; ?>,
+		method: '<?php echo $params->method ? $params->method : 0; ?>',
+		skip_checks: <?php echo $params->skip_checks ? $params->skip_checks : 0; ?>,
+    skip_templates: <?php echo $params->skip_templates ? $params->skip_templates : 0; ?>,
+    skip_extensions: <?php echo $params->skip_extensions ? $params->skip_extensions : 0; ?>,
+    positions: <?php echo $params->positions ? $params->positions : 0; ?>,
+    debug: <?php echo $params->debug ? $params->debug : 0; ?>,
 	});
 
 });

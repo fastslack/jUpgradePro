@@ -217,7 +217,7 @@ class jUpgrade
 	protected function setDestinationData($rows = false)
 	{
 		$name = $this->_step->_getStepName();
-		$method = $this->params->get('method');
+		$method = $this->params->method;
 
 		// Get the source data.
 		if ($rows === false) {
@@ -311,7 +311,7 @@ class jUpgrade
 	 */
 	protected function dataSwitch($name = null)
 	{
-		$method = $this->params->get('method');
+		$method = $this->params->method;
 
 		$rows = array();
 
@@ -348,7 +348,7 @@ class jUpgrade
 	*/
 	public function getTableStructure() {
 
-		$method = $this->params->get('method');
+		$method = $this->params->method;
 		$table = $this->getSourceTable();
 
 		if ($method == 'database') {
@@ -641,7 +641,7 @@ class jUpgrade
 	 */
 	public function getParams()
 	{
-		return $this->params->toObject();
+		return $this->params;
 	}
 
 	/*

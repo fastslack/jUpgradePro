@@ -67,17 +67,17 @@ class jUpgradeDriver
 		$params = jUpgradeProHelper::getParams();
 
 		// Require the driver file
-		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->get('method').'.php')) {
-			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->get('method').'.php';
+		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->method.'.php')) {
+			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->method.'.php';
 		}
 
 		// Derive the class name from the driver.
-		$class = 'JUpgradeDriver' . ucfirst(strtolower($params->get('method')));
+		$class = 'JUpgradeDriver' . ucfirst(strtolower($params->method));
 
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
 		if (!class_exists($class))
 		{
-			throw new RuntimeException(sprintf('Unable to load JUpgradePro Driver: %s', $params->get('method')));
+			throw new RuntimeException(sprintf('Unable to load JUpgradePro Driver: %s', $params->method));
 		}
 
 		// Create our new jUpgradeDriver connector based on the options given.

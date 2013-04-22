@@ -52,12 +52,12 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		$this->_conditions = $class::getConditionsHook();
 
 		$db_config = array();
-		$db_config['driver'] = $this->params->get('old_dbtype');
-		$db_config['host'] = $this->params->get('old_hostname');
-		$db_config['user'] = $this->params->get('old_username');
-		$db_config['password'] = $this->params->get('old_password');
-		$db_config['database'] = $this->params->get('old_db');
-		$db_config['prefix'] = $this->params->get('old_prefix');
+		$db_config['driver'] = $this->params->old_dbtype;
+		$db_config['host'] = $this->params->old_hostname;
+		$db_config['user'] = $this->params->old_username;
+		$db_config['password'] = $this->params->old_password;
+		$db_config['database'] = $this->params->old_db;
+		$db_config['prefix'] = $this->params->old_prefix;
 
 		$this->_db_old = JDatabase::getInstance($db_config);
 	}
@@ -70,7 +70,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	public function getSourceDatabase( )
 	{
-		$cache_limit = $this->params->get('cache_limit');
+		$cache_limit = $this->params->cache_limit;
 
 		$key = $this->getKeyName();
 		$name = $this->_getStepName();

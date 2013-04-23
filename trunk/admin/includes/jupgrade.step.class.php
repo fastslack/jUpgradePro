@@ -186,7 +186,11 @@ class jUpgradeStep
 
 			if ($this->cache == 0 && $this->status == 0) {
 
-				$this->cache = round( ($this->total-1) / $limit, 0, PHP_ROUND_HALF_DOWN);
+				if (version_compare(PHP_VERSION, '5.3.0') >= 0) {
+					$this->cache = round( ($this->total-1) / $limit, 0, PHP_ROUND_HALF_DOWN);
+				}else{
+					$this->cache = round( ($this->total-1) / $limit);
+				}
 				$this->stop = $limit - 1;
 				$this->first = true;
 				$this->debug = "{{{1}}}";

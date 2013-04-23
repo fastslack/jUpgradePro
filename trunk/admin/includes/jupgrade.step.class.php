@@ -189,18 +189,22 @@ class jUpgradeStep
 				$this->cache = round( ($this->total-1) / $limit, 0, PHP_ROUND_HALF_DOWN);
 				$this->stop = $limit - 1;
 				$this->first = true;
+				$this->debug = "{{{1}}}";
 
 			} else if ($this->cache == 1 && $this->status == 1) {
 
 				$this->start = $this->cid;
 				$this->cache = 0;
 				$this->stop = $this->total - 1;
+				$this->debug = "{{{2}}}";
 
 			} else if ($this->cache > 0) { 
 
 				$this->start = $this->cid;
 				$this->stop = ($this->start - 1) + $limit;
 				$this->cache = $this->cache - 1;
+				$this->debug = "{{{3}}}";
+				$this->first = false;
 
 				if ($this->stop > $this->total) {
 					$this->stop = $this->total - 1;
@@ -223,6 +227,7 @@ class jUpgradeStep
 			}
 			$this->cache = 0;
 			$this->status = 2;
+			$this->debug = "{{{4}}}";
 
 		}else{
 
@@ -230,6 +235,7 @@ class jUpgradeStep
 			$this->first = 1;
 			$this->cache = 0;
 			$this->stop = $this->total - 1;
+			$this->debug = "{{{5}}}";
 		}
 
 		// Mark if is the end of the step

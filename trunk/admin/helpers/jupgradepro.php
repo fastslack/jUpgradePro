@@ -93,7 +93,7 @@ class jUpgradeProHelper
 	 *
 	 * @since   3.0.0
 	 */
-	public static function getTotal($step)
+	public static function getTotal(jUpgradeStep $step = null)
 	{
 		JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 

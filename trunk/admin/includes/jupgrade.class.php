@@ -40,7 +40,7 @@ class jUpgrade
 	public $_db = null;
 
 	/**
-	 * @var      
+	 * @var
 	 * @since  3.0
 	 */
 	public $_driver = null;
@@ -99,14 +99,14 @@ class jUpgrade
 		$this->_db = JFactory::getDBO();
 
 		// Getting the driver
-		require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php';
+		JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 
 		if ($this->_step instanceof jUpgradeStep) {
 			$this->_step->table = $this->getSourceTable();
-		}
 
-		// Initialize the driver
-		$this->_driver = JUpgradeDriver::getInstance($step);
+			// Initialize the driver
+			$this->_driver = JUpgradeDriver::getInstance($step);
+		}
 
 		// Getting the total
 		if (!empty($step->source)) {

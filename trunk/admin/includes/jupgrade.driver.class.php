@@ -66,16 +66,17 @@ class jUpgradeDriver
 		// Getting the params and Joomla version web and cli
 		$params = jUpgradeProHelper::getParams();
 
+		// Derive the class name from the driver.
+		$class_name = 'JUpgradeDriver' . ucfirst(strtolower($params->method));
+		$class_file = JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->method.'.php';
+
 		// Require the driver file
-		if (JFile::exists(JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->method.'.php')) {
-			require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->method.'.php';
+		if (JFile::exists($class_file)) {
+			JLoader::register($class_name, $class_file);
 		}
 
-		// Derive the class name from the driver.
-		$class = 'JUpgradeDriver' . ucfirst(strtolower($params->method));
-
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
-		if (!class_exists($class))
+		if (!class_exists($class_name))
 		{
 			throw new RuntimeException(sprintf('Unable to load JUpgradePro Driver: %s', $params->method));
 		}
@@ -83,7 +84,7 @@ class jUpgradeDriver
 		// Create our new jUpgradeDriver connector based on the options given.
 		try
 		{
-			$instance = new $class($step);
+			$instance = new $class_name($step);
 		}
 		catch (RuntimeException $e)
 		{

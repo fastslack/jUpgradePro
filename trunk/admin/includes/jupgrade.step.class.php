@@ -201,6 +201,7 @@ class jUpgradeStep
 				$this->cache = 0;
 				$this->stop = $this->total - 1;
 				$this->debug = "{{{2}}}";
+				$this->first = false;
 
 			} else if ($this->cache > 0) { 
 

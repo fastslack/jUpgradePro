@@ -14,6 +14,7 @@
 defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
+JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
  * jUpgradePro Model
@@ -30,6 +31,11 @@ class jUpgradeProModelChecks extends JModelLegacy
 	 */
 	function checks()
 	{
+		// Getting the jUpgradeStep instance
+		$step = jUpgradeStep::getInstance();
+		// Getting the jUpgrade instance
+		$jupgrade = new jUpgrade($step);
+
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
 		// Getting the component parameter with global settings
@@ -88,7 +94,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 			}
 
 			// Checking the RESTful connection
-			$code = $this->_driver->requestRest('check');
+			$code = $jupgrade->_driver->requestRest('check');
 
 			switch ($code) {
 				case 401:
@@ -106,7 +112,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 
 		// Check for bad configurations
 		if ($params->method == "database") {
-			if ($params->old_hostname == '' || $params->old_username == '' || $params->old_password == '' || $params->old_db == '' || $params->old_dbprefix == '' ) {
+			if ($params->old_hostname == '' || $params->old_username == '' || $params->old_db == '' || $params->old_dbprefix == '' ) {
 				$this->returnError (413, 'COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
 			}
 		}

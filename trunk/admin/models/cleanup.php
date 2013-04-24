@@ -14,6 +14,7 @@
 defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
+JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
  * jUpgradePro Model
@@ -30,10 +31,10 @@ class jUpgradeProModelCleanup extends JModelLegacy
 	 */
 	function cleanup()
 	{
-		/**
-		 * Initialize jUpgradePro class
-		 */
-		$jupgrade = new jUpgrade;
+		// Getting the jUpgradeStep instance
+		$step = jUpgradeStep::getInstance();
+		// Getting the jUpgrade instance
+		$jupgrade = new jUpgrade($step);
 
 		// Loading the helper
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
@@ -91,9 +92,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		// Truncate the selected tables
 		$tables = array();
 		$tables[] = 'jupgrade_categories';
-		$tables[] = 'jupgrade_categories_default';
 		$tables[] = 'jupgrade_menus';
-		$tables[] = 'jupgrade_menus_default';
 		$tables[] = 'jupgrade_modules';
 		$tables[] = '#__menu_types';
 		$tables[] = '#__content';
@@ -104,19 +103,24 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$this->_db->setQuery($query)->execute();
 		}
 
-		// Insert needed value
-		$query->clear();
-		$query->insert('jupgrade_menus')->columns('`old`, `new`')->values("0, 0");
-		$this->_db->setQuery($query)->execute();
-
 		// Cleanup the menu table
 		if ($params->skip_core_menus != 1) {
 
+			// Insert needed value
+			$query->clear();
+			$query->insert('jupgrade_menus')->columns('`old`, `new`')->values("0, 0");
+			$this->_db->setQuery($query)->execute();
+
+			// Clear the default database
+			$query->clear();
+			$query->delete()->from('jupgrade_default_menus')->where('id > 100');
+			$this->_db->setQuery($query)->execute();
+
 			// Getting the menus
 			$query->clear();
-			$query->select("title, path, link, img, component_id");
+			$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
 			$query->from("#__menu");
-			$query->where("id > 1");
+			$query->where("id > 100");
 			$query->order('id ASC');
 			$this->_db->setQuery($query);
 			$menus = $this->_db->loadObjectList();
@@ -126,7 +130,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 				// Convert the array into an object.
 				$menu = (object) $menu;
 
-				$this->_db->insertObject('jupgrade_menus_default', $menu);
+				$this->_db->insertObject('jupgrade_default_menus', $menu);
 			}
 
 			$query->clear();
@@ -134,13 +138,13 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$this->_db->setQuery($query)->execute();
 		}
 
-		// Insert uncategorized id
-		$query->clear();
-		$query->insert('jupgrade_categories')->columns('`old`, `new`')->values("0, 2");
-		$this->_db->setQuery($query)->execute();
-
 		// Delete uncategorised categories
 		if ($params->skip_core_categories != 1) {
+
+			// Insert uncategorized id
+			$query->clear();
+			$query->insert('jupgrade_categories')->columns('`old`, `new`')->values("0, 2");
+			$this->_db->setQuery($query)->execute();
 
 			// Getting the menus
 			$query->clear();
@@ -157,7 +161,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 				unset($category->id);
 				
 				// Inserting the category to upgrade_categories_default
-				$this->_db->insertObject('jupgrade_categories_default', $category);
+				$this->_db->insertObject('jupgrade_default_categories', $category);
 
 				// Getting the categories table
 				$table = JTable::getInstance('Category', 'JTable');

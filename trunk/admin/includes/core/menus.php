@@ -75,38 +75,40 @@ class jUpgradeMenu extends jUpgrade
 		// Getting the data
 		$query = $db->getQuery(true);
 		$query->select('*');
-		$query->from('jupgrade_menus_default');
+		$query->from('jupgrade_default_menus');
 		$query->order('id ASC');
 		$db->setQuery($query);
 		$menus = $db->loadAssocList();
 
 		foreach ($menus as $menu) {
 
-			$parent = 1;
-
-			// Rebuild the categories table
+			// Unset id
+			unset($menu['id']);
+			// Getting the table and query
 			$table = JTable::getInstance('Menu', 'JTable');
+			$query = $db->getQuery(true);
 
+			// Getting the data
+			$query = $db->getQuery(true);
+			$query->select('alias');
+			$query->from('#__menu');
+			$query->where("alias LIKE '{$menu['alias']}%'");
+			$query->order('id DESC');
+			$query->limit(1);
+			$db->setQuery($query);
+			$alias = $db->loadResult();
+
+			// Prevent MySQL duplicate error
+			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
+			$menu['alias'] = (!empty($alias)) ? $alias."~" : $menu['alias'];
+
+			// Looking for parent
+			$parent = 1;
 			$explode = explode("/", $menu['path']);
-
-			// Setting the data
-			$array = array();
-			$array['menutype'] = 'menu';
-			$array['type'] = 'component';
-			$array['title'] = $menu['title'];
-			$array['alias'] = (count($explode) > 1) ? $explode[1] : $menu['path'];
-			$array['path'] = $menu['path'];
-			$array['link'] = $menu['link'];
-			$array['img'] = $menu['img'];
-			$array['published'] = 0;
-			$array['component_id'] = $menu['component_id'];
-			$array['client_id'] = 1;
-			$array['language'] = '*';
 
 			if (count($explode) > 1) {
 
-				// Getting the data
-				$query = $db->getQuery(true);
+				$query->clear();
 				$query->select('id');
 				$query->from('#__menu');
 				$query->where("path = '{$explode[0]}'");
@@ -115,17 +117,22 @@ class jUpgradeMenu extends jUpgrade
 
 				$db->setQuery($query);
 				$parent = $db->loadResult();
-
 			}
 
 			// Setting the location of the new category
 			$table->setLocation($parent, 'last-child');
 			//
-			$table->bind($array);
+			$table->bind($menu);
 			// Store
 			$table->store();
 		}
 
+		// Rebuild the menu nested set values.
+		$table = JTable::getInstance('Menu', 'JTable');
+
+		if (!$table->rebuild()) {
+			echo JError::raiseError(500, $table->getError());
+		}
 	}
 
 	/**
@@ -244,7 +251,6 @@ class jUpgradeMenu extends jUpgrade
 		$extensions_ids = $this->_db->loadObjectList('element');	
 
 		// Initialize values
-		//$aliases = array();
 		$unique_alias_suffix = 1;
 
 		$total = count($rows);
@@ -329,24 +335,5 @@ class jUpgradeMenu extends jUpgrade
 		}
 
 		return false;
-	}
-
-	/**
-	 * The public entry point for the class.
-	 *
-	 * @return	void
-	 * @since	0.5.2
-	 * @throws	Exception
-	 */
-	public function upgrade()
-	{
-		if (parent::upgrade()) {
-			// Rebuild the menu nested set values.
-			$table = JTable::getInstance('Menu', 'JTable', array('dbo' => $this->_db));
-
-			if (!$table->rebuild()) {
-				echo JError::raiseError(500, $table->getError());
-			}
-		}
 	}
 }

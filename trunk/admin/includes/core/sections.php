@@ -58,10 +58,8 @@ class jUpgradeSections extends jUpgradeCategory
 			$row = (array) $row;
 
 			$row['params'] = $this->convertParams($row['params']);
-			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
 			$row['title'] = str_replace("'", "&#39;", $row['title']);
 			$row['description'] = str_replace("'", "&#39;", $row['description']);
-			$row['language'] = '*';
 
 			$row['extension'] = 'com_section';
 
@@ -110,7 +108,7 @@ class jUpgradeSections extends jUpgradeCategory
 	{
 		// Fixing the parents
 		$this->fixParents();
-		// Insert existing catgories
+		// Insert existing categories
 		$this->insertExisting();
 	}
 
@@ -152,12 +150,8 @@ class jUpgradeSections extends jUpgradeCategory
 	 */
 	protected function insertExisting()
 	{
-		jimport('joomla.table.table');
-
 		// Getting the database instance
 		$db = JFactory::getDbo();
-		// Rebuild the categories table
-		$table = JTable::getInstance('Category', 'JTable');
 
 		// Getting the data
 		$query = $db->getQuery(true);
@@ -191,16 +185,9 @@ class jUpgradeSections extends jUpgradeCategory
 
 			}
 
-			// Resetting the table object
-			$table->reset();
-			// Setting the location of the new category
-			$table->setLocation($parent, 'last-child');
-			// Bind
-			$table->bind($category);
-			// Store
-			$table->store();
+			// Inserting the category
+			$this->insertCategory($category, $parent);
 		}
-	
-		return true;
+
 	} // end method
 } // end class

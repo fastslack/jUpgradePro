@@ -49,29 +49,6 @@ class jUpgradeCategory extends jUpgrade
 	 */
 	public function databaseHook($rows = null)
 	{
-
-/*
-		if ($this->section == 'com_content' && $this->source == '#__categories') {
-			$select = '`id`, `id` AS sid, `title`, `alias`, `section` AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
-			$where = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
-			$order = 'section ASC, ordering ASC';
-		}else if ($this->source == '#__categories') {
-			$select = '`id`, `id` AS sid, `title`, `alias`, `section` AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
-			$where = "section = '{$this->section}'";
-			$order = 'ordering ASC';
-		}else if ($this->source == '#__sections') {
-			$select = '`id` AS sid, `title`, `alias`, \'com_section\' AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
-			$where = "scope = 'content'";
-			$order = 'ordering ASC';
-		}
-
-		$rows = parent::getSourceData(
-			$select,
-		  null,
-			$where,
-			$order
-		);
-*/
 		// Initialize values
 		$aliases = array();
 		$unique_alias_suffix = 1;
@@ -82,10 +59,8 @@ class jUpgradeCategory extends jUpgrade
 			$row = (array) $row;
 
 			$row['params'] = $this->convertParams($row['params']);
-			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
 			$row['title'] = str_replace("'", "&#39;", $row['title']);
 			$row['description'] = str_replace("'", "&#39;", $row['description']);
-			$row['language'] = '*';
 
 			if ($row['extension'] == 'com_banner') {
 				$row['extension'] = "com_banners";
@@ -170,6 +145,10 @@ class jUpgradeCategory extends jUpgrade
 		$oldlist->section = !empty($row['extension']) ? $row['extension'] : 0;
 		$oldlist->old = isset($row['old_id']) ? $row['old_id'] : $row['id'];
 		unset($row['old_id']);
+
+		// Fixing some values
+		$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
+		$row['language'] = !empty($row['language']) ? $row['language'] : '*';
 
 		// Setting the default rules
 		$rules = array();

@@ -103,10 +103,8 @@ class JUpgradeTableCategories extends JUpgradeTable
 	function migrate( )
 	{	
 		$this->params = $this->convertParams($this->params);
-		$this->access = $this->access == 0 ? 1 : $this->access + 1;
 		$this->title = str_replace("'", "&#39;", $this->title);
 		$this->description = str_replace("'", "&#39;", $this->description);
-		$this->language = '*';
 
 		$this->extension = $this->section;
 		unset($this->section);

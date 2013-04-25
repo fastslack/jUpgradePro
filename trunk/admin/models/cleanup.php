@@ -125,7 +125,13 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			// Getting the menus
 			$query->clear();
-			$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
+			// 3.0 Changes
+			if (version_compare(PHP_VERSION, '3.0', '>=')) {
+				$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
+			}else{
+				$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
+			}
+
 			$query->from("#__menu");
 			$query->where("id > 100");
 			$query->order('id ASC');

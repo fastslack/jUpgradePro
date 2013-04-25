@@ -107,13 +107,13 @@ window.addEvent('domready', function() {
 					<div id="info_version"><?php echo JText::_('jUpgradePro'); ?> <?php echo JText::_('Version').' <b>'.$this->version.'</b>'; ?></div>
 					<div id="info_thanks">
 						<p>
-							<?php echo JText::_('Developed by'); ?> <i><a href="http://www.matware.com.ar/">Matware &#169;</a></i>  Copyleft 2006-2012<br />
+							<?php echo JText::_('Developed by'); ?> <i><a href="http://www.matware.com.ar/">Matware &#169;</a></i>  Copyleft 2006-2013<br />
 							Licensed as <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"><i>GNU General Public License v2</i></a><br />
 						</p>
 						<p>
-							<a href="http://redcomponent.com/jupgrade">Project Site</a> /
-							<a href="http://redcomponent.com/forum/92-jupgrade">Project Community</a> /
-							<a href="http://redcomponent.com/forum/92-jupgrade/102880-jupgrade-faq">FAQ</a><br />
+							<a href="http://redcomponent.com/redcomponent/jupgradepro">Project Site</a> /
+							<a href="http://redcomponent.com/forum/jupgradepro-forum">Project Community</a> /
+							<a href="http://wiki.redcomponent.com/index.php?title=JUpgradePRO:Table_of_Contents">Wiki</a><br />
 						</p>
 					</div>
 				</div>

@@ -156,31 +156,25 @@ class jUpgradeSections extends jUpgradeCategory
 
 		// Getting the database instance
 		$db = JFactory::getDbo();
+		// Rebuild the categories table
+		$table = JTable::getInstance('Category', 'JTable');
 
 		// Getting the data
 		$query = $db->getQuery(true);
 		$query->select('*');
-		$query->from('jupgrade_categories_default');
+		$query->from('jupgrade_default_categories');
 		$query->order('id ASC');
 		$db->setQuery($query);
 		$categories = $db->loadAssocList();
 
 		foreach ($categories as $category) {
 
+			// Unset id
+			$category['id'] = 0;
+
+			// Looking for parent
 			$parent = 1;
-
-			// Rebuild the categories table
-			$table = JTable::getInstance('Category', 'JTable');
-
 			$explode = explode("/", $category['path']);
-
-			// Setting the data into an array to bind into the table
-			$array = array();
-			foreach ($category as $key => $value) {
-				//if (!empty($category[$key])) {
-					$array[$key] = $category[$key];
-				//}
-			}
 
 			if (count($explode) > 1) {
 
@@ -197,10 +191,12 @@ class jUpgradeSections extends jUpgradeCategory
 
 			}
 
+			// Resetting the table object
+			$table->reset();
 			// Setting the location of the new category
 			$table->setLocation($parent, 'last-child');
 			// Bind
-			$table->bind($array);
+			$table->bind($category);
 			// Store
 			$table->store();
 		}

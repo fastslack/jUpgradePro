@@ -71,10 +71,12 @@ class jUpgradeMenu extends jUpgrade
 
 		// Getting the database instance
 		$db = JFactory::getDbo();
+		$query = $db->getQuery(true);
+		// Getting the table and query
+		$table = JTable::getInstance('Menu', 'JTable');
 
 		// Getting the data
-		$query = $db->getQuery(true);
-		$query->select('*');
+		$query->select('`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`');
 		$query->from('jupgrade_default_menus');
 		$query->order('id ASC');
 		$db->setQuery($query);
@@ -83,13 +85,10 @@ class jUpgradeMenu extends jUpgrade
 		foreach ($menus as $menu) {
 
 			// Unset id
-			unset($menu['id']);
-			// Getting the table and query
-			$table = JTable::getInstance('Menu', 'JTable');
-			$query = $db->getQuery(true);
+			$menu['id'] = 0;
 
 			// Getting the data
-			$query = $db->getQuery(true);
+			$query->clear();
 			$query->select('alias');
 			$query->from('#__menu');
 			$query->where("alias LIKE '{$menu['alias']}%'");
@@ -119,16 +118,17 @@ class jUpgradeMenu extends jUpgrade
 				$parent = $db->loadResult();
 			}
 
+			// Resetting the table object
+			$table->reset();
 			// Setting the location of the new category
 			$table->setLocation($parent, 'last-child');
-			//
+			// Bind the data
 			$table->bind($menu);
-			// Store
+			// Store to database
 			$table->store();
 		}
 
-		// Rebuild the menu nested set values.
-		$table = JTable::getInstance('Menu', 'JTable');
+		$table->reset();
 
 		if (!$table->rebuild()) {
 			echo JError::raiseError(500, $table->getError());

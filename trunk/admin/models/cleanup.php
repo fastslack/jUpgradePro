@@ -94,6 +94,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		$tables[] = 'jupgrade_categories';
 		$tables[] = 'jupgrade_menus';
 		$tables[] = 'jupgrade_modules';
+		$tables[] = 'jupgrade_default_categories';
 		$tables[] = '#__menu_types';
 		$tables[] = '#__content';
 
@@ -159,8 +160,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			{
 				$id = $category->id;
 				unset($category->id);
-				
-				// Inserting the category to upgrade_categories_default
+
 				$this->_db->insertObject('jupgrade_default_categories', $category);
 
 				// Getting the categories table

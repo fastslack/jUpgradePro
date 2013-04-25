@@ -144,10 +144,6 @@
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
 		</field>
-		<field name="skip_core_sections" type="radio" default="0" label="Skip sections" description="">
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
-		</field>
 		<field name="skip_core_contents" type="radio" default="0" label="Skip contents" description="">
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>

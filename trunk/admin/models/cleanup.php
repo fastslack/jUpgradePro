@@ -67,13 +67,19 @@ class jUpgradeProModelCleanup extends JModelLegacy
 					$query->update('jupgrade_steps')->set('status = 2')->where("name = '{$name}'");
 					$this->_db->setQuery($query)->execute();
 
+					$query->clear();
+
 					if ($name == 'users') {
-						$query->clear();
 						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'arogroup\'');
 						$this->_db->setQuery($query)->execute();
 
 						$query->clear();
 						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'usergroupmap\'');
+						$this->_db->setQuery($query)->execute();
+					}
+
+					if ($name == 'categories') {
+						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'sections\'');
 						$this->_db->setQuery($query)->execute();
 					}
 

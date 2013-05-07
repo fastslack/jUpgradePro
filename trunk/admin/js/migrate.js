@@ -15,7 +15,6 @@ var jUpgradepro = new Class({
 
   options: {
     method: 'rest',
-    skip_checks: 0,
     positions: 0,
     debug: 0
   },
@@ -176,12 +175,6 @@ var jUpgradepro = new Class({
 	migrate: function(e) {
 		var self = this;
 
-		var method = self.options.method;
-
-		if (method == 'database') {
-			method = 'ajax';
-		}
-
 		// CSS stuff
 		$('migration').setStyle('display', 'block');
 		$('warning').setStyle('display', 'block');
@@ -297,11 +290,11 @@ var jUpgradepro = new Class({
 				row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&table='+object.name;	
 
 				// Running the request[s]
-				if (method == 'ajax') {
+				if (self.options.method == 'database') {
 					if (object.total != 0) {
 						row.send();
 					}
-				} else if (method == 'rest') {
+				} else if (self.options.method == 'rest') {
 					for (i=object.start;i<=object.stop;i++) {
 						var reqname = object.name+i;
 						rm.addRequest(reqname, row);
@@ -326,12 +319,6 @@ var jUpgradepro = new Class({
 	 */
 	extensions: function(e) {
 		var self = this;
-
-		var method = self.options.method;
-
-		if (method == 'database') {
-			method = 'ajax';
-		}
 
 		// Progress bar
 		pb7 = new dwProgressBar({
@@ -438,11 +425,11 @@ var jUpgradepro = new Class({
 				ext_row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&extensions=tables&table='+object.name;	
 
 				// Running the request[s]
-				if (method == 'ajax') {
+				if (self.options.method == 'database') {
 					if (object.total != 0) {
 						ext_row.send();
 					}
-				} else if (method == 'rest') {
+				} else if (self.options.method == 'rest') {
 					for (i=object.start;i<=object.stop;i++) {
 						var reqname = object.name+i;
 						ext_rm.addRequest(reqname, ext_row);

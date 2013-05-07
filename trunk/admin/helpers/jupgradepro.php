@@ -51,7 +51,7 @@ class jUpgradeProHelper
 			$params = new JRegistry(new JConfig);
 		}
 
-		return $params->toObject();;
+		return $params->toObject();
 	}
 
 	/**

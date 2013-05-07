@@ -50,19 +50,19 @@ class jUpgradeProModelChecks extends JModelLegacy
 		$message['status'] = "ERROR";
 
 		if (!in_array('jupgrade_categories', $tables)) {
-			$this->returnError (401, 'COM_JUPGRADEPRO_ERROR_TABLE_CAT');
+			throw new Exception('COM_JUPGRADEPRO_ERROR_TABLE_CAT');
 		}
 
 		if (!in_array('jupgrade_menus', $tables)) {
-			$this->returnError (402, 'COM_JUPGRADEPRO_ERROR_TABLE_MENUS');
+			throw new Exception('COM_JUPGRADEPRO_ERROR_TABLE_MENUS');
 		}
 
 		if (!in_array('jupgrade_modules', $tables)) {
-			$this->returnError (403, 'COM_JUPGRADEPRO_ERROR_TABLE_MODULES');
+			throw new Exception('COM_JUPGRADEPRO_ERROR_TABLE_MODULES');
 		}
 
 		if (!in_array('jupgrade_steps', $tables)) {
-			$this->returnError (404, 'COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NO_EXISTS');
+			throw new Exception('COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NO_EXISTS');
 		}		
 
 		// Getting the data
@@ -73,24 +73,24 @@ class jUpgradeProModelChecks extends JModelLegacy
 		$nine = $this->_db->loadResult();
 
 		if ($nine < 10) {
-			$this->returnError (405, 'COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NOT_VALID');
+			throw new Exception('COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NOT_VALID');
 		}
 
 		// Check safe_mode_gid
 		if (@ini_get('safe_mode_gid') && @ini_get('safe_mode')) {
-			$this->returnError (411, 'COM_JUPGRADEPRO_ERROR_DISABLE_SAFE_GID');
+			throw new Exception('COM_JUPGRADEPRO_ERROR_DISABLE_SAFE_GID');
 		}
 
 		// Check for bad configurations
 		if ($params->method == "rest") {
 
 			if (!isset($params->rest_hostname) || !isset($params->rest_username) || !isset($params->rest_password) || !isset($params->rest_key) ) {
-				$this->returnError (412, 'COM_JUPGRADEPRO_ERROR_REST_CONFIG');
+				throw new Exception('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
 			}
 
 			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' || 
 					$params->rest_username == '' || $params->rest_password == '' || $params->rest_key == '') {
-				$this->returnError (412, 'COM_JUPGRADEPRO_ERROR_REST_CONFIG');
+				throw new Exception('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
 			}
 
 			// Checking the RESTful connection
@@ -98,22 +98,22 @@ class jUpgradeProModelChecks extends JModelLegacy
 
 			switch ($code) {
 				case 401:
-					$this->returnError (501, 'COM_JUPGRADEPRO_ERROR_REST_501');
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_501');
 				case 402:
-					$this->returnError (502, 'COM_JUPGRADEPRO_ERROR_REST_502');
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_502');
 				case 403:
-					$this->returnError (503, 'COM_JUPGRADEPRO_ERROR_REST_503');
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_503');
 				case 405:
-					$this->returnError (505, 'COM_JUPGRADEPRO_ERROR_REST_505');
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_505');
 				case 406:
-					$this->returnError (506, 'COM_JUPGRADEPRO_ERROR_REST_506');
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_506');
 			}
 		}
 
 		// Check for bad configurations
 		if ($params->method == "database") {
 			if ($params->old_hostname == '' || $params->old_username == '' || $params->old_db == '' || $params->old_dbprefix == '' ) {
-				$this->returnError (413, 'COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
+				throw new Exception('COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
 			}
 		}
 
@@ -134,7 +134,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 		}
 
 		if ($flag === false) {
-			$this->returnError (414, 'COM_JUPGRADEPRO_ERROR_SKIPS_ALL');				
+			throw new Exception('COM_JUPGRADEPRO_ERROR_SKIPS_ALL');				
 		}		
 
 		// Checking tables
@@ -146,7 +146,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 			$content_count = $this->_db->loadResult();
 
 			if ($content_count > 0) {
-				$this->returnError (416, 'COM_JUPGRADEPRO_ERROR_DATABASE_CONTENT');
+				throw new Exception('COM_JUPGRADEPRO_ERROR_DATABASE_CONTENT');
 			}
 		}
 
@@ -159,7 +159,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 			$users_count = $this->_db->loadResult();
 
 			if ($users_count > 1) {
-				$this->returnError (417, 'COM_JUPGRADEPRO_ERROR_DATABASE_USERS');
+				throw new Exception('COM_JUPGRADEPRO_ERROR_DATABASE_USERS');
 			}
 		}
 
@@ -178,7 +178,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 	{
 		$message['number'] = $number;
 		$message['text'] = JText::_($text);
-		echo json_encode($message);
+		print(json_encode($message));
 		exit;
 	}
 

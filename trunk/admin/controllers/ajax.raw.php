@@ -47,15 +47,16 @@ class jUpgradeProControllerAjax extends JControllerLegacy
 	 */
 	public function checks()
 	{
-		// Get the document object.
-		$document	= JFactory::getDocument();
-		$vName		= 'Checks';
-
 		// Get the model for the view.
-		$model = $this->getModel($vName);
+		$model = $this->getModel('Checks');
 
-		// @TODO Create document
-		echo $model->checks();
+		// Running the checks
+		try {
+			$model->checks();
+		} catch (Exception $e) {
+			$model->returnError (500, $e->getMessage());
+		}
+
 	}
 
 	/**
@@ -63,15 +64,15 @@ class jUpgradeProControllerAjax extends JControllerLegacy
 	 */
 	public function cleanup()
 	{
-		// Get the document object.
-		$document	= JFactory::getDocument();
-		$vName		= 'Cleanup';
-
 		// Get the model for the view.
-		$model = $this->getModel($vName);
+		$model = $this->getModel('Cleanup');
 
-		// @TODO Create document
-		echo $model->cleanup();
+		// Running the cleanup
+		try {
+			$model->cleanup();
+		} catch (Exception $e) {
+			$model->returnError (500, $e->getMessage());
+		}
 	}
 
 	/**
@@ -79,15 +80,15 @@ class jUpgradeProControllerAjax extends JControllerLegacy
 	 */
 	public function step()
 	{
-		// Get the document object.
-		$document	= JFactory::getDocument();
-		$vName		= 'Step';
-
 		// Get the model for the view.
-		$model = $this->getModel($vName);
+		$model = $this->getModel('Step');
 
-		// @TODO Create document
-		echo $model->step();
+		// Running the step
+		try {
+			$model->step(false, true);
+		} catch (Exception $e) {
+			$model->returnError (500, $e->getMessage());
+		}
 	}
 
 	/**
@@ -95,15 +96,15 @@ class jUpgradeProControllerAjax extends JControllerLegacy
 	 */
 	public function migrate()
 	{
-		// Get the document object.
-		$document	= JFactory::getDocument();
-		$vName		= 'Migrate';
-
 		// Get the model for the view.
-		$model = $this->getModel($vName);
+		$model = $this->getModel('Migrate');
 
-		// @TODO Create document
-		echo $model->migrate();
+		// Running the migrate
+		try {
+			$model->migrate();
+		} catch (Exception $e) {
+			$model->returnError (500, $e->getMessage());
+		}
 	}
 
 	/**
@@ -111,14 +112,14 @@ class jUpgradeProControllerAjax extends JControllerLegacy
 	 */
 	public function extensions()
 	{
-		// Get the document object.
-		$document	= JFactory::getDocument();
-		$vName		= 'Extensions';
-
 		// Get the model for the view.
-		$model = $this->getModel($vName);
+		$model = $this->getModel('Extensions');
 
-		// @TODO Create document
-		echo $model->extensions();
+		// Running the extensions
+		try {
+			$model->extensions();
+		} catch (Exception $e) {
+			$model->returnError (500, $e->getMessage());
+		}
 	}
 }

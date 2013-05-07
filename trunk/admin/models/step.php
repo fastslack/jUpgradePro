@@ -43,7 +43,11 @@ class jUpgradeProModelStep extends JModelLegacy
 		// Get the next step
 		$step->getStep($name);
 
-		return $step->getParameters($json);
+		if (!jUpgradeProHelper::isCli()) {
+			echo $step->getParameters();
+		}else{
+			return $step->getParameters();
+		}
 	}
 
 	/**

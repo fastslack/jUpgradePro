@@ -134,7 +134,7 @@ class jUpgradeStep
 	 *
 	 * @since   3.0.0
 	 */
-	public function getParameters($json = true)
+	public function getParameters()
 	{
 		$return = array();
 
@@ -151,12 +151,7 @@ class jUpgradeStep
 			}
 		}
 
-		// Encoding to JSON
-		if ($json == true) {
-			$return = json_encode($return);
-		}
-
-		return $return;
+		return json_encode($return);
 	}
 
 	/**
@@ -251,7 +246,7 @@ class jUpgradeStep
 		// updating the status flag
 		$this->_updateStep();
 
-		return $this->getParameters($json);
+		return $this->getParameters();
 	}
 
 	/**

@@ -31,6 +31,8 @@ class jUpgradeProModelCleanup extends JModelLegacy
 	 */
 	function cleanup()
 	{
+		// Importing helper tags
+		jimport('cms.helper.tags');
 		// Getting the jUpgradeStep instance
 		$step = jUpgradeStep::getInstance();
 		// Getting the jUpgrade instance
@@ -65,22 +67,42 @@ class jUpgradeProModelCleanup extends JModelLegacy
 					$query->clear();
 					// Set all status to 0 and clear state
 					$query->update('jupgrade_steps')->set('status = 2')->where("name = '{$name}'");
-					$this->_db->setQuery($query)->execute();
+
+					try {
+						$this->_db->setQuery($query)->execute();
+					} catch (RuntimeException $e) {
+						throw new RuntimeException($e->getMessage());
+					}
 
 					$query->clear();
 
 					if ($name == 'users') {
 						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'arogroup\'');
-						$this->_db->setQuery($query)->execute();
+
+						try {
+							$this->_db->setQuery($query)->execute();
+						} catch (RuntimeException $e) {
+							throw new RuntimeException($e->getMessage());
+						}
 
 						$query->clear();
 						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'usergroupmap\'');
-						$this->_db->setQuery($query)->execute();
+
+						try {
+							$this->_db->setQuery($query)->execute();
+						} catch (RuntimeException $e) {
+							throw new RuntimeException($e->getMessage());
+						}
 					}
 
 					if ($name == 'categories') {
 						$query->update('jupgrade_steps')->set('status = 2')->where('name = \'sections\'');
-						$this->_db->setQuery($query)->execute();
+
+						try {
+							$this->_db->setQuery($query)->execute();
+						} catch (RuntimeException $e) {
+							throw new RuntimeException($e->getMessage());
+						}
 					}
 
 				}
@@ -90,7 +112,12 @@ class jUpgradeProModelCleanup extends JModelLegacy
 				if ($v == 1) {
 					$query->clear();
 					$query->update('jupgrade_steps')->set('status = 2')->where('name = \'extensions\'');
-					$this->_db->setQuery($query)->execute();
+
+					try {
+						$this->_db->setQuery($query)->execute();
+					} catch (RuntimeException $e) {
+						throw new RuntimeException($e->getMessage());
+					}
 				}
 			}
 		}
@@ -107,7 +134,12 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		for ($i=0;$i<count($tables);$i++) {
 			$query->clear();
 			$query->delete()->from("{$tables[$i]}");
-			$this->_db->setQuery($query)->execute();
+
+			try {
+				$this->_db->setQuery($query)->execute();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 		}
 
 		// Cleanup the menu table
@@ -116,12 +148,22 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			// Insert needed value
 			$query->clear();
 			$query->insert('jupgrade_menus')->columns('`old`, `new`')->values("0, 0");
-			$this->_db->setQuery($query)->execute();
+
+			try {
+				$this->_db->setQuery($query)->execute();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 
 			// Clear the default database
 			$query->clear();
 			$query->delete()->from('jupgrade_default_menus')->where('id > 100');
-			$this->_db->setQuery($query)->execute();
+
+			try {
+				$this->_db->setQuery($query)->execute();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 
 			// Getting the menus
 			$query->clear();
@@ -136,19 +178,33 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$query->where("id > 100");
 			$query->order('id ASC');
 			$this->_db->setQuery($query);
-			$menus = $this->_db->loadObjectList();
+
+			try {
+				$menus = $this->_db->loadObjectList();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 
 			foreach ($menus as $menu)
 			{
 				// Convert the array into an object.
 				$menu = (object) $menu;
 
-				$this->_db->insertObject('jupgrade_default_menus', $menu);
+				try {
+					$this->_db->insertObject('jupgrade_default_menus', $menu);
+				} catch (RuntimeException $e) {
+					throw new RuntimeException($e->getMessage());
+				}
 			}
 
 			$query->clear();
 			$query->delete()->from('#__menu')->where('id > 1');
-			$this->_db->setQuery($query)->execute();
+
+			try {
+				$this->_db->setQuery($query)->execute();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 		}
 
 		// Delete uncategorised categories
@@ -157,7 +213,11 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			// Insert uncategorized id
 			$query->clear();
 			$query->insert('jupgrade_categories')->columns('`old`, `new`')->values("0, 2");
-			$this->_db->setQuery($query)->execute();
+			try {
+				$this->_db->setQuery($query)->execute();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 
 			// Getting the menus
 			$query->clear();
@@ -166,7 +226,13 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$query->where("id > 1");
 			$query->order('id ASC');
 			$this->_db->setQuery($query);
-			$categories = $this->_db->loadObjectList();
+
+			try {
+				$categories = $this->_db->loadObjectList();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
+
 
 			foreach ($categories as $category)
 			{
@@ -195,7 +261,12 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$query->order('id ASC');
 			$query->limit(1);
 			$this->_db->setQuery($query);
-			$superuser = $this->_db->loadResult();
+
+			try {
+				$superuser = $this->_db->loadResult();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 
 			// Updating the super user id to 10
 			$query->clear();
@@ -203,7 +274,11 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$query->set("`id` = 10");
 			$query->where("username = '{$superuser}'");
 			// Execute the query
-			$this->_db->setQuery($query)->execute();
+			try {
+				$this->_db->setQuery($query)->execute();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 
 			// Updating the user_usergroup_map
 			$query->clear();
@@ -211,7 +286,11 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$query->set("`user_id` = 10");
 			$query->where("`group_id` = 8");
 			// Execute the query
-			$this->_db->setQuery($query)->execute();
+			try {
+				$this->_db->setQuery($query)->execute();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 		}
 
 		// Checking if modules were added.
@@ -221,17 +300,30 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			$query->from("`#__modules`");
 			$query->order('id DESC');
 			$query->limit(1);
-			$jupgrade->_db->setQuery($query);
-			$modules_id = $jupgrade->_db->loadResult();
+			$this->_db->setQuery($query);
+
+			try {
+				$modules_id = $this->_db->loadResult();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 
 			if ($modules_id > 86) {
-					$query->clear();
-					$query->update('jupgrade_steps')->set('status = 2')->where('name = \'modules\'');
+				$query->clear();
+				$query->update('jupgrade_steps')->set('status = 2')->where('name = \'modules\'');
+				try {
 					$this->_db->setQuery($query)->execute();
+				} catch (RuntimeException $e) {
+					throw new RuntimeException($e->getMessage());
+				}
 
-					$query->clear();
-					$query->update('jupgrade_steps')->set('status = 2')->where('name = \'modules_menu\'');
+				$query->clear();
+				$query->update('jupgrade_steps')->set('status = 2')->where('name = \'modules_menu\'');
+				try {
 					$this->_db->setQuery($query)->execute();
+				} catch (RuntimeException $e) {
+					throw new RuntimeException($e->getMessage());
+				}
 			}
 		}
 

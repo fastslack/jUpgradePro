@@ -74,6 +74,10 @@ class jUpgradeProModelMigrate extends JModelLegacy
 			$step->_updateStep();
 		}
 
-		return $step->getParameters($json);
+		if (!jUpgradeProHelper::isCli()) {
+			echo $step->getParameters();
+		}else{
+			return $step->getParameters();
+		}
 	}
 } // end class

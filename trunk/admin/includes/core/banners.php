@@ -78,9 +78,7 @@ class jUpgradeBanners extends jUpgrade
 		// Getting the component parameter with global settings
 		$params = $this->getParams();	
 
-		// Get the source data.
-		//$rows = $this->loadData('banners');
-
+		// Fixing the changes between versions
 		foreach($rows as &$row)
 		{
 			$row = (array) $row;

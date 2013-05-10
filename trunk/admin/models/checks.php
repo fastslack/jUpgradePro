@@ -74,7 +74,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 		// Getting the data
 		$query = $this->_db->getQuery(true);
 		$query->select('COUNT(id)');
-		$query->from("`jupgrade_steps`");
+		$query->from("`jupgradepro_steps`");
 		$this->_db->setQuery($query);
 		$nine = $this->_db->loadResult();
 

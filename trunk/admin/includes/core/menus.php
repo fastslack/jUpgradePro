@@ -77,7 +77,7 @@ class jUpgradeMenu extends jUpgrade
 
 		// Getting the data
 		$query->select('`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`');
-		$query->from('jupgrade_default_menus');
+		$query->from('jupgradepro_default_menus');
 		$query->order('id ASC');
 		$db->setQuery($query);
 		$menus = $db->loadAssocList();
@@ -326,7 +326,7 @@ class jUpgradeMenu extends jUpgrade
 			$menuMap->new = $this->_db->insertid();
 
 			// Save old and new id
-			if (!$this->_db->insertObject('jupgrade_menus', $menuMap)) {
+			if (!$this->_db->insertObject('jupgradepro_menus', $menuMap)) {
 				throw new Exception($this->_db->getErrorMsg());
 			}
 

@@ -156,7 +156,7 @@ class jUpgradeSections extends jUpgradeCategory
 		// Getting the data
 		$query = $db->getQuery(true);
 		$query->select('*');
-		$query->from('jupgrade_default_categories');
+		$query->from('jupgradepro_default_categories');
 		$query->order('id ASC');
 		$db->setQuery($query);
 		$categories = $db->loadAssocList();

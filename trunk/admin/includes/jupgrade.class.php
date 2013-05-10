@@ -534,7 +534,7 @@ class jUpgrade
 	{
 		// Getting the categories id's
 		$query = "SELECT *"
-		." FROM jupgrade_{$table}";
+		." FROM jupgradepro_{$table}";
 
 		if ($section !== false) {
 			$query .= " WHERE section = '{$section}'";
@@ -569,7 +569,7 @@ class jUpgrade
 	{
 		// Getting the categories id's
 		$query = "SELECT new"
-		." FROM jupgrade_{$table}";
+		." FROM jupgradepro_{$table}";
 
 		if ($section !== false) {
 			$query .= " WHERE section = '{$section}'";

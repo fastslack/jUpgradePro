@@ -31,39 +31,45 @@ class jUpgradeProModelChecks extends JModelLegacy
 	 */
 	function checks()
 	{
-		// Getting the jUpgradeStep instance
-		$step = jUpgradeStep::getInstance();
-		// Getting the jUpgrade instance
-		$jupgrade = new jUpgrade($step);
-
+		// Loading the helper
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
-
-		// Getting the component parameter with global settings
-		$params = jUpgradeProHelper::getParams();
 
 		// Checking tables
 		$query = "SHOW TABLES";
 		$this->_db->setQuery($query);
 		$tables = $this->_db->loadColumn();
 
+		// Check if the tables exists if not populate install.sql
+		$tablesComp = array();
+		$tablesComp[] = 'categories';
+		$tablesComp[] = 'default_categories';
+		$tablesComp[] = 'default_menus';
+		$tablesComp[] = 'errors';
+		$tablesComp[] = 'extensions';
+		$tablesComp[] = 'extensions_tables';
+		$tablesComp[] = 'files_images';
+		$tablesComp[] = 'files_media';
+		$tablesComp[] = 'files_templates';
+		$tablesComp[] = 'menus';
+		$tablesComp[] = 'modules';
+		$tablesComp[] = 'steps';
+
+		foreach ($tablesComp as $table) {
+			if (!in_array('jupgradepro_'.$table, $tables)) {
+				$params = jUpgradeProHelper::populateDatabase($this->_db, JPATH_COMPONENT_ADMINISTRATOR.'/sql/install.sql');
+			}
+		}
+
+		// Getting the jUpgradeStep instance
+		$step = jUpgradeStep::getInstance();
+		// Getting the jUpgrade instance
+		$jupgrade = new jUpgrade($step);
+		// Getting the component parameter with global settings
+		$params = jUpgradeProHelper::getParams();
+
+		// Define the message array
 		$message = array();
 		$message['status'] = "ERROR";
-
-		if (!in_array('jupgrade_categories', $tables)) {
-			throw new Exception('COM_JUPGRADEPRO_ERROR_TABLE_CAT');
-		}
-
-		if (!in_array('jupgrade_menus', $tables)) {
-			throw new Exception('COM_JUPGRADEPRO_ERROR_TABLE_MENUS');
-		}
-
-		if (!in_array('jupgrade_modules', $tables)) {
-			throw new Exception('COM_JUPGRADEPRO_ERROR_TABLE_MODULES');
-		}
-
-		if (!in_array('jupgrade_steps', $tables)) {
-			throw new Exception('COM_JUPGRADEPRO_ERROR_TABLE_STEPS_NO_EXISTS');
-		}		
 
 		// Getting the data
 		$query = $this->_db->getQuery(true);

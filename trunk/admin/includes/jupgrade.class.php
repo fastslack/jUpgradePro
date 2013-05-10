@@ -325,6 +325,20 @@ class jUpgrade
 		return true;
 	}
 
+	/*
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public static function getConditionsHook()
+	{
+		$conditions = array();		
+		$conditions['where'] = array();
+		// Do customisation of the params field here for specific data.
+		return $conditions;	
+	}
+
 	/**
 	 * dataSwitch
 	 *
@@ -356,34 +370,22 @@ class jUpgrade
 	}
 
 	/**
-	 * Get total of the rows of the table
-	 *
-	 * @access	public
-	 * @return	int	The total of rows
-	 */
-	public function getTotal()
-	{
-		return $this->_total;
-	}
-
-	/**
  	* Get the table structure
 	*/
 	public function getTableStructure() {
 
-		$method = $this->params->method;
+		// Getting the source table
 		$table = $this->getSourceTable();
 
-		if ($method == 'database') {
+		// Getting the structure
+		if ($this->params->method == 'database') {
 			$result = $this->_driver->_db_old->getTableCreate($table);
-			$structure = "{$result[$table]} ;\n\n";
-
-			$structure = str_replace($this->_driver->_db_old->getPrefix(), "#__", $structure);
-
-		}else if ($method == 'rest') {
+			$structure = str_replace($this->_driver->_db_old->getPrefix(), "#__", "{$result[$table]} ;\n\n");
+		}else if ($this->params->method == 'rest') {
 			$structure = $this->_driver->requestRest("tablestructure", str_replace('#__', '', $table));
 		}
 
+		// Create only if not exists
 		$structure = str_replace('CREATE TABLE', 'CREATE TABLE IF NOT EXISTS', $structure);
 
 		// Replacing the table name from xml
@@ -475,26 +477,6 @@ class jUpgrade
 		$keys = $this->_db->loadObjectList();
 
 		return !empty($keys) ? $keys[0]->Column_name : '';
-	}
-
-	/**
-	 * @return  string	The table name  
-	 *
-	 * @since   3.0
-	 */
-	public function getSourceTable()
-	{
-		return '#__'.$this->_step->source;
-	}
-
-	/**
-	 * @return  string	The table name  
-	 *
-	 * @since   3.0
-	 */
-	public function getDestinationTable()
-	{
-		return '#__'.$this->_step->destination;
 	}
 
 	/**
@@ -642,17 +624,35 @@ class jUpgrade
 		return $this->params;
 	}
 
-	/*
+	/**
+	 * Get total of the rows of the table
 	 *
-	 * @return	void
-	 * @since	3.0.0
-	 * @throws	Exception
+	 * @access	public
+	 * @return	int	The total of rows
 	 */
-	public static function getConditionsHook()
+	public function getTotal()
 	{
-		$conditions = array();		
-		$conditions['where'] = array();
-		// Do customisation of the params field here for specific data.
-		return $conditions;	
+		return $this->_total;
 	}
-}
+
+	/**
+	 * @return  string	The table name  
+	 *
+	 * @since   3.0
+	 */
+	public function getSourceTable()
+	{
+		return '#__'.$this->_step->source;
+	}
+
+	/**
+	 * @return  string	The table name  
+	 *
+	 * @since   3.0
+	 */
+	public function getDestinationTable()
+	{
+		return '#__'.$this->_step->destination;
+	}
+
+} // end class

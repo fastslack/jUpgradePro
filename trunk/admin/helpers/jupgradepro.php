@@ -101,4 +101,37 @@ class jUpgradeProHelper
 
 		return $driver->getTotal();
 	}
+
+	/**
+	 * Populate a sql file
+	 *
+	 * @return  bool	True if succeful
+	 *
+	 * @since   3.1.0
+	 */
+	public static function populateDatabase(& $db, $sqlfile)
+	{
+		if( !($buffer = file_get_contents($sqlfile)) )
+		{
+			return -1;
+		}
+
+		$queries = $db->splitSql($buffer);
+
+		foreach ($queries as $query)
+		{
+			$query = trim($query);
+			if ($query != '' && $query {0} != '#')
+			{
+				$db->setQuery($query);
+				try {
+					$db->query();
+				} catch (Exception $e) {
+					throw new Exception($e->getMessage());
+				}
+			}
+		}
+
+		return true;
+	}
 }

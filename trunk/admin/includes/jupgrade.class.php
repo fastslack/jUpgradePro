@@ -235,17 +235,40 @@ class jUpgrade
 			$structureHook = 'structureHook_'.$name;
 
 			if (method_exists($this, $structureHook)) { 
-				$this->$structureHook();
+				try
+				{
+					$this->$structureHook();
+				}
+				catch (Exception $e)
+				{
+					throw new Exception($e->getMessage());
+				}
 			}
 		}
 
 		// Calling the data modificator hook
 		$dataHookFunc = 'dataHook_'.$name;
 
-		if (method_exists($this, $dataHookFunc)) { 
-			$rows = $this->$dataHookFunc($rows);
+		// If method exists call the custom dataHook
+		if (method_exists($this, $dataHookFunc)) {
+			try
+			{
+				$rows = $this->$dataHookFunc($rows);
+			}
+			catch (Exception $e)
+			{
+				throw new Exception($e->getMessage());
+			}
+		// If method not exists call the default dataHook
 		}else{
-			$rows = $this->dataHook($rows);
+			try
+			{
+				$rows = $this->dataHook($rows);
+			}
+			catch (Exception $e)
+			{
+				throw new Exception($e->getMessage());
+			}
 		}
 
 		if ($rows !== false) {
@@ -572,31 +595,6 @@ class jUpgrade
 		}
 
 		return $data;
-	}
-
-	/**
-	 * populateDatabase
-	 */
-	function populateDatabase(& $db, $sqlfile, & $errors, $nexttask='mainconfig')
-	{
-		if( !($buffer = file_get_contents($sqlfile)) )
-		{
-			return -1;
-		}
-
-		$queries = $db->splitSql($buffer);
-
-		foreach ($queries as $query)
-		{
-			$query = trim($query);
-			if ($query != '' && $query {0} != '#')
-			{
-				$db->setQuery($query);
-				$db->query() or die($db->getErrorMsg());
-			}
-		}
-
-		return true;
 	}
 
 	/**

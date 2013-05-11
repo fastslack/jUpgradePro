@@ -86,14 +86,9 @@ class jUpgrade
 
 		$this->params = jUpgradeProHelper::getParams();
 
-		// Getting the params and Joomla version web and cli
-		if (!jUpgradeProHelper::isCli()) {
-			// Getting the J! version
-			$version = new JVersion;
-			$this->_version = $version->RELEASE;
-		}else{
-			$this->_version = $this->params->RELEASE;
-		}
+		// Getting the J! version
+		$version = new JVersion;
+		$this->_version = $version->RELEASE;
 
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();

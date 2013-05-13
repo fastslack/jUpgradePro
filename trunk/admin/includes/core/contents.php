@@ -153,6 +153,12 @@ class jUpgradeContent extends jUpgrade
 			$rules['core.edit.state'] = array('6' => true, '5' => 1);
 			$row['rules'] = $rules;
 
+			// Converting the metadata to JSON
+			if (version_compare(PHP_VERSION, '3.1', '>=')) {
+				$row['metadata'] = $row['metadata'] . "\ntags=";
+			}
+			$row['metadata'] = $this->convertParams($row['metadata']);
+
 			// JTable:store() run an update if id exists into the object so we create them first
 			$object = new stdClass();
 			$object->id = $row['id'];

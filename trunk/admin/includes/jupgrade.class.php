@@ -267,7 +267,15 @@ class jUpgrade
 		}
 
 		if ($rows !== false) {
-			$this->ready = $this->insertData($rows);
+
+			try
+			{
+				$this->ready = $this->insertData($rows);
+			}
+			catch (Exception $e)
+			{
+				throw new Exception($e->getMessage());
+			}
 		}
 
 		// Load the step object
@@ -417,19 +425,33 @@ class jUpgrade
 
 			foreach ($rows as $row)
 			{
-				// Convert the array into an object.
-				$row = (object) $row;
+				if ($row != false) {
+					// Convert the array into an object.
+					$row = (object) $row;
 
-				if (!$this->_db->insertObject($table, $row)) {
-					$this->_step->error = $this->_db->getErrorMsg();
+					try
+					{
+						$this->_db->insertObject($table, $row);
+					}
+					catch (Exception $e)
+					{
+						throw new Exception($e->getMessage());
+					}
 				}
 
 				$this->_step->_nextID($total);
 			}
 		}else if (is_object($rows)) {
 
-			if (!$this->_db->insertObject($table, $rows)) {
-				$this->_step->error = $this->_db->getErrorMsg();
+			if ($row != false) {
+				try
+				{
+					$this->_db->insertObject($table, $rows);
+				}
+				catch (Exception $e)
+				{
+					throw new Exception($e->getMessage());
+				}
 			}
 
 		}

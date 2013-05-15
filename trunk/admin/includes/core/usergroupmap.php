@@ -28,6 +28,23 @@ JLoader::register("jUpgradeUsersDefault", JPATH_COMPONENT_ADMINISTRATOR."/includ
 class jUpgradeUsergroupMap extends jUpgradeUsersDefault
 {
 	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	array
+	 * @since	3.1.0
+	 * @throws	Exception
+	 */
+	public static function getConditionsHook()
+	{
+		$conditions = array();
+		
+		$conditions['where'] = array();
+		$conditions['order'] = "aro_id ASC";
+		
+		return $conditions;
+	}
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array
@@ -62,18 +79,29 @@ class jUpgradeUsergroupMap extends jUpgradeUsersDefault
 			unset($row['section_value']);
 			unset($row['aro_id']);
 
-			if (empty($row['user_id'])) {
-				$remove[] = $i;
-			}
-
 			$rows[$i] = $row;
 		}
 
-		// Remove the failed row's
-		$count_remove = count($remove);
-		for ($y=0;$y<$count_remove;$y++)
+		return $rows;
+	}
+
+	/**
+	 * Sets the data in the destination database.
+	 *
+	 * @return	void
+	 * @since	0.4.
+	 * @throws	Exception
+	 */
+	public function dataHook($rows)
+	{
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
 		{
-			unset($rows[$remove[$y]]);
+			$row = (array) $row;
+
+			if (empty($row['user_id'])) {
+				$row = false;
+			}
 		}
 
 		return $rows;

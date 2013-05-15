@@ -120,7 +120,6 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		else
 		{
 			throw new Exception( $this->_db_old->getErrorMsg() );
-			return false;
 		}
 	}
 

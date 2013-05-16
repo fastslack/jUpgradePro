@@ -186,6 +186,7 @@ class jUpgradeStep
 				}else{
 					$this->cache = round( ($this->total-1) / $limit);
 				}
+				$this->start = 0;
 				$this->stop = $limit - 1;
 				$this->first = true;
 				$this->debug = "{{{1}}}";
@@ -232,6 +233,7 @@ class jUpgradeStep
 		}else{
 
 			//$this->next = true;
+			$this->start = 0;
 			$this->first = 1;
 			$this->cache = 0;
 			$this->stop = $this->total - 1;

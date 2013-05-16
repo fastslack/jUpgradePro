@@ -100,7 +100,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	public function getTotal()
 	{
-		$table = $this->getSourceTable();
+		// Get the conditions
 		$conditions = $this->getConditionsHook();
 
 		// Process the conditions
@@ -150,7 +150,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 			$count = count($conditions['join']);
 
 			for ($i=0;$i<$count;$i++) {
-				$query->join('INNER', $conditions['join'][$i]);
+				$query->join('LEFT', $conditions['join'][$i]);
 			}
 		}
 
@@ -172,7 +172,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 			}
 		}
 
-		// Setting the group into the query
+		// Setting the GROUP BY into the query
 		if (isset($conditions['group_by'])) {
 			$query->group(trim($conditions['group_by']));
 		}

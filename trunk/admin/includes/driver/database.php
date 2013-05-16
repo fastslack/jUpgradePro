@@ -134,20 +134,23 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		// Create a new query object.
 		$query = $this->_db->getQuery(true);
 
-		// Getting the select clause
+		// Getting the SELECT clause
 		$select = isset($conditions['select']) ? $conditions['select'] : '*';
 		$select = trim(preg_replace('/\s+/', ' ', $select));
 
+		// Getting the TABLE and AS clause
+		$table = isset($conditions['as']) ? "{$this->getSourceTable()} AS {$conditions['as']}" : $this->getSourceTable();
+
 		// Building the query
 		$query->select($select);
-		$query->from(trim($this->getSourceTable()));
+		$query->from(trim($table));
 
 		// Setting the join[s] into the query
 		if (isset($conditions['join'])) {
 			$count = count($conditions['join']);
 
 			for ($i=0;$i<$count;$i++) {
-				$query->join($conditions['join'][$i]);
+				$query->join('INNER', $conditions['join'][$i]);
 			}
 		}
 

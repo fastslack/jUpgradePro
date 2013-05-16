@@ -37,7 +37,7 @@ class jUpgradeMenu extends jUpgrade
 			.' m.sublevel AS level, m.ordering, m.checked_out, m.checked_out_time, m.browserNav, m.access, m.params, m.home';
 		
 		$join = array();
-		$join[] = "LEFT JOIN #__components AS c ON c.id = m.componentid";
+		$join[] = "#__components AS c ON c.id = m.componentid";
 		
 		$conditions['where'] = array();
 		$conditions['join'] = $join;

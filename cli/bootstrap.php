@@ -33,6 +33,11 @@ if (file_exists(JPATH_LIBRARIES.'/import.legacy.php')) {
 	require_once JPATH_LIBRARIES.'/import.php';
 }
 
+// Import the Joomla! CMS
+if (file_exists(JPATH_LIBRARIES.'/cms.php')) {
+	require_once JPATH_LIBRARIES.'/cms.php';
+}
+
 // Import the Joomla! classes from the platform.
 jimport('joomla.application.cli');
 jimport('joomla.filesystem.file');

@@ -199,7 +199,7 @@ INSERT INTO `jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, `de
 (11, 'modules_menu', 'Modules Menus', 'moduleid', 'modules_menu', 'modules_menu', 0, 'jUpgradeModulesMenu', 0, 0, 0, 0, 0, 0, 0),
 (12, 'banners', 'Banners', 'id', 'banner', 'banners', 0, 'jUpgradeBanners', 0, 0, 0, 0, 0, 0, 0),
 (13, 'banners_clients', 'Banners Clients', 'cid', 'bannerclient', 'banner_clients', 0, 'jUpgradeBannersClients', 0, 0, 0, 0, 0, 0, 0),
-(14, 'banners_tracks', 'Banners Tracks', 'banner_id', 'bannertrack', 'bannes_tracks', 0, 'jUpgradeBannersTracks', 0, 0, 0, 0, 0, 0, 0),
+(14, 'banners_tracks', 'Banners Tracks', 'banner_id', 'bannertrack', 'banners_tracks', 0, 'jUpgradeBannersTracks', 0, 0, 0, 0, 0, 0, 0),
 (15, 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'jUpgradeContacts', 0, 0, 0, 0, 0, 0, 0),
 (16, 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'jUpgradeNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
 (17, 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'jUpgradeWeblinks', 0, 0, 0, 0, 0, 0, 0);

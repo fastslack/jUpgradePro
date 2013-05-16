@@ -26,7 +26,7 @@ final class JConfig
 	*
 	* @var string	The method name. 'database' || 'rest'
 	*/
-	public $method = 'rest';
+	public $method = 'database';
 	/**
 	* The limit of the cache system.
 	*
@@ -34,13 +34,32 @@ final class JConfig
 	*/
 	public $cache_limit = '100';
 	/**
-	* Joomla version TO migrate
+	* Keep the template positions
 	*
-	* @var double	The Joomla! version
+	* @var boolean	True if you like to keep the template positions
 	*/
-	public $RELEASE = '3.0';
+	public $positions = true;
 	/**
-	* The database configuration.
+	* Skip steps
+	*
+	* @vars ints
+	*/
+	public $skip_core_users = 0;
+	public $skip_core_categories = 0;
+	public $skip_core_contents = 0;
+	public $skip_core_contents_frontpage = 0;
+	public $skip_core_menus = 0;
+	public $skip_core_menus_types = 0;
+	public $skip_core_modules = 0;
+	public $skip_core_modules_menu = 0;
+	public $skip_core_banners = 0;
+	public $skip_core_banners_clients = 0;
+	public $skip_core_banners_tracks = 0;
+	public $skip_core_contacts = 0;
+	public $skip_core_newsfeeds = 0;
+	public $skip_core_weblinks = 0;
+	/**
+	* The database configuration for your new site
 	*
 	* @vars strings
 	*/
@@ -51,7 +70,7 @@ final class JConfig
 	public $db = '';
 	public $dbprefix = 'jos_';
 	/**
-	* The old database configuration.
+	* The database configuration for your old site
 	*
 	* @vars strings
 	*/
@@ -70,24 +89,4 @@ final class JConfig
 	public $rest_username = 'admin';
 	public $rest_password = 'adminpass';
 	public $rest_key = 'beer';
-	/**
-	* Skip steps
-	*
-	* @vars ints
-	*/
-	public $skip_core_users = 0;
-	public $skip_core_categories = 0;
-	public $skip_core_sections = 0;
-	public $skip_core_contents = 0;
-	public $skip_core_contents_frontpage = 0;
-	public $skip_core_menus = 0;
-	public $skip_core_menus_types = 0;
-	public $skip_core_modules = 0;
-	public $skip_core_modules_menu = 0;
-	public $skip_core_banners = 0;
-	public $skip_core_banners_clients = 0;
-	public $skip_core_banners_tracks = 0;
-	public $skip_core_contacts = 0;
-	public $skip_core_newsfeeds = 0;
-	public $skip_core_weblinks = 0;
 }

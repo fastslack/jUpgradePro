@@ -71,56 +71,25 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	public function getSourceDatabase( )
 	{
-		$cache_limit = $this->params->cache_limit;
-
-		$key = $this->getKeyName();
-		$name = $this->_getStepName();
-
-		$where = '';
-		$where_or = '';
-		$join = '';
-		$limit = '';
-		$order = '';
-
-		if ( !in_array($name, $this->extensions_steps) ) {
-			$oid = $this->_getStepID();
-			$limit = "LIMIT {$oid}, {$cache_limit}";
-		}
-
 		// Get the conditions
 		$conditions = $this->getConditionsHook();
-
-		if ( isset( $conditions['where'] ) ) {
-			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		}
-		if (isset($conditions['where_or'])) {
-			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
-		}		
-		$select = isset($conditions['select']) ? $conditions['select'] : '*';
-		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-		$group_by = isset($conditions['group_by']) ? 'GROUP BY '.$conditions['group_by'] : '';
-
-		if (isset($conditions['join'])) {
-			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
-		}
-
-		if ($key != '') {
-			$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
-		}
-
-		// Get the row
-		$query = "SELECT {$select} FROM {$this->getSourceTable()} {$as} {$join} {$where}{$where_or} {$group_by} {$order} {$limit}";
+		// Process the conditions
+		$query = $this->_processQuery($conditions, true);
+		// Setting the query
 		$this->_db_old->setQuery( $query );
-		//echo "\nQUERY: $query\n";
+		//echo "\nQUERY: {$query->__toString()}\n";
 		$rows = $this->_db_old->loadAssocList();
 
-		if (is_array($rows)) {
-			return $rows;
-		}
-		else
+		try
 		{
-			throw new Exception( $this->_db_old->getErrorMsg() );
+			$rows = $this->_db_old->loadAssocList();
 		}
+		catch (Exception $e)
+		{
+			throw new Exception($e->getMessage());
+		}
+
+		return $rows;
 	}
 
 	/**
@@ -134,36 +103,96 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		$table = $this->getSourceTable();
 		$conditions = $this->getConditionsHook();
 
-		$where = '';
-		$where_or = '';
+		// Process the conditions
+		$query = $this->_processQuery($conditions);
 
-		if ( isset( $conditions['where'] ) ) {
-			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		}
-		if ( isset( $conditions['where_or'] ) ) {
-			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
-		}
-
-		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-
-		$join = '';
-		if (isset($conditions['join'])) {
-			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
-		}
-
-		/// Get Total
-		$query = "SELECT COUNT(*) FROM {$table} {$as} {$join} {$where}{$where_or}";
-
+		// Get Total
 		$this->_db_old->setQuery( $query );
 		$total = $this->_db_old->loadResult();
 
-		$error = $this->_db_old->getErrorMsg();
-
-		if ($error) {
-			throw new Exception( $error );
+		try
+		{
+			$total = $this->_db_old->loadAssocList();
+		}
+		catch (Exception $e)
+		{
+			throw new Exception($e->getMessage());
 		}
 
-		return (int)$total;
+		return (int) count($total);
+	}
+
+	/**
+	 * Process the conditions
+	 *
+	 * @access	public
+	 * @return	array	The conditions ready to be added to query
+	 * @since  3.1.0
+	 */
+	public function _processQuery( $conditions, $pagination = false )
+	{
+		// Create a new query object.
+		$query = $this->_db->getQuery(true);
+
+		// Getting the select clause
+		$select = isset($conditions['select']) ? $conditions['select'] : '*';
+		$select = trim(preg_replace('/\s+/', ' ', $select));
+
+		// Building the query
+		$query->select($select);
+		$query->from(trim($this->getSourceTable()));
+
+		// Setting the join[s] into the query
+		if (isset($conditions['join'])) {
+			$count = count($conditions['join']);
+
+			for ($i=0;$i<$count;$i++) {
+				$query->join($conditions['join'][$i]);
+			}
+		}
+
+		// Setting the where[s] into the query
+		if (isset($conditions['where'])) {
+			$count = count($conditions['where']);
+
+			for ($i=0;$i<$count;$i++) {
+				$query->where(trim($conditions['where'][$i]));
+			}
+		}
+
+		// Setting the where[s] into the query
+		if (isset($conditions['where_or'])) {
+			$count = count($conditions['where_or']);
+
+			for ($i=0;$i<$count;$i++) {
+				$query->where(trim($conditions['where_or'][$i]), 'OR');
+			}
+		}
+
+		// Setting the group into the query
+		if (isset($conditions['group_by'])) {
+			$query->group(trim($conditions['group_by']));
+		}
+
+		// Process the ORDER clause
+		$key = $this->getKeyName();
+
+		if (!empty($key)) {
+			$order = isset($conditions['order']) ? $conditions['order'] : "{$key} ASC";
+			$query->order($order);
+		}
+
+		// Pagination
+		if ($pagination === false) {
+			$cache_limit = $this->params->cache_limit;
+			$oid = $this->_getStepID();
+
+			if (is_int($cache_limit) && is_int($oid)) {
+				$query->setLimit($oid, $cache_limit);
+			}
+		}
+
+		return $query;
 	}
 
 	/*

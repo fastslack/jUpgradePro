@@ -92,7 +92,7 @@ class jUpgradeProCli extends JApplicationCli
 	{
 		// Print help
 		$this->out();
-		$this->out(' jUpgradeCli v3.0.3');
+		$this->out(' jUpgradeCli v3.1.0alpha1');
 		$this->out();
 		$this->out(' Author: Matias Aguirre (maguirre@matware.com.ar)');
 		$this->out(' License: GNU/GPL http://www.gnu.org/licenses/gpl-2.0-standalone.html');
@@ -112,17 +112,35 @@ class jUpgradeProCli extends JApplicationCli
 
 		// Running the checks
 		$checks = new jUpgradeProModelChecks;
-		$checks->checks();
+
+		try {
+			$checks->checks();
+		} catch (Exception $e) {
+			$checks->returnError (500, $e->getMessage());
+		}
 
 		// Running the cleanup
 		$cleanup = new jUpgradeProModelCleanup;
-		$cleanup->cleanup();
+
+		try {
+			$cleanup->cleanup();
+		} catch (Exception $e) {
+			$cleanup->returnError (500, $e->getMessage());
+		}
 
 		// Migrating Joomla! core
-		$this->migrateCore();
+		try {
+			$this->migrateCore();
+		} catch (Exception $e) {
+			$this->returnError (500, $e->getMessage());
+		}
 
 		// Migration 3rd party extensions
-		$this->migrateExtensions();
+		try {
+			$this->migrateExtensions();
+		} catch (Exception $e) {
+			$this->returnError (500, $e->getMessage());
+		}
 	}
 
 	/**
@@ -147,13 +165,15 @@ class jUpgradeProCli extends JApplicationCli
 			$this->out("{$this->_c['WHITE']}-------------------------------------------------------------------------------------------------");
 
 			// Getting the current step
-			$step = (object) $this->step_model->step(false, false);
+			$step = json_decode($this->step_model->step());
 
 			if ( empty($step->id) || !isset($step->stop)) {
 				break;
 			}
 
-			$this->out("{$this->_c['WHITE']}|  {$this->_c['GREEN']}[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
+			$this->out("{$this->_c['WHITE']}|  {$this->_c['GREEN']}[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total}) )");
+
+			//echo "{$this->_c['WHITE']}| DEBUG: " . print_r($step);
 
 			// Start benchmark
 			$time_start = microtime(true);
@@ -241,6 +261,20 @@ class jUpgradeProCli extends JApplicationCli
 		$this->out( "\n{$this->_c['CYAN']}[[TOTAL Extensions Benchmark]] ".round($benchmark, 3)." seconds" );
 
 	} // end method
+
+	/**
+	 * returnError
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	public function returnError ($number, $text)
+	{
+		$message['number'] = $number;
+		$message['text'] = JText::_($text);
+		echo json_encode($message);
+		exit;
+	}
 
 } // end class
 

@@ -25,7 +25,7 @@
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_LIMIT"
 			description="COM_JUPGRADEPRO_CONFIG_LIMIT_DESC"
-			default="10"
+			default="100"
 		/>
 
 	</fieldset>
@@ -206,8 +206,8 @@
 			label="COM_JUPGRADEPRO_CONFIG_POSITIONS"
 			description="COM_JUPGRADEPRO_CONFIG_POSITIONS_DESC"
 			default="1">
-			<option	value="0">JNO</option>
 			<option	value="1">JYES</option>
+			<option	value="0">JNO</option>
 		</field>
 
 	</fieldset>

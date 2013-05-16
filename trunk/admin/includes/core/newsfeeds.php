@@ -48,6 +48,8 @@ class jUpgradeNewsfeeds extends jUpgrade
 
 			$cid = $row['catid'];
 			$row['catid'] = &$categories[$cid]->new;
+
+			unset($row['filename']);
 		}
 
 		return $rows;

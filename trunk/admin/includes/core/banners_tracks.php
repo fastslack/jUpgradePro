@@ -19,4 +19,21 @@
  */
 class jUpgradeBannersTracks extends jUpgrade
 {
-}
+	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	array
+	 * @since	3.1.0
+	 * @throws	Exception
+	 */
+	public static function getConditionsHook()
+	{
+		$conditions = array();
+		
+		$conditions['where'] = array();
+
+		$conditions['group_by'] = "banner_id";
+		
+		return $conditions;
+	}
+} // end class

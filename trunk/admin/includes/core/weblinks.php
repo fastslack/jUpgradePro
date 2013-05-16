@@ -82,7 +82,7 @@ class jUpgradeWeblinks extends jUpgrade
 
 			$row['language'] = '*';
 
-			if ($this->_version == '3.0') {
+			if (version_compare(PHP_VERSION, '3.0', '>=')) {
 				$row['created'] = $row['date'];
 				unset($row['approved']);
 				unset($row['archived']);

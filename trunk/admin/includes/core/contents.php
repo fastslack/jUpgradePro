@@ -157,7 +157,7 @@ class jUpgradeContent extends jUpgrade
 			if (version_compare(PHP_VERSION, '3.1', '>=')) {
 				$row['metadata'] = $row['metadata'] . "\ntags=";
 			}
-			$row['metadata'] = $this->convertParams($row['metadata']);
+			$row['metadata'] = $this->convertParams($row['metadata'], false);
 
 			// JTable:store() run an update if id exists into the object so we create them first
 			$object = new stdClass();

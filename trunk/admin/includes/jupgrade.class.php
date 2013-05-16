@@ -605,13 +605,15 @@ class jUpgrade
 	 * @since	0.4.
 	 * @throws	Exception from the convertParamsHook.
 	 */
-	protected function convertParams($params)
+	protected function convertParams($params, $hook = true)
 	{
 		$temp	= new JRegistry($params);
 		$object	= $temp->toObject();
 
 		// Fire the hook in case this parameter field needs modification.
-		$this->convertParamsHook($object);
+		if ($hook === true) {
+			$this->convertParamsHook($object);
+		}
 
 		return json_encode($object);
 	}

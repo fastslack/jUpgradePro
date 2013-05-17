@@ -1,22 +1,25 @@
 <?php
 /**
- * @version		$Id: menutypes.php 18162 2010-07-16 07:00:47Z ian $
- * @package		Joomla.Framework
- * @subpackage	Table
- * @copyright	Copyright (C) 2005 - 2010 Open Source Matters. All rights reserved.
- * @license		GNU/GPL, see LICENSE.php
- * Joomla! is free software. This version may have been modified pursuant
- * to the GNU General Public License, and as distributed it includes or
- * is derivative of works licensed under the GNU General Public License or
- * other free or open source software licenses.
- * See COPYRIGHT.php for copyright notices and details.
- */
+* jUpgradePro
+*
+* @version $Id:
+* @package jUpgradePro
+* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @author Matias Aguirre
+* @email maguirre@matware.com.ar
+* @link http://www.matware.com.ar/
+* @license GNU General Public License version 2 or later; see LICENSE
+*/
 
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
 
 /**
- * JUpgradeTableBanners_tracks Table class
+ * Upgrade class for Banners tracks
+ *
+ * This class takes the banners tracks from the existing site and send them into the new site.
+ *
+ * @since	0.4.5
  */
 class JUpgradeTableBanners_tracks extends JUpgradeTable {
 	/** @var date */
@@ -35,5 +38,23 @@ class JUpgradeTableBanners_tracks extends JUpgradeTable {
 
 	function __construct(&$db) {
 		parent::__construct('#__bannertrack', 'banner_id', $db);
+	}
+
+	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	array
+	 * @since	3.1.0
+	 * @throws	Exception
+	 */
+	public static function getConditionsHook()
+	{
+		$conditions = array();
+		
+		$conditions['where'] = array();
+
+		$conditions['group_by'] = "banner_id";
+		
+		return $conditions;
 	}
 }

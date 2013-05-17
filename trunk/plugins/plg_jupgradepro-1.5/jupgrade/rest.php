@@ -1,15 +1,15 @@
 <?php
 /**
+* jUpgradePro
+*
 * @version $Id:
-* @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @package jUpgradePro
+* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
-* @based on https://github.com/LouisLandry/joomla-platform/tree/oauth/libraries/joomla/oauth
 * @license GNU General Public License version 2 or later; see LICENSE
 */
-
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 

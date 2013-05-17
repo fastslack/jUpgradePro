@@ -1,8 +1,10 @@
 <?php
 /**
+* jUpgradePro
+*
 * @version $Id:
-* @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @package jUpgradePro
+* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/

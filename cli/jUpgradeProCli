@@ -227,7 +227,7 @@ class jUpgradeProCli extends JApplicationCli
 			$this->out("{$this->_c['WHITE']}-------------------------------------------------------------------------------------------------");
 
 			// Getting the current step
-			$step = (object) $this->step_model->step(false, false, 'tables');
+			$step = json_decode($this->step_model->step(false, false, 'tables'));
 
 			if ( empty($step->id) || !isset($step->stop)) {
 				break;

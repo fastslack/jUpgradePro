@@ -131,6 +131,9 @@ class jUpgradeContent extends jUpgrade
 		{
 			$row = (array) $row;
 
+			// Check if title isn't blank
+			$row['title'] = !empty($row['title']) ? $row['title'] : "###BLANK###";
+
 			// Map catid
 			$row['catid'] = isset($catidmap[$row['catid']]) ? $catidmap[$row['catid']]->new : $defaultId;
 			$row['alias'] = JApplication::stringURLSafe($row['alias']);
@@ -143,7 +146,7 @@ class jUpgradeContent extends jUpgrade
 
 			$count = count($aliases);
 			if ($count > 0) {
-				$row['alias'] .= "-".rand(0, 99999);
+				$row['alias'] .= "-".rand(0, 99999999);
 			}
 
 			// Setting the default rules

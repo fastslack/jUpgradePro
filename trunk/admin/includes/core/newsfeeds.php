@@ -42,14 +42,12 @@ class jUpgradeNewsfeeds extends jUpgrade
 			$row['access'] = 1;
 			$row['language'] = '*';
 
-			if ($this->_version == '3.0') {
+			if (version_compare(PHP_VERSION, '3.0', '>=')) {
 				unset($row['filename']);
 			}
 
 			$cid = $row['catid'];
 			$row['catid'] = &$categories[$cid]->new;
-
-			unset($row['filename']);
 		}
 
 		return $rows;

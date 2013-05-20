@@ -136,6 +136,9 @@ class jUpgradeContent extends jUpgrade
 
 			// Map catid
 			$row['catid'] = isset($catidmap[$row['catid']]) ? $catidmap[$row['catid']]->new : $defaultId;
+
+			// Aliases
+			$row['alias'] = !empty($row['alias']) ? $row['alias'] : "###BLANK###";
 			$row['alias'] = JApplication::stringURLSafe($row['alias']);
 
 			// Check if has duplicated aliases

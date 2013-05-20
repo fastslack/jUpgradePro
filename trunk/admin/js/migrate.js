@@ -220,10 +220,16 @@ var jUpgradepro = new Class({
 
 				var row_object = JSON.decode(row_response);
 
-				currItem.innerHTML = row_object.cid;
+				if (row_object.cid == 0) {
+					currItem.innerHTML = 1;
+				}else{
+					currItem.innerHTML = row_object.cid;
+				}
 
-				if (self.options.debug == 1) {
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
+				if (row_object.number == 500) {
+					if (self.options.debug == 1) {
+						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[ROW]</b><br><br>' +row_object.text;
+					}
 				}
 
 				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
@@ -282,7 +288,11 @@ var jUpgradepro = new Class({
 
 				migrate_status.innerHTML = 'Migrating ' + object.title;
 				if (object.middle != true) {
-					currItem.innerHTML = object.cid;
+					if (object.cid == 0) {
+						currItem.innerHTML = 1;
+					}else{
+						currItem.innerHTML = object.cid;
+					}
 				}
 				totalItems.innerHTML = object.total;
 

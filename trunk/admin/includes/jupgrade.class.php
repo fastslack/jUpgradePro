@@ -292,6 +292,101 @@ class jUpgrade
 		return $this->ready;
 	}
 
+	/**
+	 * dataSwitch
+	 *
+	 * @return	array	The requested data
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	protected function dataSwitch($name = null)
+	{
+		$method = $this->params->method;
+
+		$rows = array();
+
+		switch ($method) {
+			case 'rest':
+				$name = ($name == null) ? $this->_step->_getStepName() : $name;
+				if ( in_array($name, $this->extensions_steps) ) {
+					$rows = $this->_driver->getSourceDataRest($name);
+				}else{
+					$rows = $this->_driver->getSourceDataRestIndividual($name);
+				}
+		    break;
+			case 'database':
+		    $rows = $this->_driver->getSourceDatabase();
+		    break;
+		}
+
+		return $rows;
+	}
+
+	/**
+	 * insertData
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	protected function insertData($rows)
+	{	
+		$table = $this->getDestinationTable();
+
+		// Replacing the table name if xml exists
+		$table = $this->replaceTable($table);
+
+		if (is_array($rows)) {
+
+			$total = count($rows);
+
+			foreach ($rows as $row)
+			{
+				if ($row != false) {
+					// Convert the array into an object.
+					$row = (object) $row;
+
+					try	{
+						$this->_db->insertObject($table, $row);
+					}	catch (Exception $e) {
+						throw new Exception($e->getMessage());
+					}
+				}
+
+				$this->_step->_nextID($total);
+			}
+		}else if (is_object($rows)) {
+
+			if ($row != false) {
+				try
+				{
+					$this->_db->insertObject($table, $rows);
+				}
+				catch (Exception $e)
+				{
+					throw new Exception($e->getMessage());
+				}
+			}
+
+		}
+	
+		return !empty($this->_step->error) ? false : true;
+	}
+
+	/*
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public static function getConditionsHook()
+	{
+		$conditions = array();		
+		$conditions['where'] = array();
+		// Do customisation of the params field here for specific data.
+		return $conditions;	
+	}
+
 	/*
 	 * Fake method of dataHook if it not exists
 	 *
@@ -328,50 +423,6 @@ class jUpgrade
 		return true;
 	}
 
-	/*
-	 *
-	 * @return	void
-	 * @since	3.0.0
-	 * @throws	Exception
-	 */
-	public static function getConditionsHook()
-	{
-		$conditions = array();		
-		$conditions['where'] = array();
-		// Do customisation of the params field here for specific data.
-		return $conditions;	
-	}
-
-	/**
-	 * dataSwitch
-	 *
-	 * @return	array	The requested data
-	 * @since	3.0.0
-	 * @throws	Exception
-	 */
-	protected function dataSwitch($name = null)
-	{
-		$method = $this->params->method;
-
-		$rows = array();
-
-		switch ($method) {
-			case 'rest':
-				$name = ($name == null) ? $this->_step->_getStepName() : $name;
-				if ( in_array($name, $this->extensions_steps) ) {
-					$rows = $this->_driver->getSourceDataRest($name);
-				}else{
-					$rows = $this->_driver->getSourceDataRestIndividual($name);
-				}
-		    break;
-			case 'database':
-		    $rows = $this->_driver->getSourceDatabase();
-		    break;
-		}
-
-		return $rows;
-	}
-
 	/**
  	* Get the table structure
 	*/
@@ -403,60 +454,6 @@ class jUpgrade
 		$this->_db->query();
 
 		return true;
-	}
-
-	/**
-	 * insertData
-	 *
-	 * @return	void
-	 * @since	3.0.0
-	 * @throws	Exception
-	 */
-	protected function insertData($rows)
-	{	
-		$table = $this->getDestinationTable();
-
-		// Replacing the table name if xml exists
-		$table = $this->replaceTable($table);
-
-		if (is_array($rows)) {
-
-			$total = count($rows);
-
-			foreach ($rows as $row)
-			{
-				if ($row != false) {
-					// Convert the array into an object.
-					$row = (object) $row;
-
-					try
-					{
-						$this->_db->insertObject($table, $row);
-					}
-					catch (Exception $e)
-					{
-						throw new Exception($e->getMessage());
-					}
-				}
-
-				$this->_step->_nextID($total);
-			}
-		}else if (is_object($rows)) {
-
-			if ($row != false) {
-				try
-				{
-					$this->_db->insertObject($table, $rows);
-				}
-				catch (Exception $e)
-				{
-					throw new Exception($e->getMessage());
-				}
-			}
-
-		}
-	
-		return !empty($this->_step->error) ? false : true;
 	}
 
 	/**

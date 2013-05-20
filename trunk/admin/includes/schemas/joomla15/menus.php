@@ -316,8 +316,10 @@ class jUpgradeMenu extends jUpgrade
       }
 
 			// Inserting the menu
-			if (!$this->_db->insertObject($table, $row)) {
-				throw new Exception($this->_db->getErrorMsg());
+			try	{
+				$this->_db->insertObject($table, $row);
+			}	catch (Exception $e) {
+				throw new Exception($e->getMessage());
 			}
 
 			// Get new/old id's values
@@ -326,8 +328,10 @@ class jUpgradeMenu extends jUpgrade
 			$menuMap->new = $this->_db->insertid();
 
 			// Save old and new id
-			if (!$this->_db->insertObject('jupgradepro_menus', $menuMap)) {
-				throw new Exception($this->_db->getErrorMsg());
+			try	{
+				$this->_db->insertObject('jupgradepro_menus', $menuMap);
+			}	catch (Exception $e) {
+				throw new Exception($e->getMessage());
 			}
 
 			// Updating the steps table

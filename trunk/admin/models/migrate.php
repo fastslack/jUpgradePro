@@ -45,7 +45,14 @@ class jUpgradeProModelMigrate extends JModelLegacy
 
 		// Run the upgrade
 		if ($step->total > 0) {
-			$jupgrade->upgrade();
+			try
+			{
+				$jupgrade->upgrade();
+			}
+			catch (Exception $e)
+			{
+				throw new Exception($e->getMessage());
+			}
 		}
 
 		// Javascript flags

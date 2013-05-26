@@ -127,10 +127,15 @@ class JUpgradeTable extends JTable
 			$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
 		}
 
+		$group_by = '';
+		if (isset($conditions['group_by'])) {
+			$group_by = isset($conditions['group_by']) ? "GROUP BY " . $conditions['group_by'] : "";
+		}
+
 		$limit = "LIMIT {$oid}, 1";
 
 		// Get the row
-		$query = "SELECT {$select} FROM {$table} {$as} {$join} {$where}{$where_or} {$order} {$limit}";
+		$query = "SELECT {$select} FROM {$table} {$as} {$join} {$where}{$where_or} {$group_by} {$order} {$limit}";
 		$db->setQuery( $query );
 		$row = $db->loadAssoc();
 
@@ -260,12 +265,17 @@ class JUpgradeTable extends JTable
 			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
 		}
 
-		// Get Total
-		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$as} {$join} {$where}{$where_or}";
-		$db->setQuery( $query );
-		$total = $db->loadResult();
+		$group_by = '';
+		if (isset($conditions['group_by'])) {
+			$group_by = isset($conditions['group_by']) ? "GROUP BY " . $conditions['group_by'] : "";
+		}
 
-		if ($total != '') {
+		// Get Total
+		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$as} {$join} {$where}{$where_or} {$group_by}";
+		$db->setQuery( $query );
+		$total = (int) $db->loadResult();
+
+		if (is_int($total)) {
 			return $total;
 		}
 		else

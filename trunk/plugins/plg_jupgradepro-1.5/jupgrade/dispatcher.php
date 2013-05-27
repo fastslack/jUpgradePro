@@ -63,7 +63,7 @@ class JRESTDispatcher
 		// Loading table
 		if (isset($table)) {
 			JTable::addIncludePath(JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'table');
-			$class = JUpgradeTable::getInstance($name, 'JUpgradeTable');
+			$class = @JUpgradeTable::getInstance($name, 'JUpgradeTable');
 
 			if (!is_object($class)) {
 				$class = JUpgradeTable::getInstance('generic', 'JUpgradeTable');

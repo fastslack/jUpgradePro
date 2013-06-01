@@ -1,6 +1,6 @@
 #!/bin/bash
 #
-# * jUpgrade
+# * jUpgradePro
 # *
 # * @author      Matias Aguirre
 # * @email       maguirre@matware.com.ar
@@ -8,13 +8,14 @@
 # * @license     GNU/GPL
 # 
 
-PROJECT="jupgradepro-free"
-VERSION="3.0.0"
+PROJECT="jupgradepro"
+VERSION="3.1.0alpha1"
 
 DIR="com_$PROJECT"
 PACKAGE="com_$PROJECT-$VERSION.zip"
 
 # copy all needed files
+rm *.zip
 rm -rf $DIR
 cp -r ../trunk $DIR
 
@@ -27,10 +28,10 @@ find $DIR -name ".DS_Store" -exec rm -rf {} \;
 #rm $DIR/TODO
 
 # Zipping plugin
-cd $DIR/plugin/
-zip -rq plg_${PROJECT}-rest-${VERSION}.zip .
-mv plg_${PROJECT}-rest-${VERSION}.zip ../../.
-cd ../..
+cd $DIR/plugins/plg_jupgradepro-1.5
+zip -rq plg_${PROJECT}-restful-${VERSION}-j1.5.zip .
+mv plg_${PROJECT}-restful-${VERSION}-j1.5.zip ../../../.
+cd ../../..
 
 # create package
 rm $PACKAGE

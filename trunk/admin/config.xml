@@ -20,7 +20,7 @@
 		</field>
 
 		<field
-			name="cache_limit"
+			name="chunk_limit"
 			type="text"
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_LIMIT"

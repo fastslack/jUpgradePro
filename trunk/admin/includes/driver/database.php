@@ -187,10 +187,10 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 
 		// Pagination
 		if ($pagination === true) {
-			$cache_limit = (int) $this->params->cache_limit;
+			$chunk_limit = (int) $this->params->chunk_limit;
 			$oid = (int) $this->_getStepID();
 
-			$query->setLimit( $cache_limit, $oid );
+			$query->setLimit( $chunk_limit, $oid );
 		}
 
 		return $query;

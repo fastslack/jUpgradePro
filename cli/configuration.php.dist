@@ -31,7 +31,7 @@ final class JConfig
 	*
 	* @var int	The row limit. Defaults: 250 (database) ; 100 (rest)
 	*/
-	public $cache_limit = '100';
+	public $chunk_limit = '100';
 	/**
 	* Keep the template positions
 	*

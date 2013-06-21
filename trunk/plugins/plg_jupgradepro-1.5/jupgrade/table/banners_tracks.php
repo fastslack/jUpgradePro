@@ -47,7 +47,7 @@ class JUpgradeTableBanners_tracks extends JUpgradeTable {
 	 * @since	3.1.0
 	 * @throws	Exception
 	 */
-	public static function getConditionsHook()
+	public function getConditionsHook()
 	{
 		$conditions = array();
 		

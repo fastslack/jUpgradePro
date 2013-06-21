@@ -35,9 +35,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
 		// Checking tables
-		$query = "SHOW TABLES";
-		$this->_db->setQuery($query);
-		$tables = $this->_db->loadColumn();
+		$tables = $this->_db->getTableList();
 
 		// Check if the tables exists if not populate install.sql
 		$tablesComp = array();
@@ -56,7 +54,13 @@ class jUpgradeProModelChecks extends JModelLegacy
 
 		foreach ($tablesComp as $table) {
 			if (!in_array('jupgradepro_'.$table, $tables)) {
+				if (jUpgradeProHelper::isCli()) {
+					print("\n\033[1;37m-------------------------------------------------------------------------------------------------\n");
+					print("\033[1;37m|  \033[0;34m	Installing jUpgradePro tables\n");
+				}
+
 				$params = jUpgradeProHelper::populateDatabase($this->_db, JPATH_COMPONENT_ADMINISTRATOR.'/sql/install.sql');
+				break;
 			}
 		}
 

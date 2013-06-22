@@ -14,6 +14,7 @@
 defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
+JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
@@ -33,6 +34,9 @@ class jUpgradeProModelChecks extends JModelLegacy
 	{
 		// Loading the helper
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
+
+		// Getting the component parameter with global settings
+		$params = jUpgradeProHelper::getParams();
 
 		// Checking tables
 		$tables = $this->_db->getTableList();
@@ -63,13 +67,6 @@ class jUpgradeProModelChecks extends JModelLegacy
 				break;
 			}
 		}
-
-		// Getting the jUpgradeStep instance
-		$step = jUpgradeStep::getInstance();
-		// Getting the jUpgrade instance
-		$jupgrade = new jUpgrade($step);
-		// Getting the component parameter with global settings
-		$params = jUpgradeProHelper::getParams();
 
 		// Define the message array
 		$message = array();
@@ -104,7 +101,8 @@ class jUpgradeProModelChecks extends JModelLegacy
 			}
 
 			// Checking the RESTful connection
-			$code = $jupgrade->_driver->requestRest('check');
+			$driver = JUpgradeDriver::getInstance();
+			$code = $driver->requestRest('check');
 
 			switch ($code) {
 				case 401:

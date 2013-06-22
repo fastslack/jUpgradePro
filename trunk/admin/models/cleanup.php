@@ -14,6 +14,7 @@
 defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
+JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
@@ -31,22 +32,17 @@ class jUpgradeProModelCleanup extends JModelLegacy
 	 */
 	function cleanup()
 	{
-		// Importing helper tags
-		jimport('cms.helper.tags');
-		// Getting the jUpgradeStep instance
-		$step = jUpgradeStep::getInstance();
-		// Getting the jUpgrade instance
-		$jupgrade = new jUpgrade($step);
-
 		// Loading the helper
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
-
+		// Importing helper tags
+		jimport('cms.helper.tags');
 		// Getting the component parameter with global settings
 		$params = jUpgradeProHelper::getParams();
 
 		// If REST is enable, cleanup the source jupgradepro_steps table
 		if ($params->method == 'rest') {
-			$jupgrade->_driver->requestRest('cleanup');
+			$driver = JUpgradeDriver::getInstance();
+			$code = $driver->requestRest('cleanup');
 		}
 
 		// Set all cid, status and cache to 0

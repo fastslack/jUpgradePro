@@ -32,7 +32,10 @@ window.addEvent('domready', function() {
 	var jUpgradePro = new jUpgradepro({
 		method: '<?php echo $params->method ? $params->method : 0; ?>',
 		positions: <?php echo $params->positions ? $params->positions : 0; ?>,
-		debug: <?php echo $params->debug ? $params->debug : 0; ?>,
+		skip_checks: <?php echo $params->skip_checks ? $params->skip_checks : 0; ?>,
+		debug_step: <?php echo $params->debug_step ? $params->debug_step : 0; ?>,
+		debug_migrate: <?php echo $params->debug_migrate ? $params->debug_migrate : 0; ?>,
+		debug_check: <?php echo $params->debug_check ? $params->debug_check : 0; ?>,
 	});
 
 });

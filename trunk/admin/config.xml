@@ -136,6 +136,11 @@
 
 		<field name="spacer1" type="spacer" class="text" label="&lt;b&gt;Core skips&lt;/b&gt;" />
 
+		<field name="skip_checks" type="radio" default="0" label="Skip users" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+
 		<field name="skip_core_users" type="radio" default="0" label="Skip users" description="">
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>
@@ -232,15 +237,35 @@
 		label="COM_JUPGRADEPRO_CONFIG_DEBUG_TITLE"
 		description="COM_JUPGRADEPRO_CONFIG_DEBUG_TITLE_DESC">
 
-		<field
-			name="debug"
-			type="list"
-			label="COM_JUPGRADEPRO_CONFIG_DEBUG"
-			description="COM_JUPGRADEPRO_CONFIG_DEBUG_DESC"
-			default="0">
-			<option
+		<field name="error_reporting"	type="list"	label="COM_JUPGRADEPRO_CONFIG_ERROR_REPORTING"
+			description="COM_JUPGRADEPRO_CONFIG_ERROR_REPORTING_DESC" default="0">
+				<option
 				value="0">JNO</option>
-			<option
+				<option
+				value="1">JYES</option>
+		</field>
+
+		<field name="debug_check"	type="list"	label="COM_JUPGRADEPRO_CONFIG_DEBUG_CHECK"
+			description="COM_JUPGRADEPRO_CONFIG_DEBUG_CHECK_DESC" default="0">
+				<option
+				value="0">JNO</option>
+				<option
+				value="1">JYES</option>
+		</field>
+
+		<field name="debug_step"	type="list"	label="COM_JUPGRADEPRO_CONFIG_DEBUG_STEP"
+			description="COM_JUPGRADEPRO_CONFIG_DEBUG_STEP_DESC" default="0">
+				<option
+				value="0">JNO</option>
+				<option
+				value="1">JYES</option>
+		</field>
+
+		<field name="debug_migrate"	type="list"	label="COM_JUPGRADEPRO_CONFIG_DEBUG_MIGRATE"
+			description="COM_JUPGRADEPRO_CONFIG_DEBUG_MIGRATE_DESC"	default="0">
+				<option
+				value="0">JNO</option>
+				<option
 				value="1">JYES</option>
 		</field>
 

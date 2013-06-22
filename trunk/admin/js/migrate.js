@@ -16,7 +16,10 @@ var jUpgradepro = new Class({
   options: {
     method: 'rest',
     positions: 0,
-    debug: 0
+    skip_checks: 0,
+    debug_check: 0,
+    debug_step: 0,
+    debug_migrate: 0
   },
 
 	initialize: function(options) {
@@ -74,6 +77,9 @@ var jUpgradepro = new Class({
 		var mySlideUpdate = new Fx.Slide('update');
 		mySlideUpdate.toggle();
 
+		// Get the debug element
+		html_debug = document.getElementById('debug');
+
 		// Check skip from settings
 		if (self.options.skip_checks != 1) {
 
@@ -109,9 +115,9 @@ var jUpgradepro = new Class({
 
 					var object = JSON.decode(response);
 
-					if (self.options.debug == 1) {
-						text = document.getElementById('debug');
-						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[cleanup]</b><br><br>' +object.text;
+					if (self.options.debug_check == 1) {
+						html_debug.innerHTML = html_debug.innerHTML + '<br><br>==========<br><b>[cleanup]</b><br><br>' +object.text;
+						console.log(response);
 					}
 
 					if (object.number == 100) {
@@ -139,9 +145,8 @@ var jUpgradepro = new Class({
 
 					var object = JSON.decode(response);
 
-					if (self.options.debug == 1) {
-						text = document.getElementById('debug');
-						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[checks]</b><br><br>' +response;
+					if (self.options.debug_check == 1) {
+						html_debug.innerHTML = html_debug.innerHTML + '<br><br>==========<br><b>[checks]</b><br><br>' +response;
 						console.log(response);
 					}
 
@@ -202,6 +207,8 @@ var jUpgradepro = new Class({
 		currItem = document.getElementById('currItem');
 		// Get the totalItems element
 		totalItems = document.getElementById('totalItems');
+		// Get the debug element
+		html_debug = document.getElementById('debug');
 
 		// Declare counter
 		var counter = 0;
@@ -227,8 +234,8 @@ var jUpgradepro = new Class({
 				}
 
 				if (row_object.number == 500) {
-					if (self.options.debug == 1) {
-						text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[ROW]</b><br><br>' +row_object.text;
+					if (self.options.debug_migrate == 1) {
+						html_debug.innerHTML = html_debug.innerHTML + '<br><br>==========<br><b>[ROW]</b><br><br>' +row_object.text;
 					}
 				}
 
@@ -260,8 +267,7 @@ var jUpgradepro = new Class({
 			method: 'get'
 		}); // end Request		
 
-		text = document.getElementById('debug');
-
+		//
 		step.addEvents({
 			'complete': function(response) {
 
@@ -279,8 +285,8 @@ var jUpgradepro = new Class({
 					}
 				}
 
-				if (self.options.debug == 1) {
-					text.innerHTML = text.innerHTML + '<br><br>==========<br><b>[STEP '+object.name+']</b><br><br>' +response;
+				if (self.options.debug_step == 1) {
+					html_debug.innerHTML = html_debug.innerHTML + '<br><br>==========<br><b>[STEP '+object.name+']</b><br><br>' +response;
 				}
 
 				// Changing title and statusbar
@@ -348,7 +354,7 @@ var jUpgradepro = new Class({
 		// Get the totalItems element
 		ext_totalItems = document.getElementById('ext_totalItems');
 		// Get the debug
-		ext_text = document.getElementById('debug');
+		ext_html_debug = document.getElementById('debug');
 
 		// Declare counter
 		var counter = 0;
@@ -369,8 +375,8 @@ var jUpgradepro = new Class({
 
 				ext_currItem.innerHTML = row_object.cid;
 
-				if (self.options.debug == 1) {
-					ext_text.innerHTML = ext_text.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
+				if (self.options.debug_migrate == 1) {
+					ext_html_debug.innerHTML = ext_html_debug.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
 				}
 
 				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
@@ -418,9 +424,9 @@ var jUpgradepro = new Class({
 					}
 				}
 
-				if (self.options.debug == 1) {
+				if (self.options.debug_step == 1) {
 					console.log(response);
-					ext_text.innerHTML = ext_text.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
+					ext_html_debug.innerHTML = ext_html_debug.innerHTML + '<br><br>==========<br><b>[STEP: '+object.name+']</b><br><br>' +response;
 				}
 
 				// Changing title and statusbar

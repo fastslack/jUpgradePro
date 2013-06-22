@@ -65,6 +65,9 @@ class jUpgradeProHelper
 	{
 		if (!empty($name)) {
 
+			// Loading the JFile class
+			jimport('joomla.filesystem.file');
+
 			$file_core = JPATH_COMPONENT_ADMINISTRATOR."/includes/schemas/joomla15/{$name}.php";
 			$file_checks = JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$name}.php";
 

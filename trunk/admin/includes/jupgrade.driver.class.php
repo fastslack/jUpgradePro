@@ -63,6 +63,9 @@ class jUpgradeDriver
 	 */
 	static function getInstance(jUpgradeStep $step = null)
 	{
+		// Loading the JFile class
+		jimport('joomla.filesystem.file');
+
 		// Getting the params and Joomla version web and cli
 		$params = jUpgradeProHelper::getParams();
 

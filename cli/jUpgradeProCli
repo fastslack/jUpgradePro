@@ -171,7 +171,7 @@ class jUpgradeProCli extends JApplicationCli
 				break;
 			}
 
-			$this->out("{$this->_c['WHITE']}|  {$this->_c['GREEN']}[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total}) )");
+			$this->out("{$this->_c['WHITE']}|  {$this->_c['GREEN']}[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
 
 			//echo "{$this->_c['WHITE']}| DEBUG: " . print_r($step);
 

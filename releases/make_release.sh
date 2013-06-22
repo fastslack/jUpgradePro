@@ -9,7 +9,7 @@
 # 
 
 PROJECT="jupgradepro"
-VERSION="3.1.0alpha1"
+VERSION="3.1.0"
 
 DIR="com_$PROJECT"
 PACKAGE="com_$PROJECT-$VERSION.zip"

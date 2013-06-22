@@ -83,7 +83,11 @@ class jUpgradeDriverRest extends jUpgradeDriver
 
 		$code = $request->code;
 
-		return ($code == 200 || $code == 301) ? $request->body : $code;
+		if ($code == 500) {
+			throw new Exception('COM_JUPGRADEPRO_JUPGRADEPRO_ERROR_REST_REQUEST');
+		} else {
+			return ($code == 200 || $code == 301) ? $request->body : $code;
+		}
 	}
 
 	/**

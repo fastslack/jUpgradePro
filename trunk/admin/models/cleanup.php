@@ -126,7 +126,6 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		$tables[] = '#__jupgradepro_default_categories';
 		$tables[] = '#__menu_types';
 		$tables[] = '#__content';
-		$tables[] = '#__modules';
 
 		for ($i=0;$i<count($tables);$i++) {
 			$query->clear();

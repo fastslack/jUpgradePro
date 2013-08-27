@@ -567,8 +567,16 @@ class jUpgrade
 		$query = "SELECT new"
 		." FROM jupgradepro_{$table}";
 
-		if ($section !== false) {
-			$query .= " WHERE section = '{$section}'";
+		if ($section !== false)
+		{
+			if ($section == 'categories')
+			{
+				$query .= " WHERE (section REGEXP '^[\-\+]?[[:digit:]]*\.?[[:digit:]]*$' OR section = 'com_section')";
+			}
+			else
+			{
+				$query .= " WHERE section = '{$section}'";
+			}
 		}
 
 		if ($custom !== false) {

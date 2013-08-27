@@ -151,45 +151,35 @@ class jUpgradeMenu extends jUpgrade
 
 			// Fixing access
 			$row['access']++;
+
 			// Fixing level
 			$row['level']++;
+
 			// Fixing language
 			$row['language'] = '*';
+
 			// Fixing parent_id
 			if ($row['parent_id'] == 0) {
 				$row['parent_id'] = 1;
 			}
+
       // Converting params to JSON
       $row['params'] = $this->convertParams($row['params']);
 
       // Fixing menus URLs
-      if (strpos($row['link'], 'option=com_content') !== false) {
-
+      if (strpos($row['link'], 'option=com_content') !== false)
+			{
         if (strpos($row['link'], 'view=frontpage') !== false) {
           $row['link'] = 'index.php?option=com_content&view=featured';
-
         } 
-        /*
-        else {
-          // Extract the id from the URL
-          if (preg_match('|id=([0-9]+)|', $row['link'], $tmp)) {
-
-            $id = $tmp[1];
-            if ( (strpos($row['link'], 'layout=blog') !== false) AND
-               ( (strpos($row['link'], 'view=category') !== false) OR
-                 (strpos($row['link'], 'view=section') !== false) ) ) {
-            				$row['link'] = 'index.php?option=com_content&view=category&layout=blog&id='.$categories[$id]->new;
-            } elseif (strpos($row['link'], 'view=section') !== false) {
-              $row['link'] = 'index.php?option=com_content&view=category&layout=blog&id='.$sections[$id]->new;
-            }
-          }
-        }*/
       }
 
-      if ( (strpos($row['link'], 'Itemid=') !== false) AND $row['type'] == 'menulink') {
+      if ( (strpos($row['link'], 'Itemid=') !== false) AND $row['type'] == 'menulink')
+			{
 
           // Extract the Itemid from the URL
-          if (preg_match('|Itemid=([0-9]+)|', $row['link'], $tmp)) {
+          if (preg_match('|Itemid=([0-9]+)|', $row['link'], $tmp))
+					{
           	$item_id = $tmp[1];
 
             $row['params'] = $row['params'] . "\naliasoptions=".$item_id;
@@ -198,12 +188,23 @@ class jUpgradeMenu extends jUpgrade
           }
       }
 
-      if (strpos($row['link'], 'option=com_user&') !== false) {
+      if (strpos($row['link'], 'option=com_user&') !== false)
+			{
         $row['link'] = preg_replace('/com_user/', 'com_users', $row['link']);
         $row['component_id'] = 25;
+				$row['option'] = 'com_users';
+
+				// Change the register view to registration
+        if (strpos($row['link'], 'view=register') !== false)
+				{
+          $row['link'] = 'index.php?option=com_users&view=registration';
+        }
+				else if (strpos($row['link'], 'view=user') !== false)
+				{
+          $row['link'] = 'index.php?option=com_users&view=profile';
+        }
       }
       // End fixing menus URL's
-
     }
 
 		return $rows;
@@ -225,6 +226,7 @@ class jUpgradeMenu extends jUpgrade
 				$object->menu_image = '';
 			}
 		}
+
 		$object->show_page_heading = (isset($object->show_page_title) && !empty($object->page_title)) ? $object->show_page_title : 0;
 	}
 
@@ -240,10 +242,6 @@ class jUpgradeMenu extends jUpgrade
 		$params = $this->getParams();
 		$table	= $this->getDestinationTable();
 
-		// Getting the categories id's
-		$categories = $this->getMapList();
-		$sections = $this->getMapList('categories', 'com_section');
-		
 		// Getting the extensions id's of the new Joomla installation
 		$query = "SELECT extension_id, element"
 		." FROM #__extensions";
@@ -291,9 +289,9 @@ class jUpgradeMenu extends jUpgrade
 			// Fixes
 			$row->title = $row->name;
 
-			if (version_compare(PHP_VERSION, '3.0', '>=')) {
+			if (version_compare(PHP_VERSION, '3.0', '>='))
 				unset($row->ordering);
-			}
+
 
 			// Not needed
 			unset($row->name);
@@ -301,19 +299,20 @@ class jUpgradeMenu extends jUpgrade
 			unset($row->componentid);
 
       // Extract the id from the URL
-      if (preg_match('|id=([0-9]+)|', $row->link, $tmp)) {
+      if (preg_match('|id=([0-9]+)|', $row->link, $tmp))
+			{
+				$id = $tmp[1];
 
-        $id = $tmp[1];
-        if ( (strpos($row->link, 'layout=blog') !== false) AND
-           ( (strpos($row->link, 'view=category') !== false) OR
-             (strpos($row->link, 'view=section') !== false) ) ) {
-             		$catid = isset($categories[$id]->new) ? $categories[$id]->new : $id;
-        				$row->link = "index.php?option=com_content&view=category&layout=blog&id={$catid}";
-        } elseif (strpos($row->link, 'view=section') !== false) {
-        	$sectionid = isset($sections[$id]->new) ? $sections[$id]->new : $id;
-          $row->link = 'index.php?option=com_content&view=category&layout=blog&id='.$sectionid;
-        }
-      }
+				if ( (strpos($row->link, 'layout=blog') !== false) AND
+					( (strpos($row->link, 'view=category') !== false) OR
+					(strpos($row->link, 'view=section') !== false) ) ) {
+						$catid = $this->getMapListValue('categories', 'categories', 'old = ' . $id);
+						$row->link = "index.php?option=com_content&view=category&layout=blog&id={$catid}";
+				} elseif (strpos($row->link, 'view=section') !== false) {
+						$catid = $this->getMapListValue('categories', 'com_section', 'old = ' . $id);
+						$row->link = 'index.php?option=com_content&view=category&layout=blog&id='.$catid;
+				}
+			}
 
 			// Inserting the menu
 			try	{

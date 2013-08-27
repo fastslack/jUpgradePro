@@ -12,7 +12,7 @@
 			type="list"
 			label="COM_JUPGRADEPRO_CONFIG_METHOD"
 			description="COM_JUPGRADEPRO_CONFIG_METHOD_DESC"
-			default="rest">
+			default="database">
 			<option
 				value="database">COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE</option>
 			<option

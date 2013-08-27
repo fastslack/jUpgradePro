@@ -73,7 +73,7 @@ class jUpgradeCategory extends jUpgrade
 				$row['alias'] = JFilterOutput::stringURLSafe($row['title']);
 			}
 
-			// The Joomla 1.6 database structure does not allow duplicate aliases
+			// The Joomla 2.5/3.0+ database structure does not allow duplicate aliases
 			if (in_array($row['alias'], $aliases, true)) {
 				$row['alias'] = $row['alias'].$unique_alias_suffix;
 				$unique_alias_suffix++;

@@ -110,7 +110,7 @@ class jUpgradeContent extends jUpgrade
 		$table	= $this->getDestinationTable();
 
 		// Get category mapping
-		$query = "SELECT * FROM jupgradepro_categories WHERE section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$' AND old>0";
+		$query = "SELECT * FROM jupgradepro_categories WHERE section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$' AND old > 0";
 		$this->_db->setQuery($query);
 		$catidmap = $this->_db->loadObjectList('old');
 		

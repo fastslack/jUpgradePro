@@ -92,7 +92,7 @@ class jUpgradeCategories extends jUpgradeCategory
 				$object->id = $category['id'];
 			}
 
-			// Inserting the menu
+			// Inserting the categories
 			if (!$this->_db->insertObject($table, $object)) {
 				echo $this->_db->getErrorMsg();
 			}

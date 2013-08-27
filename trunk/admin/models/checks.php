@@ -57,13 +57,13 @@ class jUpgradeProModelChecks extends JModelLegacy
 		$tablesComp[] = 'steps';
 
 		foreach ($tablesComp as $table) {
-			if (!in_array('jupgradepro_'.$table, $tables)) {
+			if (!in_array('#__jupgradepro_'.$table, $tables)) {
 				if (jUpgradeProHelper::isCli()) {
 					print("\n\033[1;37m-------------------------------------------------------------------------------------------------\n");
 					print("\033[1;37m|  \033[0;34m	Installing jUpgradePro tables\n");
 				}
 
-				$params = jUpgradeProHelper::populateDatabase($this->_db, JPATH_COMPONENT_ADMINISTRATOR.'/sql/install.sql');
+				jUpgradeProHelper::populateDatabase($this->_db, JPATH_COMPONENT_ADMINISTRATOR.'/sql/install.sql');
 				break;
 			}
 		}
@@ -75,7 +75,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 		// Getting the data
 		$query = $this->_db->getQuery(true);
 		$query->select('COUNT(id)');
-		$query->from("`jupgradepro_steps`");
+		$query->from("`#__jupgradepro_steps`");
 		$this->_db->setQuery($query);
 		$nine = $this->_db->loadResult();
 

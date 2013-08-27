@@ -252,8 +252,8 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 
 							$xmlpath = "{$plugin->element}/extensions/{$element}.xml";
 
-							// Inserting the step to jupgradepro_extensions table
-							$query->insert('jupgradepro_extensions')->columns('`name`, `title`, `class`, `xmlpath`')->values("'{$element}', '{$xml->name}', '{$class}', '{$xmlpath}'");
+							// Inserting the step to #__jupgradepro_extensions table
+							$query->insert('#__jupgradepro_extensions')->columns('`name`, `title`, `class`, `xmlpath`')->values("'{$element}', '{$xml->name}', '{$class}', '{$xmlpath}'");
 							$this->_db->setQuery($query);
 							$this->_db->execute();
 
@@ -297,7 +297,7 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 									$exists = $this->_driver->tableExists($table->name);
 
 									if ($exists == 'YES'){
-										if (!$this->_db->insertObject('jupgradepro_extensions_tables', $table)) {
+										if (!$this->_db->insertObject('#__jupgradepro_extensions_tables', $table)) {
 											throw new Exception($this->_db->getErrorMsg());
 										}
 									}

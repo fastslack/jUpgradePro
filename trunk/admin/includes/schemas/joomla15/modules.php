@@ -130,7 +130,7 @@ class jUpgradeModules extends jUpgrade
 			$oldlist->new = $this->_db->insertid();
 
 			// Save old and new id
-			if (!$this->_db->insertObject('jupgradepro_modules', $oldlist)) {
+			if (!$this->_db->insertObject('#__jupgradepro_modules', $oldlist)) {
 				throw new Exception($this->_db->getErrorMsg());
 			}
 

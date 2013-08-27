@@ -190,7 +190,7 @@ class jUpgradeCategory extends jUpgrade
 		$oldlist->new = $category->id;
 
 		// Save old and new id
-		if (!$this->_db->insertObject('jupgradepro_categories', $oldlist)) {
+		if (!$this->_db->insertObject('#__jupgradepro_categories', $oldlist)) {
 			throw new Exception($this->_db->getErrorMsg());
 		}
 

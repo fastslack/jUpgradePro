@@ -72,7 +72,7 @@ class jUpgradeProModelMigrate extends JModelLegacy
 			$step->stop = -1;
 		}
 
-		// Update jupgradepro_steps table if id = last_id
+		// Update #__jupgradepro_steps table if id = last_id
 		if ( ( ($step->total <= $step->cid) || ($step->stop == -1) && ($empty == false) ) )
 		{
 			$step->next = true;

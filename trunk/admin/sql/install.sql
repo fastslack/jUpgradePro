@@ -1,11 +1,11 @@
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_categories`
+-- Table structure for table `#__jupgradepro_categories`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_categories`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_categories` (
+DROP TABLE IF EXISTS `#__jupgradepro_categories`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_categories` (
   `old` int(11) NOT NULL,
   `new` int(11) NOT NULL,
   `section` varchar(255) NOT NULL DEFAULT '0'
@@ -14,11 +14,11 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_categories` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_errors`
+-- Table structure for table `#__jupgradepro_errors`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_errors`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_errors` (
+DROP TABLE IF EXISTS `#__jupgradepro_errors`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_errors` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `method` varchar(255) NOT NULL,
   `step` varchar(255) NOT NULL,
@@ -29,11 +29,11 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_errors` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_extensions`
+-- Table structure for table `#__jupgradepro_extensions`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_extensions`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_extensions` (
+DROP TABLE IF EXISTS `#__jupgradepro_extensions`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_extensions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -49,10 +49,10 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_extensions` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=7 ;
 
 --
--- Dumping data for table `jupgradepro_extensions`
+-- Dumping data for table `#__jupgradepro_extensions`
 --
 
-INSERT INTO `jupgradepro_extensions` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `xmlpath`) VALUES
+INSERT INTO `#__jupgradepro_extensions` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `xmlpath`) VALUES
 (1, 'extensions', 'Check extensions', '', '', '', 0, 'jUpgradeCheckExtensions', 0, 0, ''),
 (2, 'ext_components', 'Check components', 'id', 'components', 'extensions', 0, 'jUpgradeExtensionsComponents', 0, 0, ''),
 (3, 'ext_modules', 'Check modules', 'id', 'modules', 'extensions', 0, 'jUpgradeExtensionsModules', 0, 0, ''),
@@ -61,11 +61,11 @@ INSERT INTO `jupgradepro_extensions` (`id`, `name`, `title`, `tbl_key`, `source`
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_extensions_tables`
+-- Table structure for table `#__jupgradepro_extensions_tables`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_extensions_tables`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_extensions_tables` (
+DROP TABLE IF EXISTS `#__jupgradepro_extensions_tables`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_extensions_tables` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `eid` int(11) NOT NULL,
   `name` varchar(255) NOT NULL,
@@ -88,11 +88,11 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_extensions_tables` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_files_images`
+-- Table structure for table `#__jupgradepro_files_images`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_files_images`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_files_images` (
+DROP TABLE IF EXISTS `#__jupgradepro_files_images`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_files_images` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
@@ -101,11 +101,11 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_files_images` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_files_media`
+-- Table structure for table `#__jupgradepro_files_media`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_files_media`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_files_media` (
+DROP TABLE IF EXISTS `#__jupgradepro_files_media`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_files_media` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
@@ -114,11 +114,11 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_files_media` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_files_templates`
+-- Table structure for table `#__jupgradepro_files_templates`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_files_templates`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_files_templates` (
+DROP TABLE IF EXISTS `#__jupgradepro_files_templates`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_files_templates` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
@@ -127,30 +127,30 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_files_templates` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_menus`
+-- Table structure for table `#__jupgradepro_menus`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_menus`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_menus` (
+DROP TABLE IF EXISTS `#__jupgradepro_menus`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_menus` (
   `old` int(11) NOT NULL,
   `new` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 --
--- Dumping data for table `jupgradepro_menus`
+-- Dumping data for table `#__jupgradepro_menus`
 --
 
-INSERT INTO `jupgradepro_menus` (`old`, `new`) VALUES
+INSERT INTO `#__jupgradepro_menus` (`old`, `new`) VALUES
 (0, 0);
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_modules`
+-- Table structure for table `#__jupgradepro_modules`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_modules`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_modules` (
+DROP TABLE IF EXISTS `#__jupgradepro_modules`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_modules` (
   `old` int(11) NOT NULL,
   `new` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
@@ -158,11 +158,11 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_modules` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_steps`
+-- Table structure for table `#__jupgradepro_steps`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_steps`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_steps` (
+DROP TABLE IF EXISTS `#__jupgradepro_steps`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_steps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
@@ -182,10 +182,10 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_steps` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
 
 --
--- Dumping data for table `jupgradepro_steps`
+-- Dumping data for table `#__jupgradepro_steps`
 --
 
-INSERT INTO `jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
+INSERT INTO `#__jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
 (1, 'users', 'Users', 'id', 'users', 'users', 0, 'jUpgradeUsers', 0, 0, 0, 0, 0, 0, 0),
 (2, 'arogroup', 'Users Groups', 'id', 'core_acl_aro_groups', 'usergroups', 0, 'jUpgradeUsergroups', 0, 0, 0, 0, 0, 0, 0),
 (3, 'usergroupmap', 'Users Groups', 'aro_id', 'core_acl_groups_aro_map', 'user_usergroup_map', 0, 'jUpgradeUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
@@ -210,11 +210,11 @@ INSERT INTO `jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, `de
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_default_menus`
+-- Table structure for table `#__jupgradepro_default_menus`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_default_menus`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_default_menus` (
+DROP TABLE IF EXISTS `#__jupgradepro_default_menus`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_default_menus` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `menutype` varchar(24) NOT NULL COMMENT 'The type of menu this item belongs to. FK to #__menu_types.menutype',
   `title` varchar(255) NOT NULL COMMENT 'The display title of the menu item.',
@@ -241,10 +241,10 @@ CREATE TABLE IF NOT EXISTS `jupgradepro_default_menus` (
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=101 ;
 
 --
--- Dumping data for table `jupgradepro_default_menus`
+-- Dumping data for table `#__jupgradepro_default_menus`
 --
 
-INSERT INTO `jupgradepro_default_menus` (`id`, `menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`) VALUES
+INSERT INTO `#__jupgradepro_default_menus` (`id`, `menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`) VALUES
 (1, 'menu', 'com_banners', 'Banners', '', 'Banners', 'index.php?option=com_banners', 'component', 0, 1, 4, 0, 0, '0000-00-00 00:00:00', 0, 0, 'class:banners', 0, '', 0, '*', 1),
 (2, 'menu', 'com_banners', 'Banners', '', 'Banners/Banners', 'index.php?option=com_banners', 'component', 0, 2, 4, 0, 0, '0000-00-00 00:00:00', 0, 0, 'class:banners', 0, '', 0, '*', 1),
 (3, 'menu', 'com_banners_categories', 'Categories', '', 'Banners/Categories', 'index.php?option=com_categories&extension=com_banners', 'component', 0, 2, 6, 0, 0, '0000-00-00 00:00:00', 0, 0, 'class:banners-cat', 0, '', 0, '*', 1),
@@ -271,11 +271,11 @@ INSERT INTO `jupgradepro_default_menus` (`id`, `menutype`, `title`, `alias`, `no
 -- --------------------------------------------------------
 
 --
--- Table structure for table `jupgradepro_default_categories`
+-- Table structure for table `#__jupgradepro_default_categories`
 --
 
-DROP TABLE IF EXISTS `jupgradepro_default_categories`;
-CREATE TABLE IF NOT EXISTS `jupgradepro_default_categories` (
+DROP TABLE IF EXISTS `#__jupgradepro_default_categories`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_default_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `parent_id` int(10) unsigned NOT NULL DEFAULT '0',
   `path` varchar(255) NOT NULL DEFAULT '',

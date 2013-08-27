@@ -77,7 +77,7 @@ class jUpgradeMenu extends jUpgrade
 
 		// Getting the data
 		$query->select('`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`');
-		$query->from('jupgradepro_default_menus');
+		$query->from('#__jupgradepro_default_menus');
 		$query->order('id ASC');
 		$db->setQuery($query);
 		$menus = $db->loadAssocList();
@@ -328,7 +328,7 @@ class jUpgradeMenu extends jUpgrade
 
 			// Save old and new id
 			try	{
-				$this->_db->insertObject('jupgradepro_menus', $menuMap);
+				$this->_db->insertObject('#__jupgradepro_menus', $menuMap);
 			}	catch (Exception $e) {
 				throw new Exception($e->getMessage());
 			}

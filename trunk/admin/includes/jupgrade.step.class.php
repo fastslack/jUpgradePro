@@ -68,11 +68,11 @@ class jUpgradeStep
 
 		// Set step table
 		if ($extensions == false) {
-			$this->_table = 'jupgradepro_steps';
+			$this->_table = '#__jupgradepro_steps';
 		}else if($extensions === 'tables') {
-			$this->_table = 'jupgradepro_extensions_tables';
+			$this->_table = '#__jupgradepro_extensions_tables';
 		}else if($extensions == true) {
-			$this->_table = 'jupgradepro_extensions';
+			$this->_table = '#__jupgradepro_extensions';
 		}
 
 		// Load the last step from database
@@ -263,8 +263,8 @@ class jUpgradeStep
 		$query->select('e.*');
 		$query->from($this->_table.' AS e');
 
-		if ($this->_table == 'jupgradepro_extensions_tables') {
-			$query->leftJoin('`jupgradepro_extensions` AS ext ON ext.name = e.element');
+		if ($this->_table == '#__jupgradepro_extensions_tables') {
+			$query->leftJoin('`#__jupgradepro_extensions` AS ext ON ext.name = e.element');
 			$query->select('ext.xmlpath');
 		}
 
@@ -298,7 +298,7 @@ class jUpgradeStep
 		$query->select('name');
 		$query->from($this->_table);
 		$query->where("status = 0");
-		if ($this->_table == 'jupgradepro_extensions_tables') {
+		if ($this->_table == '#__jupgradepro_extensions_tables') {
 			$query->where("element = '{$step['element']}'");
 		}
 		$query->order('id DESC');

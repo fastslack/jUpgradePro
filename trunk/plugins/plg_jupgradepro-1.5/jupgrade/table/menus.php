@@ -152,8 +152,8 @@ class JUpgradeTableMenus extends JUpgradeTable
 		if (strpos($this->link, 'option=com_user&') !== false)
 		{
 			$this->link = preg_replace('/com_user/', 'com_users', $this->link);
-			$row->component_id = 25;
-			$row->option = 'com_users';
+			$this->component_id = 25;
+			$this->option = 'com_users';
 
 			// Change the register view to registration
 			if (strpos($this->link, 'view=register') !== false)

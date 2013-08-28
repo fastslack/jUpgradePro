@@ -127,55 +127,45 @@ class JUpgradeTableMenus extends JUpgradeTable
 				$this->parent_id = 1;
 			}
 		}
-		
-		// Fixing extension_id
-		//if ( isset($extensions_ids[$this->option]) ) {
-		//	$this->component_id = $extensions_ids[$this->option]->extension_id;
-		//	unset($this->option);
-		//}
-    
+  
     // Fixing menus URLs
     if (strpos($this->link, 'option=com_content') !== false) {
 
       if (strpos($this->link, 'view=frontpage') !== false) {
         $this->link = 'index.php?option=com_content&view=featured';
-
-      } else {
-        // Extract the id from the URL
-        if (preg_match('|id=([0-9]+)|', $this->link, $tmp)) {
-
-          $id = $tmp[1];
-          
-          //if ( (strpos($this->link, 'layout=blog') !== false) AND
-          //   ( (strpos($this->link, 'view=category') !== false) OR
-          //     (strpos($this->link, 'view=section') !== false) ) ) {
-          //				$this->link = 'index.php?option=com_content&view=category&layout=blog&id='.$$id;
-          //} elseif (strpos($this->link, 'view=section') !== false) {
-          //  $this->link = 'index.php?option=com_content&view=category&layout=blog&id='.$id;
-          //}
-          
-        }
       }
     }
 
-    if ( (strpos($this->link, 'Itemid=') !== false) AND $this->type == 'menulink') {
+		if ( (strpos($this->link, 'Itemid=') !== false) AND $this->type == 'menulink')
+		{
 
-        // Extract the Itemid from the URL
-        if (preg_match('|Itemid=([0-9]+)|', $this->link, $tmp)) {
-        	$item_id = $tmp[1];
+			// Extract the Itemid from the URL
+			if (preg_match('|Itemid=([0-9]+)|', $this->link, $tmp)) {
+				$item_id = $tmp[1];
 
-          $this->params = $this->params . "\naliasoptions=".$item_id;
-          $this->type = 'alias';
-          $this->link = 'index.php?Itemid=';
-        }
-    }
+				$this->params = $this->params . "\naliasoptions=".$item_id;
+				$this->type = 'alias';
+				$this->link = 'index.php?Itemid=';
+			}
+		}
 
-    if (strpos($this->link, 'option=com_user&') !== false) {
-      $this->link = preg_replace('/com_user/', 'com_users', $this->link);
-      $this->component_id = 25;
-    }
+		if (strpos($this->link, 'option=com_user&') !== false)
+		{
+			$this->link = preg_replace('/com_user/', 'com_users', $this->link);
+			$row->component_id = 25;
+			$row->option = 'com_users';
+
+			// Change the register view to registration
+			if (strpos($this->link, 'view=register') !== false)
+			{
+				$this->link = 'index.php?option=com_users&view=registration';
+			}
+			else if (strpos($this->link, 'view=user') !== false)
+			{
+				$this->link = 'index.php?option=com_users&view=profile';
+			}
+		}
     // End fixing menus URL's
-
 	}
 
 	/**

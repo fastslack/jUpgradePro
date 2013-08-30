@@ -258,6 +258,9 @@ class jUpgradeMenu extends jUpgrade
 			// Convert the array into an object.
 			$row = (object) $row;
 
+			// Get new/old id's values
+			$menuMap = new stdClass();
+
 			// Check if has duplicated aliases
 			$query = "SELECT alias"
 			." FROM #__menu"
@@ -269,6 +272,9 @@ class jUpgradeMenu extends jUpgrade
 			if ($count > 0) {
 				$row->alias .= "-".rand(0, 99999);
 			}
+
+			// Save the old id
+			$menuMap->old = $row->id;
 
 			// Fixing id if == 1 (used by root)
 			if ($row->id == 1) {
@@ -321,9 +327,7 @@ class jUpgradeMenu extends jUpgrade
 				throw new Exception($e->getMessage());
 			}
 
-			// Get new/old id's values
-			$menuMap = new stdClass();
-			$menuMap->old = $row->id;
+			// Save the new id
 			$menuMap->new = $this->_db->insertid();
 
 			// Save old and new id

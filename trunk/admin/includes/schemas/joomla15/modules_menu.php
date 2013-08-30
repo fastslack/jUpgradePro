@@ -45,7 +45,7 @@ class jUpgradeModulesMenu extends jUpgrade
 	/**
 	 * Sets the data in the destination database.
 	 *
-	 * @return	void
+	 * @return	object
 	 * @since	0.4.
 	 * @throws	Exception
 	 */
@@ -57,10 +57,17 @@ class jUpgradeModulesMenu extends jUpgrade
 			// Convert the array into an object.
 			$row = (object) $row;
 
+			// Set the correct moduleid
 			$custom = "old = {$row->moduleid}";
 			$mapped = $this->getMapListValue("modules", false, $custom);
 
 			$row->moduleid = isset($mapped) ? $mapped : $row->moduleid+99999;
+
+			// Set the correct menuid
+			$custom = "old = {$row->menuid}";
+			$mapped = $this->getMapListValue("menus", false, $custom);
+
+			$row->menuid = isset($mapped) ? $mapped : $row->menuid+99999;
 		}
 
 		return $rows;

@@ -194,6 +194,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 				}
 			}
 
+			// Cleanup the entire menu
 			$query->clear();
 			$query->delete()->from('#__menu')->where('id > 1');
 
@@ -321,6 +322,16 @@ class jUpgradeProModelCleanup extends JModelLegacy
 				} catch (RuntimeException $e) {
 					throw new RuntimeException($e->getMessage());
 				}
+			}
+
+			// Cleanup the modules for 'site' unused modules
+			$query->clear();
+			$query->delete()->from('#__modules')->where('client_id = 0');
+
+			try {
+				$this->_db->setQuery($query)->execute();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
 			}
 		}
 

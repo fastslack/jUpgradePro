@@ -57,7 +57,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 		$tablesComp[] = 'steps';
 
 		foreach ($tablesComp as $table) {
-			if (!in_array('#__jupgradepro_'.$table, $tables)) {
+			if (!in_array($this->_db->getPrefix() . 'jupgradepro_' . $table, $tables)) {
 				if (jUpgradeProHelper::isCli()) {
 					print("\n\033[1;37m-------------------------------------------------------------------------------------------------\n");
 					print("\033[1;37m|  \033[0;34m	Installing jUpgradePro tables\n");

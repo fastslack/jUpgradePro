@@ -77,7 +77,7 @@ class JUpgradeTableModules extends JUpgradeTable
 	{
 		$conditions = array();
 				
-		$conditions['where'][] = "id > 15 ";
+		$conditions['where'][] = "client_id = 0";
 		$conditions['where'][] = "module IN ('mod_breadcrumbs', 'mod_footer', 'mod_mainmenu', 'mod_menu', 'mod_related_items', 'mod_stats', 'mod_wrapper', 'mod_archive', 'mod_custom', 'mod_latestnews', 'mod_mostread', 'mod_search', 'mod_syndicate', 'mod_banners', 'mod_feed', 'mod_login', 'mod_newsflash', 'mod_random_image', 'mod_whosonline' )";
 				
 		return $conditions;
@@ -117,6 +117,4 @@ class JUpgradeTableModules extends JUpgradeTable
 			$this->module = "mod_articles_news";
 		}
 	}
-
-
 }

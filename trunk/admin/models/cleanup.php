@@ -172,7 +172,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			$query->from("#__menu");
 			$query->where("id > 100");
-			$query->where("(alias != 'home' AND home = 1)");
+			$query->where("alias != 'home'");
 			$query->order('id ASC');
 			$this->_db->setQuery($query);
 

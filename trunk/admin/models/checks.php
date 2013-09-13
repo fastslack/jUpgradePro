@@ -139,6 +139,12 @@ class jUpgradeProModelChecks extends JModelLegacy
 					$flag = true;
 				}
 			}
+
+			if ($core == "skip_exte") {
+				if ($v == 0) {
+					$flag = true;
+				}
+			}
 		}
 
 		if ($flag === false) {

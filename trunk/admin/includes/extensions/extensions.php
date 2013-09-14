@@ -252,10 +252,22 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 
 							$xmlpath = "{$plugin->element}/extensions/{$element}.xml";
 
-							// Inserting the step to #__jupgradepro_extensions table
-							$query->insert('#__jupgradepro_extensions')->columns('`name`, `title`, `class`, `xmlpath`')->values("'{$element}', '{$xml->name}', '{$class}', '{$xmlpath}'");
+							// Checking if other migration exists
+							$query = $this->_db->getQuery(true);
+							$query->select('e.*');
+							$query->from('#__jupgradepro_extensions AS e');
+							$query->where('e.name = \''.$element.'\'');
+							$query->limit(1);
 							$this->_db->setQuery($query);
-							$this->_db->execute();
+							$exists = $this->_db->loadResult();
+
+							if (empty($exists))
+							{
+								// Inserting the step to #__jupgradepro_extensions table
+								$query->insert('#__jupgradepro_extensions')->columns('`name`, `title`, `class`, `xmlpath`')->values("'{$element}', '{$xml->name}', '{$class}', '{$xmlpath}'");
+								$this->_db->setQuery($query);
+								$this->_db->execute();
+							}
 
 							// Inserting the collection if exists
 							if (isset($xml->name) && isset($xml->collection)) {
@@ -294,9 +306,9 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 									$table->replace = (string) $xml->tables->table[$i]->attributes()->replace;
 									$table->replace = !empty($table->replace) ? $table->replace : $main_replace;
 
-									$exists = $this->_driver->tableExists($table->name);
+									$table_exists = $this->_driver->tableExists($table->name);
 
-									if ($exists == 'YES'){
+									if ($table_exists == 'YES'){
 										if (!$this->_db->insertObject('#__jupgradepro_extensions_tables', $table)) {
 											throw new Exception($this->_db->getErrorMsg());
 										}

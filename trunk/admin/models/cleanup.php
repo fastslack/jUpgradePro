@@ -39,6 +39,9 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		// Getting the component parameter with global settings
 		$params = jUpgradeProHelper::getParams();
 
+		// Initialise the tables array
+		$del_tables = array();
+
 		// If REST is enable, cleanup the source #__jupgradepro_steps table
 		if ($params->method == 'rest') {
 			$driver = JUpgradeDriver::getInstance();
@@ -60,76 +63,63 @@ class jUpgradeProModelCleanup extends JModelLegacy
 
 			if ($core == "skip_core") {
 				if ($v == 1) {
-					$query->clear();
-					// Set all status to 0 and clear state
-					$query->update('#__jupgradepro_steps')->set('status = 2')->where("name = '{$name}'");
 
-					try {
-						$this->_db->setQuery($query)->execute();
-					} catch (RuntimeException $e) {
-						throw new RuntimeException($e->getMessage());
-					}
-
-					$query->clear();
+					// Disable the the steps setted by user
+					$this->updateStep($name);
 
 					if ($name == 'users') {
-						$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \'arogroup\'');
+						// Disable the sections step
+						$this->updateStep('arogroup');
 
-						try {
-							$this->_db->setQuery($query)->execute();
-						} catch (RuntimeException $e) {
-							throw new RuntimeException($e->getMessage());
-						}
-
-						$query->clear();
-						$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \'usergroupmap\'');
-
-						try {
-							$this->_db->setQuery($query)->execute();
-						} catch (RuntimeException $e) {
-							throw new RuntimeException($e->getMessage());
-						}
+						// Disable the sections step
+						$this->updateStep('usergroupmap');
 					}
 
 					if ($name == 'categories') {
-						$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \'sections\'');
-
-						try {
-							$this->_db->setQuery($query)->execute();
-						} catch (RuntimeException $e) {
-							throw new RuntimeException($e->getMessage());
-						}
+						// Disable the sections step
+						$this->updateStep('sections');
 					}
-
 				}
 			}
 
 			if ($k == 'skip_extensions') {
 				if ($v == 1) {
-					$query->clear();
-					$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \'extensions\'');
-
-					try {
-						$this->_db->setQuery($query)->execute();
-					} catch (RuntimeException $e) {
-						throw new RuntimeException($e->getMessage());
-					}
+					// Disable the extensions step
+					$this->updateStep('extensions');
+				}
+				else if ($v == 0)
+				{
+					// Add the tables to truncate for extensions
+					$del_tables[] = '#__jupgradepro_extensions_tables';
 				}
 			}
 		}
 
-		// Truncate the selected tables
-		$tables = array();
-		$tables[] = '#__jupgradepro_categories';
-		$tables[] = '#__jupgradepro_menus';
-		$tables[] = '#__jupgradepro_modules';
-		$tables[] = '#__jupgradepro_default_categories';
-		$tables[] = '#__menu_types';
-		$tables[] = '#__content';
+		// Truncate menu types if menus are enabled
+		if ($params->skip_core_categories != 1)
+		{
+			$del_tables[] = '#__jupgradepro_categories';
+			$del_tables[] = '#__jupgradepro_default_categories';
+		}
 
-		for ($i=0;$i<count($tables);$i++) {
+		// Truncate menu types if menus are enabled
+		if ($params->skip_core_menus != 1)
+		{
+			$del_tables[] = '#__menu_types';
+			$del_tables[] = '#__jupgradepro_menus';
+		}
+
+		// Truncate contents if are enabled
+		if ($params->skip_core_modules != 1)
+			$del_tables[] = '#__jupgradepro_modules';
+
+		// Truncate contents if are enabled
+		if ($params->skip_core_contents != 1)
+			$del_tables[] = '#__content';
+
+		for ($i=0;$i<count($del_tables);$i++) {
 			$query->clear();
-			$query->delete()->from("{$tables[$i]}");
+			$query->delete()->from("{$del_tables[$i]}");
 
 			try {
 				$this->_db->setQuery($query)->execute();
@@ -307,21 +297,11 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			}
 
 			if ($modules_id > 86) {
-				$query->clear();
-				$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \'modules\'');
-				try {
-					$this->_db->setQuery($query)->execute();
-				} catch (RuntimeException $e) {
-					throw new RuntimeException($e->getMessage());
-				}
+				// Update the modules step
+				$this->updateStep('modules');
 
-				$query->clear();
-				$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \'modules_menu\'');
-				try {
-					$this->_db->setQuery($query)->execute();
-				} catch (RuntimeException $e) {
-					throw new RuntimeException($e->getMessage());
-				}
+				// Update the modules_menu step
+				$this->updateStep('modules_menu');
 			}
 
 			// Cleanup the modules for 'site' unused modules
@@ -338,6 +318,29 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		// Done checks
 		if (!jUpgradeProHelper::isCli())
 			$this->returnError (100, 'DONE');
+	}
+
+	/**
+	 * Update the status of one step
+	 *
+	 * @param		string  $name  The name of the table to update
+	 *
+	 * @return	none
+	 *
+	 * @since	3.1.1
+	 */
+	public function updateStep ($name)
+	{
+		// Get the JQuery object
+		$query = $this->_db->getQuery(true);
+		$query->clear();
+
+		$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \''.$name.'\'');
+		try {
+			$this->_db->setQuery($query)->execute();
+		} catch (RuntimeException $e) {
+			throw new RuntimeException($e->getMessage());
+		}
 	}
 
 	/**

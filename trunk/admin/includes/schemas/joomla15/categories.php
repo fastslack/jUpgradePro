@@ -69,7 +69,9 @@ class jUpgradeCategories extends jUpgradeCategory
 		// Initialize values
 		$aliases = array();
 		$unique_alias_suffix = 1;
-		$rootidmap = 0;
+		
+		$rootidmap = (end($rows)['id'])+1;
+		reset($rows);
 
 		// JTable::store() run an update if id exists so we create them first
 		foreach ($rows as $category)
@@ -79,11 +81,6 @@ class jUpgradeCategories extends jUpgradeCategory
 			$category = (array) $category;
 
 			if ($category['id'] == 1) {
-				$query = "SELECT id+1"
-				." FROM #__categories"
-				." ORDER BY id DESC LIMIT 1";
-				$this->_db->setQuery($query);
-				$rootidmap = $this->_db->loadResult();
 
 				$object->id = $rootidmap;
 				$category['old_id'] = $category['id'];
@@ -99,6 +96,7 @@ class jUpgradeCategories extends jUpgradeCategory
 		}
 
 		$total = count($rows);
+
 
 		// Update the category
 		foreach ($rows as $category)

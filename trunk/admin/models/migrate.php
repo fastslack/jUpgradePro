@@ -31,8 +31,12 @@ class jUpgradeProModelMigrate extends JModelLegacy
 	 */
 	function migrate($table = false, $json = true, $extensions = false) {
 
-		$table = (bool) ($table != false) ? $table : JRequest::getCmd('table', '');
-		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', '');
+		$table = (bool) ($table != false) ? $table : JRequest::getCmd('table', null);
+		
+		//@todo fix this in javascript, this is just a workaround
+		if ($table == 'undefined') $table = null;
+		
+		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', false);
 
 		// Init the jUpgrade instance
 		$step = jUpgradeStep::getInstance($table, $extensions);

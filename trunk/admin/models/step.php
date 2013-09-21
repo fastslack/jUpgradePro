@@ -32,7 +32,7 @@ class jUpgradeProModelStep extends JModelLegacy
 	public function step($name = false, $json = true, $extensions = false) {
 
 		// Check if extensions exists if not get it from URI request
-		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', '');
+		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', false);
 
 		// Getting the jUpgradeStep instance
 		$step = jUpgradeStep::getInstance(null, $extensions);

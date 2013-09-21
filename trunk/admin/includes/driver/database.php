@@ -50,7 +50,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 		jUpgradeProHelper::requireClass($name, $xmlpath, $class);
 
 		// @@ Fix bug using PHP < 5.2.3 version
-		$this->_conditions = call_user_func($class .'::getConditionsHook');
+		$this->_conditions = call_user_func('jUpgradeDriverDatabase::getConditionsHook');
 
 		$db_config = array();
 		$db_config['driver'] = $this->params->old_dbtype;

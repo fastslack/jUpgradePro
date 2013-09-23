@@ -153,14 +153,14 @@ class jUpgradeMenu extends jUpgrade
 			$row['access']++;
 
 			// Fixing level
-			$row['sublevel']++;
+			$row['level']++;
 
 			// Fixing language
 			$row['language'] = '*';
 
 			// Fixing parent_id
-			if ($row['parent'] == 0) {
-				$row['parent'] = 1;
+			if ($row['parent_id'] == 0) {
+				$row['parent_id'] = 1;
 			}
 
       // Converting params to JSON

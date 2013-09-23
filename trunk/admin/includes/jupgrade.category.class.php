@@ -61,8 +61,6 @@ class jUpgradeCategory extends jUpgrade
 			$row['params'] = $this->convertParams($row['params']);
 			$row['title'] = str_replace("'", "&#39;", $row['title']);
 			$row['description'] = str_replace("'", "&#39;", $row['description']);
-			$row['extension'] = $row['section'];
-			unset($row['section']);
 
 			if ($row['extension'] == 'com_banner') {
 				$row['extension'] = "com_banners";

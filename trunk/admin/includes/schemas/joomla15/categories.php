@@ -70,7 +70,7 @@ class jUpgradeCategories extends jUpgradeCategory
 		$aliases = array();
 		$unique_alias_suffix = 1;
 		
-		$rootidmap = 2;
+		$rootidmap = 9999;
 		
 		if (is_array($rows)) { 
 			

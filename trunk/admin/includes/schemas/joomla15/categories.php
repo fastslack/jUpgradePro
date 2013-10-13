@@ -70,7 +70,15 @@ class jUpgradeCategories extends jUpgradeCategory
 		$aliases = array();
 		$unique_alias_suffix = 1;
 		
-		$rootidmap = (reset($rows)['id'])+1;
+		$rootidmap = 2;
+		
+		if (is_array($rows)) { 
+			
+			$resrows = reset($rows);
+		    if(is_array($resrows) && isset($resrows['id'])) {
+		    	$rootidmap = $resrows['id'] +1;
+		    }
+		}
 
 		// JTable::store() run an update if id exists so we create them first
 		foreach ($rows as $category)

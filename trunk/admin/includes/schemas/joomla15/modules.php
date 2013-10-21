@@ -61,6 +61,9 @@ class jUpgradeModules extends jUpgrade
 
 			## Language
 			$row['language'] = "*";
+			
+			## Note
+			$row['note'] = "";
 
 			## Module field changes
 			if ($row['module'] == "mod_mainmenu") {

@@ -164,7 +164,7 @@ class jUpgradeCategory extends jUpgrade
 			// Fixing extension name if it's section
 			if ($row['extension'] == 'com_section') {
 				$row['extension'] = "com_content";
-
+				$row['id'] = 0;
 				$category->setLocation(1, 'last-child');
 			}
 		}

@@ -38,11 +38,28 @@ class jUpgradeProModelExtensions extends JModelLegacy
 		// Get jUpgradeExtensions instance
 		$extensions = jUpgrade::getInstance($step);
 		$success = $extensions->upgrade();
-
 		if ($success === true) {
 			$step->status = 2;
-			$step->_updateStep();
-			return true;
+			$step->_updateStep ();
+			if (! jUpgradeProHelper::isCli ()) {
+				echo true;
+			} else {
+				return true;
+			}
 		}
+	}
+	
+	/**
+	 * returnError
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	public function returnError ($number, $text)
+	{
+		$message['number'] = $number;
+		$message['text'] = JText::_($text);
+		echo json_encode($message);
+		exit;
 	}
 } // end class

@@ -12,8 +12,7 @@
 */
 
 // User define for Joomla! 2.5 / 3.0 / 3.1 path
-//define('JPATH_SITE', dirname(dirname(dirname(__FILE__))).'/joomla-cms.my');
-define('JPATH_SITE', '/home/fastslack/www/matware');
+define('JPATH_SITE', dirname(dirname(dirname(__FILE__))).'/joomla-cms');
 
 // @@@ DONT TOUCH BELOW THIS @@@
 // Setup the base path related constant.
@@ -45,8 +44,6 @@ jimport('joomla.filesystem.file');
 jimport('joomla.database.database');
 jimport('joomla.environment.request');
 jimport('cms.model.legacy');
-
-//JLoader::registerPrefix('JUpgrade', JPATH_LIBRARIES . '/matware');
 
 // Require the jUpgradePro files
 require_once JPATH_COMPONENT.'/models/checks.php';

@@ -212,6 +212,10 @@ class jUpgradeProCli extends JApplicationCli
 	{
 		$finished = false;
 		$method = $this->params->get('method');
+		$skip = $this->params->get('skip_extensions');
+
+		if ($skip == 1)
+			exit;
 
 		$this->out("{$this->_c['WHITE']}-------------------------------------------------------------------------------------------------");
 		$this->out("{$this->_c['WHITE']}|  {$this->_c['BLUE']}	Migrating Joomla! 3rd party extensions");

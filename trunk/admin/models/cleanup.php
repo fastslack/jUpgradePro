@@ -238,49 +238,6 @@ class jUpgradeProModelCleanup extends JModelLegacy
 			}
 		}
 
-		// Change the id of the admin user
-		if ($params->skip_core_users != 1) {
-
-			// Getting the data
-			$query->clear();
-			$query->select("username");
-			$query->from("#__users");
-			$query->where("name = 'Super User'");
-			$query->order('id ASC');
-			$query->limit(1);
-			$this->_db->setQuery($query);
-
-			try {
-				$superuser = $this->_db->loadResult();
-			} catch (RuntimeException $e) {
-				throw new RuntimeException($e->getMessage());
-			}
-
-			// Updating the super user id to 10
-			$query->clear();
-			$query->update("#__users");
-			$query->set("`id` = 10");
-			$query->where("username = '{$superuser}'");
-			// Execute the query
-			try {
-				$this->_db->setQuery($query)->execute();
-			} catch (RuntimeException $e) {
-				throw new RuntimeException($e->getMessage());
-			}
-
-			// Updating the user_usergroup_map
-			$query->clear();
-			$query->update("#__user_usergroup_map");
-			$query->set("`user_id` = 10");
-			$query->where("`group_id` = 8");
-			// Execute the query
-			try {
-				$this->_db->setQuery($query)->execute();
-			} catch (RuntimeException $e) {
-				throw new RuntimeException($e->getMessage());
-			}
-		}
-
 		// Checking if modules were added.
 		if ($params->skip_core_modules != 1) {
 			$query->clear();

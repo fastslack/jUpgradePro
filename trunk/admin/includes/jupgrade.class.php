@@ -160,7 +160,7 @@ class jUpgrade
 		}
 
 		// Require the correct file
-		jUpgradeProHelper::requireClass($step->name, $step->xmlpath, $step->class);
+		jUpgradeProHelper::requireClass($step->name, $step->xmlpath, $class);
 
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
 		if (!class_exists($class))
@@ -213,6 +213,16 @@ class jUpgrade
 	{
 		$name = $this->_step->_getStepName();
 		$method = $this->params->method;
+
+		// Before migrate hook
+		try
+		{
+			$this->beforeHook();
+		}
+		catch (Exception $e)
+		{
+			throw new Exception($e->getMessage());
+		}
 
 		// Get the source data.
 		if ($rows === false) {
@@ -310,8 +320,6 @@ class jUpgrade
 				$name = ($name == null) ? $this->_step->_getStepName() : $name;
 				if ( in_array($name, $this->extensions_steps) ) {
 					$rows = $this->_driver->getSourceDataRest($name);
-				}else{
-					$rows = $this->_driver->getSourceDataRestIndividual($name);
 				}
 		    break;
 			case 'database':

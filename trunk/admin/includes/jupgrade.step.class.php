@@ -18,7 +18,7 @@ defined('_JEXEC') or die;
  *
  * @package		jUpgradePro
  */
-class jUpgradeStep
+class JUpgradeproStep
 {	
 	public $id = null;
 	public $name = null;
@@ -96,7 +96,7 @@ class jUpgradeStep
 		}
 		catch (RuntimeException $e)
 		{
-			throw new RuntimeException(sprintf('Unable to load jUpgradeStep object: %s', $e->getMessage()));
+			throw new RuntimeException(sprintf('Unable to load JUpgradeproStep object: %s', $e->getMessage()));
 		}
 
 		return $instance;
@@ -167,13 +167,13 @@ class jUpgradeStep
 		}
 
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
-		$params = jUpgradeProHelper::getParams();
+		$params = JUpgradeproHelper::getParams();
 
 		$limit = $params->chunk_limit;
 
 		// Getting the total
 		if (isset($this->source)) {
-			$this->total = jUpgradeProHelper::getTotal($this);
+			$this->total = JUpgradeproHelper::getTotal($this);
 		}
 
 		// We must to fragment the steps
@@ -378,7 +378,7 @@ class jUpgradeStep
 	{
 		$update_cid = $this->_getStepID() + 1;
 		$this->_updateID($update_cid);
-		echo jUpgradeProHelper::isCli() ? "•" : "";
+		echo JUpgradeproHelper::isCli() ? "•" : "";
 	}
 
 	/**

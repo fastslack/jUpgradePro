@@ -17,7 +17,7 @@
  *
  * @since	0.4.5
  */
-class jUpgradeModulesMenu extends jUpgrade
+class JUpgradeproModulesMenu extends JUpgrade
 {
 	/**
 	 * Setting the conditions hook

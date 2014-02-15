@@ -20,7 +20,7 @@ JLoader::register("jUpgradeUsersDefault", JPATH_COMPONENT_ADMINISTRATOR."/includ
  *
  * @since	0.4.4
  */
-class jUpgradeUsers extends jUpgradeUsersDefault
+class JUpgradeproUsers extends JUpgradeUsersDefault
 {
 
 	/**

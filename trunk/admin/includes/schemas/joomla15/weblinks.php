@@ -17,7 +17,7 @@
  *
  * @since	0.4.5
  */
-class jUpgradeWeblinks extends jUpgrade
+class JUpgradeproWeblinks extends JUpgrade
 {
 	/**
 	 * Setting the conditions hook

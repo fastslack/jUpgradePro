@@ -20,7 +20,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.ph
  *
  * @since	0.4.5
  */
-class jUpgradeCategories extends jUpgradeCategory
+class JUpgradeproCategories extends JUpgradeCategory
 {
 	/**
 	 * Setting the conditions hook

@@ -20,7 +20,7 @@ defined('_JEXEC') or die;
  *
  * @since	1.2.2
  */
-class jUpgradeCategory extends jUpgrade
+class JUpgradeCategory extends jUpgrade
 {
 	/**
 	 * @var		string	The name of the section of the categories.

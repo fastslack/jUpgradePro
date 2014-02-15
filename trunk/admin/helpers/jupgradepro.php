@@ -18,7 +18,7 @@ defined('_JEXEC') or die;
  * @package  Joomla.Administrator
  * @since    3.0.0
  */
-class jUpgradeProHelper
+class JUpgradeproHelper
 {
 	/**
 	 * Check if the class is called from CLI
@@ -96,7 +96,7 @@ class jUpgradeProHelper
 	 *
 	 * @since   3.0.0
 	 */
-	public static function getTotal(jUpgradeStep $step = null)
+	public static function getTotal(JUpgradeproStep $step = null)
 	{
 		JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 

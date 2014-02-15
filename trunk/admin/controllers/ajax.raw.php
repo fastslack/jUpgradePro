@@ -19,7 +19,7 @@ defined('_JEXEC') or die;
  * @subpackage  com_jupgradepro
  * @since       3.0.3
  */
-class jUpgradeProControllerAjax extends JControllerLegacy
+class JUpgradeproControllerAjax extends JControllerLegacy
 {
 	/**
 	 * @var		string	The context for persistent state.

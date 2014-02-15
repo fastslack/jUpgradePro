@@ -17,7 +17,7 @@
  *
  * @since	3.0.0
  */
-class jUpgradeUsersDefault extends jUpgrade
+class JUpgradeproUsersDefault extends JUpgrade
 {
 	/**
 	 * @var      

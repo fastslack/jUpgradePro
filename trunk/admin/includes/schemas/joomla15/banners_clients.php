@@ -17,7 +17,7 @@
  * @subpackage	com_jupgrade
  * @since		2.5.2
  */
-class jUpgradeBannersClients extends jUpgrade
+class JUpgradeproBannersClients extends JUpgrade
 {
 	/**
 	 * Setting the conditions hook

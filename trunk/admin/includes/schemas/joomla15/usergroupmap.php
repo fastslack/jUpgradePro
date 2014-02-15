@@ -25,7 +25,7 @@ JLoader::register("jUpgradeUsersDefault", JPATH_COMPONENT_ADMINISTRATOR."/includ
  * @subpackage	com_jupgrade
  * @since		0.4.4
  */
-class jUpgradeUsergroupMap extends jUpgradeUsersDefault
+class JUpgradeproUsergroupMap extends JUpgradeUsersDefault
 {
 	/**
 	 * Setting the conditions hook

@@ -15,14 +15,14 @@ defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
 JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
-JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
+JLoader::register('JUpgradeproStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
  * jUpgradePro Model
  *
  * @package		jUpgradePro
  */
-class jUpgradeProModelCleanup extends JModelLegacy
+class JUpgradeproModelCleanup extends JModelLegacy
 {
 	/**
 	 * Cleanup
@@ -37,7 +37,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		// Importing helper tags
 		jimport('cms.helper.tags');
 		// Getting the component parameter with global settings
-		$params = jUpgradeProHelper::getParams();
+		$params = JUpgradeproHelper::getParams();
 
 		// Initialise the tables array
 		$del_tables = array();
@@ -273,7 +273,7 @@ class jUpgradeProModelCleanup extends JModelLegacy
 		}
 
 		// Done checks
-		if (!jUpgradeProHelper::isCli())
+		if (!JUpgradeproHelper::isCli())
 			$this->returnError (100, 'DONE');
 	}
 

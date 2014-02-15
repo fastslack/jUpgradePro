@@ -14,14 +14,14 @@
 defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
-JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
+JLoader::register('JUpgradeproStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
  * jUpgradePro Model
  *
  * @package		jUpgradePro
  */
-class jUpgradeProModelMigrate extends JModelLegacy
+class JUpgradeproModelMigrate extends JModelLegacy
 {
 	/**
 	 * Migrate
@@ -35,8 +35,8 @@ class jUpgradeProModelMigrate extends JModelLegacy
 		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', '');
 
 		// Init the jUpgrade instance
-		$step = jUpgradeStep::getInstance($table, $extensions);
-		$jupgrade = jUpgrade::getInstance($step);
+		$step = JUpgradeproStep::getInstance($table, $extensions);
+		$jupgrade = JUpgradepro::getInstance($step);
 
 		// Get the database structure
 		if ($step->first == true && $extensions == 'tables') {
@@ -81,7 +81,7 @@ class jUpgradeProModelMigrate extends JModelLegacy
 			$step->_updateStep();
 		}
 
-		if (!jUpgradeProHelper::isCli()) {
+		if (!JUpgradeproHelper::isCli()) {
 			echo $step->getParameters();
 		}else{
 			return $step->getParameters();

@@ -17,7 +17,7 @@
  *
  * @since	0.4.5
  */
-class jUpgradeExtensions extends jUpgrade
+class JUpgradeproExtensions extends JUpgrade
 {
 	/**
 	 * @var      

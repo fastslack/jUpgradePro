@@ -17,6 +17,6 @@
  *
  * @since	0.4.5
  */
-class jUpgradeMenusTypes extends jUpgrade
+class JUpgradeproMenusTypes extends JUpgrade
 {
 }

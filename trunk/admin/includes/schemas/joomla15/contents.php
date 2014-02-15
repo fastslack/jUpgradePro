@@ -17,7 +17,7 @@
  *
  * @since	0.4.5
  */
-class jUpgradeContent extends jUpgrade
+class JUpgradeproContent extends JUpgrade
 {
 	/**
 	 * Get the raw data for this part of the upgrade.

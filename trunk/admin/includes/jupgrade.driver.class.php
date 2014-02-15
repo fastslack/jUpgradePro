@@ -19,7 +19,7 @@ defined('_JEXEC') or die;
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jUpgradeDriver
+class JUpgradeproDriver
 {	
 	/**
 	 * @var      
@@ -39,7 +39,7 @@ class jUpgradeDriver
 	 */
 	protected $_step = null;
 
-	function __construct(jUpgradeStep $step = null)
+	function __construct(JUpgradeproStep $step = null)
 	{
 		jimport('legacy.component.helper');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
@@ -47,7 +47,7 @@ class jUpgradeDriver
 		// Set the step params	
 		$this->_step = $step;
 
-		$this->params = jUpgradeProHelper::getParams();
+		$this->params = JUpgradeproHelper::getParams();
 
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
@@ -61,13 +61,13 @@ class jUpgradeDriver
 	 *
 	 * @since  3.0.0
 	 */
-	static function getInstance(jUpgradeStep $step = null)
+	static function getInstance(JUpgradeproStep $step = null)
 	{
 		// Loading the JFile class
 		jimport('joomla.filesystem.file');
 
 		// Getting the params and Joomla version web and cli
-		$params = jUpgradeProHelper::getParams();
+		$params = JUpgradeproHelper::getParams();
 
 		// Derive the class name from the driver.
 		$class_name = 'JUpgradeDriver' . ucfirst(strtolower($params->method));
@@ -81,7 +81,7 @@ class jUpgradeDriver
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
 		if (!class_exists($class_name))
 		{
-			throw new RuntimeException(sprintf('Unable to load JUpgradePro Driver: %s', $params->method));
+			throw new RuntimeException(sprintf('Unable to load JUpgradepro Driver: %s', $params->method));
 		}
 
 		// Create our new jUpgradeDriver connector based on the options given.

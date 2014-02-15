@@ -19,7 +19,7 @@ defined('_JEXEC') or die;
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jUpgrade
+class JUpgradepro
 {	
 	/**
 	 * @var      
@@ -75,7 +75,7 @@ class jUpgrade
 	 */
 	public $canDrop = false;
 
-	function __construct(jUpgradeStep $step = null)
+	function __construct(JUpgradeproStep $step = null)
 	{
 		// Set the current step
 		$this->_step = $step;
@@ -84,7 +84,7 @@ class jUpgrade
 		jimport('cms.version.version');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
-		$this->params = jUpgradeProHelper::getParams();
+		$this->params = JUpgradeproHelper::getParams();
 
 		// Getting the J! version
 		$version = new JVersion;
@@ -96,7 +96,7 @@ class jUpgrade
 		// Getting the driver
 		JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 
-		if ($this->_step instanceof jUpgradeStep) {
+		if ($this->_step instanceof JUpgradeproStep) {
 			$this->_step->table = $this->getSourceTable();
 
 			// Initialize the driver
@@ -105,7 +105,7 @@ class jUpgrade
 
 		// Getting the total
 		if (!empty($step->source)) {
-			$this->_total = jUpgradeProHelper::getTotal($step);
+			$this->_total = JUpgradeproHelper::getTotal($step);
 		}
 
 		// Set timelimit to 0
@@ -141,7 +141,7 @@ class jUpgrade
 	 *
 	 * @since  3.0.0
 	 */
-	static function getInstance(jUpgradeStep $step = null)
+	static function getInstance(JUpgradeproStep $step = null)
 	{
 		$class = '';
 
@@ -160,7 +160,7 @@ class jUpgrade
 		}
 
 		// Require the correct file
-		jUpgradeProHelper::requireClass($step->name, $step->xmlpath, $class);
+		JUpgradeproHelper::requireClass($step->name, $step->xmlpath, $class);
 
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
 		if (!class_exists($class))

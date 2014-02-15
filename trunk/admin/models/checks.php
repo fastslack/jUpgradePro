@@ -15,14 +15,14 @@ defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
 JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
-JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
+JLoader::register('JUpgradeproStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
  * jUpgradePro Model
  *
  * @package		jUpgradePro
  */
-class jUpgradeProModelChecks extends JModelLegacy
+class JUpgradeproModelChecks extends JModelLegacy
 {
 	/**
 	 * Initial checks in jUpgradePro
@@ -36,7 +36,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
 		// Getting the component parameter with global settings
-		$params = jUpgradeProHelper::getParams();
+		$params = JUpgradeproHelper::getParams();
 
 		// Checking tables
 		$tables = $this->_db->getTableList();
@@ -58,12 +58,12 @@ class jUpgradeProModelChecks extends JModelLegacy
 
 		foreach ($tablesComp as $table) {
 			if (!in_array($this->_db->getPrefix() . 'jupgradepro_' . $table, $tables)) {
-				if (jUpgradeProHelper::isCli()) {
+				if (JUpgradeproHelper::isCli()) {
 					print("\n\033[1;37m-------------------------------------------------------------------------------------------------\n");
 					print("\033[1;37m|  \033[0;34m	Installing jUpgradePro tables\n");
 				}
 
-				jUpgradeProHelper::populateDatabase($this->_db, JPATH_COMPONENT_ADMINISTRATOR.'/sql/install.sql');
+				JUpgradeproHelper::populateDatabase($this->_db, JPATH_COMPONENT_ADMINISTRATOR.'/sql/install.sql');
 				break;
 			}
 		}
@@ -178,7 +178,7 @@ class jUpgradeProModelChecks extends JModelLegacy
 		}
 
 		// Done checks
-		if (!jUpgradeProHelper::isCli())
+		if (!JUpgradeproHelper::isCli())
 			$this->returnError (100, 'DONE');
 	}
 

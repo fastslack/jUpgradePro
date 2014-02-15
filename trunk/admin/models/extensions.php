@@ -14,7 +14,7 @@
 defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
-JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
+JLoader::register('JUpgradeproStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 JLoader::register('jUpgradeExtensions', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.extensions.class.php');
 
 /**
@@ -22,7 +22,7 @@ JLoader::register('jUpgradeExtensions', JPATH_COMPONENT_ADMINISTRATOR.'/includes
  *
  * @package		jUpgradePro
  */
-class jUpgradeProModelExtensions extends JModelLegacy
+class JUpgradeproModelExtensions extends JModelLegacy
 {
 	/**
 	 * Migrate the extensions
@@ -33,10 +33,10 @@ class jUpgradeProModelExtensions extends JModelLegacy
 	function extensions() {
 
 		// Get the step
-		$step = jUpgradeStep::getInstance('extensions', true);
+		$step = JUpgradeproStep::getInstance('extensions', true);
 
 		// Get jUpgradeExtensions instance
-		$extensions = jUpgrade::getInstance($step);
+		$extensions = JUpgradepro::getInstance($step);
 		$success = $extensions->upgrade();
 
 		if ($success === true) {

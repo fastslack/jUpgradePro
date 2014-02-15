@@ -22,7 +22,7 @@ JLoader::register("jUpgradeUsersDefault", JPATH_COMPONENT_ADMINISTRATOR."/includ
  * @subpackage	com_jupgrade
  * @since		0.4.4
  */
-class jUpgradeUsergroups extends jUpgradeUsersDefault
+class JUpgradeproUsergroups extends JUpgradeUsersDefault
 {
 	/**
 	 * Setting the conditions hook

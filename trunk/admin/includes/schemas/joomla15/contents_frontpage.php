@@ -17,6 +17,6 @@
  * @subpackage	com_jupgrade
  * @since		0.4.4
  */
-class jUpgradeContentFrontpage extends jUpgrade
+class JUpgradeproContentFrontpage extends JUpgrade
 {
 }

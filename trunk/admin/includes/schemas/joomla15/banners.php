@@ -17,7 +17,7 @@
  *
  * @since       0.4.5
  */
-class jUpgradeBanners extends jUpgrade
+class JUpgradeproBanners extends JUpgrade
 {
 	/**
 	 * Setting the conditions hook

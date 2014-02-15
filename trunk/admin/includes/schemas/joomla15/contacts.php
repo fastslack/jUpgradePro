@@ -20,7 +20,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.ph
  *
  * @since	0.4.5
  */
-class jUpgradeContacts extends jUpgrade
+class JUpgradeproContacts extends JUpgrade
 {
 	/**
 	 * Get the raw data for this part of the upgrade.

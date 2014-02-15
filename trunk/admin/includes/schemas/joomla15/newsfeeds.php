@@ -17,7 +17,7 @@
  *
  * @since	0.4.5
  */
-class jUpgradeNewsfeeds extends jUpgrade
+class JUpgradeproNewsfeeds extends JUpgrade
 {
 	/**
 	 * Sets the data in the destination database.

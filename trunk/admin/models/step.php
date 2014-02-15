@@ -14,14 +14,14 @@
 defined('_JEXEC') or die;
 
 JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
-JLoader::register('jUpgradeStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
+JLoader::register('JUpgradeproStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
  * jUpgradePro Model
  *
  * @package		jUpgradePro
  */
-class jUpgradeProModelStep extends JModelLegacy
+class JUpgradeproModelStep extends JModelLegacy
 {
 	/**
 	 * Initial checks in jUpgradePro
@@ -34,8 +34,8 @@ class jUpgradeProModelStep extends JModelLegacy
 		// Check if extensions exists if not get it from URI request
 		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', '');
 
-		// Getting the jUpgradeStep instance
-		$step = jUpgradeStep::getInstance(null, $extensions);
+		// Getting the JUpgradeproStep instance
+		$step = JUpgradeproStep::getInstance(null, $extensions);
 
 		// Check if name exists
 		$name = !empty($name) ? $name : $step->name;
@@ -43,7 +43,7 @@ class jUpgradeProModelStep extends JModelLegacy
 		// Get the next step
 		$step->getStep($name);
 
-		if (!jUpgradeProHelper::isCli()) {
+		if (!JUpgradeproHelper::isCli()) {
 			echo $step->getParameters();
 		}else{
 			return $step->getParameters();

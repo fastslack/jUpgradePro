@@ -19,7 +19,7 @@ jimport( 'joomla.application.component.view' );
  * @package		MatWare
  * @subpackage	com_jupgrade
  */
-class jupgradeProViewCpanel extends JViewLegacy
+class JUpgradeproViewCpanel extends JViewLegacy
 {
 	/**
 	 * Display the view.
@@ -40,7 +40,7 @@ class jupgradeProViewCpanel extends JViewLegacy
 
 		// Get params
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
-		$params = jUpgradeProHelper::getParams();
+		$params = JUpgradeproHelper::getParams();
 
 		//
 		// Joomla bug: JInstaller not save the defaults params reading config.xml
@@ -55,7 +55,7 @@ class jupgradeProViewCpanel extends JViewLegacy
 			$db->query();
 
 			// Get params.. again
-			$params		= jUpgradeProHelper::getParams();
+			$params		= JUpgradeproHelper::getParams();
 		}
 
 		// Load mooTools

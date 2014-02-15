@@ -18,7 +18,7 @@ defined('_JEXEC') or die;
  *
  * @package		jUpgradePro
  */
-class jUpgradeDriverDatabase extends jUpgradeDriver
+class JUpgradeproDriverDatabase extends jUpgradeDriver
 {
 	/**
 	 * @var      
@@ -37,7 +37,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 	 */
 	private $extensions_steps = array('extensions', 'ext_components', 'ext_modules', 'ext_plugins');
 
-	function __construct(jUpgradeStep $step = null)
+	function __construct(JUpgradeproStep $step = null)
 	{
 		parent::__construct($step);
 
@@ -47,7 +47,7 @@ class jUpgradeDriverDatabase extends jUpgradeDriver
 
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
-		jUpgradeProHelper::requireClass($name, $xmlpath, $class);
+		JUpgradeproHelper::requireClass($name, $xmlpath, $class);
 
 		// @@ Fix bug using PHP < 5.2.3 version
 		$this->_conditions = call_user_func($class .'::getConditionsHook');

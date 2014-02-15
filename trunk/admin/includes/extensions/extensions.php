@@ -17,7 +17,7 @@
  *
  * @since	0.4.5
  */
-class jUpgradeCheckExtensions extends jUpgradeExtensions
+class JUpgradeproCheckExtensions extends jUpgradeExtensions
 {
 	/**
 	 * count adapters
@@ -54,10 +54,10 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 	protected function upgradeComponents()
 	{
 		// Getting the step
-		$step = jUpgradeStep::getInstance('ext_components', true);
+		$step = JUpgradeproStep::getInstance('ext_components', true);
 
 		// Get jUpgradeExtensionsComponents instance
-		$components = jUpgrade::getInstance($step);
+		$components = JUpgradepro::getInstance($step);
 		$rows = $components->dataSwitch();
 
 		$this->_addExtensions ( $rows, 'com' );
@@ -78,10 +78,10 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 	protected function upgradeModules()
 	{
 		// Getting the step
-		$step = jUpgradeStep::getInstance('ext_modules', true);
+		$step = JUpgradeproStep::getInstance('ext_modules', true);
 
 		// Get jUpgradeExtensionsModules instance
-		$modules = jUpgrade::getInstance($step);
+		$modules = JUpgradepro::getInstance($step);
 		$rows = $modules->dataSwitch();
 
 		$this->_addExtensions ( $rows, 'mod' );
@@ -102,10 +102,10 @@ class jUpgradeCheckExtensions extends jUpgradeExtensions
 	protected function upgradePlugins()
 	{
 		// Getting the step
-		$step = jUpgradeStep::getInstance('ext_plugins', true);
+		$step = JUpgradeproStep::getInstance('ext_plugins', true);
 
 		// Get jUpgradeExtensionsPlugins instance
-		$plugins = jUpgrade::getInstance($step);
+		$plugins = JUpgradepro::getInstance($step);
 		$rows = $plugins->dataSwitch();
 
 		$this->_addExtensions ( $rows, 'plg' );

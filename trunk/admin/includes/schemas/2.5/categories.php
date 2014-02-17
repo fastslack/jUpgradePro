@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -18,7 +18,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.ph
  *
  * This class takes the categories from the existing site and inserts them into the new site.
  *
- * @since	0.4.5
+ * @since	3.2.0
  */
 class JUpgradeproCategories extends JUpgradeproCategory
 {
@@ -33,7 +33,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	{
 		$conditions = array();
 
-		$conditions['select'] = '`id`, `title`, `alias`, `extension`, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
+		$conditions['select'] = '*';
 
 		$where_or = array();
 		$where_or[] = "extension REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";

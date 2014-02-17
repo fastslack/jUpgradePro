@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -15,7 +15,7 @@
  *
  * @package		MatWare
  * @subpackage	com_jupgrade
- * @since		2.5.2
+ * @since		3.2.0
  */
 class JUpgradeproBannersClients extends JUpgradepro
 {
@@ -30,7 +30,7 @@ class JUpgradeproBannersClients extends JUpgradepro
 	{
 		$conditions = array();
 		
-		$conditions['select'] = '`cid` AS id, `name`, 1 AS `state`, `contact`, `email`, `extrainfo`, `checked_out`, `checked_out_time`';
+		$conditions['select'] = 'id, `name`, `state`, `contact`, `email`, `extrainfo`, `checked_out`, `checked_out_time`';
 		
 		$conditions['where'] = array();
 		

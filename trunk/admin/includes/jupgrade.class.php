@@ -234,14 +234,16 @@ class JUpgradepro
 			$rows = $this->dataSwitch();
 		}
 
+		// Call to database method hook
 		if ( $method == 'database' OR $method == 'database_all') {
 			if (method_exists($this, 'databaseHook')) { 
 				$rows = $this->databaseHook($rows);
 			}
 		}
 
+		// Call structure hook to create the db table
 		if ($this->_step->first == true && $this->_step->cid == 0) {
-			// Calling the structure modificator hook
+
 			$structureHook = 'structureHook_'.$name;
 
 			if (method_exists($this, $structureHook)) { 
@@ -281,6 +283,7 @@ class JUpgradepro
 			}
 		}
 
+		// Insert the data to the target
 		if ($rows !== false) {
 
 			try
@@ -296,10 +299,12 @@ class JUpgradepro
 		// Load the step object
 		$this->_step->_load();
 
+		// Call after migration hook
 		if ($this->getTotal() == $this->_step->cid) {
 			$this->ready = $this->afterHook($rows);
 		}
 
+		// Call after all steps hook
 		if ($this->_step->name == $this->_step->laststep && $this->_step->cache == 0 && $this->getTotal() == $this->_step->cid) {
 			$this->ready = $this->afterAllStepsHook();
 		}
@@ -394,9 +399,12 @@ class JUpgradepro
 	 */
 	public static function getConditionsHook()
 	{
-		$conditions = array();		
+		$conditions = array();	
+
+		$conditions['select'] = '*';
+
 		$conditions['where'] = array();
-		// Do customisation of the params field here for specific data.
+
 		return $conditions;	
 	}
 

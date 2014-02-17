@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_errors` (
 DROP TABLE IF EXISTS `#__jupgradepro_extensions`;
 CREATE TABLE IF NOT EXISTS `#__jupgradepro_extensions` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `version` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `tbl_key` varchar(255) NOT NULL,
@@ -52,11 +53,15 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_extensions` (
 -- Dumping data for table `#__jupgradepro_extensions`
 --
 
-INSERT INTO `#__jupgradepro_extensions` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `xmlpath`) VALUES
-(1, 'extensions', 'Check extensions', '', '', '', 0, 'JUpgradeproCheckExtensions', 0, 0, ''),
-(2, 'ext_components', 'Check components', 'id', 'components', 'extensions', 0, 'JUpgradeproExtensionsComponents', 0, 0, ''),
-(3, 'ext_modules', 'Check modules', 'id', 'modules', 'extensions', 0, 'JUpgradeproExtensionsModules', 0, 0, ''),
-(4, 'ext_plugins', 'Check plugins', 'id', 'plugins', 'extensions', 0, 'JUpgradeproExtensionsPlugins', 0, 0, '');
+INSERT INTO `#__jupgradepro_extensions` (`id`, `version`,`name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `xmlpath`) VALUES
+(1, '1.5', 'extensions', 'Check extensions', '', '', '', 0, 'JUpgradeproCheckExtensions', 0, 0, ''),
+(2, '1.5', 'ext_components', 'Check components', 'id', 'components', 'extensions', 0, 'JUpgradeproExtensionsComponents', 0, 0, ''),
+(3, '1.5', 'ext_modules', 'Check modules', 'id', 'modules', 'extensions', 0, 'JUpgradeproExtensionsModules', 0, 0, ''),
+(4, '1.5', 'ext_plugins', 'Check plugins', 'id', 'plugins', 'extensions', 0, 'JUpgradeproExtensionsPlugins', 0, 0, ''),
+(5, '2.5', 'extensions', 'Check extensions', '', '', '', 0, 'JUpgradeproCheckExtensions', 0, 0, ''),
+(6, '2.5', 'ext_components', 'Check components', 'id', 'components', 'extensions', 0, 'JUpgradeproExtensionsComponents', 0, 0, ''),
+(7, '2.5', 'ext_modules', 'Check modules', 'id', 'modules', 'extensions', 0, 'JUpgradeproExtensionsModules', 0, 0, ''),
+(8, '2.5', 'ext_plugins', 'Check plugins', 'id', 'plugins', 'extensions', 0, 'JUpgradeproExtensionsPlugins', 0, 0, '');
 
 -- --------------------------------------------------------
 

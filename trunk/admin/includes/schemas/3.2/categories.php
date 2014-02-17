@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -18,7 +18,7 @@ require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.ph
  *
  * This class takes the categories from the existing site and inserts them into the new site.
  *
- * @since	0.4.5
+ * @since	3.2.0
  */
 class JUpgradeproCategories extends JUpgradeproCategory
 {
@@ -33,13 +33,13 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	{
 		$conditions = array();
 
-		$conditions['select'] = '`id`, `id` AS sid, `title`, `alias`, `section` AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
+		$conditions['select'] = '*';
 
 		$where_or = array();
-		$where_or[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
-		$where_or[] = "section IN ('com_banner', 'com_contact', 'com_contact_details', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
+		$where_or[] = "extension REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
+		$where_or[] = "extension IN ('com_banners', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
 
-		$conditions['order'] = "id DESC, section DESC, ordering DESC";		
+		$conditions['order'] = "id DESC, extension DESC";		
 		$conditions['where_or'] = $where_or;
 		
 		return $conditions;
@@ -49,7 +49,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	 * Sets the data in the destination database.
 	 *
 	 * @return	void
-	 * @since	0.4.
+	 * @since	0.5.6
 	 * @throws	Exception
 	 */
 	public function dataHook($rows = null)
@@ -58,18 +58,10 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		$table = $this->getDestinationTable();
 		// Getting the component parameter with global settings
 		$params = $this->getParams();
-
-		/**
-		 * Inserting the categories
-		 * @since	2.5.1
-		 */
+		// Initialize values
+		$rootidmap = 0;
 		// Content categories
 		$this->section = 'com_content'; 
-
-		// Initialize values
-		$aliases = array();
-		$unique_alias_suffix = 1;
-		$rootidmap = 0;
 
 		// JTable::store() run an update if id exists so we create them first
 		foreach ($rows as $category)
@@ -92,9 +84,14 @@ class JUpgradeproCategories extends JUpgradeproCategory
 				$object->id = $category['id'];
 			}
 
-			// Inserting the categories
-			if (!$this->_db->insertObject($table, $object)) {
-				echo $this->_db->getErrorMsg();
+			// Inserting the categories id's
+			try
+			{
+				$this->_db->insertObject($table, $object);
+			}
+			catch (RuntimeException $e)
+			{
+				throw new RuntimeException($this->_db->getErrorMsg());
 			}
 		}
 
@@ -115,18 +112,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 				$category['id'] = $rootidmap;
 			}
 
-			// Check if has duplicated aliases
-			$query = "SELECT alias"
-			." FROM #__categories"
-			." WHERE alias = ".$this->_db->quote($category['alias']);
-			$this->_db->setQuery($query);
-			$aliases = $this->_db->loadAssoc();
-
-			$count = count($aliases);
-			if ($count > 0) {
-				$category['alias'] .= "-".rand(0, 99999);
-			}
-
+			// Update the category data
 			$this->insertCategory($category);
 
 			// Updating the steps table

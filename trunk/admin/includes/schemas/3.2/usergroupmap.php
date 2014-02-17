@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -23,7 +23,7 @@ JLoader::register("JUpgradeproUser", JPATH_COMPONENT_ADMINISTRATOR."/includes/ju
  *
  * @package		MatWare
  * @subpackage	com_jupgrade
- * @since		0.4.4
+ * @since		3.2.0
  */
 class JUpgradeproUsergroupMap extends JUpgradeproUser
 {
@@ -39,7 +39,7 @@ class JUpgradeproUsergroupMap extends JUpgradeproUser
 		$conditions = array();
 		
 		$conditions['where'] = array();
-		$conditions['order'] = "aro_id ASC";
+		$conditions['order'] = "user_id ASC";
 		
 		return $conditions;
 	}
@@ -54,7 +54,7 @@ class JUpgradeproUsergroupMap extends JUpgradeproUser
 	public function &databaseHook($rows)
 	{
 		$remove = array();
-
+/*
 		// Set up the mapping table for the old groups to the new groups.
 		$groupMap = $this->getUsergroupIdMap();
 
@@ -81,7 +81,7 @@ class JUpgradeproUsergroupMap extends JUpgradeproUser
 
 			$rows[$i] = $row;
 		}
-
+*/
 		return $rows;
 	}
 

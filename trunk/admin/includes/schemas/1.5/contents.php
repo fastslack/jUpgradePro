@@ -159,10 +159,12 @@ class JUpgradeproContent extends JUpgradepro
 			$rules['core.edit.state'] = array('6' => true, '5' => 1);
 			$row['rules'] = $rules;
 
-			// Converting the metadata to JSON
-			if (version_compare(PHP_VERSION, '3.1', '>=')) {
+			// Add tags if Joomla! is greater than 3.1
+			if (version_compare(JUpgradeproHelper::getVersion('old'), '2.5', '<') && version_compare(JUpgradeproHelper::getVersion('new'), '3.1', '>=')) {
 				$row['metadata'] = $row['metadata'] . "\ntags=";
 			}
+
+			// Converting the metadata to JSON
 			$row['metadata'] = $this->convertParams($row['metadata'], false);
 
 			// JTable:store() run an update if id exists into the object so we create them first

@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -23,7 +23,7 @@ JLoader::register("JUpgradeproUser", JPATH_COMPONENT_ADMINISTRATOR."/includes/ju
  *
  * @package		MatWare
  * @subpackage	com_jupgrade
- * @since		0.4.4
+ * @since		3.2.0
  */
 class JUpgradeproUsergroupMap extends JUpgradeproUser
 {

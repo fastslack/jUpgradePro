@@ -42,7 +42,7 @@ class JUpgradeproNewsfeeds extends JUpgradepro
 			$row['access'] = 1;
 			$row['language'] = '*';
 
-			if (version_compare(PHP_VERSION, '3.0', '>=')) {
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
 				unset($row['filename']);
 			}
 

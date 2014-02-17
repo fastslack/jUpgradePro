@@ -19,37 +19,4 @@
  */
 class JUpgradeproNewsfeeds extends JUpgradepro
 {
-	/**
-	 * Sets the data in the destination database.
-	 *
-	 * @return	void
-	 * @since	3.0.
-	 * @throws	Exception
-	 */
-	public function dataHook($rows = null)
-	{
-		// Getting the component parameter with global settings
-		$params = $this->getParams();	
-
-		// Getting the categories id's
-		$categories = $this->getMapList('categories', 'com_newsfeeds');
-
-		// Do some custom post processing on the list.
-		foreach ($rows as &$row)
-		{
-			$row = (array) $row;
-
-			$row['access'] = 1;
-			$row['language'] = '*';
-
-			if (version_compare(PHP_VERSION, '3.0', '>=')) {
-				unset($row['filename']);
-			}
-
-			$cid = $row['catid'];
-			$row['catid'] = &$categories[$cid]->new;
-		}
-
-		return $rows;
-	}
 }

@@ -86,17 +86,14 @@ class JUpgradeproUsers extends JUpgradeproUser
 		{
 			$row = (array) $row;
 
-			$row['params'] = $this->convertParams($row['params']);
-
       // Chaging admin username and email
       if ($row['id'] == 62) {
-        $row['username'] = $row['username'].'v15';
-        $row['email'] = $row['email'].'v15';
+        $row['username'] = $row['username'].'-old';
+        $row['email'] = $row['email'].'-old';
       }
 
 			// Remove unused fields. 
-			$gid = 'gid';
-			unset($row[$gid]);
+			unset($row['gid']);
 		}
 		
 		return $rows;
@@ -122,41 +119,5 @@ class JUpgradeproUsers extends JUpgradeproUser
 		} catch (RuntimeException $e) {
 			throw new RuntimeException($e->getMessage());
 		}
-	}
-
-	/**
-	 * Sets the data in the destination database.
-	 *
-	 * @return	void
-	 * @since	0.4.
-	 * @throws	Exception
-	 */
-	public function dataHook($rows)
-	{
-		// Do some custom post processing on the list.
-		foreach ($rows as &$row)
-		{
-			$row = (array) $row;
-
-			if (version_compare(PHP_VERSION, '3.0', '>=')) {
-				unset($row['usertype']);
-			}
-		}
-
-		return $rows;
-	}
-
-	/**
-	 * A hook to be able to modify params prior as they are converted to JSON.
-	 *
-	 * @param	object	$object	A reference to the parameters as an object.
-	 *
-	 * @return	void
-	 * @since	0.4.
-	 * @throws	Exception
-	 */
-	protected function convertParamsHook(&$object)
-	{
-		$object->timezone = 'UTC';
 	}
 }

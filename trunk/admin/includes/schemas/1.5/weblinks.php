@@ -82,7 +82,7 @@ class JUpgradeproWeblinks extends JUpgradepro
 
 			$row['language'] = '*';
 
-			if (version_compare(PHP_VERSION, '3.0', '>=')) {
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
 				$row['created'] = $row['date'];
 				unset($row['approved']);
 				unset($row['archived']);

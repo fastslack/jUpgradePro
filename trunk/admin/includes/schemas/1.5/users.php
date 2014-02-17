@@ -138,7 +138,7 @@ class JUpgradeproUsers extends JUpgradeproUser
 		{
 			$row = (array) $row;
 
-			if (version_compare(PHP_VERSION, '3.0', '>=')) {
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
 				unset($row['usertype']);
 			}
 		}

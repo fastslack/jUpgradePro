@@ -111,6 +111,9 @@ class JUpgradeproCategories extends JUpgradeproCategory
 			$category['rgt'] = null;
 			$category['level'] = null;
 
+			$category['access'] = $category['access'] == 0 ? 1 : $category['access'] + 1;
+			$category['language'] = !empty($category['language']) ? $category['language'] : '*';
+
 			if ($category['id'] == 1) {
 				$category['id'] = $rootidmap;
 			}

@@ -33,7 +33,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	{
 		$conditions = array();
 
-		$conditions['select'] = '`id`, `id` AS sid, `title`, `alias`, `extension`, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
+		$conditions['select'] = '`id`, `title`, `alias`, `extension`, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
 
 		$where_or = array();
 		$where_or[] = "extension REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
@@ -52,34 +52,73 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	 * @since	0.5.6
 	 * @throws	Exception
 	 */
-	public function dataHook2($rows = null)
+	public function dataHook($rows = null)
 	{
-		print_r($rows);
-/*
-		// Getting the category table
-		$category = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
+		// Getting the destination table
+		$table = $this->getDestinationTable();
+		// Getting the component parameter with global settings
+		$params = $this->getParams();
+		// Initialize values
+		$rootidmap = 0;
+		// Content categories
+		$this->section = 'com_content'; 
 
-		// Remove id
-		foreach ($rows as $cat)
+		// JTable::store() run an update if id exists so we create them first
+		foreach ($rows as $category)
 		{
-			unset($cat->id);
-			unset($cat->sid);
-		}
+			$object = new stdClass();
 
-		// Insert the categories
-		foreach ($rows as $cat)
-		{
-			// Bind data to save category
-			if (!$category->bind($cat)) {
-				echo JError::raiseError(500, $category->getError());
+			$category = (array) $category;
+
+			if ($category['id'] == 1) {
+				$query = "SELECT id+1"
+				." FROM #__categories"
+				." ORDER BY id DESC LIMIT 1";
+				$this->_db->setQuery($query);
+				$rootidmap = $this->_db->loadResult();
+
+				$object->id = $rootidmap;
+				$category['old_id'] = $category['id'];
+				$category['id'] = $rootidmap;
+			}else{
+				$object->id = $category['id'];
 			}
 
-			// Insert the category
-			if (!@$category->store()) {
-				echo JError::raiseError(500, $category->getError());
+			// Inserting the categories id's
+			try
+			{
+				$this->_db->insertObject($table, $object);
+			}
+			catch (RuntimeException $e)
+			{
+				throw new RuntimeException($this->_db->getErrorMsg());
 			}
 		}
-*/
+
+		$total = count($rows);
+
+		// Update the category
+		foreach ($rows as $category)
+		{
+			$category = (array) $category;
+
+			$category['asset_id'] = null;
+			$category['parent_id'] = 1;
+			$category['lft'] = null;
+			$category['rgt'] = null;
+			$category['level'] = null;
+
+			if ($category['id'] == 1) {
+				$category['id'] = $rootidmap;
+			}
+
+			// Update the category data
+			$this->insertCategory($category);
+
+			// Updating the steps table
+			$this->_step->_nextID($total);
+		}
+
 		return false;
 	}
 }

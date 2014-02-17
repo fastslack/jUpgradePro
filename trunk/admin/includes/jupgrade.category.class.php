@@ -146,10 +146,6 @@ class JUpgradeproCategory extends JUpgradepro
 		$oldlist->old = isset($row['old_id']) ? $row['old_id'] : $row['id'];
 		unset($row['old_id']);
 
-		// Fixing some values
-		$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
-		$row['language'] = !empty($row['language']) ? $row['language'] : '*';
-
 		// Setting the default rules
 		$rules = array();
 		$rules['core.create'] = $rules['core.delete'] = $rules['core.edit'] = $rules['core.edit.state'] = $rules['core.edit.own'] = '';
@@ -178,12 +174,12 @@ class JUpgradeproCategory extends JUpgradepro
 
 		// Bind data to save category
 		if (!$category->bind($row)) {
-			echo JError::raiseError(500, $category->getError());
+			throw new Exception($category->getError());
 		}
 
 		// Insert the category
-		if (!@$category->store()) {
-			echo JError::raiseError(500, $category->getError());
+		if (!$category->store()) {
+			throw new Exception($category->getError());
 		}
 
 		// Get new id

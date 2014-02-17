@@ -17,7 +17,7 @@
  *
  * @since	0.4.5
  */
-class JUpgradeproCheckExtensions extends jUpgradeExtensions
+class JUpgradeproCheckExtensions extends JUpgradeproExtensions
 {
 	/**
 	 * count adapters

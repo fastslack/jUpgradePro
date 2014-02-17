@@ -17,7 +17,7 @@
  *
  * @since	3.0.0
  */
-class JUpgradeproExtensionsComponents extends jUpgrade
+class JUpgradeproExtensionsComponents extends JUpgradepro
 {
 	/**
 	 * @var		string	The name of the source database table.

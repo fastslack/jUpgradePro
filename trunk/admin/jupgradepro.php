@@ -28,7 +28,7 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_jupgradepro'))
 jimport('joomla.application.component.controller');
 
 // Getting the controller
-$controller	= JControllerLegacy::getInstance('jUpgradePro');
+$controller	= JControllerLegacy::getInstance('JUpgradepro');
 $controller->execute(JFactory::getApplication()->input->get('task'));
 
 // Redirect if set by the controller

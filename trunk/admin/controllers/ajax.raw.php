@@ -36,7 +36,7 @@ class JUpgradeproControllerAjax extends JControllerLegacy
 	 * @return  jUpgradeProModel
 	 * @since   3.0.3
 	 */
-	public function getModel($name = '', $prefix = 'jUpgradeProModel', $config = array())
+	public function getModel($name = '', $prefix = 'JUpgradeproModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;

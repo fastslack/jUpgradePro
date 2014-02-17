@@ -94,14 +94,14 @@ class JUpgradepro
 		$this->_db = JFactory::getDBO();
 
 		// Getting the driver
-		JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
+		JLoader::register('JUpgradeproDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 
 		if ($this->_step instanceof JUpgradeproStep) {
 			$this->_step->table = $this->getSourceTable();
-
-			// Initialize the driver
-			$this->_driver = JUpgradeDriver::getInstance($step);
 		}
+
+		// Initialize the driver
+		$this->_driver = JUpgradeproDriver::getInstance($step);
 
 		// Getting the total
 		if (!empty($step->source)) {
@@ -151,7 +151,7 @@ class JUpgradepro
 
 		// Correct the 3rd party extensions class name
 		if (isset($step->element)) {
-			$step->class = empty($step->class) ? 'jUpgradeExtensions' : $step->class;
+			$step->class = empty($step->class) ? 'JUpgradeproExtensions' : $step->class;
 		}
 
 		// Getting the class name
@@ -160,12 +160,15 @@ class JUpgradepro
 		}
 
 		// Require the correct file
-		JUpgradeproHelper::requireClass($step->name, $step->xmlpath, $class);
+		if (is_object($step))
+		{
+			JUpgradeproHelper::requireClass($step->name, $step->xmlpath, $class);
+		}
 
 		// If the class still doesn't exist we have nothing left to do but throw an exception.  We did our best.
 		if (!class_exists($class))
 		{
-			$class = 'jUpgrade';
+			$class = 'JUpgradepro';
 		}
 
 		// Create our new jUpgradePro connector based on the options given.
@@ -175,7 +178,7 @@ class JUpgradepro
 		}
 		catch (RuntimeException $e)
 		{
-			throw new RuntimeException(sprintf('Unable to load jUpgradePro object: %s', $e->getMessage()));
+			throw new RuntimeException(sprintf('Unable to load JUpgradepro object: %s', $e->getMessage()));
 		}
 
 		return $instance;
@@ -217,7 +220,9 @@ class JUpgradepro
 		// Before migrate hook
 		try
 		{
-			$this->beforeHook();
+			if (method_exists($this, 'beforeHook')) { 
+				$this->beforeHook();
+			}		
 		}
 		catch (Exception $e)
 		{

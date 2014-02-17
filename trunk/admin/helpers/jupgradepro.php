@@ -39,7 +39,7 @@ class JUpgradeproHelper
 	 *
 	 * @since   3.0.0
 	 */
-	public static function getParams()
+	public static function getParams($object = true)
 	{
 		// Getting the type of interface between web server and PHP
 		$sapi = php_sapi_name();
@@ -51,7 +51,31 @@ class JUpgradeproHelper
 			$params = new JRegistry(new JConfig);
 		}
 
-		return $params->toObject();
+		return ($object === true) ? $params->toObject() : $params;
+	}
+
+	/**
+	 * Get the Joomla! version
+	 *
+	 * @return  string	The Joomla! version
+	 *
+	 * @since   3.2.0
+	 */
+	public static function getVersion($site)
+	{
+		$db = JFactory::getDBO();
+
+		$query = $db->getQuery(true);
+		$query->select($site);
+		$query->from("`#__jupgradepro_version`");
+		$query->limit(1);
+		$db->setQuery($query);
+
+		try {
+			return $db->loadResult();
+		} catch (RuntimeException $e) {
+			throw new RuntimeException($e->getMessage());
+		}
 	}
 
 	/**
@@ -68,7 +92,9 @@ class JUpgradeproHelper
 			// Loading the JFile class
 			jimport('joomla.filesystem.file');
 
-			$file_core = JPATH_COMPONENT_ADMINISTRATOR."/includes/schemas/joomla15/{$name}.php";
+			$schema = JUpgradeproHelper::getVersion('old');
+
+			$file_core = JPATH_COMPONENT_ADMINISTRATOR."/includes/schemas/{$schema}/{$name}.php";
 			$file_checks = JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$name}.php";
 
 			// Require the file
@@ -98,9 +124,9 @@ class JUpgradeproHelper
 	 */
 	public static function getTotal(JUpgradeproStep $step = null)
 	{
-		JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
+		JLoader::register('JUpgradeproDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 
-		$driver = JUpgradeDriver::getInstance($step);
+		$driver = JUpgradeproDriver::getInstance($step);
 
 		return $driver->getTotal();
 	}

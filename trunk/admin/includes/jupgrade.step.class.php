@@ -92,7 +92,7 @@ class JUpgradeproStep
 		// Create our new jUpgradePro connector based on the options given.
 		try
 		{
-			$instance = new JUpgradeStep($name, $extensions);
+			$instance = new JUpgradeproStep($name, $extensions);
 		}
 		catch (RuntimeException $e)
 		{
@@ -274,6 +274,10 @@ class JUpgradeproStep
 			$query->where("e.status != 2");
 		}
 
+		$old_ver = JUpgradeproHelper::getVersion('old');
+
+		$query->where("e.version = {$this->_db->quote($old_ver)}");
+
 		$query->order('e.id ASC');
 		$query->limit(1);
 
@@ -301,6 +305,7 @@ class JUpgradeproStep
 		if ($this->_table == '#__jupgradepro_extensions_tables') {
 			$query->where("element = '{$step['element']}'");
 		}
+		$query->where("version = {$this->_db->quote($old_ver)}");
 		$query->order('id DESC');
 		$query->limit(1);
 
@@ -333,6 +338,11 @@ class JUpgradeproStep
 		}
 
 		$query->where("name = {$this->_db->quote($this->name)}");
+
+		$old_ver = JUpgradeproHelper::getVersion('old');
+
+		$query->where("version = {$this->_db->quote($old_ver)}");
+
 		// Execute the query
 		$this->_db->setQuery($query)->execute();
 
@@ -362,6 +372,11 @@ class JUpgradeproStep
 		$query->update($this->_table);
 		$query->set("`cid` = '{$id}'");
 		$query->where("name = {$this->_db->quote($name)}");
+
+		$old_ver = JUpgradeproHelper::getVersion('old');
+
+		$query->where("version = {$this->_db->quote($old_ver)}");
+
 		// Execute the query
 		return $this->_db->setQuery($query)->execute();
 	}

@@ -18,7 +18,7 @@ defined('_JEXEC') or die;
  *
  * @package		jUpgradePro
  */
-class JUpgradeproDriverRest extends jUpgradeDriver
+class JUpgradeproDriverRest extends JUpgradeproDriver
 {	
 
 	function __construct(JUpgradeproStep $step = null)

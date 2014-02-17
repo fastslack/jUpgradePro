@@ -18,7 +18,7 @@ defined('_JEXEC') or die;
  *
  * @package		jUpgradePro
  */
-class JUpgradeproDriverDatabase extends jUpgradeDriver
+class JUpgradeproDriverDatabase extends JUpgradeproDriver
 {
 	/**
 	 * @var      
@@ -41,7 +41,7 @@ class JUpgradeproDriverDatabase extends jUpgradeDriver
 	{
 		parent::__construct($step);
 
-		$class = (!empty($step->class)) ? $step->class : 'jUpgrade';
+		$class = (!empty($step->class)) ? $step->class : 'JUpgradepro';
 		$name = (!empty($step->name)) ? $step->name : '';
 		$xmlpath = (!empty($step->xmlpath)) ? $step->xmlpath : '';
 

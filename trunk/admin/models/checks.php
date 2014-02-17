@@ -13,8 +13,8 @@
 // No direct access.
 defined('_JEXEC') or die;
 
-JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
-JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
+JLoader::register('JUpgradepro', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
+JLoader::register('JUpgradeproDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 JLoader::register('JUpgradeproStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
@@ -37,6 +37,22 @@ class JUpgradeproModelChecks extends JModelLegacy
 
 		// Getting the component parameter with global settings
 		$params = JUpgradeproHelper::getParams();
+
+		$step = JUpgradeproStep::getInstance();
+
+		// Get the tables from old site
+		$old_tables = JUpgradepro::getInstance($step)->_driver->_db_old->getTableList();
+		$old_prefix = JUpgradepro::getInstance($step)->_driver->_db_old->getPrefix();
+
+		// Check the old site Joomla! version
+		$old_version = $this->checkOldVersion($old_tables, $old_prefix);
+		// Get the new site Joomla! version
+		$v = new JVersion();
+		$new_version = $v->RELEASE;
+
+		// Save the versions to database
+		$this->setVersion('old', $old_version);
+		$this->setVersion('new', $new_version);
 
 		// Checking tables
 		$tables = $this->_db->getTableList();
@@ -180,6 +196,63 @@ class JUpgradeproModelChecks extends JModelLegacy
 		// Done checks
 		if (!JUpgradeproHelper::isCli())
 			$this->returnError (100, 'DONE');
+	}
+
+	/**
+	 * Set old site Joomla! version
+	 *
+	 * @return	none
+	 * @since	3.2.0
+	 */
+	public function setVersion ($site, $version)
+	{
+		// Set the ols site version
+		$query = $this->_db->getQuery(true);
+		$query->update('#__jupgradepro_version')->set("{$site} = '{$version}'");
+		$this->_db->setQuery($query)->execute();
+	}
+
+	/**
+	 * Check the Joomla! version from tables
+	 *
+	 * @return	version	The Joomla! version
+	 * @since	3.2.0
+	 */
+	public function checkOldVersion ($tables, $prefix)
+	{
+		// Trim the prefix value
+		$prefix = trim($prefix);
+
+		// Set the tables to search
+		$j15 = "{$prefix}core_acl_aro";
+		$j25 = "{$prefix}update_categories";
+		$j30 = "{$prefix}assets";
+		$j31 = "{$prefix}content_types";
+		$j32 = "{$prefix}postinstall_messages";
+
+		// Check the correct version
+		if (in_array($j15, $tables))
+		{
+			$version = "1.5";
+		}
+		else if(in_array($j25, $tables))
+		{
+			$version = "2.5";
+		}
+		else if(in_array($j30, $tables) && !in_array($j25, $tables) && !in_array($j31, $tables))
+		{
+			$version = "3.0";
+		}
+		else if(in_array($j31, $tables) && !in_array($j32, $tables))
+		{
+			$version = "3.1";
+		}
+		else if(in_array($j32, $tables))
+		{
+			$version = "3.2";
+		}
+		
+		return $version;
 	}
 
 	/**

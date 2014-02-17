@@ -45,7 +45,7 @@ class JUpgradeproDriver
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
 		// Set the step params	
-		$this->_step = $step;
+		$this->_step = ($step !== null) ? $step : null;
 
 		$this->params = JUpgradeproHelper::getParams();
 
@@ -70,7 +70,7 @@ class JUpgradeproDriver
 		$params = JUpgradeproHelper::getParams();
 
 		// Derive the class name from the driver.
-		$class_name = 'JUpgradeDriver' . ucfirst(strtolower($params->method));
+		$class_name = 'JUpgradeproDriver' . ucfirst(strtolower($params->method));
 		$class_file = JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->method.'.php';
 
 		// Require the driver file

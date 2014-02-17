@@ -13,8 +13,8 @@
 // No direct access.
 defined('_JEXEC') or die;
 
-JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
-JLoader::register('jUpgradeDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
+JLoader::register('JUpgradepro', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
+JLoader::register('JUpgradeproDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
 JLoader::register('JUpgradeproStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 
 /**
@@ -50,7 +50,7 @@ class JUpgradeproModelCleanup extends JModelLegacy
 
 		// Set all cid, status and cache to 0
 		$query = $this->_db->getQuery(true);
-		$query->update('#__jupgradepro_steps')->set('cid = 0, status = 0, cache = 0');
+		$query->update('#__jupgradepro_steps')->set('cid = 0, status = 0, cache = 0, total = 0, stop = 0');
 		$this->_db->setQuery($query)->execute();
 
 		// Convert the params to array
@@ -154,7 +154,7 @@ class JUpgradeproModelCleanup extends JModelLegacy
 			// Getting the menus
 			$query->clear();
 			// 3.0 Changes
-			if (version_compare(PHP_VERSION, '3.0', '>=')) {
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
 				$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
 			}else{
 				$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");

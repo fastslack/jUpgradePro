@@ -53,10 +53,10 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_extensions` (
 --
 
 INSERT INTO `#__jupgradepro_extensions` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `xmlpath`) VALUES
-(1, 'extensions', 'Check extensions', '', '', '', 0, 'jUpgradeCheckExtensions', 0, 0, ''),
-(2, 'ext_components', 'Check components', 'id', 'components', 'extensions', 0, 'jUpgradeExtensionsComponents', 0, 0, ''),
-(3, 'ext_modules', 'Check modules', 'id', 'modules', 'extensions', 0, 'jUpgradeExtensionsModules', 0, 0, ''),
-(4, 'ext_plugins', 'Check plugins', 'id', 'plugins', 'extensions', 0, 'jUpgradeExtensionsPlugins', 0, 0, '');
+(1, 'extensions', 'Check extensions', '', '', '', 0, 'JUpgradeproCheckExtensions', 0, 0, ''),
+(2, 'ext_components', 'Check components', 'id', 'components', 'extensions', 0, 'JUpgradeproExtensionsComponents', 0, 0, ''),
+(3, 'ext_modules', 'Check modules', 'id', 'modules', 'extensions', 0, 'JUpgradeproExtensionsModules', 0, 0, ''),
+(4, 'ext_plugins', 'Check plugins', 'id', 'plugins', 'extensions', 0, 'JUpgradeproExtensionsPlugins', 0, 0, '');
 
 -- --------------------------------------------------------
 
@@ -185,24 +185,41 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_steps` (
 -- Dumping data for table `#__jupgradepro_steps`
 --
 
+INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
+(1, '1.5', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
+(2, '1.5', 'arogroup', 'Users Groups', 'id', 'core_acl_aro_groups', 'usergroups', 0, 'JUpgradeproUsergroups', 0, 0, 0, 0, 0, 0, 0),
+(3, '1.5', 'usergroupmap', 'Users Groups', 'aro_id', 'core_acl_groups_aro_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
+(4, '1.5', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
+(5, '1.5', 'sections', 'Sections', 'id', 'sections', 'categories', 0, 'JUpgradeproSections', 0, 0, 0, 0, 0, 0, 0),
+(6, '1.5', 'contents', 'Contents', 'id', 'content', 'content', 0, 'JUpgradeproContent', 0, 0, 0, 0, 0, 0, 0),
+(7, '1.5', 'contents_frontpage', 'FrontPage Contents', 'content_id', 'content_frontpage', 'content_frontpage', 0, 'JUpgradeproContentFrontpage', 0, 0, 0, 0, 0, 0, 0),
+(8, '1.5', 'menus', 'Menus', 'id', 'menu', 'menu', 0, 'JUpgradeproMenu', 0, 0, 0, 0, 0, 0, 0),
+(9, '1.5', 'menus_types', 'Menus Types', 'id', 'menu_types', 'menu_types', 0, 'JUpgradeproMenusTypes', 0, 0, 0, 0, 0, 0, 0),
+(10, '1.5', 'modules', 'Core Modules', 'id', 'modules', 'modules', 0, 'JUpgradeproModules', 0, 0, 0, 0, 0, 0, 0),
+(11, '1.5', 'modules_menu', 'Modules Menus', 'moduleid', 'modules_menu', 'modules_menu', 0, 'JUpgradeproModulesMenu', 0, 0, 0, 0, 0, 0, 0),
+(12, '1.5', 'banners', 'Banners', 'id', 'banner', 'banners', 0, 'JUpgradeproBanners', 0, 0, 0, 0, 0, 0, 0),
+(13, '1.5', 'banners_clients', 'Banners Clients', 'cid', 'bannerclient', 'banner_clients', 0, 'JUpgradeproBannersClients', 0, 0, 0, 0, 0, 0, 0),
+(14, '1.5', 'banners_tracks', 'Banners Tracks', 'banner_id', 'bannertrack', 'banner_tracks', 0, 'JUpgradeproBannersTracks', 0, 0, 0, 0, 0, 0, 0),
+(15, '1.5', 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'JUpgradeproContacts', 0, 0, 0, 0, 0, 0, 0),
+(16, '1.5', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
+(17, '1.5', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
+
 INSERT INTO `#__jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
-(1, 'users', 'Users', 'id', 'users', 'users', 0, 'jUpgradeUsers', 0, 0, 0, 0, 0, 0, 0),
-(2, 'arogroup', 'Users Groups', 'id', 'core_acl_aro_groups', 'usergroups', 0, 'jUpgradeUsergroups', 0, 0, 0, 0, 0, 0, 0),
-(3, 'usergroupmap', 'Users Groups', 'aro_id', 'core_acl_groups_aro_map', 'user_usergroup_map', 0, 'jUpgradeUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
-(4, 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'jUpgradeCategories', 0, 0, 0, 0, 0, 0, 0),
-(5, 'sections', 'Sections', 'id', 'sections', 'categories', 0, 'jUpgradeSections', 0, 0, 0, 0, 0, 0, 0),
-(6, 'contents', 'Contents', 'id', 'content', 'content', 0, 'jUpgradeContent', 0, 0, 0, 0, 0, 0, 0),
-(7, 'contents_frontpage', 'FrontPage Contents', 'content_id', 'content_frontpage', 'content_frontpage', 0, 'jUpgradeContentFrontpage', 0, 0, 0, 0, 0, 0, 0),
-(8, 'menus', 'Menus', 'id', 'menu', 'menu', 0, 'jUpgradeMenu', 0, 0, 0, 0, 0, 0, 0),
-(9, 'menus_types', 'Menus Types', 'id', 'menu_types', 'menu_types', 0, 'jUpgradeMenusTypes', 0, 0, 0, 0, 0, 0, 0),
-(10, 'modules', 'Core Modules', 'id', 'modules', 'modules', 0, 'jUpgradeModules', 0, 0, 0, 0, 0, 0, 0),
-(11, 'modules_menu', 'Modules Menus', 'moduleid', 'modules_menu', 'modules_menu', 0, 'jUpgradeModulesMenu', 0, 0, 0, 0, 0, 0, 0),
-(12, 'banners', 'Banners', 'id', 'banner', 'banners', 0, 'jUpgradeBanners', 0, 0, 0, 0, 0, 0, 0),
-(13, 'banners_clients', 'Banners Clients', 'cid', 'bannerclient', 'banner_clients', 0, 'jUpgradeBannersClients', 0, 0, 0, 0, 0, 0, 0),
-(14, 'banners_tracks', 'Banners Tracks', 'banner_id', 'bannertrack', 'banner_tracks', 0, 'jUpgradeBannersTracks', 0, 0, 0, 0, 0, 0, 0),
-(15, 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'jUpgradeContacts', 0, 0, 0, 0, 0, 0, 0),
-(16, 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'jUpgradeNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
-(17, 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'jUpgradeWeblinks', 0, 0, 0, 0, 0, 0, 0);
+(18, '2.5', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
+(19, '2.5', 'usergroupmap', 'Users Groups', 'user_id', 'user_usergroup_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
+(20, '2.5', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
+(21, '2.5', 'contents', 'Contents', 'id', 'content', 'content', 0, 'JUpgradeproContent', 0, 0, 0, 0, 0, 0, 0),
+(22, '2.5', 'contents_frontpage', 'FrontPage Contents', 'content_id', 'content_frontpage', 'content_frontpage', 0, 'JUpgradeproContentFrontpage', 0, 0, 0, 0, 0, 0, 0),
+(23, '2.5', 'menus', 'Menus', 'id', 'menu', 'menu', 0, 'JUpgradeproMenu', 0, 0, 0, 0, 0, 0, 0),
+(24, '2.5', 'menus_types', 'Menus Types', 'id', 'menu_types', 'menu_types', 0, 'JUpgradeproMenusTypes', 0, 0, 0, 0, 0, 0, 0),
+(25, '2.5', 'modules', 'Core Modules', 'id', 'modules', 'modules', 0, 'JUpgradeproModules', 0, 0, 0, 0, 0, 0, 0),
+(26, '2.5', 'modules_menu', 'Modules Menus', 'moduleid', 'modules_menu', 'modules_menu', 0, 'JUpgradeproModulesMenu', 0, 0, 0, 0, 0, 0, 0),
+(27, '2.5', 'banners', 'Banners', 'id', 'banners', 'banners', 0, 'JUpgradeproBanners', 0, 0, 0, 0, 0, 0, 0),
+(28, '2.5', 'banners_clients', 'Banners Clients', 'id', 'banner_clients', 'banner_clients', 0, 'JUpgradeproBannersClients', 0, 0, 0, 0, 0, 0, 0),
+(29, '2.5', 'banners_tracks', 'Banners Tracks', 'banner_id', 'banner_tracks', 'banner_tracks', 0, 'JUpgradeproBannersTracks', 0, 0, 0, 0, 0, 0, 0),
+(30, '2.5', 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'JUpgradeproContacts', 0, 0, 0, 0, 0, 0, 0),
+(31, '2.5', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
+(32, '2.5', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 
@@ -301,3 +318,20 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_default_categories` (
   `version` int(10) unsigned NOT NULL DEFAULT '1',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 ;
+
+--
+-- Table structure for table `#__jupgradepro_version`
+--
+
+DROP TABLE IF EXISTS `#__jupgradepro_version`;
+CREATE TABLE IF NOT EXISTS `#__jupgradepro_version` (
+  `new` varchar(255) NOT NULL,
+  `old` varchar(255) NOT NULL,
+  PRIMARY KEY (`new`)
+) ENGINE=InnoDB DEFAULT CHARSET=latin1;
+
+--
+-- Dumping data for table `ze1f4_jupgradepro_version`
+--
+
+INSERT INTO `ze1f4_jupgradepro_version` (`new`, `old`) VALUES ('0', '0');

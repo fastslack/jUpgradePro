@@ -17,7 +17,7 @@
  *
  * @since	0.4.5
  */
-class JUpgradeproExtensions extends JUpgrade
+class JUpgradeproExtensions extends JUpgradepro
 {
 	/**
 	 * @var      

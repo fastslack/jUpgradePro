@@ -11,13 +11,13 @@
 * @license GNU General Public License version 2 or later; see LICENSE
 */
 /**
- * Upgrade class for Weblinks
+ * Upgrade class for 3rd party extensions plugins
  *
  * This class takes the weblinks from the existing site and inserts them into the new site.
  *
  * @since	3.0.0
  */
-class JUpgradeproExtensionsPlugins extends jUpgrade
+class JUpgradeproExtensionsPlugins extends JUpgradepro
 {
 	/**
 	 * @var		string	The name of the source database table.

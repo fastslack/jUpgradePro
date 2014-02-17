@@ -177,6 +177,7 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_modules` (
 DROP TABLE IF EXISTS `#__jupgradepro_steps`;
 CREATE TABLE IF NOT EXISTS `#__jupgradepro_steps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `version` varchar(255) NOT NULL,
   `name` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `tbl_key` varchar(255) NOT NULL,
@@ -192,7 +193,7 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_steps` (
   `stop` int(11) NOT NULL,
   `first` tinyint(1) NOT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=18 ;
+) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=63 ;
 
 --
 -- Dumping data for table `#__jupgradepro_steps`
@@ -217,7 +218,7 @@ INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`,
 (16, '1.5', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
 (17, '1.5', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
 
-INSERT INTO `#__jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
+INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
 (18, '2.5', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
 (19, '2.5', 'usergroupmap', 'Users Groups', 'user_id', 'user_usergroup_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
 (20, '2.5', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
@@ -234,7 +235,7 @@ INSERT INTO `#__jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, 
 (31, '2.5', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
 (32, '2.5', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
 
-INSERT INTO `#__jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
+INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
 (33, '3.1', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
 (34, '3.1', 'usergroupmap', 'Users Groups', 'user_id', 'user_usergroup_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
 (35, '3.1', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
@@ -251,7 +252,7 @@ INSERT INTO `#__jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, 
 (46, '3.1', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
 (47, '3.1', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
 
-INSERT INTO `#__jupgradepro_steps` (`id`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
+INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
 (48, '3.1', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
 (49, '3.1', 'usergroupmap', 'Users Groups', 'user_id', 'user_usergroup_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
 (50, '3.1', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
@@ -381,4 +382,4 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_version` (
 -- Dumping data for table `ze1f4_jupgradepro_version`
 --
 
-INSERT INTO `ze1f4_jupgradepro_version` (`new`, `old`) VALUES ('0', '0');
+INSERT INTO `#__jupgradepro_version` (`new`, `old`) VALUES ('0', '0');

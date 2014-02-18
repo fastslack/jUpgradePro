@@ -4,7 +4,7 @@
 	<author>Matias Aguirre</author>
 	<authorEmail>maguirre@matware.com.ar</authorEmail>
 	<authorUrl>http://www.matware.com.ar</authorUrl>
-	<copyright>Copyright 2006 - 2013 Matias Aguirre. All rights reserved.</copyright>
+	<copyright>Copyright 2006 - 2014 Matias Aguirre. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later.</license>
 	<creationDate>2012-08-30</creationDate>
 	<version>3.2.0</version>
@@ -45,6 +45,8 @@
 		<languages folder="admin">
 			<language tag="en-GB">language/en-GB/en-GB.com_jupgradepro.ini</language>
 			<language tag="en-GB">language/en-GB/en-GB.com_jupgradepro.sys.ini</language>
+			<language tag="es-ES">language/es-ES/es-ES.com_jupgradepro.ini</language>
+			<language tag="es-ES">language/es-ES/es-ES.com_jupgradepro.sys.ini</language>
 		</languages>
 	</administration>
 

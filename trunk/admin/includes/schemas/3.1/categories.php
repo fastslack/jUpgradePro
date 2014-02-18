@@ -46,6 +46,55 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	}
 
 	/**
+	 * Method to do pre-processes modifications before migrate
+	 *
+	 * @return	boolean	Returns true if all is fine, false if not.
+	 * @since	3.2.0
+	 * @throws	Exception
+	 */
+	public function beforeHook()
+	{
+		// Insert uncategorized id
+		$query = $this->_db->getQuery(true);
+		$query->insert('#__jupgradepro_categories')->columns('`old`, `new`')->values("0, 2");
+		try {
+			$this->_db->setQuery($query)->execute();
+		} catch (RuntimeException $e) {
+			throw new RuntimeException($e->getMessage());
+		}
+
+		// Getting the menus
+		$query->clear();
+		$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`,  `params`, `created_user_id`");
+		$query->from("#__categories");
+		$query->where("id > 1");
+		$query->order('id ASC');
+		$this->_db->setQuery($query);
+
+		try {
+			$categories = $this->_db->loadObjectList();
+		} catch (RuntimeException $e) {
+			throw new RuntimeException($e->getMessage());
+		}
+
+
+		foreach ($categories as $category)
+		{
+			$id = $category->id;
+			unset($category->id);
+
+			$this->_db->insertObject('#__jupgradepro_default_categories', $category);
+
+			// Getting the categories table
+			$table = JTable::getInstance('Category', 'JTable');
+			// Load it before delete. Joomla bug?
+			$table->load($id);
+			// Delete
+			$table->delete($id);
+		}
+	}
+
+	/**
 	 * Sets the data in the destination database.
 	 *
 	 * @return	void

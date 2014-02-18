@@ -13,10 +13,8 @@
 			label="COM_JUPGRADEPRO_CONFIG_METHOD"
 			description="COM_JUPGRADEPRO_CONFIG_METHOD_DESC"
 			default="database">
-			<option
-				value="database">COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE</option>
-			<option
-				value="rest">COM_JUPGRADEPRO_CONFIG_REST_TITLE</option>
+			<option value="database">COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE</option>
+			<option	value="rest">COM_JUPGRADEPRO_CONFIG_REST_TITLE</option>
 		</field>
 
 		<field

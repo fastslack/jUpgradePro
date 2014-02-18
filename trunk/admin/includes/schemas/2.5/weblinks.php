@@ -20,23 +20,6 @@
 class JUpgradeproWeblinks extends JUpgradepro
 {
 	/**
-	 * Setting the conditions hook
-	 *
-	 * @return	void
-	 * @since	3.0.0
-	 * @throws	Exception
-	 */
-	public static function getConditionsHook()
-	{
-		$conditions = array();
-
-		$conditions['select'] = '`id`, `catid`, `title`, `alias`, `url`, `description`, `date`, `hits`, '
-     .' `state`, `checked_out`, `checked_out_time`, `ordering`, `archived`, `approved`,`params`';
-				
-		return $conditions;
-	}
-
-	/**
 	 * Sets the data in the destination database.
 	 *
 	 * @return	void
@@ -55,7 +38,6 @@ class JUpgradeproWeblinks extends JUpgradepro
 			$row = (array) $row;
 			
 			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
-				$row['created'] = $row['date'];
 				unset($row['approved']);
 				unset($row['archived']);
 				unset($row['date']);

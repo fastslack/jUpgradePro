@@ -92,7 +92,9 @@ class JUpgradeproUsers extends JUpgradeproUser
         $row['email'] = $row['email'].'-old';
       }
 
-			// Remove unused fields. 
+			// Remove unused fields.
+			unset($row['otpKey']);
+			unset($row['otep']);
 			unset($row['gid']);
 		}
 		

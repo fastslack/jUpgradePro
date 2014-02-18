@@ -22,7 +22,6 @@ JLoader::register("JUpgradeproUser", JPATH_COMPONENT_ADMINISTRATOR."/includes/ju
  */
 class JUpgradeproUsers extends JUpgradeproUser
 {
-
 	/**
 	 * Method to do pre-processes modifications before migrate
 	 *

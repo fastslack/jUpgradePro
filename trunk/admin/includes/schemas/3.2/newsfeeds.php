@@ -19,4 +19,24 @@
  */
 class JUpgradeproNewsfeeds extends JUpgradepro
 {
+	/**
+	 * Get the raw data for this part of the upgrade.
+	 *
+	 * @return	array	Returns a reference to the source data array.
+	 * @since	0.4.4
+	 * @throws	Exception
+	 */
+	public function &databaseHook($rows)
+	{
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
+		{
+			$row = (array) $row;
+
+			// Remove unused fields.
+			unset($row['date']);
+		}
+		
+		return $rows;
+	}
 }

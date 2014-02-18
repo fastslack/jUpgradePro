@@ -30,39 +30,9 @@ class JUpgradeproWeblinks extends JUpgradepro
 	{
 		$conditions = array();
 
-		$conditions['select'] = '`id`, `catid`, `title`, `alias`, `url`, `description`, `date`, `hits`, '
-     .' `state`, `checked_out`, `checked_out_time`, `ordering`, `archived`, `approved`,`params`';
+		$conditions['select'] = '`id`, `catid`, `title`, `alias`, `url`, `description`, `hits`, '
+     .' `state`, `checked_out`, `checked_out_time`, `ordering`, `params`, `language`';
 				
 		return $conditions;
-	}
-
-	/**
-	 * Sets the data in the destination database.
-	 *
-	 * @return	void
-	 * @since	3.0.
-	 * @throws	Exception
-	 */
-	public function dataHook($rows = null)
-	{
-		// Getting the component parameter with global settings
-		$params = $this->getParams();
-
-		// Do some custom post processing on the list.
-		foreach ($rows as &$row)
-		{
-			// Convert the array into an object.
-			$row = (array) $row;
-			
-			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
-				$row['created'] = $row['date'];
-				unset($row['approved']);
-				unset($row['archived']);
-				unset($row['date']);
-				unset($row['sid']);
-			}
-		}
-
-		return $rows;
 	}
 }

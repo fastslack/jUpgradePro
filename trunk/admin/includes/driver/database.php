@@ -50,7 +50,11 @@ class JUpgradeproDriverDatabase extends JUpgradeproDriver
 		JUpgradeproHelper::requireClass($name, $xmlpath, $class);
 
 		// @@ Fix bug using PHP < 5.2.3 version
-		$this->_conditions = call_user_func(array($class, 'getConditionsHook'));
+		if (version_compare(PHP_VERSION, '5.2.3', '<')) {
+			$this->_conditions = call_user_func(array($class, 'getConditionsHook'));
+		}else{
+			$this->_conditions = $class::getConditionsHook();
+		}
 
 		$db_config = array();
 		$db_config['driver'] = $this->params->old_dbtype;

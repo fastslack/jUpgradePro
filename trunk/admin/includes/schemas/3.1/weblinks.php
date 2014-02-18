@@ -31,7 +31,7 @@ class JUpgradeproWeblinks extends JUpgradepro
 		$conditions = array();
 
 		$conditions['select'] = '`id`, `catid`, `title`, `alias`, `url`, `description`, `date`, `hits`, '
-     .' `state`, `checked_out`, `checked_out_time`, `ordering`, `archived`, `approved`,`params`';
+     .' `state`, `checked_out`, `checked_out_time`, `ordering`, `language`, `params`';
 				
 		return $conditions;
 	}

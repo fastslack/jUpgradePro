@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
  * jUpgradePro utility class for migrations
  *
  * @package		MatWare
- * @subpackage	com_jupgrade
+ * @subpackage	com_jupgradepro
  */
 class JUpgradepro
 {	
@@ -84,11 +84,8 @@ class JUpgradepro
 		jimport('cms.version.version');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
+		// Getting the component parameters
 		$this->params = JUpgradeproHelper::getParams();
-
-		// Getting the J! version
-		$version = new JVersion;
-		$this->_version = $version->RELEASE;
 
 		// Creating dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
@@ -125,7 +122,6 @@ class JUpgradepro
 		$query = "SHOW GRANTS FOR CURRENT_USER";
 		$this->_db->setQuery( $query );
 		$list = $this->_db->loadRowList();
-		$grant = isset($list[1][0]) ? $list[1][0] : $list[0][0];
 		$grant = empty($list[1][0]) ? $list[0][0] : $list[1][0];
 
 		if (strpos($grant, 'DROP') == true || strpos($grant, 'ALL') == true) {
@@ -143,8 +139,6 @@ class JUpgradepro
 	 */
 	static function getInstance(JUpgradeproStep $step = null)
 	{
-		$class = '';
-
 		if ($step == null) {
 			return false;
 		}
@@ -155,6 +149,7 @@ class JUpgradepro
 		}
 
 		// Getting the class name
+		$class = '';
 		if (isset($step->class)) {
 			$class = $step->class;
 		}
@@ -392,6 +387,7 @@ class JUpgradepro
 	}
 
 	/*
+	 * Get query condition's
 	 *
 	 * @return	void
 	 * @since	3.0.0

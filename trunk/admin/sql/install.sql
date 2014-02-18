@@ -253,21 +253,21 @@ INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`,
 (47, '3.1', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
 
 INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
-(48, '3.1', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
-(49, '3.1', 'usergroupmap', 'Users Groups', 'user_id', 'user_usergroup_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
-(50, '3.1', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
-(51, '3.1', 'contents', 'Contents', 'id', 'content', 'content', 0, 'JUpgradeproContent', 0, 0, 0, 0, 0, 0, 0),
-(52, '3.1', 'contents_frontpage', 'FrontPage Contents', 'content_id', 'content_frontpage', 'content_frontpage', 0, 'JUpgradeproContentFrontpage', 0, 0, 0, 0, 0, 0, 0),
-(53, '3.1', 'menus', 'Menus', 'id', 'menu', 'menu', 0, 'JUpgradeproMenu', 0, 0, 0, 0, 0, 0, 0),
-(54, '3.1', 'menus_types', 'Menus Types', 'id', 'menu_types', 'menu_types', 0, 'JUpgradeproMenusTypes', 0, 0, 0, 0, 0, 0, 0),
-(55, '3.1', 'modules', 'Core Modules', 'id', 'modules', 'modules', 0, 'JUpgradeproModules', 0, 0, 0, 0, 0, 0, 0),
-(56, '3.1', 'modules_menu', 'Modules Menus', 'moduleid', 'modules_menu', 'modules_menu', 0, 'JUpgradeproModulesMenu', 0, 0, 0, 0, 0, 0, 0),
-(57, '3.1', 'banners', 'Banners', 'id', 'banners', 'banners', 0, 'JUpgradeproBanners', 0, 0, 0, 0, 0, 0, 0),
-(58, '3.1', 'banners_clients', 'Banners Clients', 'id', 'banner_clients', 'banner_clients', 0, 'JUpgradeproBannersClients', 0, 0, 0, 0, 0, 0, 0),
-(59, '3.1', 'banners_tracks', 'Banners Tracks', 'banner_id', 'banner_tracks', 'banner_tracks', 0, 'JUpgradeproBannersTracks', 0, 0, 0, 0, 0, 0, 0),
-(60, '3.1', 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'JUpgradeproContacts', 0, 0, 0, 0, 0, 0, 0),
-(61, '3.1', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
-(62, '3.1', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
+(48, '3.2', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
+(49, '3.2', 'usergroupmap', 'Users Groups', 'user_id', 'user_usergroup_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
+(50, '3.2', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
+(51, '3.2', 'contents', 'Contents', 'id', 'content', 'content', 0, 'JUpgradeproContent', 0, 0, 0, 0, 0, 0, 0),
+(52, '3.2', 'contents_frontpage', 'FrontPage Contents', 'content_id', 'content_frontpage', 'content_frontpage', 0, 'JUpgradeproContentFrontpage', 0, 0, 0, 0, 0, 0, 0),
+(53, '3.2', 'menus', 'Menus', 'id', 'menu', 'menu', 0, 'JUpgradeproMenu', 0, 0, 0, 0, 0, 0, 0),
+(54, '3.2', 'menus_types', 'Menus Types', 'id', 'menu_types', 'menu_types', 0, 'JUpgradeproMenusTypes', 0, 0, 0, 0, 0, 0, 0),
+(55, '3.2', 'modules', 'Core Modules', 'id', 'modules', 'modules', 0, 'JUpgradeproModules', 0, 0, 0, 0, 0, 0, 0),
+(56, '3.2', 'modules_menu', 'Modules Menus', 'moduleid', 'modules_menu', 'modules_menu', 0, 'JUpgradeproModulesMenu', 0, 0, 0, 0, 0, 0, 0),
+(57, '3.2', 'banners', 'Banners', 'id', 'banners', 'banners', 0, 'JUpgradeproBanners', 0, 0, 0, 0, 0, 0, 0),
+(58, '3.2', 'banners_clients', 'Banners Clients', 'id', 'banner_clients', 'banner_clients', 0, 'JUpgradeproBannersClients', 0, 0, 0, 0, 0, 0, 0),
+(59, '3.2', 'banners_tracks', 'Banners Tracks', 'banner_id', 'banner_tracks', 'banner_tracks', 0, 'JUpgradeproBannersTracks', 0, 0, 0, 0, 0, 0, 0),
+(60, '3.2', 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'JUpgradeproContacts', 0, 0, 0, 0, 0, 0, 0),
+(61, '3.2', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
+(62, '3.2', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
 
 -- --------------------------------------------------------
 

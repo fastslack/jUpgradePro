@@ -95,7 +95,7 @@ class JUpgradeproHelper
 			$schema = JUpgradeproHelper::getVersion('old');
 
 			$file_core = JPATH_COMPONENT_ADMINISTRATOR."/includes/schemas/{$schema}/{$name}.php";
-			$file_checks = JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$name}.php";
+			$file_checks = JPATH_COMPONENT_ADMINISTRATOR."/includes/extensions/{$schema}/{$name}.php";
 
 			// Require the file
 			if (JFile::exists($file_core)) {

@@ -92,6 +92,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 			// Delete
 			$table->delete($id);
 		}
+
 	}
 
 	/**

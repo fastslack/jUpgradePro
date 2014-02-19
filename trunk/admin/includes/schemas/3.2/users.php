@@ -50,7 +50,7 @@ class JUpgradeproUsers extends JUpgradeproUser
 		// Updating the super user id to 10
 		$query->clear();
 		$query->update("#__users");
-		$query->set("`id` = 99999999999999999999");
+		$query->set("`id` = 2147483647");
 		$query->where("username = '{$superuser}'");
 		// Execute the query
 		try {
@@ -62,7 +62,7 @@ class JUpgradeproUsers extends JUpgradeproUser
 		// Updating the user_usergroup_map
 		$query->clear();
 		$query->update("#__user_usergroup_map");
-		$query->set("`user_id` = 99999999999999999999");
+		$query->set("`user_id` = 2147483647");
 		$query->where("`group_id` = 8");
 		// Execute the query
 		try {
@@ -87,7 +87,7 @@ class JUpgradeproUsers extends JUpgradeproUser
 			$row = (array) $row;
 
       // Chaging admin username and email
-      if ($row['id'] == 62) {
+      if ($row['username'] == 'admin') {
         $row['username'] = $row['username'].'-old';
         $row['email'] = $row['email'].'-old';
       }
@@ -114,7 +114,19 @@ class JUpgradeproUsers extends JUpgradeproUser
 		$query = $this->_db->getQuery(true);
 		$query->update("#__users");
 		$query->set("`id` = 2");
-		$query->where("id = 99999999999999999999");
+		$query->where("id = 2147483647");
+		// Execute the query
+		try {
+			$this->_db->setQuery($query)->execute();
+		} catch (RuntimeException $e) {
+			throw new RuntimeException($e->getMessage());
+		}
+
+		// Updating the user_usergroup_map
+		$query->clear();
+		$query->update("#__user_usergroup_map");
+		$query->set("`user_id` = 2");
+		$query->where("`user_id` = 2147483647");
 		// Execute the query
 		try {
 			$this->_db->setQuery($query)->execute();

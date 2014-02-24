@@ -14,6 +14,7 @@
 defined('_JEXEC') or die;
 
 JLoader::register('JUpgradepro', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.class.php');
+JLoader::register('jUpgrade', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.compat.php');
 JLoader::register('JUpgradeproStep', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.step.class.php');
 JLoader::register('jUpgradeExtensions', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.extensions.class.php');
 
@@ -42,7 +43,12 @@ class JUpgradeproModelExtensions extends JModelLegacy
 		if ($success === true) {
 			$step->status = 2;
 			$step->_updateStep();
-			return true;
+
+			if (!JUpgradeproHelper::isCli()) {
+				print(1);
+			}else{
+				return true;
+			}
 		}
 	}
 } // end class

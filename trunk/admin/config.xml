@@ -134,11 +134,6 @@
 
 		<field name="spacer1" type="spacer" class="text" label="&lt;b&gt;Core skips&lt;/b&gt;" />
 
-		<field name="skip_checks" type="radio" default="0" label="Skip users" description="">
-			<option value="1">JYES</option>
-			<option value="0">JNO</option>
-		</field>
-
 		<field name="skip_core_users" type="radio" default="0" label="Skip users" description="">
 			<option value="1">JYES</option>
 			<option value="0">JNO</option>

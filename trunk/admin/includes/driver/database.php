@@ -77,10 +77,15 @@ class JUpgradeproDriverDatabase extends JUpgradeproDriver
 	{
 		// Get the conditions
 		$conditions = $this->getConditionsHook();
+
 		// Process the conditions
 		$query = $this->_processQuery($conditions, true);
+
 		// Setting the query
-		$this->_db_old->setQuery( $query );
+		$chunk_limit = (int) $this->params->chunk_limit;
+		$cid = (int) $this->_getStepID();
+		$this->_db_old->setQuery( $query, $cid, $chunk_limit );
+
 		//echo "\nQUERY: {$query->__toString()}\n";
 		$rows = $this->_db_old->loadAssocList();
 
@@ -110,8 +115,10 @@ class JUpgradeproDriverDatabase extends JUpgradeproDriver
 		// Process the conditions
 		$query = $this->_processQuery($conditions);
 
-		// Get Total
+		// Setting the query
 		$this->_db_old->setQuery( $query );
+
+		// Get the total
 		$total = $this->_db_old->loadResult();
 
 		try

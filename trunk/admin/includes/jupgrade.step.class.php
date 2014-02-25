@@ -45,6 +45,7 @@ class JUpgradeproStep
 	public $middle = false;
 	public $end = false;
 
+	public $old_ver = '';
 	public $extensions = false;
 
 	public $_table = false;
@@ -74,6 +75,8 @@ class JUpgradeproStep
 		}else if($extensions == true) {
 			$this->_table = '#__jupgradepro_extensions';
 		}
+
+		$this->old_ver = JUpgradeproHelper::getVersion('old');
 
 		// Load the last step from database
 		$this->_load($name);
@@ -274,9 +277,7 @@ class JUpgradeproStep
 			$query->where("e.status != 2");
 		}
 
-		$old_ver = JUpgradeproHelper::getVersion('old');
-
-		$query->where("e.version = {$this->_db->quote($old_ver)}");
+		$query->where("e.version = {$this->_db->quote($this->old_ver)}");
 
 		$query->order('e.id ASC');
 		$query->limit(1);
@@ -305,7 +306,7 @@ class JUpgradeproStep
 		if ($this->_table == '#__jupgradepro_extensions_tables') {
 			$query->where("element = '{$step['element']}'");
 		}
-		$query->where("version = {$this->_db->quote($old_ver)}");
+		$query->where("version = {$this->_db->quote($this->old_ver)}");
 		$query->order('id DESC');
 		$query->limit(1);
 
@@ -338,10 +339,7 @@ class JUpgradeproStep
 		}
 
 		$query->where("name = {$this->_db->quote($this->name)}");
-
-		$old_ver = JUpgradeproHelper::getVersion('old');
-
-		$query->where("version = {$this->_db->quote($old_ver)}");
+		$query->where("version = {$this->_db->quote($this->old_ver)}");
 
 		// Execute the query
 		$this->_db->setQuery($query)->execute();
@@ -372,10 +370,7 @@ class JUpgradeproStep
 		$query->update($this->_table);
 		$query->set("`cid` = '{$id}'");
 		$query->where("name = {$this->_db->quote($name)}");
-
-		$old_ver = JUpgradeproHelper::getVersion('old');
-
-		$query->where("version = {$this->_db->quote($old_ver)}");
+		$query->where("version = {$this->_db->quote($this->old_ver)}");
 
 		// Execute the query
 		return $this->_db->setQuery($query)->execute();

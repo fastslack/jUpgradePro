@@ -140,7 +140,7 @@ var jUpgradepro = new Class({
 
 			checks.addEvents({
 				'complete': function(response) {
-					console.log(response);
+
 					pb0.set(66);
 
 					var object = JSON.decode(response);
@@ -245,7 +245,7 @@ var jUpgradepro = new Class({
 						pb4.finish();
 						this.cancel();
 						step.cancel();
-						self.extensions();
+						self.extensions(e);
 					} else if (row_object.next == 1) {
 						step.send();
 					}
@@ -279,7 +279,7 @@ var jUpgradepro = new Class({
 						pb4.set(100);
 						pb4.finish();
 						this.cancel();
-						self.extensions();
+						self.extensions(e);
 					}else{
 						step.send();
 					}

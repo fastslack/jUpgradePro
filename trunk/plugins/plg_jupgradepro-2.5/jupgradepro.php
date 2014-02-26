@@ -2,7 +2,7 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -15,38 +15,20 @@ defined( '_JEXEC' ) or die( 'Restricted access' );
 jimport( 'joomla.plugin.plugin' );
 
 /**
- * Joomla! System JUpgrade Plugin
+ * Joomla! System JUpgradePro Plugin
  *
  * @package		Joomla
  * @subpackage	System
  */
-class plgSystemJUpgrade extends JPlugin
+class plgSystemJUpgradepro extends JPlugin
 {
-	/**
-	 * Constructor
-	 *
-	 * For php4 compatability we must not use the __constructor as a constructor for plugins
-	 * because func_get_args ( void ) returns a copy of all passed arguments NOT references.
-	 * This causes problems with cross-referencing necessary for the observer design pattern.
-	 *
-	 * @access	protected
-	 * @param	object	$subject The object to observe
-	 * @param 	array   $config  An array that holds the plugin configuration
-	 * @since	1.0
-	 */
-	function plgSystemJUpgrade(& $subject, $config) {
-		
-		parent::__construct($subject, $config);
-	}
-
 	function onAfterInitialise()
 	{
 		jimport('joomla.user.helper');
-		require_once JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'rest.php';
-		require_once JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'authorizer.php';
-		require_once JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'dispatcher.php';
-		require_once JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'table.php';
-
+		JLoader::register('JRESTMessage', JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/rest.php');
+		JLoader::register('JRESTAuthorizer', JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/authorizer.php');
+		JLoader::register('JRESTDispatcher', JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/dispatcher.php');
+		JLoader::register('JUpgradeproTable', JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/table.php');
 
 		// Check if jupgrade_steps exists
 		$this->checkStepTable();
@@ -89,12 +71,12 @@ class plgSystemJUpgrade extends JPlugin
 				JResponse::setHeader('status', 401);
 				JResponse::setBody('Dispatch error.');
 				JResponse::sendHeaders();
-				exit;		
+				exit;
 			}
 
 			exit; // Exit
 		}
-		
+
 		//exit; // Exit test
 		
 	} // end method
@@ -105,14 +87,12 @@ class plgSystemJUpgrade extends JPlugin
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$sqlfile = JPATH_ROOT .DS.'plugins'.DS.'system'.DS.'jupgrade'.DS.'sql'.DS.'install.sql';
+		$sqlfile = JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/sql/install.sql';
 	
 		// Checking tables
-		$query = "SHOW TABLES";
-		$db->setQuery($query);
-		$tables = $db->loadResultArray();
-		
-		if (!in_array('jupgrade_plugin_steps', $tables)) {
+		$tables = $db->getTableList();
+
+		if (!in_array('jupgradepro_plugin_steps', $tables)) {
 			$this->populateDatabase( $db, $sqlfile );
 		}		
 

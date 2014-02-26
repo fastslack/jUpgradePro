@@ -26,6 +26,11 @@ defined('JPATH_BASE') or die();
 class JUpgradeproTable extends JTable
 {
 	/**
+	 * Table type
+	 */		
+	var $_type = '';
+
+	/**
 	 * Get the row
 	 *
 	 * @return  string/json	The json row
@@ -58,14 +63,14 @@ class JUpgradeproTable extends JTable
 	 */
 	public function getCleanup()
 	{
-		$table = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
+		$name = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
 
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
 		$query = "UPDATE jupgradepro_plugin_steps SET cid = 0"; 
-		if ($table != false) {
-			$query .= " WHERE name = '{$table}'";
+		if ($name != false) {
+			$query .= " WHERE name = '{$name}'";
 		}
 
 		$db->setQuery( $query );

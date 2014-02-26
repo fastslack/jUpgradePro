@@ -22,13 +22,6 @@ defined('JPATH_BASE') or die();
 class JUpgradeproTableMenus extends JUpgradeproTable
 {
 	/**
-	 * Table type
-	 *
-	 * @var string
-	 */	
-	var $_type = 'menus';
-
-	/**
 	 * Constructor
 	 *
 	 * @access protected
@@ -36,6 +29,8 @@ class JUpgradeproTableMenus extends JUpgradeproTable
 	 */
 	function __construct( &$db ) {
 		parent::__construct( '#__menu', 'id', $db );
+
+		$this->_type = 'menus';
 	}
 
 	/**

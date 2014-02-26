@@ -8,7 +8,6 @@
 * @link http://www.matware.com.ar/
 * @license GNU General Public License version 2 or later; see LICENSE
 */
-
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
 
@@ -17,14 +16,9 @@ defined('JPATH_BASE') or die();
  */
 class JUpgradeproTableContacts extends JUpgradeproTable {
 
-	/**
-	 * Table type
-	 *
-	 * @var string
-	 */	
-	var $_type = 'contacts';
-
 	function __construct(&$db) {
 		parent::__construct('#__contact_details', 'id', $db);
+
+		$this->_type = 'contacts';
 	}
 }

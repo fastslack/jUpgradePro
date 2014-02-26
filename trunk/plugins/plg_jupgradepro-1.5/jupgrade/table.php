@@ -1,15 +1,14 @@
 <?php
 /**
-* jUpgradePro
-*
 * @version $Id:
-* @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @package Matware.jUpgradePro
+* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
 * @license GNU General Public License version 2 or later; see LICENSE
 */
+
 // Check to ensure this file is within the rest of the framework
 defined('JPATH_BASE') or die();
 
@@ -26,6 +25,11 @@ defined('JPATH_BASE') or die();
  */
 class JUpgradeTable extends JTable
 {
+	/**
+	 * Table type
+	 */		
+	var $_type = '';
+
 	/**
 	 * Get the row
 	 *
@@ -59,14 +63,14 @@ class JUpgradeTable extends JTable
 	 */
 	public function getCleanup()
 	{
-		$table = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
+		$name = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
 
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$query = "UPDATE jupgrade_plugin_steps SET cid = 0"; 
-		if ($table != false) {
-			$query .= " WHERE name = '{$table}'";
+		$query = "UPDATE jupgradepro_plugin_steps SET cid = 0"; 
+		if ($name != false) {
+			$query .= " WHERE name = '{$name}'";
 		}
 
 		$db->setQuery( $query );
@@ -329,7 +333,7 @@ class JUpgradeTable extends JTable
 	/**
 	 * Method to get bool if table exists
 	 *
-	 * @return  array  An array of all the tables in the database.
+	 * @return  string  YES is table is found, NO if not.
 	 *
 	 * @since   3.0.0
 	 * @throws  JDatabaseException
@@ -353,6 +357,41 @@ class JUpgradeTable extends JTable
 		}else{
 			return 'NO';
 		}
+	}
+
+	/**
+	 * Method to get the tables list
+	 *
+	 * @return  array  An array of all the tables in the database.
+	 *
+	 * @since   3.2.0
+	 * @throws  JDatabaseException
+	 */
+	public function getTableslist()
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		// Set the query to get the tables statement.
+		$tables = $db->getTableList();
+
+		return json_encode($tables);
+	}
+
+	/**
+	 * Method to get the table prefix
+	 *
+	 * @return  string  The table prefix
+	 *
+	 * @since   3.2.0
+	 * @throws  JDatabaseException
+	 */
+	public function getTablesprefix()
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		return json_encode($db->getPrefix());
 	}
 
 	/**

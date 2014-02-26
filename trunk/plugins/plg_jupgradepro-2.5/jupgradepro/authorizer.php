@@ -2,7 +2,7 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -31,9 +31,9 @@ class JRESTAuthorizer
 	public function authorize(&$db, $params)
 	{
 		// Getting the client key
-		$plugin =& JPluginHelper::getPlugin('system', 'jupgrade');
-		$pluginParams = new JParameter( $plugin->params );
-		$client_key = trim($pluginParams->get('client_key'));
+		$plugin =& JPluginHelper::getPlugin('system', 'jupgradepro');
+		$pluginParams = json_decode($plugin->params);
+		$client_key = trim($pluginParams->client_key);
 
 		// Uncrypt the request
 		$key = base64_decode($params['HTTP_KEY']);
@@ -76,20 +76,24 @@ class JRESTAuthorizer
 		}
 
 		$parts	= explode( ':', $password_decode );
-		$password	= $parts[0];
+		$password	= trim($parts[0]);
 
 		// Getting the local username and password
-		$query = 'SELECT `id`, `password`, `gid`'
-		. ' FROM #__users'
-		. ' WHERE username = '.$db->quote($user);
-		$db->setQuery( $query );
+		$query = $db->getQuery(true);
+		$query->select('`id`, `password`');
+		$query->from("`#__users`");
+		$query->where("`username` = {$db->quote($user)}");
+		$db->setQuery($query);
 		$user_result = $db->loadObject();
 
+		// Getting the user instance
+		$user = JFactory::getUser($user_result->id);
+
 		// Check the password
-		$parts	= explode( ':', $user_result->password );
-		$crypt	= $parts[0];
-		$salt	= @$parts[1];
-		$testcrypt = JUserHelper::getCryptedPassword($password, $salt);
+		if ($user_result)
+		{
+			$match = JUserHelper::verifyPassword($password, $user_result->password, $user_result->id);
+		}
 
 		if (!is_object($user_result)) {
 			JResponse::setHeader('status', 403);
@@ -98,14 +102,14 @@ class JRESTAuthorizer
 			exit;
 		}
 
-		if ($crypt != $testcrypt) {
+		if ($match !== true) {
 			JResponse::setHeader('status', 406);
 			JResponse::setBody('Username or password do not match');
 			JResponse::sendHeaders();
 			exit;
 		}
 
-		if ($user_result->gid != 25) {
+		if (!$user->authorise('core.admin')) {
 			JResponse::setHeader('status', 401);
 			JResponse::setBody('Username is not Super Administrator');
 			JResponse::sendHeaders();

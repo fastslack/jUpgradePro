@@ -2,7 +2,7 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -19,7 +19,7 @@ defined('JPATH_BASE') or die();
  * @subpackage		JUpgradeTableGeneric
  * @since	3.0.1
  */
-class JUpgradeTableGeneric extends JUpgradeTable
+class JUpgradeproTableGeneric extends JUpgradeproTable
 {
 	/**
 	 * Table type
@@ -35,7 +35,7 @@ class JUpgradeTableGeneric extends JUpgradeTable
 	 * @param database A database connector object
 	 */
 	function __construct( &$db ) {
-		parent::__construct( 'jupgrade_steps', 'id', $db );
+		parent::__construct( 'jupgradepro_plugin_steps', 'id', $db );
 	}
 
 	/**
@@ -84,12 +84,12 @@ class JUpgradeTableGeneric extends JUpgradeTable
 		}
 
 		// Check if table exists on db
-		$query = "SELECT name FROM jupgrade_plugin_steps WHERE name = '{$name}'";
+		$query = "SELECT name FROM jupgradepro_plugin_steps WHERE name = '{$name}'";
 		$this->_db->setQuery( $query );
 		$exists = $this->_db->loadResult();
 
 		if ($exists == '') {
-			$query = "INSERT INTO jupgrade_plugin_steps (`name`) VALUES ( '{$name}' )  ";
+			$query = "INSERT INTO jupgradepro_plugin_steps (`name`) VALUES ( '{$name}' )  ";
 			$this->_db->setQuery( $query );
 			$this->_db->query();
 		}

@@ -2,7 +2,7 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -23,7 +23,7 @@ defined('JPATH_BASE') or die();
  * @since		1.0
  * @tutorial	Joomla.Framework/jtable.cls
  */
-class JUpgradeTable extends JTable
+class JUpgradeproTable extends JTable
 {
 	/**
 	 * Get the row
@@ -63,7 +63,7 @@ class JUpgradeTable extends JTable
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$query = "UPDATE jupgrade_plugin_steps SET cid = 0"; 
+		$query = "UPDATE jupgradepro_plugin_steps SET cid = 0"; 
 		if ($table != false) {
 			$query .= " WHERE name = '{$table}'";
 		}
@@ -159,7 +159,7 @@ class JUpgradeTable extends JTable
 
 		$name = $this->_getStepName();
 
-		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($name);
+		$query = "UPDATE `jupgradepro_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($name);
 
 		$db->setQuery( $query );
 		return $db->query();
@@ -179,7 +179,7 @@ class JUpgradeTable extends JTable
 
 		$name = $this->_getStepName();
 
-		$query = 'SELECT `cid` FROM jupgrade_plugin_steps'
+		$query = 'SELECT `cid` FROM jupgradepro_plugin_steps'
 		. ' WHERE name = '.$db->quote($name);
 		$db->setQuery( $query );
 		$stepid = (int) $db->loadResult();
@@ -318,7 +318,7 @@ class JUpgradeTable extends JTable
 	/**
 	 * Method to get bool if table exists
 	 *
-	 * @return  array  An array of all the tables in the database.
+	 * @return  string  YES is table is found, NO if not.
 	 *
 	 * @since   3.0.0
 	 * @throws  JDatabaseException
@@ -342,6 +342,41 @@ class JUpgradeTable extends JTable
 		}else{
 			return 'NO';
 		}
+	}
+
+	/**
+	 * Method to get the tables list
+	 *
+	 * @return  array  An array of all the tables in the database.
+	 *
+	 * @since   3.2.0
+	 * @throws  JDatabaseException
+	 */
+	public function getTableslist()
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		// Set the query to get the tables statement.
+		$tables = $db->getTableList();
+
+		return json_encode($tables);
+	}
+
+	/**
+	 * Method to get the table prefix
+	 *
+	 * @return  string  The table prefix
+	 *
+	 * @since   3.2.0
+	 * @throws  JDatabaseException
+	 */
+	public function getTablesprefix()
+	{
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		return json_encode($db->getPrefix());
 	}
 
 	/**
@@ -411,7 +446,7 @@ class JUpgradeTable extends JTable
 	 */
 	protected function convertParams($params)
 	{
-		$temp	= new JParameter($params);
+		$temp	= new JRegistry($params);
 		$object	= $temp->toObject();
 
 		// Fire the hook in case this parameter field needs modification.

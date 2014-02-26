@@ -2,14 +2,13 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
 * @based on https://github.com/LouisLandry/joomla-platform/tree/oauth/libraries/joomla/oauth
 * @license GNU General Public License version 2 or later; see LICENSE
 */
-
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
@@ -357,6 +356,8 @@ class JRESTMessage
 			}
 		}
 
+echo "DS";
+print_r($parameters);
 		// If we didn't find anything return false.
 		if (empty($parameters))
 		{

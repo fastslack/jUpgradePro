@@ -22,13 +22,8 @@ defined('JPATH_BASE') or die();
  * @subpackage		Table
  * @since	1.0
  */
-class JUpgradeTableModules_menu extends JUpgradeTable
+class JUpgradeproTableModules_menu extends JUpgradeproTable
 {
-	/** @var int Primary key */
-	var $moduleid					= null;
-	/** @var string */
-	var $menuid				= null;
-
 	/**
 	 * Table type
 	 *
@@ -66,14 +61,12 @@ class JUpgradeTableModules_menu extends JUpgradeTable
 
 		$conditions['as'] = "m";
 
-		$conditions['select'] = "DISTINCT m.moduleid, m.menuid";
+		$conditions['select'] = "DISTINCT moduleid, menuid";
 
-		$conditions['join'][] = "LEFT JOIN #__modules AS modules ON modules.id = m.moduleid";
+		$conditions['join'][] = "#__modules AS modules ON modules.id = m.moduleid";
 
-		$conditions['where'][] = "m.moduleid NOT IN (1,2,3,4,8,13,14,15)";
+		$conditions['where'][] = "m.moduleid NOT IN (2,3,4,8,13,14,15)";
 		$conditions['where'][] = "modules.module IN ('mod_breadcrumbs', 'mod_footer', 'mod_mainmenu', 'mod_menu', 'mod_related_items', 'mod_stats', 'mod_wrapper', 'mod_archive', 'mod_custom', 'mod_latestnews', 'mod_mostread', 'mod_search', 'mod_syndicate', 'mod_banners', 'mod_feed', 'mod_login', 'mod_newsflash', 'mod_random_image', 'mod_whosonline' )";
-
-		$conditions['order'] = "moduleid, menuid ASC";
 				
 		return $conditions;
 	}

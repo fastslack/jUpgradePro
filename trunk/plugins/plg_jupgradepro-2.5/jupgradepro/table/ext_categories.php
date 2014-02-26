@@ -22,7 +22,7 @@ defined('JPATH_BASE') or die();
  * @subpackage		Table
  * @since	1.0
  */
-class JUpgradeTableExtensions_categories extends JUpgradeTable
+class JUpgradeproTableExtensions_categories extends JUpgradeproTable
 {
 	/** @var int Primary key */
 	var $id					= null;

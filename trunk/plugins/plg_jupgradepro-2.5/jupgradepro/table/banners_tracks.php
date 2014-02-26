@@ -18,13 +18,7 @@ defined('JPATH_BASE') or die();
 /**
  * JUpgradeTableBanners_tracks Table class
  */
-class JUpgradeTableBanners_tracks extends JUpgradeTable {
-	/** @var date */
-	var $track_date = null;
-	/** @var int(10) unsigned */
-	var $track_type = null;
-	/** @var int(10) unsigned */
-	var $banner_id = null;
+class JUpgradeproTableBanners_tracks extends JUpgradeproTable {
 
 	/**
 	 * Table type
@@ -34,6 +28,6 @@ class JUpgradeTableBanners_tracks extends JUpgradeTable {
 	var $_type = 'banners_tracks';	
 
 	function __construct(&$db) {
-		parent::__construct('#__bannertrack', 'banner_id', $db);
+		parent::__construct('#__banner_tracks', 'banner_id', $db);
 	}
 }

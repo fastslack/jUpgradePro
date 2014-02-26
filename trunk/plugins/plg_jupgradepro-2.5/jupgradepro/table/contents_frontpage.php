@@ -2,7 +2,7 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -20,13 +20,8 @@ defined('JPATH_BASE') or die();
  * @subpackage		Table
  * @since	1.0
  */
-class JUpgradeTableContents_frontpage extends JUpgradeTable
+class JUpgradeproTableContents_frontpage extends JUpgradeproTable
 {
-	/** @var int Primary key */
-	var $content_id					= null;
-	/** @var int */
-	var $ordering				= null;
-
 	/**
 	 * Table type
 	 *

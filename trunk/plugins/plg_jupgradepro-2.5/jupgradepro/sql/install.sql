@@ -1,9 +1,9 @@
 --
--- Table structure for table `jupgrade_plugin_steps`
+-- Table structure for table `jupgradepro_plugin_steps`
 --
 
-DROP TABLE IF EXISTS `jupgrade_plugin_steps`;
-CREATE TABLE IF NOT EXISTS `jupgrade_plugin_steps` (
+DROP TABLE IF EXISTS `jupgradepro_plugin_steps`;
+CREATE TABLE IF NOT EXISTS `jupgradepro_plugin_steps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(255) NOT NULL,
   `cid` int(11) NOT NULL DEFAULT '0',
@@ -11,10 +11,10 @@ CREATE TABLE IF NOT EXISTS `jupgrade_plugin_steps` (
 ) ENGINE=MyISAM  DEFAULT CHARSET=utf8 AUTO_INCREMENT=21 ;
 
 --
--- Dumping data for table `jupgrade_plugin_steps`
+-- Dumping data for table `jupgradepro_plugin_steps`
 --
 
-INSERT INTO `jupgrade_plugin_steps` (`id`, `name`, `cid`) VALUES
+INSERT INTO `jupgradepro_plugin_steps` (`id`, `name`, `cid`) VALUES
 (1, 'users', 0),
 (2, 'arogroup', 0),
 (3, 'usergroupmap', 0),

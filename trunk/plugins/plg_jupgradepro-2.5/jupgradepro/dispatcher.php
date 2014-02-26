@@ -2,7 +2,7 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -43,12 +43,12 @@ class JRESTDispatcher
 	{
 		// Getting the database instance
 		$db = JFactory::getDbo();	
-	
+
 		// Loading params
 		$this->_parameters = $parameters;
 
 		$task = isset($this->_parameters['HTTP_TASK']) ? $this->_parameters['HTTP_TASK'] : '';
-		$name = $table = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
+		$name = $table = !empty($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : 'generic';
 		$files = isset($this->_parameters['HTTP_FILES']) ? $this->_parameters['HTTP_FILES'] : '';
 
 		// Fixing table if is extension
@@ -60,17 +60,18 @@ class JRESTDispatcher
 		}
 
 		// Loading table
-		if (isset($table)) {
-			JTable::addIncludePath(JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'table');
-			$class = JUpgradeTable::getInstance($name, 'JUpgradeTable');
+		if (!empty($table)) {
+			JTable::addIncludePath(JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/table');
+			$class = JUpgradeproTable::getInstance($name, 'JUpgradeproTable');
 
 			if (!is_object($class)) {
-				$class = JUpgradeTable::getInstance('generic', 'JUpgradeTable');
+				$class = JUpgradeproTable::getInstance('generic', 'JUpgradeproTable');
 				$class->changeTable($table);
 			}
+
 		}else if (isset($files)) {
-			require_once JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'files.php';
-			$class = new JUpgradeFiles();
+			require_once JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/files.php';
+			$class = new JUpgradeproFiles();
 		}
 
 		// Get the method name

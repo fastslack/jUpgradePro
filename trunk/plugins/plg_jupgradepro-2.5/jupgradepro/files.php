@@ -2,7 +2,7 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2012 Matware. All rights reserved.
+* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -23,7 +23,7 @@ defined('JPATH_BASE') or die();
  * @since		1.0
  * @tutorial	Joomla.Framework/jtable.cls
  */
-class JUpgradeFiles
+class JUpgradeproFiles
 {
 	/**
 	 * @var    array  Lits of files to send
@@ -167,7 +167,7 @@ class JUpgradeFiles
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$query = "UPDATE jupgrade_plugin_steps SET cid = 0"; 
+		$query = "UPDATE jupgradepro_plugin_steps SET cid = 0"; 
 		if ($table != false) {
 			$query .= " WHERE name = '{$table}'";
 		}
@@ -226,7 +226,7 @@ class JUpgradeFiles
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$query = 'SELECT `cid` FROM jupgrade_plugin_steps'
+		$query = 'SELECT `cid` FROM jupgradepro_plugin_steps'
 		. ' WHERE name = '.$db->quote($table);
 		$db->setQuery( $query );
 		$fileid = (int) $db->loadResult();
@@ -247,7 +247,7 @@ class JUpgradeFiles
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($table);
+		$query = "UPDATE `jupgradepro_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($table);
 
 		$db->setQuery( $query );
 		return $db->query();

@@ -35,7 +35,7 @@ class JUpgradeproModelMigrate extends JModelLegacy
 		$table = (bool) ($table != false) ? $table : JRequest::getCmd('table', '');
 		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', '');
 
-		// Init the jUpgrade instance
+		// Init the jUpgradepro instance
 		$step = JUpgradeproStep::getInstance($table, $extensions);
 		$jupgrade = JUpgradepro::getInstance($step);
 

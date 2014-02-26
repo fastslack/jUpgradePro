@@ -45,7 +45,7 @@ class JUpgradeproModelCleanup extends JModelLegacy
 
 		// If REST is enable, cleanup the source #__jupgradepro_steps table
 		if ($params->method == 'rest') {
-			$driver = JUpgradeDriver::getInstance();
+			$driver = JUpgradeproDriver::getInstance();
 			$code = $driver->requestRest('cleanup');
 		}
 

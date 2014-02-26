@@ -39,11 +39,54 @@ class JUpgradeproModelChecks extends JModelLegacy
 		// Getting the component parameter with global settings
 		$params = JUpgradeproHelper::getParams();
 
+		// Getting the step instance
 		$step = JUpgradeproStep::getInstance();
 
+		// Check for bad configurations
+		if ($params->method == "rest") {
+
+			if (!isset($params->rest_hostname) || !isset($params->rest_username) || !isset($params->rest_password) || !isset($params->rest_key) ) {
+				throw new Exception('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
+			}
+
+			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' || 
+					$params->rest_username == '' || $params->rest_password == '' || $params->rest_key == '') {
+				throw new Exception('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
+			}
+
+			// Checking the RESTful connection
+			$driver = JUpgradeproDriver::getInstance();
+			$code = $driver->requestRest('check');
+
+			switch ($code) {
+				case 401:
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_501');
+				case 402:
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_502');
+				case 403:
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_503');
+				case 405:
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_505');
+				case 406:
+					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_506');
+			}
+		}
+
+		// Check for bad configurations
+		if ($params->method == "database") {
+			if ($params->old_hostname == '' || $params->old_username == '' || $params->old_db == '' || $params->old_dbprefix == '' ) {
+				throw new Exception('COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
+			}
+		}
+
 		// Get the tables from old site
-		$old_tables = JUpgradepro::getInstance($step)->_driver->_db_old->getTableList();
-		$old_prefix = JUpgradepro::getInstance($step)->_driver->_db_old->getPrefix();
+		if ($params->method == "database") {
+			$old_tables = JUpgradepro::getInstance($step)->_driver->_db_old->getTableList();
+			$old_prefix = $params->old_dbprefix;
+		}else if ($params->method == "rest") {
+			$old_tables = json_decode($driver->requestRest('tableslist'));
+			$old_prefix = json_decode($driver->requestRest('tablesprefix'));
+		}
 
 		// Check the old site Joomla! version
 		$old_version = $this->checkOldVersion($old_tables, $old_prefix);
@@ -103,43 +146,6 @@ class JUpgradeproModelChecks extends JModelLegacy
 		// Check safe_mode_gid
 		if (@ini_get('safe_mode_gid') && @ini_get('safe_mode')) {
 			throw new Exception('COM_JUPGRADEPRO_ERROR_DISABLE_SAFE_GID');
-		}
-
-		// Check for bad configurations
-		if ($params->method == "rest") {
-
-			if (!isset($params->rest_hostname) || !isset($params->rest_username) || !isset($params->rest_password) || !isset($params->rest_key) ) {
-				throw new Exception('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
-			}
-
-			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' || 
-					$params->rest_username == '' || $params->rest_password == '' || $params->rest_key == '') {
-				throw new Exception('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
-			}
-
-			// Checking the RESTful connection
-			$driver = JUpgradeDriver::getInstance();
-			$code = $driver->requestRest('check');
-
-			switch ($code) {
-				case 401:
-					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_501');
-				case 402:
-					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_502');
-				case 403:
-					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_503');
-				case 405:
-					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_505');
-				case 406:
-					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_506');
-			}
-		}
-
-		// Check for bad configurations
-		if ($params->method == "database") {
-			if ($params->old_hostname == '' || $params->old_username == '' || $params->old_db == '' || $params->old_dbprefix == '' ) {
-				throw new Exception('COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
-			}
 		}
 
 		// Convert the params to array

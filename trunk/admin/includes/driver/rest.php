@@ -101,11 +101,14 @@ class JUpgradeproDriverRest extends JUpgradeproDriver
 	{
 		// Declare rows
 		$rows = array();
+
 		// Cleanup		
 		$cleanup = $this->requestRest('cleanup', $table);
+
 		// Total
 		$total = $this->requestRest('total', $table);
 
+		// Get the resources
 		for ($i=1;$i<=$total;$i++) {		
 			$response = $this->requestRest('row', $table);
 			if ($response != '') {

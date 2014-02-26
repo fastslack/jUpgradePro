@@ -107,7 +107,7 @@ class JUpgradeproMenu extends JUpgradepro
 
 		// Cleanup the entire menu
 		$query->clear();
-		$query->delete()->from('#__menu')->where('id > 1');
+		$query->delete()->from('#__menu')->where('id > 1')->where('client_id = 0');
 
 		try {
 			$this->_db->setQuery($query)->execute();

@@ -45,47 +45,6 @@ class JUpgradeproUsergroupMap extends JUpgradeproUser
 	}
 
 	/**
-	 * Get the raw data for this part of the upgrade.
-	 *
-	 * @return	array
-	 * @since	0.4.4
-	 * @throws	Exception
-	 */
-	public function &databaseHook($rows)
-	{
-		$remove = array();
-/*
-		// Set up the mapping table for the old groups to the new groups.
-		$groupMap = $this->getUsergroupIdMap();
-
-		// Do some custom post processing on the list.
-		// The schema for old group map is: group_id, section_value, aro_id
-		// The schema for new groups is: user_id, group_id
-	
-		$count = count($rows);
-
-		for ($i=0;$i<$count;$i++)
-		{
-			$row = (array) $rows[$i];
-
-			$row['user_id'] = $this->getUserIdAroMap($row['aro_id']);
-
-			// Note, if we are here, these are custom groups we didn't know about.
-			if ($row['group_id'] <= 30) {
-				$row['group_id'] = $groupMap[$row['group_id']];
-			}
-
-			// Remove unused fields.
-			unset($row['section_value']);
-			unset($row['aro_id']);
-
-			$rows[$i] = $row;
-		}
-*/
-		return $rows;
-	}
-
-	/**
 	 * Sets the data in the destination database.
 	 *
 	 * @return	void

@@ -316,16 +316,22 @@ class JUpgradepro
 	 */
 	protected function dataSwitch($name = null)
 	{
-		$method = $this->params->method;
-
+		// Init rows variable
 		$rows = array();
+
+		// Get the method
+		$method = $this->params->method;
 
 		switch ($method) {
 			case 'rest':
 				$name = ($name == null) ? $this->_step->_getStepName() : $name;
+
 				if ( in_array($name, $this->extensions_steps) ) {
 					$rows = $this->_driver->getSourceDataRest($name);
+				}else{
+					$rows = $this->_driver->getSourceDataRestIndividual($name);
 				}
+
 		    break;
 			case 'database':
 		    $rows = $this->_driver->getSourceDatabase();

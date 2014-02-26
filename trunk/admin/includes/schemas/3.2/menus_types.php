@@ -19,4 +19,21 @@
  */
 class JUpgradeproMenusTypes extends JUpgradepro
 {
+	/**
+	 * Setting the conditions hook
+	 *
+	 * @return	void
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public static function getConditionsHook()
+	{
+		$conditions = array();
+
+		$conditions['select'] = "*";
+
+		$conditions['where'][] = "id != 1";
+				
+		return $conditions;
+	}
 }

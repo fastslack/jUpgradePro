@@ -193,6 +193,7 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_steps` (
   `start` int(11) NOT NULL,
   `stop` int(11) NOT NULL,
   `first` tinyint(1) NOT NULL,
+  `debug` varchar(255) NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB  DEFAULT CHARSET=utf8 AUTO_INCREMENT=63 ;
 

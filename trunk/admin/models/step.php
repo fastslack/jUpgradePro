@@ -30,7 +30,7 @@ class JUpgradeproModelStep extends JModelLegacy
 	 * @return	none
 	 * @since	1.2.0
 	 */
-	public function step($name = false, $json = true, $extensions = false) {
+	public function step($name = null, $json = true, $extensions = false) {
 
 		// Check if extensions exists if not get it from URI request
 		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', '');
@@ -42,7 +42,10 @@ class JUpgradeproModelStep extends JModelLegacy
 		$name = !empty($name) ? $name : $step->name;
 
 		// Get the next step
-		$step->getStep($name);
+		if (!$step->getStep($name))
+		{
+			$this->returnError('500', 'Step instance cannot be loaded.');
+		}
 
 		if (!JUpgradeproHelper::isCli()) {
 			echo $step->getParameters();

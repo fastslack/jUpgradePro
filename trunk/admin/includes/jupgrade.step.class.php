@@ -76,6 +76,7 @@ class JUpgradeproStep
 			$this->_table = '#__jupgradepro_extensions';
 		}
 
+		// Get the old version
 		$this->old_ver = JUpgradeproHelper::getVersion('old');
 
 		// Load the last step from database
@@ -235,10 +236,10 @@ class JUpgradeproStep
 
 		}else{
 
-			//$this->next = true;
 			$this->start = 0;
 			$this->first = 1;
 			$this->cache = 0;
+			$this->status = 1;
 			$this->stop = $this->total - 1;
 			$this->debug = "{{{5}}}";
 		}
@@ -330,11 +331,11 @@ class JUpgradeproStep
 		$query = $this->_db->getQuery(true);
 		$query->update($this->_table);
 
-		$columns = array('status', 'cache', 'cid', 'total', 'start', 'stop', 'first');
+		$columns = array('status', 'cache', 'total', 'start', 'stop', 'first', 'debug');
 
 		foreach ($columns as $column) {
 			if (!empty($this->$column)) {
-				$query->set("{$column} = {$this->$column}");
+				$query->set("{$column} = '{$this->$column}'");
 			}
 		}
 
@@ -386,7 +387,7 @@ class JUpgradeproStep
 	 */
 	public function _nextID($total = false)
 	{
-		$update_cid = $this->_getStepID() + 1;
+		$update_cid = (int) $this->_getStepID() + 1;
 		$this->_updateID($update_cid);
 		echo JUpgradeproHelper::isCli() ? "•" : "";
 	}
@@ -400,7 +401,7 @@ class JUpgradeproStep
 	 */
 	public function _getStepID()
 	{
-		$this->_load();
+		$this->_load($this->name);
 		return $this->cid;
 	}
 

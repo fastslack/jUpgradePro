@@ -292,7 +292,7 @@ class JUpgradepro
 		}
 
 		// Load the step object
-		$this->_step->_load();
+		$this->_step->_load($this->_step->name);
 
 		// Call after migration hook
 		if ($this->getTotal() == $this->_step->cid) {

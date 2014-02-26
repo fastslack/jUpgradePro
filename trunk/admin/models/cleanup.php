@@ -145,11 +145,13 @@ class JUpgradeproModelCleanup extends JModelLegacy
 	 */
 	public function updateStep ($name)
 	{
+		// Get the version
+		$version = JUpgradeproHelper::getVersion('old');
+
 		// Get the JQuery object
 		$query = $this->_db->getQuery(true);
-		$query->clear();
 
-		$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \''.$name.'\'');
+		$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \''.$name.'\'')->where('version = \''.$version.'\'');
 		try {
 			$this->_db->setQuery($query)->execute();
 		} catch (RuntimeException $e) {

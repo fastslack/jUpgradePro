@@ -28,7 +28,7 @@ class JUpgradeproTableExt_modules extends JUpgradeproTable
 	 * @param database A database connector object
 	 */
 	function __construct( &$db ) {
-		parent::__construct( '#__extensions', 'id', $db );
+		parent::__construct( '#__extensions', 'extension_id', $db );
 
 		$this->_type = 'ext_modules';
 	}

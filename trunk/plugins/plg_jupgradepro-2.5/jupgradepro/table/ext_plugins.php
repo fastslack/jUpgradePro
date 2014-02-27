@@ -53,8 +53,6 @@ class JUpgradeproTableExt_plugins extends JUpgradeproTable
 		$where[] = "element   NOT   IN   ('joomla',   'ldap',   'gmail',   'openid',   'content',   'categories',   'contacts',   'sections',   'newsfeeds',   'weblinks',   'pagebreak',   'vote',   'emailcloak',   'geshi',   'loadmodule',   'pagenavigation', 'none',   'tinymce',   'xstandard',   'image',   'readmore',   'sef',   'debug',   'legacy',   'cache',   'remember', 'backlink', 'log', 'blogger', 'mtupdate' )";
 		
 		$conditions['where'] = $where;
-
-		$conditions['limit'] = false;
 		
 		return $conditions;
 	}

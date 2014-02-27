@@ -131,12 +131,7 @@ class JUpgradeproTable extends JTable
 			$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
 		}
 
-		$limit = '';
-		if ($conditions['limit'] == false) {
-			$limit = '';
-		}else{
-			$limit = !isset($conditions['limit']) ? "LIMIT {$oid}, 1" : $conditions['limit'];
-		}
+		$limit = "LIMIT {$oid}, 1";
 
 		// Get the row
 		$query = "SELECT {$select} FROM {$table} {$as} {$join} {$where}{$where_or} {$order} {$limit}";

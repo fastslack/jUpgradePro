@@ -53,7 +53,7 @@ class JUpgradeproTableExt_Components extends JUpgradeproTable
 		
 		$conditions['where'] = $where;
 
-		$conditions['limit'] = 'false';
+		$conditions['limit'] = false;
 
 		return $conditions;
 	}

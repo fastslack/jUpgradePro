@@ -54,7 +54,7 @@ class JUpgradeproTableExt_modules extends JUpgradeproTable
 		
 		$conditions['where'] = $where;
 
-		$conditions['limit'] = 'false';
+		$conditions['limit'] = false;
 	
 		return $conditions;
 	}

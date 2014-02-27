@@ -132,7 +132,7 @@ class JUpgradeproTable extends JTable
 		}
 
 		$limit = '';
-		if (isset($conditions['limit'] == 'false') {
+		if (isset($conditions['limit'] == 'false')) {
 			$limit = '';
 		}else{
 			$limit = !isset($conditions['limit']) ? "LIMIT {$oid}, 1" : $conditions['limit'];

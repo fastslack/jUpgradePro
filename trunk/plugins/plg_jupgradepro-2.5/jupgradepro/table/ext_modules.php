@@ -53,6 +53,8 @@ class JUpgradeproTableExt_modules extends JUpgradeproTable
 		$where[] = "m.element   NOT   IN   ('mod_mainmenu',   'mod_login',   'mod_popular',   'mod_latest',   'mod_stats',   'mod_unread',   'mod_online',   'mod_toolbar',   'mod_quickicon',   'mod_logged',   'mod_footer',   'mod_menu',   'mod_submenu',   'mod_status',   'mod_title',   'mod_login' )";
 		
 		$conditions['where'] = $where;
+
+		$conditions['limit'] = 'false';
 	
 		return $conditions;
 	}

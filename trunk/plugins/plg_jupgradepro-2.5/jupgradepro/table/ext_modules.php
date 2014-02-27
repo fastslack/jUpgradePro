@@ -21,44 +21,6 @@ defined('JPATH_BASE') or die();
  */
 class JUpgradeproTableExt_modules extends JUpgradeproTable
 {
-	/** @var int Primary key */
-	var $id					= null;
-	/** @var string */
-	var $name				= null;
-	/** @var string */
-	var $showtitle			= null;
-	/** @var int */
-	var $content			= null;
-	/** @var int */
-	var $ordering			= null;
-	/** @var string */
-	var $position			= null;
-	/** @var boolean */
-	var $checked_out		= 0;
-	/** @var time */
-	var $checked_out_time	= 0;
-	/** @var boolean */
-	var $published			= null;
-	/** @var string */
-	var $module				= null;
-	/** @var int */
-	var $access				= null;
-	/** @var string */
-	var $params				= null;
-	/** @var string */
-	var $client_id			= null;
-	/** @var int */
-	var $element				= null;
-	/** @var int */
-	var $type				= null;
-
-	/**
-	 * Table type
-	 *
-	 * @var string
-	 */	
-	var $_type = 'ext_modules';	
-
 	/**
 	 * Contructor
 	 *
@@ -66,7 +28,9 @@ class JUpgradeproTableExt_modules extends JUpgradeproTable
 	 * @param database A database connector object
 	 */
 	function __construct( &$db ) {
-		parent::__construct( '#__modules', 'id', $db );
+		parent::__construct( '#__extensions', 'id', $db );
+
+		$this->_type = 'ext_modules';
 	}
 
 	/**
@@ -79,25 +43,17 @@ class JUpgradeproTableExt_modules extends JUpgradeproTable
 	public function getConditionsHook()
 	{
 		$conditions = array();
+		
+		$conditions['as'] = "m";
+		
+		$conditions['select'] = '`name`, `element`, `type`, `folder`, `client_id`, `ordering`, `params`';
 
-		$conditions['select'] = '`title` AS name, `module` AS element, params';
-
-		$conditions['where'][] = "module NOT IN ('mod_mainmenu',   'mod_login',   'mod_popular',   'mod_latest',   'mod_stats',   'mod_unread',   'mod_online',   'mod_toolbar',   'mod_quickicon',   'mod_logged',   'mod_footer',   'mod_menu',   'mod_submenu',   'mod_status',   'mod_title',   'mod_login' )";
-				
+		$where = array();
+		$where[] = "m.type = 'module'";
+		$where[] = "m.element   NOT   IN   ('mod_mainmenu',   'mod_login',   'mod_popular',   'mod_latest',   'mod_stats',   'mod_unread',   'mod_online',   'mod_toolbar',   'mod_quickicon',   'mod_logged',   'mod_footer',   'mod_menu',   'mod_submenu',   'mod_status',   'mod_title',   'mod_login' )";
+		
+		$conditions['where'] = $where;
+	
 		return $conditions;
-	}
-
-	/**
-	 * 
-	 *
-	 * @access	public
-	 * @param		Array	Result to migrate
-	 * @return	Array	Migrated result
-	 */
-	function migrate( )
-	{
-		$this->params = isset($this->params) ? $this->convertParams($this->params) : '';
-		// Default
-		$this->type = 'module';
 	}
 }

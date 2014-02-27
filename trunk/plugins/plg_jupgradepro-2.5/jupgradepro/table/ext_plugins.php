@@ -21,36 +21,6 @@ defined('JPATH_BASE') or die();
  */
 class JUpgradeproTableExt_plugins extends JUpgradeproTable
 {
-	/** @var int Primary key */
-	var $id					= null;
-	/** @var string */
-	var $name				= null;
-	/** @var string */
-	var $folder			= null;
-	/** @var int */
-	var $ordering			= null;
-	/** @var boolean */
-	var $published			= null;
-	/** @var string */
-	var $module				= null;
-	/** @var int */
-	var $access				= null;
-	/** @var string */
-	var $params				= null;
-	/** @var string */
-	var $client_id			= null;
-	/** @var int */
-	var $element				= null;
-	/** @var int */
-	var $type				= null;
-
-	/**
-	 * Table type
-	 *
-	 * @var string
-	 */	
-	var $_type = 'ext_plugins';	
-
 	/**
 	 * Contructor
 	 *
@@ -58,9 +28,10 @@ class JUpgradeproTableExt_plugins extends JUpgradeproTable
 	 * @param database A database connector object
 	 */
 	function __construct( &$db ) {
-		parent::__construct( '#__plugins', 'id', $db );
-	}
+		parent::__construct( '#__extensions', 'id', $db );
 
+		$this->_type = 'ext_components';
+	}
 
 	/**
 	 * Setting the conditions hook
@@ -72,26 +43,17 @@ class JUpgradeproTableExt_plugins extends JUpgradeproTable
 	public function getConditionsHook()
 	{
 		$conditions = array();
+		
+		$conditions['as'] = "p";
+		
+		$conditions['select'] = '`name`, `element`, `type`, `folder`, `client_id`, `ordering`, `params`';
 
-		$conditions['select'] = 'name, element, folder, client_id, ordering, params';
-
-		$conditions['where'][] = "element   NOT   IN   ('joomla',   'ldap',   'gmail',   'openid',   'content',   'categories',   'contacts',   'sections',   'newsfeeds',   'weblinks',   'pagebreak',   'vote',   'emailcloak',   'geshi',   'loadmodule',   'pagenavigation', 'none',   'tinymce',   'xstandard',   'image',   'readmore',   'sef',   'debug',   'legacy',   'cache',   'remember', 'backlink', 'log', 'blogger', 'mtupgrade' )";
-
+		$where = array();
+		$where[] = "`type` = 'plugin'";
+		$where[] = "element   NOT   IN   ('joomla',   'ldap',   'gmail',   'openid',   'content',   'categories',   'contacts',   'sections',   'newsfeeds',   'weblinks',   'pagebreak',   'vote',   'emailcloak',   'geshi',   'loadmodule',   'pagenavigation', 'none',   'tinymce',   'xstandard',   'image',   'readmore',   'sef',   'debug',   'legacy',   'cache',   'remember', 'backlink', 'log', 'blogger', 'mtupdate' )";
+		
+		$conditions['where'] = $where;
+		
 		return $conditions;
-	}
-
-
-	/**
-	 * 
-	 *
-	 * @access	public
-	 * @param		Array	Result to migrate
-	 * @return	Array	Migrated result
-	 */
-	function migrate( )
-	{		
-		$this->params = isset($this->params) ? $this->convertParams($this->params) : '';
-		// Default
-		$this->type = 'plugin';
 	}
 }

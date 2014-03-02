@@ -367,6 +367,7 @@ class JUpgradeproExtensions extends JUpgradepro
 			// Convert the array into an object.
 			$row = (object) $row;
 			$row->id = null;
+			$row->extension_id = null;
 			$row->element = strtolower($row->element);
 
 			// Ensure that name is always using form: xxx_folder_name
@@ -393,16 +394,23 @@ class JUpgradeproExtensions extends JUpgradepro
 		jimport('joomla.filesystem.folder');
 
 		$types = array(
-			'/^com_(.+)$/e',									// com_componentname
-			'/^mod_(.+)$/e',									// mod_modulename
-			'/^plg_(.+)_(.+)$/e',								// plg_folder_pluginname
-			'/^tpl_(.+)$/e');									// tpl_templatename
+			'/^(.+)_(.+)_(.+)$/',
+			'/^(.+)_(.+)$/');
 
-		$classes = array(
-			"'jUpgradeComponent'.ucfirst('\\1')",				// jUpgradeComponentComponentname
-			"'jUpgradeModule'.ucfirst('\\1')",					// jUpgradeModuleModulename
-			"'jUpgradePlugin'.ucfirst('\\1').ucfirst('\\2')",	// jUpgradePluginPluginname
-			"'jUpgradeTemplate'.ucfirst('\\1')");				// jUpgradeTemplateTemplatename
+		function replaceClassName($matches)
+		{
+			if ($matches[1] == 'com') {
+				$option = 'jUpgradeComponent'.ucfirst($matches[2]);
+			}else if ($matches[1] == 'mod') {
+				$option = 'jUpgradeModule'.ucfirst($matches[2]);
+			}else if ($matches[1] == 'plg') {
+				$option = 'jUpgradePlugin'.ucfirst($matches[2]).ucfirst($matches[3]);
+			}else if ($matches[1] == 'tpl') {
+				$option = 'jUpgradeTemplate'.ucfirst($matches[2]);
+			}
+
+			return $option;
+		}
 
 		// Getting the plugins list
 		$query = $this->_db->getQuery(true);
@@ -415,6 +423,11 @@ class JUpgradeproExtensions extends JUpgradepro
 		// Setting the query and getting the result
 		$this->_db->setQuery($query);
 		$plugins = $this->_db->loadObjectList();
+
+		// Get the tables list and prefix from the old site
+		$old_tables = json_decode($this->_driver->requestRest('tableslist'));
+		$old_prefix = json_decode($this->_driver->requestRest('tablesprefix'));
+		$old_version = JUpgradeproHelper::getVersion('old');
 
 		// Do some custom post processing on the list.
 		foreach ($plugins as $plugin)
@@ -449,7 +462,11 @@ class JUpgradeproExtensions extends JUpgradepro
 							$class = trim($xml->installer->class[0]);
 						}
 						if (empty($class)) {
-							$class = preg_replace($types, $classes, $element);
+							$class = preg_replace_callback(
+									$types,
+									'replaceClassName',
+									$element
+							);
 						}
 
 						// Saving the extensions and migrating the tables
@@ -462,8 +479,6 @@ class JUpgradeproExtensions extends JUpgradepro
 							$query->clear();
 
 							$xmlpath = "{$plugin->element}/extensions/{$element}.xml";
-
-							$old_version = JUpgradeproHelper::getVersion('old');
 
 							// Checking if other migration exists
 							$query = $this->_db->getQuery(true);
@@ -491,7 +506,12 @@ class JUpgradeproExtensions extends JUpgradepro
 							}
 
 							// Converting the params
-							$extension->params = $this->convertParams($extension->params);
+							if (version_compare($old_version, '1.5', '=')) {
+								$extension->params = $this->convertParams($extension->params);
+							}
+
+							// Unset id
+							unset($extension->extension_id);
 
 							// Saving the extension to #__extensions table
 							if (!$this->_db->insertObject('#__extensions', $extension)) {
@@ -499,7 +519,7 @@ class JUpgradeproExtensions extends JUpgradepro
 							}
 
 							// Getting the extension id
-							$extension->id = $this->_db->insertid();
+							$extension->extension_id = $this->_db->insertid();
 
 							// Adding tables to migrate
 							if (!empty($xml->tables[0])) {
@@ -513,16 +533,16 @@ class JUpgradeproExtensions extends JUpgradepro
 									//
 									$table = new StdClass();
 									$table->name = $table->source = $table->destination = (string) $xml->tables->table[$i];
-									$table->eid = $extension->id;
+									$table->eid = $extension->extension_id;
 									$table->element = $element;
 									$table->version = $old_version;
 									$table->class = $class;
 									$table->replace = (string) $xml->tables->table[$i]->attributes()->replace;
 									$table->replace = !empty($table->replace) ? $table->replace : $main_replace;
 
-									$table_exists = $this->_driver->tableExists($table->name);
+									$table_name = $old_prefix.$table->name;
 
-									if ($table_exists == 'YES'){
+									if (in_array($table_name, $old_tables)){
 										if (!$this->_db->insertObject('#__jupgradepro_extensions_tables', $table)) {
 											throw new Exception($this->_db->getErrorMsg());
 										}

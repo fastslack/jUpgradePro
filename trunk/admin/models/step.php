@@ -44,7 +44,7 @@ class JUpgradeproModelStep extends JModelLegacy
 		// Get the next step
 		if (!$step->getStep($name))
 		{
-			$this->returnError('500', 'Step instance cannot be loaded.');
+			return false;
 		}
 
 		if (!JUpgradeproHelper::isCli()) {

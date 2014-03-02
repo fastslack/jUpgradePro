@@ -356,8 +356,6 @@ class JRESTMessage
 			}
 		}
 
-echo "DS";
-print_r($parameters);
 		// If we didn't find anything return false.
 		if (empty($parameters))
 		{

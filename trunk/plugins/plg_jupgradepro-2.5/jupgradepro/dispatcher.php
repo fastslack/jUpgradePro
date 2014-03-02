@@ -31,7 +31,13 @@ class JRESTDispatcher
 	 * @since  3.0
 	 */
 	private $_table = array();
-	
+
+	/**
+	 * @var    array  A list with the steps to skip
+	 * @since  3.0
+	 */
+	private $skip_steps = array('banners', 'banners_clients', 'banners_tracks', 'categories', 'contacts', 'contents', 'contents_frontpage', 'ext_categories', 'ext_components', 'ext_modules', 'ext_plugins', 'generic', 'menus', 'menus_types', 'modules', 'modules_menu', 'newsfeeds', 'usergroupmap', 'users', 'weblinks');
+
 	/**
 	 * 
 	 *
@@ -62,11 +68,12 @@ class JRESTDispatcher
 		// Loading table
 		if (!empty($table)) {
 			JTable::addIncludePath(JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/table');
-			$class = JUpgradeproTable::getInstance($name, 'JUpgradeproTable');
 
-			if (!is_object($class)) {
+			if (!in_array($name, $this->skip_steps)) {
 				$class = JUpgradeproTable::getInstance('generic', 'JUpgradeproTable');
 				$class->changeTable($table);
+			}else{
+				$class = JUpgradeproTable::getInstance($name, 'JUpgradeproTable');
 			}
 
 		}else if (isset($files)) {

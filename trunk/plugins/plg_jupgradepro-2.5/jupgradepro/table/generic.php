@@ -22,20 +22,13 @@ defined('JPATH_BASE') or die();
 class JUpgradeproTableGeneric extends JUpgradeproTable
 {
 	/**
-	 * Table type
-	 *
-	 * @var string
-	 */	
-	var $_type = 'generic';	
-
-	/**
 	 * Contructor
 	 *
 	 * @access protected
 	 * @param database A database connector object
 	 */
 	function __construct( &$db ) {
-		parent::__construct( 'jupgradepro_plugin_steps', 'id', $db );
+		$this->_type = 'generic';
 	}
 
 	/**
@@ -66,6 +59,9 @@ class JUpgradeproTableGeneric extends JUpgradeproTable
 	 */
 	public function changeTable($table)
 	{
+		// Get the database instance
+		$db = JFactory::getDBO();
+
 		// Getting table
 		$name = $table;
 		$table = '#__'.$table;
@@ -75,8 +71,8 @@ class JUpgradeproTableGeneric extends JUpgradeproTable
 		$key = !empty($keys) ? $keys[0] : '';
 
 		// Getting columns
-		$this->_db->setQuery("SHOW COLUMNS FROM {$table}");
-		$columns = $this->_db->loadObjectList();
+		$db->setQuery("SHOW COLUMNS FROM {$table}");
+		$columns = $db->loadObjectList();
 
 		foreach ($columns as $column) {
 			$colname = $column->Field;
@@ -85,16 +81,16 @@ class JUpgradeproTableGeneric extends JUpgradeproTable
 
 		// Check if table exists on db
 		$query = "SELECT name FROM jupgradepro_plugin_steps WHERE name = '{$name}'";
-		$this->_db->setQuery( $query );
-		$exists = $this->_db->loadResult();
+		$db->setQuery( $query );
+		$exists = $db->loadResult();
 
 		if ($exists == '') {
 			$query = "INSERT INTO jupgradepro_plugin_steps (`name`) VALUES ( '{$name}' )  ";
-			$this->_db->setQuery( $query );
-			$this->_db->query();
+			$db->setQuery( $query );
+			$db->query();
 		}
 
-		parent::__construct( $table, $key, $this->_db );
+		parent::__construct( $table, $key, $db );
 	}
 
 	/**
@@ -106,9 +102,11 @@ class JUpgradeproTableGeneric extends JUpgradeproTable
 	 */
 	private function _getTableKeys($table)
 	{
+		$db = JFactory::getDBO();
+
 		$query = "SHOW KEYS FROM {$table} WHERE Key_name = 'PRIMARY'";
-		$this->_db->setQuery( $query );
-		$result = $this->_db->loadObjectList();
+		$db->setQuery( $query );
+		$result = $db->loadObjectList();
 
 		$return = array();
 		foreach ($result as $key) {
@@ -117,5 +115,4 @@ class JUpgradeproTableGeneric extends JUpgradeproTable
 
 		return $return;
 	}
-
 }

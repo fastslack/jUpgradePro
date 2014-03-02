@@ -43,9 +43,8 @@ class JUpgradeproTable extends JTable
 		$id = $this->_getStepID();
 		// Load the row
 		$load = $this->load($id);
-
+		// Migrate it
 		if ($load !== false) {
-			// Migrate it
 			$this->migrate();
 			// Return as JSON
 			return $this->toJSON();

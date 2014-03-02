@@ -242,10 +242,6 @@ class JUpgradeproModelChecks extends JModelLegacy
 		{
 			$version = "1.5";
 		}
-		else if(in_array($j25, $tables))
-		{
-			$version = "2.5";
-		}
 		else if(in_array($j30, $tables) && !in_array($j25, $tables) && !in_array($j31, $tables))
 		{
 			$version = "3.0";
@@ -257,6 +253,10 @@ class JUpgradeproModelChecks extends JModelLegacy
 		else if(in_array($j32, $tables))
 		{
 			$version = "3.2";
+		}
+		else if(in_array($j25, $tables))
+		{
+			$version = "2.5";
 		}
 		
 		return $version;

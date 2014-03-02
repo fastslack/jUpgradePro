@@ -40,7 +40,7 @@ class JUpgradeproModelMigrate extends JModelLegacy
 		$jupgrade = JUpgradepro::getInstance($step);
 
 		// Get the database structure
-		if ($step->first == true && $extensions == 'tables') {
+		if ($step->first == true && $extensions == 'tables' && $step->cid == 0) {
 			$structure = $jupgrade->getTableStructure();
 		}
 

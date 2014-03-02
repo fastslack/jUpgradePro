@@ -39,9 +39,7 @@ class JUpgradeproExtensionsPlugins extends JUpgradepro
 		$where[] = "element   NOT   IN   ('joomla',   'ldap',   'gmail',   'openid',   'content',   'categories',   'contacts',   'sections',   'newsfeeds',   'weblinks',   'pagebreak',   'vote',   'emailcloak',   'geshi',   'loadmodule',   'pagenavigation', 'none',   'tinymce',   'xstandard',   'image',   'readmore',   'sef',   'debug',   'legacy',   'cache',   'remember', 'backlink', 'log', 'blogger', 'mtupdate' )";
 		
 		$conditions['where'] = $where;
-
-		//$conditions['group_by'] = 'element';
-		
+	
 		return $conditions;
 	}
 }

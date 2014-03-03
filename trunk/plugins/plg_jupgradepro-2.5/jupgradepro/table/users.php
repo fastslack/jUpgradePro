@@ -31,18 +31,24 @@ class JUpgradeproTableUsers extends JUpgradeproTable
 	}
 	
 	/**
-	 * 
+	 * Migrate the data
 	 *
+	 * @access	public
+	 * @param		Array	Result to migrate
+	 * @return	Array	Migrated result
 	 */
-	function migrate ()
+	function migrate ($rows = false)
 	{
-    // Chaging admin username and email
-    if ($this->id == 62) {
-      $this->username = $this->username.'v15';
-      $this->email = $this->email.'v15';
-    }
+		foreach ($rows as $row)
+		{
+		  // Chaging admin username and email
+		  if ($row['username'] == 'admin') {
+		    $row['username'] = $row['username'].'-v15';
+		    $row['email'] = $row['email'].'-v15';
+		  }
 
-		unset($this->otpKey);
-		unset($this->otep);
+			unset($row['otpKey']);
+			unset($row['otep']);
+		}
 	}
 }

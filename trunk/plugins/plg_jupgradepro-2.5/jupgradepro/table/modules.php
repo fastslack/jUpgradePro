@@ -54,14 +54,19 @@ class JUpgradeproTableModules extends JUpgradeproTable
 	}
 
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate( )
+	function migrate ($rows = false)
 	{
-		unset($this->asset_id);
+		foreach ($rows as &$row)
+		{
+			unset($row['asset_id']);
+		}
+
+		return $rows;
 	}
 }

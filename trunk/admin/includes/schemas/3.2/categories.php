@@ -63,7 +63,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 			throw new RuntimeException($e->getMessage());
 		}
 
-		// Getting the menus
+		// Getting the categories
 		$query->clear();
 		$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`,  `params`, `created_user_id`");
 		$query->from("#__categories");
@@ -104,9 +104,11 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	 */
 	public function dataHook($rows = null)
 	{
-		// Getting the destination table
+		// Get the database query
+		$query = $this->_db->getQuery(true);
+		// Get the destination table
 		$table = $this->getDestinationTable();
-		// Getting the component parameter with global settings
+		// Get the component parameter with global settings
 		$params = $this->getParams();
 		// Initialize values
 		$rootidmap = 0;
@@ -121,9 +123,11 @@ class JUpgradeproCategories extends JUpgradeproCategory
 			$category = (array) $category;
 
 			if ($category['id'] == 1) {
-				$query = "SELECT id+1"
-				." FROM #__categories"
-				." ORDER BY id DESC LIMIT 1";
+				$query->clear();
+				$query->select('id+1');
+				$query->from('#__categories');
+				$query->order('id DESC');
+				$query->limit(1);
 				$this->_db->setQuery($query);
 				$rootidmap = $this->_db->loadResult();
 

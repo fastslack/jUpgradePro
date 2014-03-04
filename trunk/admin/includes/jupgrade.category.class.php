@@ -165,6 +165,24 @@ class JUpgradeproCategory extends JUpgradepro
 			}
 		}
 
+		// Getting the data
+		$query = $this->_db->getQuery(true);
+		$query->select('alias');
+		$query->from('#__categories');
+		$query->where("alias LIKE '{$row['alias']}%'");
+		$query->order('id DESC');
+		$query->limit(1);
+		$this->_db->setQuery($query);
+		$alias = $this->_db->loadColumn();
+
+		// Prevent MySQL duplicate error
+		// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
+		$c = count($alias);
+		if ($c > 0)
+		{
+			$row['alias'] = $alias[$c-1] . str_repeat("~", $c);
+		}
+
 		// @@ TODO: maybe $parent flag is unused
 		// If has parent made $path and get parent id
 		if ($parent !== false) {

@@ -70,7 +70,7 @@ class JUpgradeproDriverRest extends JUpgradeproDriver
 	 *
 	 * @return   step object
 	 */
-	public function requestRest($task = 'total', $table = false) {
+	public function requestRest($task = 'total', $table = false, $chunk = false) {
 		// JHttp instance
 		jimport('joomla.http.http');
 		$http = new JHttp();
@@ -78,7 +78,8 @@ class JUpgradeproDriverRest extends JUpgradeproDriver
 
 		// Getting the total
 		$data['task'] = $task;
-		$data['table'] = ($table != false) ? $table : '';
+		$data['table'] = ($table !== false) ? $table : '';
+		$data['chunk'] = ($chunk !== false) ? $chunk : '';
 		$request = $http->get($this->params->rest_hostname.'/index.php', $data);
 
 		$code = $request->code;
@@ -97,45 +98,16 @@ class JUpgradeproDriverRest extends JUpgradeproDriver
 	 * @since 3.0.0
 	 * @throws	Exception
 	 */
-	public function &getSourceDataRest($table = null)
+	public function getSourceDataRestList($table = null)
 	{
 		// Declare rows
 		$rows = array();
 
-		// Cleanup		
-		$cleanup = $this->requestRest('cleanup', $table);
+		$chunk = $this->params->chunk_limit;
 
-		// Total
-		$total = $this->requestRest('total', $table);
+		$rows = $this->requestRest('rows', $table, $chunk);
 
-		// Get the resources
-		for ($i=1;$i<=$total;$i++) {		
-			$response = $this->requestRest('row', $table);
-			if ($response != '') {
-				$rows[$i] = json_decode($response);
-			}
-		}
-
-		return $rows;
-	}
-
-	/**
-	 * Get the raw data for this part of the upgrade.
-	 *
-	 * @return	array	Returns a reference to the source data array.
-	 * @since	3.0.0
-	 * @throws	Exception
-	 */
-	public function &getSourceDataRestIndividual($table = null)
-	{
-		$rows = array();
-		$response = $this->requestRest('row', $table);
-
-		if ($response != '') {
-			$rows[] = json_decode($response);
-		}
-
-		return $rows;
+		return json_decode($rows);
 	}
 
 	/**
@@ -151,11 +123,12 @@ class JUpgradeproDriverRest extends JUpgradeproDriver
 		return (int)$total;
 	}
 
-	/**
+ /**
+	* Check if the table exists
  	* 
 	* @param string $table The table name
 	*/
-	function tableExists ($table) { 
+	public function tableExists ($table) { 
 		return $this->requestRest("tableexists", $table);
 	}
 }

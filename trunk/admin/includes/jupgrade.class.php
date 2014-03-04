@@ -213,15 +213,17 @@ class JUpgradepro
 		$method = $this->params->method;
 
 		// Before migrate hook
-		try
-		{
-			if (method_exists($this, 'beforeHook')) { 
-				$this->beforeHook();
-			}		
-		}
-		catch (Exception $e)
-		{
-			throw new Exception($e->getMessage());
+		if ($this->_step->first == true && $this->_step->cid == 0) {
+			try
+			{
+				if (method_exists($this, 'beforeHook')) { 
+					$this->beforeHook();
+				}		
+			}
+			catch (Exception $e)
+			{
+				throw new Exception($e->getMessage());
+			}
 		}
 
 		// Get the source data.
@@ -319,19 +321,15 @@ class JUpgradepro
 		// Init rows variable
 		$rows = array();
 
-		// Get the method
+		// Get the method and chunk
 		$method = $this->params->method;
+		$chunk = $this->params->chunk_limit;
 
 		switch ($method) {
 			case 'rest':
 				$name = ($name == null) ? $this->_step->_getStepName() : $name;
 
-				if ( in_array($name, $this->extensions_steps) ) {
-					$rows = $this->_driver->getSourceDataRest($name);
-				}else{
-					$rows = $this->_driver->getSourceDataRestIndividual($name);
-				}
-
+				$rows = $this->_driver->getSourceDataRestList($name, $chunk);
 		    break;
 			case 'database':
 		    $rows = $this->_driver->getSourceDatabase();

@@ -59,25 +59,32 @@ class JUpgradeTableUsergroupmap extends JUpgradeTable
 	}
 	
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
+	 * @param		Array	Result to migrate
+	 * @return	Array	Migrated result
 	 */
-	function migrate( )
+	function migrate(&$rows)
 	{
-		// Do some custom post processing on the list.
-		// The schema for old group map is: group_id, section_value, aro_id
-		// The schema for new groups is: user_id, group_id
-		$this->user_id = $this->_getUserIdAroMap($this->aro_id);
+		foreach ($rows as $row)
+		{
+			// Do some custom post processing on the list.
+			// The schema for old group map is: group_id, section_value, aro_id
+			// The schema for new groups is: user_id, group_id
+			$row['user_id'] = $this->_getUserIdAroMap($row['aro_id']);
 
-		// Note, if we are here, these are custom groups we didn't know about.
-		if ($this->group_id <= 30) {
-			$this->group_id = $this->usergroup_map[$this->group_id];
+			// Note, if we are here, these are custom groups we didn't know about.
+			if ($row['group_id'] <= 30) {
+				$row['group_id'] = $this->usergroup_map[$row['group_id']];
+			}
+
+			// Remove unused fields.
+			unset($row['section_value']);
+			unset($row['aro_id']);
 		}
 
-		// Remove unused fields.
-		unset($this->section_value);
-		unset($this->aro_id);
+		return $rows;
 	}
 
 	/**

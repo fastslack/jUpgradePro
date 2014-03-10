@@ -99,28 +99,33 @@ class JUpgradeTableContents extends JUpgradeTable
 	}
 
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate( )
-	{	
-		$this->attribs = $this->convertParams($this->attribs);
-		$this->access = $this->access == 0 ? 1 : $this->access + 1;
-		$this->language = '*';
-
-		// Correct state
-		if ($this->state == -1) {
-			$this->state = 2;
-		}
-
-		// Prevent JGLOBAL_ARTICLE_MUST_HAVE_TEXT error
-		if (trim($this->introtext) == '' && trim($this->fulltext) == '')
+	function migrate(&$rows)
+	{
+		foreach ($rows as $row)
 		{
-			$this->introtext = '&nbsp;';
+			$row['attribs'] = $this->convertParams($row['attribs']);
+			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
+			$row['language'] = '*';
+
+			// Correct state
+			if ($row['state'] == -1) {
+				$row['state'] = 2;
+			}
+
+			// Prevent JGLOBAL_ARTICLE_MUST_HAVE_TEXT error
+			if (trim($row['introtext']) == '' && trim($row['fulltext']) == '')
+			{
+				$row['introtext'] = '&nbsp;';
+			}
 		}
+
+		return $rows;
 	}
 
 	/**

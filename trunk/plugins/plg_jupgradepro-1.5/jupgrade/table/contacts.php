@@ -82,19 +82,24 @@ class JUpgradeTableContacts extends JUpgradeTable {
 	}
 
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate( )
-	{	
-		// Fixing access
-		$this->access = $this->access == 0 ? 1 : $this->access + 1;
-		// Fixing language
-		$this->language = '*';
-    // Converting params to JSON
-    $this->params = $this->convertParams($this->params);
+	function migrate(&$rows)
+	{
+		foreach ($rows as $row)
+		{
+			// Fixing access
+			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
+			// Fixing language
+			$row['language'] = '*';
+		  // Converting params to JSON
+		  $row['params'] = $this->convertParams($row['params']);
+		}
+
+		return $rows;
 	}
 }

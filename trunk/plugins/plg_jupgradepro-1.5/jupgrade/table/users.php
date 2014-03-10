@@ -107,41 +107,37 @@ class JUpgradeTableUsers extends JUpgradeTable
 	var $params			= null;
 
 	/**
-	 * Table type
-	 *
-	 * @var string
-	 */	
-	var $_type = 'users';	
-
-	/**
 	* @param database A database connector object
 	*/
 	function __construct ( &$db )
 	{
 		parent::__construct( '#__users', 'id', $db );
 
-		//initialise
-		$this->id        = 0;
-		$this->sendEmail = 0;
+		$this->_type = 'users';
 	}
-	
+
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate ()
+	function migrate ($rows)
 	{
-		// Fixing the params compatible with 2.5/3.0
-		$this->params = $this->convertParams($this->params);
+		foreach ($rows as $row)
+		{
+			// Fixing the params compatible with 2.5/3.0
+			$row['params'] = $this->convertParams($row['params']);
 
-    // Chaging admin username and email
-    if ($this->id == 62) {
-      $this->username = $this->username.'v15';
-      $this->email = $this->email.'v15';
-    }
+		  // Chaging admin username and email
+		  if ($row['id'] == 62) {
+		    $row['username'] = $row['username'].'v15';
+		    $row['email'] = $row['email'].'v15';
+		  }
+		}
+
+		return $rows;
 	}
 
 	/**

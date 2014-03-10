@@ -92,30 +92,35 @@ class JUpgradeTableCategories extends JUpgradeTable
 	}
 
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate( )
-	{	
-		$this->params = $this->convertParams($this->params);
-		$this->title = str_replace("'", "&#39;", $this->title);
-		$this->description = str_replace("'", "&#39;", $this->description);
+	function migrate(&$rows)
+	{
+		foreach ($rows as $row)
+		{
+			$row['params'] = $this->convertParams($row['params']);
+			$row['title'] = str_replace("'", "&#39;", $row['title']);
+			$row['description'] = str_replace("'", "&#39;", $row['description']);
 
-		$this->extension = $this->section;
-		unset($this->section);
+			$row['extension'] = $row['section'];
+			unset($row['section']);
 
-		if ($this->extension == 'com_banner') {
-			$this->extension = "com_banners";
-		}else if ($this->extension == 'com_contact_details') {
-			$this->extension = "com_contact";
+			if ($row['extension'] == 'com_banner') {
+				$row['extension'] = "com_banners";
+			}else if ($row['extension'] == 'com_contact_details') {
+				$row['extension'] = "com_contact";
+			}
+
+			// Correct alias
+			if ($row['alias'] == "") {
+				$row['alias'] = JFilterOutput::stringURLSafe($row['title']);
+			}
 		}
 
-		// Correct alias
-		if ($this->alias == "") {
-			$this->alias = JFilterOutput::stringURLSafe($this->title);
-		}
+		return $rows;
 	}
 }

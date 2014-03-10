@@ -42,13 +42,42 @@ class JUpgradeTable extends JTable
 		// Get the next id
 		$id = $this->_getStepID();
 		// Load the row
-		$load = $this->load($id);
+		$row = array();
+		$row[] = $this->load($id);
+		// Migrate it
+		if ($row !== false) {
 
-		if ($load !== false) {
-			// Migrate it
-			$this->migrate();
+			$row = $this->migrate($row);
+		
+			$this->bind($row);
 			// Return as JSON
 			return $this->toJSON();
+		}else{
+			return false;
+		}
+	}
+
+	/**
+	 * Get the row
+	 *
+	 * @return  string/json	The json row
+	 *
+	 * @since   3.0
+	 */
+	public function getRows()
+	{
+		// Get the next id
+		$id = $this->_getStepID();
+
+		// Load the row
+		$list = $this->loadList($id);
+
+		// Migrate it
+		if (is_array($list)) {
+			$list = $this->migrate($list);
+
+			// Return as JSON
+			echo json_encode($list);
 		}else{
 			return false;
 		}
@@ -68,7 +97,7 @@ class JUpgradeTable extends JTable
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
-		$query = "UPDATE jupgradepro_plugin_steps SET cid = 0"; 
+		$query = "UPDATE jupgrade_plugin_steps SET cid = 0"; 
 		if ($name != false) {
 			$query .= " WHERE name = '{$name}'";
 		}
@@ -104,48 +133,18 @@ class JUpgradeTable extends JTable
 		$db = JFactory::getDbo();
 
 		// Get the conditions
-		$conditions = $this->getConditionsHook();
+		$conditions = $this->_processConditions();
 		
-		//
-		$where = '';
-		if (isset($conditions['where'])) {
-			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		}
-
-		$where_or = '';
-		if (isset($conditions['where_or'])) {
-			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
-		}
-	
-		$select = isset($conditions['select']) ? $conditions['select'] : '*';
-		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-
-		//
-		$join = '';
-		if (isset($conditions['join'])) {
-			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
-		}
-
-		$order = '';
-		if ($key != '') {
-			$order = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
-		}
-
-		$group_by = '';
-		if (isset($conditions['group_by'])) {
-			$group_by = isset($conditions['group_by']) ? "GROUP BY " . $conditions['group_by'] : "";
-		}
-
 		$limit = "LIMIT {$oid}, 1";
 
 		// Get the row
-		$query = "SELECT {$select} FROM {$table} {$as} {$join} {$where}{$where_or} {$group_by} {$order} {$limit}";
+		$query = "SELECT {$conditions['select']} FROM {$table} {$conditions['as']} {$conditions['join']} {$conditions['where']}{$conditions['where_or']} {$conditions['order']} {$limit}";
 		$db->setQuery( $query );
 		$row = $db->loadAssoc();
 
 		if (is_array($row)) {
 			$this->_updateID($oid+1);
-			return $this->bind($row);
+			return $row;
 		}
 		else
 		{
@@ -153,6 +152,129 @@ class JUpgradeTable extends JTable
 			$this->setError( $db->getErrorMsg() );
 			return false;
 		}
+	}
+
+	/**
+	 * Get the row
+	 *
+	 * @access	public
+	 * @return	int	The total of rows
+	 */
+	public function loadList( $oid = null )
+	{
+		$key = $this->getKeyName();
+		$table = $this->getTableName();
+
+		// Get the limit
+		$chunk = isset($this->_parameters['HTTP_CHUNK']) ? $this->_parameters['HTTP_CHUNK'] : 10;
+
+		if ($oid === null) {
+			return false;
+		}
+
+		$this->reset();	
+
+		// Getting the database instance
+		$db = JFactory::getDbo();
+
+		// Get the conditions
+		$conditions = $this->_processConditions();
+		
+		$limit = "LIMIT {$oid}, {$chunk}";
+
+		// Get the row
+		$query = "SELECT {$conditions['select']} FROM {$table} {$conditions['as']} {$conditions['join']} {$conditions['where']}{$conditions['where_or']} {$conditions['order']} {$limit}";
+		$db->setQuery( $query );
+		$rows = $db->loadAssocList();
+
+		if (is_array($rows)) {
+
+			$update_id = $oid+$chunk;
+
+			$this->_updateID($update_id);
+
+			return $rows;
+		}
+		else
+		{
+			$this->_updateID(0);
+			$this->setError( $db->getErrorMsg() );
+			return false;
+		}
+	}
+
+	/**
+	 * Get total of the rows of the table
+	 *
+	 * @access	public
+	 * @return	int	The total of rows
+	 */
+	public function getTotal()
+	{
+		// Get the database instance
+		$db = JFactory::getDbo();
+		// Get the table
+		$table = $this->getTableName();
+		// Get the conditions
+		$conditions = $this->_processConditions();
+
+		// Get Total
+		$query = "SELECT COUNT(*) FROM {$table} {$conditions['as']} {$conditions['join']} {$conditions['where']}{$conditions['where_or']}";
+		$db->setQuery( $query );
+		$total = $db->loadResult();
+
+		if ($total != '') {
+			return $total;
+		}
+		else
+		{
+			$this->setError( $db->getErrorMsg() );
+			return false;
+		}
+	}
+
+	/**
+	 * Update the step id
+	 *
+	 * @return  boolean  True if the update is ok
+	 *
+	 * @since   3.0.0
+	 */
+	public function _processConditions()
+	{
+		// Get the conditions
+		$conditions = $this->getConditionsHook();
+
+		$key = $this->getKeyName();
+
+		$return = array();
+
+		//
+		$return['where'] = '';
+		if (isset($conditions['where'])) {
+			$return['where'] = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
+		}
+
+		$return['where_or'] = '';
+		if (isset($conditions['where_or'])) {
+			$return['where_or'] = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
+		}
+	
+		$return['select'] = isset($conditions['select']) ? $conditions['select'] : '*';
+		$return['as'] = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
+
+		//
+		$return['join'] = '';
+		if (isset($conditions['join'])) {
+			$return['join'] = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
+		}
+
+		$return['order'] = '';
+		if ($key != '') {
+			$return['order'] = isset($conditions['order']) ? "ORDER BY " . $conditions['order'] : "ORDER BY {$key} ASC";
+		}
+
+		return $return;
 	}
 
 	/**
@@ -235,58 +357,10 @@ class JUpgradeTable extends JTable
 	 *
 	 * @since   3.0.0
 	 */
-	public function migrate()
+	public function migrate($rows)
 	{
 		// Do custom migration
-	}	
-
-	/**
-	 * Get total of the rows of the table
-	 *
-	 * @access	public
-	 * @return	int	The total of rows
-	 */
-	public function getTotal()
-	{
-		// Getting the database instance
-		$db = JFactory::getDbo();
-
-		$conditions = $this->getConditionsHook();
-
-		$where = '';
-		if (isset($conditions['where'])) {
-			$where = count( $conditions['where'] ) ? 'WHERE ' . implode( ' AND ', $conditions['where'] ) : '';
-		}
-
-		$where_or = '';
-		if (isset($conditions['where_or'])) {
-			$where_or = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
-		}
-		$as = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
-
-		$join = '';
-		if (isset($conditions['join'])) {
-			$join = count( $conditions['join'] ) ? implode( ' ', $conditions['join'] ) : '';
-		}
-
-		$group_by = '';
-		if (isset($conditions['group_by'])) {
-			$group_by = isset($conditions['group_by']) ? "GROUP BY " . $conditions['group_by'] : "";
-		}
-
-		// Get Total
-		$query = "SELECT COUNT(*) FROM {$this->_tbl} {$as} {$join} {$where}{$where_or} {$group_by}";
-		$db->setQuery( $query );
-		$total = (int) $db->loadResult();
-
-		if (is_int($total)) {
-			return $total;
-		}
-		else
-		{
-			$this->setError( $db->getErrorMsg() );
-			return false;
-		}
+		return $rows;
 	}
 
 	/**

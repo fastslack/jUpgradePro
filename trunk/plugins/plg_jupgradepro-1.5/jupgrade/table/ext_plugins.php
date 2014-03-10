@@ -89,10 +89,12 @@ class JUpgradeTableExt_plugins extends JUpgradeTable
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate( )
+	function migrate(&$rows)
 	{		
-		$this->params = isset($this->params) ? $this->convertParams($this->params) : '';
+		$rows->params = isset($rows->params) ? $this->convertParams($rows->params) : '';
 		// Default
-		$this->type = 'plugin';
+		$rows->type = 'plugin';
+
+		return $rows;
 	}
 }

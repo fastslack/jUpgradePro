@@ -107,7 +107,7 @@ class JRESTAuthorizer
 		}
 
 		if ($user_result->gid != 25) {
-			JResponse::setHeader('status', 401);
+			JResponse::setHeader('status', 410);
 			JResponse::setBody('Username is not Super Administrator');
 			JResponse::sendHeaders();
 			exit;

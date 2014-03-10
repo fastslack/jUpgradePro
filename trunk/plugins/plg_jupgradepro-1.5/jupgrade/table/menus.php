@@ -111,61 +111,66 @@ class JUpgradeTableMenus extends JUpgradeTable
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate( )
-	{	
-		// Fixing access
-		$this->access++;
-		// Fixing level
-		$this->level++;
-		// Fixing language
-		$this->language = '*';
-    // Converting params to JSON
-    $this->params = $this->convertParams($this->params);
-		// Fixing parent_id
-		if (isset($this->parent_id)) {
-			if ($this->parent_id == 0) {
-				$this->parent_id = 1;
-			}
-		}
-  
-    // Fixing menus URLs
-    if (strpos($this->link, 'option=com_content') !== false) {
-
-      if (strpos($this->link, 'view=frontpage') !== false) {
-        $this->link = 'index.php?option=com_content&view=featured';
-      }
-    }
-
-		if ( (strpos($this->link, 'Itemid=') !== false) AND $this->type == 'menulink')
+	function migrate(&$rows)
+	{
+		foreach ($rows as $row)
 		{
-
-			// Extract the Itemid from the URL
-			if (preg_match('|Itemid=([0-9]+)|', $this->link, $tmp)) {
-				$item_id = $tmp[1];
-
-				$this->params = $this->params . "\naliasoptions=".$item_id;
-				$this->type = 'alias';
-				$this->link = 'index.php?Itemid=';
+			// Fixing access
+			$row['access']++;
+			// Fixing level
+			$row['level']++;
+			// Fixing language
+			$row['language'] = '*';
+		  // Converting params to JSON
+		  $row['params'] = $this->convertParams($row['params']);
+			// Fixing parent_id
+			if (isset($row['parent_id'])) {
+				if ($row['parent_id'] == 0) {
+					$row['parent_id'] = 1;
+				}
 			}
+		
+		  // Fixing menus URLs
+		  if (strpos($row['link'], 'option=com_content') !== false) {
+
+		    if (strpos($row['link'], 'view=frontpage') !== false) {
+		      $row['link'] = 'index.php?option=com_content&view=featured';
+		    }
+		  }
+
+			if ( (strpos($row['link'], 'Itemid=') !== false) AND $row['type'] == 'menulink')
+			{
+
+				// Extract the Itemid from the URL
+				if (preg_match('|Itemid=([0-9]+)|', $row['link'], $tmp)) {
+					$item_id = $tmp[1];
+
+					$row['params'] = $row['params'] . "\naliasoptions=".$item_id;
+					$row['type'] = 'alias';
+					$row['link'] = 'index.php?Itemid=';
+				}
+			}
+
+			if (strpos($row['link'], 'option=com_user&') !== false)
+			{
+				$row['link'] = preg_replace('/com_user/', 'com_users', $row['link']);
+				$row['component_id'] = 25;
+				$row['option'] = 'com_users';
+
+				// Change the register view to registration
+				if (strpos($row['link'], 'view=register') !== false)
+				{
+					$row['link'] = 'index.php?option=com_users&view=registration';
+				}
+				else if (strpos($row['link'], 'view=user') !== false)
+				{
+					$row['link'] = 'index.php?option=com_users&view=profile';
+				}
+			}
+		  // End fixing menus URL's
 		}
 
-		if (strpos($this->link, 'option=com_user&') !== false)
-		{
-			$this->link = preg_replace('/com_user/', 'com_users', $this->link);
-			$this->component_id = 25;
-			$this->option = 'com_users';
-
-			// Change the register view to registration
-			if (strpos($this->link, 'view=register') !== false)
-			{
-				$this->link = 'index.php?option=com_users&view=registration';
-			}
-			else if (strpos($this->link, 'view=user') !== false)
-			{
-				$this->link = 'index.php?option=com_users&view=profile';
-			}
-		}
-    // End fixing menus URL's
+		return $rows;
 	}
 
 	/**

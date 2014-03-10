@@ -64,12 +64,21 @@ class JUpgradeTableWeblinks extends JUpgradeTable {
 	}
 
 	/**
-	 * Weblinks migration
+	 * Migrate the data
+	 *
+	 * @access	public
+	 * @param		Array	Result to migrate
+	 * @return	Array	Migrated result
 	 */
-	function migrate ()
+	function migrate(&$rows)
 	{
-		// Fixing state
-		$this->state = $this->published;
-		unset($this->published);
+		foreach ($rows as $row)
+		{
+			// Fixing state
+			$row['state'] = $row['published'];
+			unset($row['published']);
+		}
+
+		return $rows;
 	}
 }

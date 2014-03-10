@@ -83,26 +83,33 @@ class JUpgradeTableAROGroup extends JUpgradeTable
 	}
 
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
+	 * @param		Array	Result to migrate
+	 * @return	Array	Migrated result
 	 */
-	function migrate( )
-	{	
-		// Note, if we are here, these are custom groups we didn't know about.
-		if (isset($this->parent_id)) {
-			if ($this->parent_id <= 30) {
-				$this->parent_id = $this->usergroup_map[$this->parent_id];
+	function migrate(&$rows)
+	{
+		foreach ($rows as $row)
+		{
+			// Note, if we are here, these are custom groups we didn't know about.
+			if (isset($row['parent_id'])) {
+				if ($row['parent_id'] <= 30) {
+					$row['parent_id'] = $this->usergroup_map[$row['parent_id']];
+				}
 			}
+
+			// Use the old groups name for the new title.
+			$row['title'] = $row['name'];
+
+			// Remove unused fields.
+			unset($row['name']);
+			unset($row['value']);
+			unset($row['lft']);
+			unset($row['rgt']);
 		}
 
-		// Use the old groups name for the new title.
-		$this->title = $this->name;
-
-		// Remove unused fields.
-		unset($this->name);
-		unset($this->value);
-		unset($this->lft);
-		unset($this->rgt);
+		return $rows;
 	}
 }

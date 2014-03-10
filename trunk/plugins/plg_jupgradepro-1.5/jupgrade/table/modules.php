@@ -84,37 +84,80 @@ class JUpgradeTableModules extends JUpgradeTable
 	}
 
 	/**
+	 * Migrate the data
+	 *
+	 * @access	public
+	 * @param		Array	Result to migrate
+	 * @return	Array	Migrated result
+	 */
+	function migrate(&$rows)
+	{
+		foreach ($rows as $row)
+		{
+			$row['params'] = isset($row['params']) ? $this->convertParams($row['params']) : '';
+
+			## Fix access
+			$row['access'] = $row['access']+1;
+
+			## Language
+			$row['language'] = "*";
+
+			## Module field changes
+			if ($row['module'] == "mod_mainmenu") {
+				$row['module'] = "mod_menu";
+			}
+			else if ($row['module'] == "mod_archive") {
+				$row['module'] = "mod_articles_archive";
+			}
+			else if ($row['module'] == "mod_latestnews") {
+				$row['module'] = "mod_articles_latest";
+			}
+			else if ($row['module'] == "mod_mostread") {
+				$row['module'] = "mod_articles_popular";
+			}
+			else if ($row['module'] == "mod_newsflash") {
+				$row['module'] = "mod_articles_news";
+			}
+		}
+
+		return $rows;
+	}	
+
+	/**
 	 * 
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate( )
-	{		
-		$this->params = isset($this->params) ? $this->convertParams($this->params) : '';
+	function migrate(&$rows)
+	{
+
+		$row['params = isset($row['params) ? $this->convertParams($row['params) : '';
 
 		## Fix access
-		$this->access = $this->access+1;
+		$row['access = $row['access+1;
 
 		## Language
-		$this->language = "*";
+		$row['language = "*";
 
 		## Module field changes
-		if ($this->module == "mod_mainmenu") {
-			$this->module = "mod_menu";
+		if ($row['module == "mod_mainmenu") {
+			$row['module = "mod_menu";
 		}
-		else if ($this->module == "mod_archive") {
-			$this->module = "mod_articles_archive";
+		else if ($row['module == "mod_archive") {
+			$row['module = "mod_articles_archive";
 		}
-		else if ($this->module == "mod_latestnews") {
-			$this->module = "mod_articles_latest";
+		else if ($row['module == "mod_latestnews") {
+			$row['module = "mod_articles_latest";
 		}
-		else if ($this->module == "mod_mostread") {
-			$this->module = "mod_articles_popular";
+		else if ($row['module == "mod_mostread") {
+			$row['module = "mod_articles_popular";
 		}
-		else if ($this->module == "mod_newsflash") {
-			$this->module = "mod_articles_news";
+		else if ($row['module == "mod_newsflash") {
+			$row['module = "mod_articles_news";
 		}
+
+		return $rows;
 	}
 }

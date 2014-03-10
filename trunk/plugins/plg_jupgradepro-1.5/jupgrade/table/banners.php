@@ -104,14 +104,19 @@ class JUpgradeTableBanners extends JUpgradeTable {
 	}
 	
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate( )
-	{	
-		unset($this->bid);
+	function migrate(&$rows)
+	{
+		foreach ($rows as $row)
+		{
+			unset($rows['bid']);
+		}
+
+		return $rows;
 	}	
 }

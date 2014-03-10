@@ -87,26 +87,31 @@ class JUpgradeTableSections extends JUpgradeTable
 	}
 
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate( )
-	{	
-		$this->params = $this->convertParams($this->params);
-		$this->title = str_replace("'", "&#39;", $this->title);
-		$this->description = str_replace("'", "&#39;", $this->description);
+	function migrate(&$rows)
+	{
+		foreach ($rows as $row)
+		{
+			$row['params'] = $this->convertParams($row['params']);
+			$row['title'] = str_replace("'", "&#39;", $row['title']);
+			$row['description'] = str_replace("'", "&#39;", $row['description']);
 
-		$this->extension = 'com_section';
+			$row['extension'] = 'com_section';
 		
-		$this->old_id = $this->id;
-		unset($this->id);
+			$row['old_id'] = $row['id'];
+			unset($row['id']);
 
-		// Correct alias
-		if ($this->alias == "") {
-			$this->alias = JFilterOutput::stringURLSafe($this->title);
+			// Correct alias
+			if ($row['alias'] == "") {
+				$row['alias'] = JFilterOutput::stringURLSafe($row['title']);
+			}
 		}
+
+		return $rows;
 	}
 }

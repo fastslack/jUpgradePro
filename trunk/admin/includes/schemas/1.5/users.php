@@ -71,35 +71,6 @@ class JUpgradeproUsers extends JUpgradeproUser
 		}
 	}
 
-	/**
-	 * Get the raw data for this part of the upgrade.
-	 *
-	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.4
-	 * @throws	Exception
-	 */
-	public function &databaseHook($rows)
-	{
-		// Do some custom post processing on the list.
-		foreach ($rows as &$row)
-		{
-			$row = (array) $row;
-
-			$row['params'] = $this->convertParams($row['params']);
-
-      // Chaging admin username and email
-      if ($row['username'] == 'admin') {
-        $row['username'] = $row['username'].'-old';
-        $row['email'] = $row['email'].'-old';
-      }
-
-			// Remove unused fields. 
-			unset($row['gid']);
-		}
-		
-		return $rows;
-	}
-
 	/*
 	 * Fake method after hooks
 	 *
@@ -135,6 +106,32 @@ class JUpgradeproUsers extends JUpgradeproUser
 	}
 
 	/**
+	 * Get the raw data for this part of the upgrade.
+	 *
+	 * @return	array	Returns a reference to the source data array.
+	 * @since	0.4.4
+	 * @throws	Exception
+	 */
+	public function &databaseHook($rows)
+	{
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
+		{
+			$row = (array) $row;
+
+			$row['params'] = $this->convertParams($row['params']);
+
+			// Chaging admin username and email
+			if ($row['username'] == 'admin') {
+				$row['username'] = $row['username'].'-old';
+				$row['email'] = $row['email'].'-old';
+			}
+		}
+		
+		return $rows;
+	}
+
+	/**
 	 * Sets the data in the destination database.
 	 *
 	 * @return	void
@@ -151,6 +148,9 @@ class JUpgradeproUsers extends JUpgradeproUser
 			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
 				unset($row['usertype']);
 			}
+
+			// Remove unused fields. 
+			unset($row['gid']);
 		}
 
 		return $rows;

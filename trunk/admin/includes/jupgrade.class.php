@@ -374,7 +374,7 @@ class JUpgradepro
 			}
 		}else if (is_object($rows)) {
 
-			if ($row != false) {
+			if ($rows != false) {
 				try
 				{
 					$this->_db->insertObject($table, $rows);

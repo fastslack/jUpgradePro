@@ -88,6 +88,7 @@ class JUpgradeproWeblinks extends JUpgradepro
 				unset($row['archived']);
 				unset($row['date']);
 				unset($row['sid']);
+				unset($row['published']);
 			}
 		}
 

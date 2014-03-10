@@ -39,6 +39,7 @@ class JUpgradeproStep
 	public $start = 0;
 	public $stop = 0;
 	public $laststep = '';
+	public $chunk = 0;
 
 	public $first = false;
 	public $next = false;
@@ -173,7 +174,7 @@ class JUpgradeproStep
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 		$params = JUpgradeproHelper::getParams();
 
-		$limit = $params->chunk_limit;
+		$limit = $this->chunk = $params->chunk_limit;
 
 		// Getting the total
 		if (isset($this->source)) {

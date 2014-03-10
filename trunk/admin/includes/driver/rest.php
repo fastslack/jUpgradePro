@@ -80,6 +80,7 @@ class JUpgradeproDriverRest extends JUpgradeproDriver
 		$data['task'] = $task;
 		$data['table'] = ($table !== false) ? $table : '';
 		$data['chunk'] = ($chunk !== false) ? $chunk : '';
+
 		$request = $http->get($this->params->rest_hostname.'/index.php', $data);
 
 		$code = $request->code;

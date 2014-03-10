@@ -426,7 +426,7 @@ class JUpgradeproExtensions extends JUpgradepro
 
 		// Get the tables list and prefix from the old site
 		$old_tables = json_decode($this->_driver->requestRest('tableslist'));
-		$old_prefix = json_decode($this->_driver->requestRest('tablesprefix'));
+		$old_prefix = substr($old_tables[0], 0, 4);
 		$old_version = JUpgradeproHelper::getVersion('old');
 
 		// Do some custom post processing on the list.

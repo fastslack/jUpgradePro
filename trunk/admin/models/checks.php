@@ -85,7 +85,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 			$old_prefix = $params->old_dbprefix;
 		}else if ($params->method == "rest") {
 			$old_tables = json_decode($driver->requestRest('tableslist'));
-			$old_prefix = json_decode($driver->requestRest('tablesprefix'));
+			$old_prefix = substr($old_tables[0], 0, 4);
 		}
 
 		// Check the old site Joomla! version

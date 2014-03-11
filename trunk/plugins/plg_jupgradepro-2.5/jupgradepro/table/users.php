@@ -50,5 +50,7 @@ class JUpgradeproTableUsers extends JUpgradeproTable
 			unset($row['otpKey']);
 			unset($row['otep']);
 		}
+
+		return $rows;
 	}
 }

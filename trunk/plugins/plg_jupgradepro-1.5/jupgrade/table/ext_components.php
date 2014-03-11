@@ -95,21 +95,23 @@ class JUpgradeTableExt_Components extends JUpgradeTable
 	}
 
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
 	function migrate(&$rows)
-	{	
-    // Converting params to JSON
-    $rows->params = $this->convertParams($rows->params);
-		// Defaults
-		$rows->type = 'component';
-		$rows->client_id = 1;
+	{
+		foreach ($rows as $row)
+		{
+		  // Converting params to JSON
+		  $row['params'] = $this->convertParams($row['params']);
+			// Defaults
+			$row['type'] = 'component';
+			$row['client_id'] = 1;
+		}
 
 		return $rows;
 	}
-
 }

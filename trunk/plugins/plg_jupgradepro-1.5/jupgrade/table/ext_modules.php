@@ -89,7 +89,7 @@ class JUpgradeTableExt_modules extends JUpgradeTable
 	}
 
 	/**
-	 * 
+	 * Migrate the data
 	 *
 	 * @access	public
 	 * @param		Array	Result to migrate
@@ -97,9 +97,12 @@ class JUpgradeTableExt_modules extends JUpgradeTable
 	 */
 	function migrate(&$rows)
 	{
-		$rows->params = isset($rows->params) ? $this->convertParams($rows->params) : '';
-		// Default
-		$rows->type = 'module';
+		foreach ($rows as $row)
+		{
+			$row['params'] = isset($row['params']) ? $this->convertParams($row['params']) : '';
+			// Default
+			$row['type'] = 'module';
+		}
 
 		return $rows;
 	}

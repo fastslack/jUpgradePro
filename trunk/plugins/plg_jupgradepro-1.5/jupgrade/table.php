@@ -28,7 +28,7 @@ class JUpgradeTable extends JTable
 	/**
 	 * Table type
 	 */		
-	var $_type = '';
+	public $_type = '';
 
 	/**
 	 * Get the row
@@ -64,13 +64,13 @@ class JUpgradeTable extends JTable
 	 *
 	 * @since   3.0
 	 */
-	public function getRows()
+	public function getRows($chunk)
 	{
 		// Get the next id
 		$id = $this->_getStepID();
 
 		// Load the row
-		$list = $this->loadList($id);
+		$list = $this->loadList($id, $chunk);
 
 		// Migrate it
 		if (is_array($list)) {
@@ -92,15 +92,13 @@ class JUpgradeTable extends JTable
 	 */
 	public function getCleanup()
 	{
-		$name = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
-
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
 		$query = "UPDATE jupgrade_plugin_steps SET cid = 0"; 
-		if ($name != false) {
-			$query .= " WHERE name = '{$name}'";
-		}
+		//if ($this->table != false) {
+		//	$query .= " WHERE name = '{$this->table}'";
+		//}
 
 		$db->setQuery( $query );
 		$result = $db->query();
@@ -160,13 +158,10 @@ class JUpgradeTable extends JTable
 	 * @access	public
 	 * @return	int	The total of rows
 	 */
-	public function loadList( $oid = null )
+	public function loadList( $oid = null, $chunk = null )
 	{
 		$key = $this->getKeyName();
 		$table = $this->getTableName();
-
-		// Get the limit
-		$chunk = isset($this->_parameters['HTTP_CHUNK']) ? $this->_parameters['HTTP_CHUNK'] : 10;
 
 		if ($oid === null) {
 			return false;
@@ -189,7 +184,7 @@ class JUpgradeTable extends JTable
 
 		if (is_array($rows)) {
 
-			$update_id = $oid+$chunk;
+			$update_id = $oid + $chunk;
 
 			$this->_updateID($update_id);
 
@@ -291,8 +286,18 @@ class JUpgradeTable extends JTable
 
 		$name = $this->_getStepName();
 
-		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($name);
+		$query = "SELECT `name` FROM `jupgrade_plugin_steps` WHERE `name` = ".$db->quote($name);
+		$db->setQuery( $query );
+		$exists = $db->loadResult();
 
+		if ($exists == "")
+		{
+			$query = "INSERT INTO `jupgrade_plugin_steps` (`id`, `name`, `cid`) VALUES (NULL, {$db->quote($name)}, '0')";
+			$db->setQuery( $query );
+			$db->query();
+		}
+
+		$query = "UPDATE `jupgrade_plugin_steps` SET `cid` = '{$id}' WHERE name = ".$db->quote($name);
 		$db->setQuery( $query );
 		return $db->query();
 	}

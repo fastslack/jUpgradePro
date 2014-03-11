@@ -253,11 +253,6 @@ var jUpgradepro = new Class({
 			}
 		});
 
-		var rm = new Request.Multiple({
-			onRequest : function() {},
-			onComplete : function() {}
-		});
-
 		//
 		// 
 		//
@@ -272,6 +267,14 @@ var jUpgradepro = new Class({
 			'complete': function(response) {
 
 				var object = JSON.decode(response);
+
+				if (object === null)
+				{
+					pb4.set(100);
+					pb4.finish();
+					this.cancel();
+					self.extensions(e);
+				}
 
 				// Redirect if total == 0
 				if (object.total == 0) {
@@ -306,16 +309,8 @@ var jUpgradepro = new Class({
 				row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&table='+object.name;	
 
 				// Running the request[s]
-				if (self.options.method == 'database') {
-					if (object.total != 0) {
-						row.send();
-					}
-				} else if (self.options.method == 'rest') {
-					for (i=object.start;i<=object.stop;i++) {
-						var reqname = object.name+i;
-						rm.addRequest(reqname, row);
-					}
-					rm.runAll();
+				if (object.total != 0) {
+					row.send();
 				}
 			}
 		});
@@ -393,11 +388,6 @@ var jUpgradepro = new Class({
 			}
 		});
 
-		var ext_rm = new Request.Multiple({
-			onRequest : function() {},
-			onComplete : function() {}
-		});
-
 		//
 		// Declare the step event
 		//
@@ -413,9 +403,18 @@ var jUpgradepro = new Class({
 
 				var object = JSON.decode(response);
 
+				if (object === null)
+				{
+					pb7.set(100);
+					pb7.finish();
+					this.cancel();
+					self.done();
+				}
+
 				// Redirect if total == 0
 				if (object.total == 0) {
 					if (object.end == 1) {
+						pb7.set(100);
 						pb7.finish();
 						this.cancel();
 						self.done();
@@ -441,16 +440,8 @@ var jUpgradepro = new Class({
 				ext_row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&extensions=tables&table='+object.name;	
 
 				// Running the request[s]
-				if (self.options.method == 'database') {
-					if (object.total != 0) {
-						ext_row.send();
-					}
-				} else if (self.options.method == 'rest') {
-					for (i=object.start;i<=object.stop;i++) {
-						var reqname = object.name+i;
-						ext_rm.addRequest(reqname, ext_row);
-					}
-					ext_rm.runAll();
+				if (object.total != 0) {
+					ext_row.send();
 				}
 			}
 		});

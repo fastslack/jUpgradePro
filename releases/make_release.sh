@@ -9,7 +9,7 @@
 # 
 
 PROJECT="jupgradepro"
-VERSION="3.1.0"
+VERSION="3.2.0beta3"
 
 DIR="com_$PROJECT"
 PACKAGE="com_$PROJECT-$VERSION.zip"
@@ -31,6 +31,12 @@ find $DIR -name ".DS_Store" -exec rm -rf {} \;
 cd $DIR/plugins/plg_jupgradepro-1.5
 zip -rq plg_${PROJECT}-restful-${VERSION}-j1.5.zip .
 mv plg_${PROJECT}-restful-${VERSION}-j1.5.zip ../../../.
+cd ../../..
+
+# Zipping plugin
+cd $DIR/plugins/plg_jupgradepro-2.5
+zip -rq plg_${PROJECT}-restful-${VERSION}-j2.5-j3.zip .
+mv plg_${PROJECT}-restful-${VERSION}-j2.5-j3.zip ../../../.
 cd ../../..
 
 # create package

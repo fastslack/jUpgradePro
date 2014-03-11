@@ -139,6 +139,22 @@ class JUpgradeproHelper
 			throw new RuntimeException($e->getMessage());
 		}
 
+		if (is_null($total))
+		{
+			$query = $db->getQuery(true);
+			$query->select('total');
+			$query->from("`#__jupgradepro_extensions_tables`");
+			$query->where("name = '{$step->name}'");
+			$query->limit(1);
+			$db->setQuery($query);
+
+			try {
+				$total = $db->loadResult();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
+		}
+
 		if ($total == 0)
 		{
 			JLoader::register('JUpgradeproDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');

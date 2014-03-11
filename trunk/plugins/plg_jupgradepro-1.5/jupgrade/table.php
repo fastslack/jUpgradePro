@@ -184,7 +184,7 @@ class JUpgradeTable extends JTable
 
 		if (is_array($rows)) {
 
-			$update_id = $oid + $chunk;
+			$update_id = $oid + count($rows);
 
 			$this->_updateID($update_id);
 

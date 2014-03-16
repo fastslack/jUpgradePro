@@ -30,9 +30,14 @@ class JUpgradeproViewCpanel extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		$url = 'http://wiki.redcomponent.com/index.php?title=JUpgradePRO:Table_of_Contents';
+		$url = 'http://www.matware.com.ar/proyects/jupgradepro.html';
+		$url2 = 'http://www.matware.com.ar/jupgradepro-3rd-extensions-plugins/level.html';
 
+		$bar = JToolbar::getInstance('toolbar');
+
+		// Add a back button.
 		JToolbarHelper::title(JText::_( 'jUpgradePro' ), 'jupgradepro');
+		$bar->appendButton('Link', 'wand', 'Buy 3rd extensions plugins', $url2);
 		JToolbarHelper::preferences('com_jupgradepro', '500');
 		JToolbarHelper::spacer();
 		JToolbarHelper::help('help', false, $url);

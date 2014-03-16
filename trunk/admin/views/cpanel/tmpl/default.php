@@ -111,8 +111,8 @@ window.addEvent('domready', function() {
 							Licensed as <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"><i>GNU General Public License v2</i></a><br />
 						</p>
 						<h3>
-							<a href="http://matware.com.ar/proyects/jupgradepro.html">Project Site</a> /
-							<a href="http://matware.com.ar/kunena/projects/jupgradepro.html">Community</a> /
+							<a href="http://www.matware.com.ar/proyects/jupgradepro.html">Project Site</a> /
+							<a href="http://www.matware.com.ar/forums/jupgradepro.html">Community</a> /
 							<a href="https://github.com/fastslack/jUpgradePro">GitHub</a> /
 							<a href="https://github.com/fastslack/jUpgradePro/wiki">Documentation</a><br />
 						</h3>

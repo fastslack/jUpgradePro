@@ -137,15 +137,13 @@ class JUpgradeproMenu extends JUpgradepro
 			$row['access']++;
 
 			// Fixing level
-			$row['level']++;
+			$row['level'] = $row['sublevel']++;
 
 			// Fixing language
 			$row['language'] = '*';
 
 			// Fixing parent_id
-			if ($row['parent_id'] == 0) {
-				$row['parent_id'] = 1;
-			}
+			$row['parent_id'] = $row['parent'];
 
       // Converting params to JSON
       $row['params'] = $this->convertParams($row['params']);

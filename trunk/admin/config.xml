@@ -126,6 +126,15 @@
 			default="jos_"
 		/>
 
+		<field
+			name="path"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_PATH"
+			description="COM_JUPGRADEPRO_CONFIG_PATH_DESC"
+			default=""
+		/>
+
 	</fieldset>
 
 	<fieldset

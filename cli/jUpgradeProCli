@@ -5,7 +5,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -154,8 +154,12 @@ class jUpgradeProCli extends JApplicationCli
 		$finished = false;
 		$method = $this->params->get('method');
 
+
+		$oldver = JUpgradeproHelper::getVersion('old');
+		$newver = JUpgradeproHelper::getVersion('new');
+
 		$this->out("{$this->_c['WHITE']}-------------------------------------------------------------------------------------------------");
-		$this->out("{$this->_c['WHITE']}|  {$this->_c['BLUE']}	Migrating Joomla! core data");
+		$this->out("{$this->_c['WHITE']}|  {$this->_c['BLUE']}	Migrating Joomla! {$oldver} core data to Joomla! {$newver}");
 
 		// Start benchmark
 		$benchmark_start = microtime(true);
@@ -180,14 +184,7 @@ class jUpgradeProCli extends JApplicationCli
 
 			echo "{$this->_c['WHITE']}|  {$this->_c['RED']}[{$this->_c['YELLOW']}";
 			if ($step->stop != -1) {
-				if ($method == 'database') {
-					$result = $this->migrate_model->migrate($step->name, false);
-				}else if ($method == 'rest') {
-
-					for($i=$step->start;$i<=$step->stop;$i++) {
-						$response = $this->migrate_model->migrate($step->name, false);
-					}
-				}
+				$response = $this->migrate_model->migrate($step->name, false);
 			}
 			$this->out( "{$this->_c['RED']}]" );
 
@@ -244,14 +241,7 @@ class jUpgradeProCli extends JApplicationCli
 
 			echo "{$this->_c['WHITE']}|  {$this->_c['RED']}[{$this->_c['YELLOW']}";
 			if ($step->stop != -1) {
-				if ($method == 'database') {
-					$result = $this->migrate_model->migrate($step->name, false, 'tables');
-				}else if ($method == 'rest') {
-
-					for($i=$step->start;$i<=$step->stop;$i++) {
-						$response = $this->migrate_model->migrate($step->name, false, 'tables');
-					}
-				}
+				$response = $this->migrate_model->migrate($step->name, false, 'tables');
 			}
 			$this->out( "{$this->_c['RED']}]" );
 

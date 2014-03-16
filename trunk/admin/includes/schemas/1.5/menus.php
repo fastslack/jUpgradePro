@@ -242,20 +242,22 @@ class JUpgradeproMenu extends JUpgradepro
 			// Convert the array into an object.
 			$row = (object) $row;
 
+			// Getting the data
+			$query = $this->_db->getQuery(true);
+			$query->select('alias');
+			$query->from('#__menu');
+			$query->where("alias LIKE '{$row->alias}%'");
+			$query->order('id DESC');
+			$query->limit(1);
+			$this->_db->setQuery($query);
+			$alias = $this->_db->loadResult();
+
+			// Prevent MySQL duplicate error
+			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
+			$row->alias = (!empty($alias)) ? $alias."~" : $row->alias;
+
 			// Get new/old id's values
 			$menuMap = new stdClass();
-
-			// Check if has duplicated aliases
-			$query = "SELECT alias"
-			." FROM #__menu"
-			." WHERE alias = ".$this->_db->quote($row->alias);
-			$this->_db->setQuery($query);
-			$aliases = $this->_db->loadAssoc();
-
-			$count = count($aliases);
-			if ($count > 0) {
-				$row->alias .= "-".rand(0, 99999);
-			}
 
 			// Save the old id
 			$menuMap->old = $row->id;

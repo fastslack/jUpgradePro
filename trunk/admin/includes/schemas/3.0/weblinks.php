@@ -35,4 +35,40 @@ class JUpgradeproWeblinks extends JUpgradepro
 				
 		return $conditions;
 	}
+
+	/**
+	 * Sets the data in the destination database.
+	 *
+	 * @return	void
+	 * @since	3.0.
+	 * @throws	Exception
+	 */
+	public function dataHook($rows = null)
+	{
+		// Getting the component parameter with global settings
+		$params = $this->getParams();
+
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
+		{
+			// Convert the array into an object.
+			$row = (array) $row;
+			
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
+				$row['created'] = $row['date'];
+				unset($row['approved']);
+				unset($row['archived']);
+				unset($row['date']);
+				unset($row['sid']);
+			}
+
+			// Remove unused fields.
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '2.5', '=')) {
+				unset($row['version']);
+				unset($row['images']);
+			}
+		}
+
+		return $rows;
+	}
 }

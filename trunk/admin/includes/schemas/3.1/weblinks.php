@@ -61,6 +61,12 @@ class JUpgradeproWeblinks extends JUpgradepro
 				unset($row['date']);
 				unset($row['sid']);
 			}
+
+			// Remove unused fields.
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '2.5', '=')) {
+				unset($row['version']);
+				unset($row['images']);
+			}
 		}
 
 		return $rows;

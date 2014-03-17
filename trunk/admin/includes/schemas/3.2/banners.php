@@ -23,10 +23,10 @@ class JUpgradeproBanners extends JUpgradepro
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.4
+	 * @since		3.2.0
 	 * @throws	Exception
 	 */
-	public function &databaseHook($rows)
+	public function &dataHook($rows)
 	{
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)

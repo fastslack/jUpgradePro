@@ -35,4 +35,28 @@ class JUpgradeproWeblinks extends JUpgradepro
 				
 		return $conditions;
 	}
+
+	/**
+	 * Get the raw data for this part of the upgrade.
+	 *
+	 * @return	array	Returns a reference to the source data array.
+	 * @since		3.2.0
+	 * @throws	Exception
+	 */
+	public function &dataHook($rows)
+	{
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
+		{
+			$row = (array) $row;
+
+			// Remove unused fields.
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '2.5', '=')) {
+				unset($row['version']);
+				unset($row['images']);
+			}
+		}
+		
+		return $rows;
+	}
 }

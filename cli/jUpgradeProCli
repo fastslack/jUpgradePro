@@ -92,9 +92,10 @@ class jUpgradeProCli extends JApplicationCli
 	{
 		// Print help
 		$this->out();
-		$this->out(' jUpgradeCli v3.1.0');
+		$this->out(' jUpgradeCli v3.2.0');
 		$this->out();
 		$this->out(' Author: Matias Aguirre (maguirre@matware.com.ar)');
+		$this->out(' URL: http://www.matware.com.ar');
 		$this->out(' License: GNU/GPL http://www.gnu.org/licenses/gpl-2.0-standalone.html');
 		$this->out();
 	}

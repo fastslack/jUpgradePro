@@ -393,6 +393,9 @@ class JUpgradeproExtensions extends JUpgradepro
 	{
 		jimport('joomla.filesystem.folder');
 
+		// Getting the component parameter with global settings
+		$params = JUpgradeproHelper::getParams();
+
 		$types = array(
 			'/^(.+)_(.+)_(.+)$/',
 			'/^(.+)_(.+)$/');
@@ -425,8 +428,15 @@ class JUpgradeproExtensions extends JUpgradepro
 		$plugins = $this->_db->loadObjectList();
 
 		// Get the tables list and prefix from the old site
-		$old_tables = json_decode($this->_driver->requestRest('tableslist'));
-		$old_prefix = substr($old_tables[10], 0, strpos($old_tables[10], '_')+1);
+		if ($params->method == "database") {
+			$old_tables = $this->_driver->_db_old->getTableList();
+			$old_prefix = $params->old_dbprefix;
+		}else if ($params->method == "rest") {
+			$old_tables = json_decode($driver->requestRest('tableslist'));
+			$old_prefix = substr($old_tables[10], 0, strpos($old_tables[10], '_')+1);
+		}
+
+		// Get the old site version
 		$old_version = JUpgradeproHelper::getVersion('old');
 
 		// Do some custom post processing on the list.

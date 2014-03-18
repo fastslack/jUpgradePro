@@ -61,7 +61,7 @@ class JUpgradeproCategory extends JUpgradepro
 			$row['params'] = $this->convertParams($row['params']);
 			$row['title'] = str_replace("'", "&#39;", $row['title']);
 			$row['description'] = str_replace("'", "&#39;", $row['description']);
-			$row['extension'] = $row['section'];
+			$row['extension'] = isset($row['section']) ? $row['section'] : '' ;
 			unset($row['section']);
 
 			if ($row['extension'] == 'com_banner') {

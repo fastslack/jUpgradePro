@@ -231,6 +231,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 		$prefix = trim($prefix);
 
 		// Set the tables to search
+		$j10 = "{$prefix}bannerfinish";
 		$j15 = "{$prefix}core_acl_aro";
 		$j25 = "{$prefix}update_categories";
 		$j30 = "{$prefix}assets";
@@ -238,7 +239,11 @@ class JUpgradeproModelChecks extends JModelLegacy
 		$j32 = "{$prefix}postinstall_messages";
 
 		// Check the correct version
-		if (in_array($j15, $tables))
+		if (in_array($j10, $tables))
+		{
+			$version = "1.0";
+		}
+		else if(in_array($j15, $tables))
 		{
 			$version = "1.5";
 		}

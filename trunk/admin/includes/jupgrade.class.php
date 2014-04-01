@@ -623,6 +623,28 @@ class JUpgradepro
 	}
 
 	/**
+	 * Get the alias if its duplicated
+	 *
+	 * @param	string	$alias	The alias to search.
+	 *
+	 * @return	string	The alias
+	 * @since	3.2.1
+	 * @throws	Exception
+	 */
+	public function getAlias($alias)
+	{
+		$query = $this->_db->getQuery(true);
+		$query->select('alias');
+		$query->from('#__menu');
+		$query->where("alias LIKE '{$alias}%'");
+		$query->order('alias DESC');
+		$query->limit(1);
+		$this->_db->setQuery($query);
+
+		return $this->_db->loadResult();
+	}
+
+	/**
 	 * Converts the params fields into a JSON string.
 	 *
 	 * @param	string	$params	The source text definition for the parameter field.

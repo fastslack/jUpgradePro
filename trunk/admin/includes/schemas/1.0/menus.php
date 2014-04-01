@@ -33,8 +33,8 @@ class JUpgradeproMenu extends JUpgradepro
 		
 		$conditions['as'] = "m";
 		
-		$conditions['select'] = 'm.id, m.menutype, m.name, m.name AS title, m.alias, m.link, m.type, c.option, m.published, m.parent AS parent_id,'
-			.' m.sublevel AS level, m.ordering, m.checked_out, m.checked_out_time, m.browserNav, m.access, m.params, m.home';
+		$conditions['select'] = 'm.id, m.menutype, m.name, m.name AS title, \'\' AS alias, m.link, m.type, c.option, m.published, m.parent AS parent_id,'
+			.' m.sublevel AS level, m.ordering, m.checked_out, m.checked_out_time, m.browserNav, m.access, m.params, \'\' AS home';
 		
 		$join = array();
 		$join[] = "#__components AS c ON c.id = m.componentid";
@@ -79,9 +79,9 @@ class JUpgradeproMenu extends JUpgradepro
 		$query->clear();
 		// 3.0 Changes
 		if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
-			$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
+			$query->select("`menutype`, `title`, '' AS `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
 		}else{
-			$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
+			$query->select("`menutype`, `title`, '' AS `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
 		}
 
 		$query->from("#__menu");
@@ -246,6 +246,9 @@ class JUpgradeproMenu extends JUpgradepro
 			// Convert the array into an object.
 			$row = (object) $row;
 
+			// Create the alias
+			$row->alias = JFilterOutput::stringURLSafe($row->title);
+
 			// Getting the duplicated alias
 			$alias = $this->getAlias($row->alias);
 
@@ -336,7 +339,7 @@ class JUpgradeproMenu extends JUpgradepro
 	 */
 	public function afterHook()
 	{
-		$this->insertDefaultMenus();
+		//$this->insertDefaultMenus();
 	}
 
 	/**

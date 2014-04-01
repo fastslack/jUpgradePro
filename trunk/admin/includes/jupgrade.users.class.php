@@ -69,10 +69,15 @@ class JUpgradeproUser extends JUpgradepro
 	 */
 	protected function getUserIdAroMap($aro_id)
 	{
+		// Get the version
+		$old_version = JUpgradeproHelper::getVersion('old');
+		// Get thge correct table key
+		$key = ($old_version == '1.0') ? 'aro_id' : 'id';
+
 		$this->_driver->_db_old->setQuery(
 			'SELECT value' .
 			' FROM #__core_acl_aro' .
-			' WHERE id = '.$aro_id
+			' WHERE '.$key.' = '.$aro_id
 		);
 
 		$return	= $this->_driver->_db_old->loadResult();

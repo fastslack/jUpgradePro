@@ -237,7 +237,7 @@ class JUpgradeproMenu extends JUpgradepro
 			$menu['id'] = 0;
 
 			// Getting the duplicated alias
-			$alias = $this->getAlias($row->alias);
+			$alias = $this->getAlias($menu['alias']);
 
 			// Prevent MySQL duplicate error
 			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'

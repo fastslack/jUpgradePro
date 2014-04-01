@@ -37,7 +37,7 @@ GROUP BY menutype
 		
 		$conditions['as'] = "m";
 		
-		$conditions['select'] = 'm.menutype';
+		$conditions['select'] = 'm.menutype, m.menutype AS title';
 
 		$conditions['group_by'] = "m.menutype";
 

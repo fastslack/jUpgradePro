@@ -339,7 +339,7 @@ class JUpgradeproMenu extends JUpgradepro
 	 */
 	public function afterHook()
 	{
-		//$this->insertDefaultMenus();
+		$this->insertDefaultMenus();
 	}
 
 	/**
@@ -349,7 +349,7 @@ class JUpgradeproMenu extends JUpgradepro
 	 * @since	0.5.2
 	 * @throws	Exception
 	 */
-	public static function insertDefaultMenus()
+	public function insertDefaultMenus()
 	{
 		jimport('joomla.table.table');
 
@@ -372,7 +372,7 @@ class JUpgradeproMenu extends JUpgradepro
 			$menu['id'] = 0;
 
 			// Getting the duplicated alias
-			$alias = $this->getAlias($row->alias);
+			$alias = $this->getAlias($menu['alias']);
 
 			// Prevent MySQL duplicate error
 			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'

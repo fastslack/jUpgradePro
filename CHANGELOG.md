@@ -1,7 +1,7 @@
 ## 0. Metadata
 
 File version:	$Id$
-Copyright:		Copyright 2005 - 2013 Matias Aguirre. All rights reserved.
+Copyright:		Copyright 2005 - 2014 Matias Aguirre. All rights reserved.
 License:		GNU General Public License version 2 or later.
 
 ## 1. Copyright and disclaimer
@@ -13,7 +13,7 @@ see source code and the LICENSE file
 ## 2. Changelog
 
 This is a non-exhaustive (but still near complete) changelog for
-Joomla! 1.6, including alpha and beta versions.
+jUpgradePro, including alpha and beta versions.
 Our thanks to all those people who've contributed bug reports and
 code fixes.
 
@@ -29,11 +29,289 @@ $ -> Language fix or change
 ! -> Note
 ```
 
+2014-03-17 22:57:59 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[4f6f8c1]](http://github.com/fastslack/jUpgradePro/commit/4f6f8c12a9a8ad0d8054e4d73d925d88bf87ff1c) <b>Fix database method migration</b> <br />
+
+2014-03-17 12:15:02 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[84139cc]](http://github.com/fastslack/jUpgradePro/commit/84139cc246629651b518cef5d4ddb691b6ae14e6) <b>jUpgradePro v3.2.0 Released</b> <br />
+
+2014-03-17 12:12:48 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[41d7668]](http://github.com/fastslack/jUpgradePro/commit/41d7668d86fd3b070dd351432a76315f91b50f94) <b>Fix modules menu order to fix duplucated bug</b> <br />
+
+2014-03-17 12:12:23 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[e52f6a5]](http://github.com/fastslack/jUpgradePro/commit/e52f6a596e3fe35f169b67ae0e332a88b2dea8c9) <b>Some small fixes on schemas</b> <br />
+
+2014-03-16 18:23:22 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[5019252]](http://github.com/fastslack/jUpgradePro/commit/50192521d5e32fe25cb09afed2f6d8a3d198991f) <b>Add J! 3.0 schema</b> <br />
+
+2014-03-16 18:22:36 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[097d283]](http://github.com/fastslack/jUpgradePro/commit/097d283bc28ed3e98a6819b421eddb35b0a61795) <b>Fix cosmetical issues</b> <br />
+
+2014-03-16 17:59:44 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[520e2c5]](http://github.com/fastslack/jUpgradePro/commit/520e2c519e8046ec246be09cc0b10f8d24f15460) <b>Fix some bugfixes (thanks Klas)</b> <br />
+
+2014-03-16 17:39:48 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[513706d]](http://github.com/fastslack/jUpgradePro/commit/513706dbae03f74563b40a5b386f8907478e33a6) <b>Update CLI script</b> <br />
+
+2014-03-16 17:38:32 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[1568c7a]](http://github.com/fastslack/jUpgradePro/commit/1568c7a7dd57052f55d3248f1b75b56f163ce2c0) <b>Cosmetical changes</b> <br />
+
+2014-03-16 17:36:22 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[0159780]](http://github.com/fastslack/jUpgradePro/commit/0159780a6f8b33e7ea841f66fd7ecbe5e2225b16) <b>Lot of fixes for 2.5 migration</b> <br />
+
+2014-03-11 19:20:31 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[7f701b2]](http://github.com/fastslack/jUpgradePro/commit/7f701b28c685b69147bb8ef2a4f6f90fbdb2acaf) <b>Add restful plugin for J! 2.5 and greater</b> <br />
+
+2014-03-11 19:19:46 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[91bb3a9]](http://github.com/fastslack/jUpgradePro/commit/91bb3a9b440af5f9649538fdf6c66fbc91a51b24) <b>Remove usertype on 2.5+ restful plugin</b> <br />
+
+2014-03-11 19:19:27 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[52a75c6]](http://github.com/fastslack/jUpgradePro/commit/52a75c6385532d68bdec5ca7a99542ae50626222) <b>Small fixes on js</b> <br />
+
+2014-03-11 19:17:03 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[5a14c96]](http://github.com/fastslack/jUpgradePro/commit/5a14c968fb214060a278166383467bb6eca120c0) <b>Fix version checks</b> <br />
+
+2014-03-11 19:15:24 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[4dc1345]](http://github.com/fastslack/jUpgradePro/commit/4dc13457dee83822755101411a552d30333d1365) <b>Fix prefix on 3rd extensions migration</b> <br />
+
+2014-03-11 19:14:49 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[efd7311]](http://github.com/fastslack/jUpgradePro/commit/efd7311ed182ec04915ae4d27b989e07711f926a) <b>Small fixes on user migrations</b> <br />
+
+2014-03-11 14:36:11 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[b494b89]](http://github.com/fastslack/jUpgradePro/commit/b494b89727f83284d981e256902212229ba1895d) <b>Fix update id count</b> <br />
+
+2014-03-11 14:33:56 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[8afb742]](http://github.com/fastslack/jUpgradePro/commit/8afb7423acafb1f7cd4bf12f93f3762d73e4a702) <b>Add return</b> <br />
+
+2014-03-10 23:16:36 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[c3d9af0]](http://github.com/fastslack/jUpgradePro/commit/c3d9af067ede51b33607a7548b10c5426dbf9e9b) <b>Better chunk management</b> <br />
+
+2014-03-10 22:57:37 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[edd5eaa]](http://github.com/fastslack/jUpgradePro/commit/edd5eaa00f61dd092b1ef9753aef0d9667aea27e) <b>Check the total of 3rd party extensions table too</b> <br />
+
+2014-03-10 22:55:45 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[be0e54e]](http://github.com/fastslack/jUpgradePro/commit/be0e54ea3aa356a94a3e330edbc041b72133e66b) <b>Fixes on 3rd party extensions migration</b> <br />
+
+2014-03-10 16:51:55 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[716c0de]](http://github.com/fastslack/jUpgradePro/commit/716c0de570f0b86c841006a78a23c9c6b797d8a6) <b>Get the step total only one time</b> <br />
+
+2014-03-10 16:44:18 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[ef054a7]](http://github.com/fastslack/jUpgradePro/commit/ef054a7a37ac614003e2639c901ac6fddbd6cbf8) <b>Some fixes to support multiple restful items</b> <br />
+
+2014-03-10 16:40:50 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[daa3885]](http://github.com/fastslack/jUpgradePro/commit/daa388524995889773eab850cd2c5363d0581ff5) <b>Add multiple rows request using RESTful webservices on plugin for J! 1.5</b> <br />
+
+2014-03-04 16:02:59 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[0f32d35]](http://github.com/fastslack/jUpgradePro/commit/0f32d3527d61f7b19fa192dc18944c6da240a1b9) <b>Add debug fields to db tables</b> <br />
+
+2014-03-04 15:49:34 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[96b16cb]](http://github.com/fastslack/jUpgradePro/commit/96b16cb2ae010b1c150d40109b8d22aea066b321) <b>Some fixes on categories migration</b> <br />
+
+2014-03-04 15:49:04 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[4c37452]](http://github.com/fastslack/jUpgradePro/commit/4c3745204474a64a236f8d07ad19e47aead994d5) <b>Allow multiple rows chunk using RESTful method</b> <br />
+
+2014-03-03 01:30:10 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[1faf4c0]](http://github.com/fastslack/jUpgradePro/commit/1faf4c08d4b2b678168058312a45aa82f22576e6) <b>Allow multiple rows migration using RESTful method</b> <br />
+
+2014-03-02 20:10:07 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[96e10bd]](http://github.com/fastslack/jUpgradePro/commit/96e10bda243d3920fbf0a020fe1cd1977b02dc2b) <b>Get the table structure only one time</b> <br />
+
+2014-03-02 20:09:53 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[16ad62a]](http://github.com/fastslack/jUpgradePro/commit/16ad62aba69270341fd3b625c36822897c8634c8) <b>Better J! version checks</b> <br />
+
+2014-03-02 20:09:33 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[e41fde6]](http://github.com/fastslack/jUpgradePro/commit/e41fde608f87f3d03500d5763c5466faaf71dea5) <b>Do not exit, just return false</b> <br />
+
+2014-03-02 20:08:44 -0300 <i>by Matias Aguirre</i><br />
+
+2014-03-02 20:08:32 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[2c5682a]](http://github.com/fastslack/jUpgradePro/commit/2c5682a2e76575fb1fcf8c512d180edef3efe5fc) <b>Fix deprecated preg_replace warning and other fixes</b> <br />
+
+2014-03-02 20:06:25 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[a0259f6]](http://github.com/fastslack/jUpgradePro/commit/a0259f688195a847edd64f4bd490d7b11ca1edf3) <b>Remove unused code</b> <br />
+
+2014-03-02 10:34:13 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[3ba24da]](http://github.com/fastslack/jUpgradePro/commit/3ba24dab1b9f77d9ec19becc3dab4624d6b6da1f) <b>Fixes on 2.5+ restful plugin</b> <br />
+
+2014-02-27 17:11:45 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[6548dbf]](http://github.com/fastslack/jUpgradePro/commit/6548dbf819b0885741baffc35a7b90794b53eb81) <b>Revert</b> <br />
+
+2014-02-27 16:44:32 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[d6e78e7]](http://github.com/fastslack/jUpgradePro/commit/d6e78e767012c4d9d00c7fe2f86d26eff6824517) <b>Bad</b> <br />
+
+2014-02-27 07:09:00 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[d86c996]](http://github.com/fastslack/jUpgradePro/commit/d86c996b1a96e335f4120103eb334e152353bc2f) <b>??</b> <br />
+
+2014-02-27 16:30:47 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[eb1fefb]](http://github.com/fastslack/jUpgradePro/commit/eb1fefbc98b37a1d9982757b1659ec0538917b2b) <b>Grrr</b> <br />
+
+2014-02-27 16:29:44 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[d148fee]](http://github.com/fastslack/jUpgradePro/commit/d148fee1c30fbc3bab88f3db2a41b7f0f7a127b1) <b>Allow to get more than one row</b> <br />
+
+2014-02-27 14:07:41 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[21ef852]](http://github.com/fastslack/jUpgradePro/commit/21ef8526a9223425e9caf7a450fe62a60d3947ee) <b>Fix id's of 3rd party ext migration on RESTFul plugin for J! 2.5+</b> <br />
+
+2014-02-27 13:59:14 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[78830e8]](http://github.com/fastslack/jUpgradePro/commit/78830e8683b52a295551c8b4e47914055aa21136) <b>Fix 3rd party extensions migration using RESTful method</b> <br />
+
+2014-02-26 20:33:42 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[93e1f52]](http://github.com/fastslack/jUpgradePro/commit/93e1f526833db024af6a16d7691b18552987e19c) <b>Update jUpgradePro for J! 1.5 plugin</b> <br />
+
+2014-02-26 20:14:23 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[9a39e09]](http://github.com/fastslack/jUpgradePro/commit/9a39e0958653bd83e1baedab1b3535b413ab6a46) <b>Lot of small fixes</b> <br />
+
+2014-02-26 20:13:45 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[63c76c6]](http://github.com/fastslack/jUpgradePro/commit/63c76c6f9219f5455c48333b8b5c4c9d001668d0) <b>Small fixes on schemas</b> <br />
+
+2014-02-26 20:10:31 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[2060668]](http://github.com/fastslack/jUpgradePro/commit/206066846ef9d1e4fe74e0b4389c8d9d26da787a) <b>Update jUpgradePro plugin for J! 2.5 and greater</b> <br />
+
+2014-02-25 21:53:13 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[8b956da]](http://github.com/fastslack/jUpgradePro/commit/8b956da7ac430f10a6e8392f07099885be035e15) <b>Update jupgradepro plugin for Joomla! 2.5 and greater</b> <br />
+
+2014-02-25 21:49:59 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[ceb02f9]](http://github.com/fastslack/jUpgradePro/commit/ceb02f9c9bc004ca1e52ca414451d29e76d320b5) <b>Lot of small fixes for RESTful migration</b> <br />
+
+2014-02-25 15:07:42 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[e6dba01]](http://github.com/fastslack/jUpgradePro/commit/e6dba01e780f0150bf419c513962a2a6294c3eb0) <b>Fix multi-version migration</b> <br />
+
+2014-02-24 03:31:17 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[932c967]](http://github.com/fastslack/jUpgradePro/commit/932c96790272e8fee77edd0412add43aecc91d37) <b>Backward classes compatibility</b> <br />
+
+2014-02-24 03:30:01 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[76321ae]](http://github.com/fastslack/jUpgradePro/commit/76321ae829ff24c0ab9b31b77d80789406677c7b) <b>Remove unused skip</b> <br />
+
+2014-02-19 14:04:07 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[0743c23]](http://github.com/fastslack/jUpgradePro/commit/0743c23fc014952098ab90f117d2b81f34d9660e) <b>Users and banners fixes</b> <br />
+
+2014-02-18 16:00:24 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[6bebbbc]](http://github.com/fastslack/jUpgradePro/commit/6bebbbc74f2060c2529e9662c50e014c30dd0d33) <b>Separate cleanup on categories and modules</b> <br />
+
+2014-02-18 15:59:40 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[b80c7cb]](http://github.com/fastslack/jUpgradePro/commit/b80c7cb364a9744142299959d0e9b4ad4a8b4ca9) <b>Add spanish language</b> <br />
+
+2014-02-18 15:39:27 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[7b73bad]](http://github.com/fastslack/jUpgradePro/commit/7b73bad2063a959ee0c5345f0d5672f3b74f39f3) <b>Lot of small fixes</b> <br />
+
+2014-02-18 15:17:10 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[b320848]](http://github.com/fastslack/jUpgradePro/commit/b320848f553c75d50ba7536d349054c9e8514e0b) <b>Fix call static method on database driver</b> <br />
+
+2014-02-18 15:16:38 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[3ab9691]](http://github.com/fastslack/jUpgradePro/commit/3ab969152a45bf67fbb56b37f581724ed8191fac) <b>Separate extensions classes to multiversion support</b> <br />
+
+2014-02-17 23:42:42 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[ec2d073]](http://github.com/fastslack/jUpgradePro/commit/ec2d0734e6cb019b49d0cb4c7de851c9f81de4f8) <b>Multiple version on 3rd party extensions</b> <br />
+
+2014-02-17 23:27:52 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[991bfce]](http://github.com/fastslack/jUpgradePro/commit/991bfce1fda35a9aa3f9315c84836014d273641a) <b>Fix menu migration from J! 1.5</b> <br />
+
+2014-02-17 23:27:22 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[c741734]](http://github.com/fastslack/jUpgradePro/commit/c741734cb6d28e9c92b8ad9943aa7eef5c51fe6b) <b>Fix get conditions hook on database driver</b> <br />
+
+2014-02-17 19:54:41 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[0e9fc4b]](http://github.com/fastslack/jUpgradePro/commit/0e9fc4bb6644eb1444f833df01fdb915d2f9ea51) <b>Fix J! version checks</b> <br />
+
+2014-02-17 19:46:03 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[fb19c6f]](http://github.com/fastslack/jUpgradePro/commit/fb19c6f1a93372c2f9f1eea888bf0d8e15d78793) <b>Small fix on database driver</b> <br />
+
+2014-02-17 19:45:30 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[7d58e5d]](http://github.com/fastslack/jUpgradePro/commit/7d58e5d156718fdd43350ffb445d5b5f1fdda1f6) <b>Fixes on install sql file</b> <br />
+
+2014-02-17 18:21:45 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[f162029]](http://github.com/fastslack/jUpgradePro/commit/f1620299a138b5d297ad6527f0964bbb79d17491) <b>Multi-version migration support</b> <br />
+
+2014-02-17 18:14:23 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[021342b]](http://github.com/fastslack/jUpgradePro/commit/021342b83579113f6295ffef707010bee4e01cd2) <b>Lot of fixes to support  multi-version migration</b> <br />
+
+2014-02-17 17:22:12 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[d096b74]](http://github.com/fastslack/jUpgradePro/commit/d096b7422830527158b6a32c4ff75606007c5880) <b>Fix categories migration from J! 2.5</b> <br />
+
+2014-02-17 16:50:19 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[daeefc7]](http://github.com/fastslack/jUpgradePro/commit/daeefc7fc1eb1a606a944e213d751af8fafd5032) <b>Add differents schemas</b> <br />
+
+2014-02-17 16:49:42 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[37c1c30]](http://github.com/fastslack/jUpgradePro/commit/37c1c30d20849187ff614af5fb8ae7809450c42d) <b>Lot of changes</b> <br />
+
+2014-02-15 00:58:14 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[233cdc2]](http://github.com/fastslack/jUpgradePro/commit/233cdc24f06760fd336047e124195f3df303fd5a) <b>Change classes names</b> <br />
+
+2014-02-14 22:10:40 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[2596302]](http://github.com/fastslack/jUpgradePro/commit/2596302226020b01f5cb439541b39ede0a777ef7) <b>Add before hook to modify all the thing</b> <br />
+
+2014-02-14 21:45:29 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[8fd0324]](http://github.com/fastslack/jUpgradePro/commit/8fd0324abaf7d516cdf04aee1d0f8c55cfd8da5e) <b>Remove custom bootstrap</b> <br />
+
+2014-02-14 21:44:01 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[c6dea28]](http://github.com/fastslack/jUpgradePro/commit/c6dea28ef124d254b36856d52f0b9e8203596307) <b>Exit if skip_extension parameter is true</b> <br />
+
+2013-09-21 06:15:52 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[9231a4c]](http://github.com/fastslack/jUpgradePro/commit/9231a4ca07fef65dead256b405d369162703a6f4) <b>Change links</b> <br />
+
+2013-09-14 01:36:39 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[90d34f5]](http://github.com/fastslack/jUpgradePro/commit/90d34f59c0fcfc69ae07abcd034b0193cbb3534c) <b>Dont add extension if it exists</b> <br />
+
+2013-09-14 01:35:36 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[ed63066]](http://github.com/fastslack/jUpgradePro/commit/ed6306641f107ee729e1ea7cc122f59a0a62383f) <b>Check fixes</b> <br />
+
+2013-09-13 15:21:35 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[f13698c]](http://github.com/fastslack/jUpgradePro/commit/f13698c0cb214828d920202b4dac35f45e33c51c) <b>Also check extensions skip</b> <br />
+
+2013-09-08 21:43:28 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[dd33861]](http://github.com/fastslack/jUpgradePro/commit/dd33861f9f56f0bea7c466672162a32f43bb821a) <b>Backup all the menus</b> <br />
+
+2013-09-02 15:45:29 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[2f91917]](http://github.com/fastslack/jUpgradePro/commit/2f9191796b3bd9382e5c914c557e22b7ca9dfc10) <b>Fix modules migration on plugins</b> <br />
+
+2013-08-31 19:59:17 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[b110611]](http://github.com/fastslack/jUpgradePro/commit/b11061137bb1b5a9542c2c8173adb8401c1406ea) <b>Fix modules menu positions</b> <br />
+
+2013-08-31 19:57:55 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[b6cf205]](http://github.com/fastslack/jUpgradePro/commit/b6cf205b0ca3a334f9ebe95d770a10f08a4593fc) <b>Fix jupgradepro tables check</b> <br />
+
+2013-08-30 19:19:22 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[30065b0]](http://github.com/fastslack/jUpgradePro/commit/30065b0b0acba6815970a38692ddc0809f2577ca) <b>Fix menu positions if id=1</b> <br />
+
+2013-08-30 17:10:34 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[800691d]](http://github.com/fastslack/jUpgradePro/commit/800691d50c01da21dc1494c642141b1d67e029b7) <b>Cleanup 'site' modules too</b> <br />
+
+2013-08-30 17:03:06 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[3f2b836]](http://github.com/fastslack/jUpgradePro/commit/3f2b83611b9ffa3414c501cca266fd31389c1525) <b>Fixing menu home migration</b> <br />
+
+2013-08-28 03:06:53 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[c7e754c]](http://github.com/fastslack/jUpgradePro/commit/c7e754ca8f464835a604bb692b5e27d73a0efcad) <b>Fix the menus links on restful plugin</b> <br />
+
+2013-08-28 02:50:58 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[74ef474]](http://github.com/fastslack/jUpgradePro/commit/74ef4746542f443aaf8436bee438f2ed89b56210) <b>Fix the menus links on restful plugin</b> <br />
+
+2013-08-27 18:52:44 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[1c15106]](http://github.com/fastslack/jUpgradePro/commit/1c151064d18f9a45fcaf94344f40d9cc7d2839e8) <b>Revert</b> <br />
+
+2013-08-27 18:49:39 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[2ec3aa5]](http://github.com/fastslack/jUpgradePro/commit/2ec3aa51fa92a748bbbce66d474e62895e78d77d) <b>Add prefix to jupgradepro tables</b> <br />
+
+2013-08-27 18:18:22 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[8721adb]](http://github.com/fastslack/jUpgradePro/commit/8721adbb2fcdbe30dfd774bd54896449775be751) <b>Truncate modules too (Thanks Brian Teeman)</b> <br />
+
+2013-08-27 17:03:02 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[3431381]](http://github.com/fastslack/jUpgradePro/commit/34313815b35969602ac4fcda7527b4744d65d93f) <b>Small stylish</b> <br />
+
+2013-08-27 17:02:45 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[60ae5f4]](http://github.com/fastslack/jUpgradePro/commit/60ae5f48373838ae3a71399f722e487fb7622be7) <b>Set database method as default</b> <br />
+
+2013-08-27 17:01:33 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[2fb4486]](http://github.com/fastslack/jUpgradePro/commit/2fb44865056f14fdff7a80f47b7855a08a00d59f) <b>Fix menu issues with users and categories</b> <br />
+
+2013-06-22 02:22:24 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[fcbd411]](http://github.com/fastslack/jUpgradePro/commit/fcbd411f0a4aa96e8fdbb631d8b3b8f77c2f3803) <b>Add auto-changelog script</b> <br />
+
+2013-06-22 02:20:35 -0300 <i>by Matias Aguirre</i><br />
+ \+ [[059aeac]](http://github.com/fastslack/jUpgradePro/commit/059aeac5c8e921f2c6c5614c0603ed180022bb4f) <b>Fix links on CHANGELOG</b> <br />
+
 2013-06-22 02:07:15 -0300 <i>by Matias Aguirre</i><br />
  \+ [[ec143db]](http://github.com/fastslack/jUpgradePro/commit/ec143dbb9a0edc11b5893e01723fc7e7d2160993) <b>Markdown fix on CHANGELOG</b> <br />
 
 2013-06-22 02:04:00 -0300 <i>by Matias Aguirre</i><br />
- ^ [[41362ae]](http://github.com/fastslack/jUpgradePro/commit/41362aeaa5437fb362fd21b17b0a454fe73454c3) <b>Update CHANGELOG.md</b> <br />
+ \+ [[41362ae]](http://github.com/fastslack/jUpgradePro/commit/41362aeaa5437fb362fd21b17b0a454fe73454c3) <b>Update CHANGELOG.md</b> <br />
 
 2013-06-22 01:33:26 -0300 <i>by Matias Aguirre</i><br />
  \+ [[4f69068]](http://github.com/fastslack/jUpgradePro/commit/4f690687089d4d54327639cb17041e8bbaafc1e3) <b>Add CHANGELOG</b> <br />
@@ -42,10 +320,10 @@ $ -> Language fix or change
  \+ [[049f054]](http://github.com/fastslack/jUpgradePro/commit/049f054a1919b953bf3b9bf1af2ff936a70fb1a9) <b>jUpgradePro v3.1.0 Released</b> <br />
 
 2013-06-22 00:48:12 -0300 <i>by Matias Aguirre</i><br />
- # [[ff77a49]](http://github.com/fastslack/jUpgradePro/commit/ff77a49259549cc0c269665b2b7a3d7416b67da8) <b>Small fix on jUpgradeProCli script</b> <br />
+ \+ [[ff77a49]](http://github.com/fastslack/jUpgradePro/commit/ff77a49259549cc0c269665b2b7a3d7416b67da8) <b>Small fix on jUpgradeProCli script</b> <br />
 
 2013-06-22 00:22:09 -0300 <i>by Matias Aguirre</i><br />
- ^ [[75f0b92]](http://github.com/fastslack/jUpgradePro/commit/75f0b9289df33c608c6db47ae5d88939ff8dc007) <b>Improve debuging</b> <br />
+ \+ [[75f0b92]](http://github.com/fastslack/jUpgradePro/commit/75f0b9289df33c608c6db47ae5d88939ff8dc007) <b>Improve debuging</b> <br />
 
 2013-06-22 00:21:22 -0300 <i>by Matias Aguirre</i><br />
  \+ [[f255e13]](http://github.com/fastslack/jUpgradePro/commit/f255e13038725c130c6265bd9307e25454fe8d23) <b>Make sure that JFile class is loaded</b> <br />
@@ -54,48 +332,48 @@ $ -> Language fix or change
  \+ [[ce371de]](http://github.com/fastslack/jUpgradePro/commit/ce371def3afff3ef2a2195bee616bf968d750d0c) <b>Add exception on rest request</b> <br />
 
 2013-06-21 23:12:50 -0300 <i>by Matias Aguirre</i><br />
- ^ [[4980c4a]](http://github.com/fastslack/jUpgradePro/commit/4980c4a3f8eb90be846d085b9fc1b61e707557df) <b>Better way to access driver</b> <br />
+ \+ [[4980c4a]](http://github.com/fastslack/jUpgradePro/commit/4980c4a3f8eb90be846d085b9fc1b61e707557df) <b>Better way to access driver</b> <br />
 
 2013-06-21 20:39:19 -0300 <i>by Matias Aguirre</i><br />
- # [[37e257e]](http://github.com/fastslack/jUpgradePro/commit/37e257e2b0427748ebbffed5d9e81682a3613000) <b>Fix banners tracks restful migration</b> <br />
+ \+ [[37e257e]](http://github.com/fastslack/jUpgradePro/commit/37e257e2b0427748ebbffed5d9e81682a3613000) <b>Fix banners tracks restful migration</b> <br />
 
 2013-06-21 18:34:57 -0300 <i>by Matias Aguirre</i><br />
 
 2013-06-21 18:34:39 -0300 <i>by Matias Aguirre</i><br />
- ^ [[f1a2046]](http://github.com/fastslack/jUpgradePro/commit/f1a204672827715f60b6f795a77a28ccc8e4dc82) <b>Change cache name to chunk</b> <br />
+ \+ [[f1a2046]](http://github.com/fastslack/jUpgradePro/commit/f1a204672827715f60b6f795a77a28ccc8e4dc82) <b>Change cache name to chunk</b> <br />
 
 2013-06-21 10:37:21 -0300 <i>by Matias Aguirre</i><br />
- # [[50f236a]](http://github.com/fastslack/jUpgradePro/commit/50f236aa77918cc7ebf248ca95cb27c163d0076b) <b>Small fixes on models</b> <br />
+ \+ [[50f236a]](http://github.com/fastslack/jUpgradePro/commit/50f236aa77918cc7ebf248ca95cb27c163d0076b) <b>Small fixes on models</b> <br />
 
 2013-06-02 02:53:51 +0200 <i>by Javier</i><br />
- ^ [[16b4b63]](http://github.com/fastslack/jUpgradePro/commit/16b4b6334ca216f5bbdf25df3c36f64ce85830e4) <b>Change name cache to chunk</b> <br />
+ \+ [[16b4b63]](http://github.com/fastslack/jUpgradePro/commit/16b4b6334ca216f5bbdf25df3c36f64ce85830e4) <b>Change name cache to chunk</b> <br />
 
 2013-06-01 05:25:40 -0300 <i>by Matias Aguirre</i><br />
- # [[33326fa]](http://github.com/fastslack/jUpgradePro/commit/33326fafc7403db17fbd77fb8df9a7d473d1560a) <b>Fix release script</b> <br />
+ \+ [[33326fa]](http://github.com/fastslack/jUpgradePro/commit/33326fafc7403db17fbd77fb8df9a7d473d1560a) <b>Fix release script</b> <br />
 
 2013-05-26 22:48:22 -0300 <i>by Matias Aguirre</i><br />
- ^ [[01b07e2]](http://github.com/fastslack/jUpgradePro/commit/01b07e253c5f41fd2731624715b8d50b942a1566) <b>Prevent some errors on WAMP servers</b> <br />
+ \+ [[01b07e2]](http://github.com/fastslack/jUpgradePro/commit/01b07e253c5f41fd2731624715b8d50b942a1566) <b>Prevent some errors on WAMP servers</b> <br />
 
 2013-05-26 19:28:17 -0300 <i>by Matias Aguirre</i><br />
  \+ [[33b84c8]](http://github.com/fastslack/jUpgradePro/commit/33b84c87b5524680cdce6b8117e67e545ea97ee8) <b>Add missing group_by condition</b> <br />
 
 2013-05-20 16:28:23 -0300 <i>by Matias Aguirre</i><br />
- ^ [[1e71b90]](http://github.com/fastslack/jUpgradePro/commit/1e71b90a9dfe2f86c2233500af372f175068112c) <b>Big changes on 2.5 plugin</b> <br />
+ \+ [[1e71b90]](http://github.com/fastslack/jUpgradePro/commit/1e71b90a9dfe2f86c2233500af372f175068112c) <b>Big changes on 2.5 plugin</b> <br />
 
 2013-05-20 16:27:58 -0300 <i>by Matias Aguirre</i><br />
- ^ [[c2c5ac1]](http://github.com/fastslack/jUpgradePro/commit/c2c5ac1cc09a3fe1b5e9c6054236661b9984b5aa) <b>Big changes on 2.5 plugin</b> <br />
+ \+ [[c2c5ac1]](http://github.com/fastslack/jUpgradePro/commit/c2c5ac1cc09a3fe1b5e9c6054236661b9984b5aa) <b>Big changes on 2.5 plugin</b> <br />
 
 2013-05-20 15:08:56 -0300 <i>by Matias Aguirre</i><br />
  \+ [[36ce9b7]](http://github.com/fastslack/jUpgradePro/commit/36ce9b71f5b08373304ad20925439efa8355e488) <b>Initial support for different schemas</b> <br />
 
 2013-05-20 15:08:22 -0300 <i>by Matias Aguirre</i><br />
- # [[c1def01]](http://github.com/fastslack/jUpgradePro/commit/c1def0143d492c85f2d6351b378e242918e8255e) <b>Stylish</b> <br />
+ \+ [[c1def01]](http://github.com/fastslack/jUpgradePro/commit/c1def0143d492c85f2d6351b378e242918e8255e) <b>Stylish</b> <br />
 
 2013-05-20 15:07:44 -0300 <i>by Matias Aguirre</i><br />
  \+ [[f1db0d0]](http://github.com/fastslack/jUpgradePro/commit/f1db0d097c20c20a25e87e28885b6e9314397010) <b>More exceptions</b> <br />
 
 2013-05-20 14:22:06 -0300 <i>by Matias Aguirre</i><br />
- ^ [[514f61c]](http://github.com/fastslack/jUpgradePro/commit/514f61c590f7d63c08136c35f75d20aa25429504) <b>Reorder methods</b> <br />
+ \+ [[514f61c]](http://github.com/fastslack/jUpgradePro/commit/514f61c590f7d63c08136c35f75d20aa25429504) <b>Reorder methods</b> <br />
 
 2013-05-20 03:11:10 -0300 <i>by Matias Aguirre</i><br />
  \+ [[e8b829b]](http://github.com/fastslack/jUpgradePro/commit/e8b829b57d619f5b9f78384c03d339976a5a2b49) <b>Check for empty alias</b> <br />
@@ -107,22 +385,22 @@ $ -> Language fix or change
  \+ [[c2cd627]](http://github.com/fastslack/jUpgradePro/commit/c2cd627ae686f2460f9d0efbcee5909156750861) <b>Prepare to acceps multiple origin schemas</b> <br />
 
 2013-05-18 01:53:27 -0300 <i>by Matias Aguirre</i><br />
- # [[b8e0beb]](http://github.com/fastslack/jUpgradePro/commit/b8e0bebf09421a6f6f36eb85aa4cb5be6ce35699) <b>Fix content title and alias</b> <br />
+ \+ [[b8e0beb]](http://github.com/fastslack/jUpgradePro/commit/b8e0bebf09421a6f6f36eb85aa4cb5be6ce35699) <b>Fix content title and alias</b> <br />
 
 2013-05-18 00:41:43 -0300 <i>by Matias Aguirre</i><br />
- # [[e3af726]](http://github.com/fastslack/jUpgradePro/commit/e3af726fd448fbcca795b87c20f8529f50844174) <b>Fix newsfeeds with Joomla! 3.0+</b> <br />
+ \+ [[e3af726]](http://github.com/fastslack/jUpgradePro/commit/e3af726fd448fbcca795b87c20f8529f50844174) <b>Fix newsfeeds with Joomla! 3.0+</b> <br />
 
 2013-05-17 21:36:03 -0300 <i>by Matias Aguirre</i><br />
- # [[9b741ac]](http://github.com/fastslack/jUpgradePro/commit/9b741ac3d2056ca2a07e5fca3f40fd88d2971fc1) <b>Correct decode for JSON step</b> <br />
+ \+ [[9b741ac]](http://github.com/fastslack/jUpgradePro/commit/9b741ac3d2056ca2a07e5fca3f40fd88d2971fc1) <b>Correct decode for JSON step</b> <br />
 
 2013-05-17 18:00:44 -0300 <i>by Matias Aguirre</i><br />
- ^ [[c92429a]](http://github.com/fastslack/jUpgradePro/commit/c92429a2a1974c9253e4767e9e6b7ff0097e2f52) <b>Change headers and some bugs fixes</b> <br />
+ \+ [[c92429a]](http://github.com/fastslack/jUpgradePro/commit/c92429a2a1974c9253e4767e9e6b7ff0097e2f52) <b>Change headers and some bugs fixes</b> <br />
 
 2013-05-17 18:00:18 -0300 <i>by Matias Aguirre</i><br />
- ^ [[d1c7b79]](http://github.com/fastslack/jUpgradePro/commit/d1c7b79c33f44a3b0d917d8b83a51d87b6100317) <b>Change headers and some bugs fixes</b> <br />
+ \+ [[d1c7b79]](http://github.com/fastslack/jUpgradePro/commit/d1c7b79c33f44a3b0d917d8b83a51d87b6100317) <b>Change headers and some bugs fixes</b> <br />
 
 2013-05-17 16:04:54 -0300 <i>by Matias Aguirre</i><br />
- # [[c88eb8a]](http://github.com/fastslack/jUpgradePro/commit/c88eb8ab78c2cb96e658eae86178f3f57172255a) <b>Fix header</b> <br />
+ \+ [[c88eb8a]](http://github.com/fastslack/jUpgradePro/commit/c88eb8ab78c2cb96e658eae86178f3f57172255a) <b>Fix header</b> <br />
 
 2013-05-16 20:33:12 -0700 <i>by Matias Aguirre</i><br />
 

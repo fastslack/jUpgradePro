@@ -214,7 +214,7 @@ class JUpgradeproMenu extends JUpgradepro
 	 * @since	0.5.2
 	 * @throws	Exception
 	 */
-	public static function insertDefaultMenus()
+	public function insertDefaultMenus()
 	{
 		jimport('joomla.table.table');
 

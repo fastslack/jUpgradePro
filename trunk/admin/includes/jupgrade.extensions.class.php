@@ -422,6 +422,7 @@ class JUpgradeproExtensions extends JUpgradepro
 		$query->where("type = 'plugin'");
 		$query->where("folder = 'jupgradepro'");
 		$query->where("enabled = 1");
+		$query->where("state = 0");
 
 		// Setting the query and getting the result
 		$this->_db->setQuery($query);

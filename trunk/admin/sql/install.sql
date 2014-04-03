@@ -207,7 +207,7 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_steps` (
 -- Dumping data for table `#__jupgradepro_steps`
 --
 
-INSERT INTO `ze1f4_jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
+INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
 (NULL, '1.0', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
 (NULL, '1.0', 'arogroup', 'Users Groups', 'group_id', 'core_acl_aro_groups', 'usergroups', 0, 'JUpgradeproUsergroups', 0, 0, 0, 0, 0, 0, 0),
 (NULL, '1.0', 'usergroupmap', 'Users Groups', 'aro_id', 'core_acl_groups_aro_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),

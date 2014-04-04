@@ -365,12 +365,17 @@ class JUpgradepro
 
 					try	{
 						$this->_db->insertObject($table, $row);
+
+						$this->_step->_nextID($total);
+
 					}	catch (Exception $e) {
-						throw new Exception($e->getMessage());
+
+						$this->_step->_nextID($total);
+						$this->saveError($e->getMessage());
+
+						continue;
 					}
 				}
-
-				$this->_step->_nextID($total);
 			}
 		}else if (is_object($rows)) {
 
@@ -720,6 +725,23 @@ class JUpgradepro
 	public function getDestinationTable()
 	{
 		return '#__'.$this->_step->destination;
+	}
+
+	/**
+	 * @return  string	The table name  
+	 *
+	 * @since   3.0
+	 */
+	public function saveError($error)
+	{
+		$query = $this->_db->getQuery(true);
+		$query->insert('#__jupgradepro_errors')
+			->columns('`message`')
+			->values("'{$this->_db->escape($error)}'");
+		$this->_db->setQuery($query);
+		$this->_db->execute();
+
+		return true;
 	}
 
 } // end class

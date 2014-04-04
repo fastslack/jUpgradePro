@@ -23,6 +23,7 @@ CREATE TABLE IF NOT EXISTS `#__jupgradepro_errors` (
   `method` varchar(255) NOT NULL,
   `step` varchar(255) NOT NULL,
   `cid` int(11) NOT NULL,
+  `message` text NOT NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=latin1 AUTO_INCREMENT=1 ;
 

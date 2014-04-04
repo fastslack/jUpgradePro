@@ -198,14 +198,6 @@ class JUpgradeproDriverDatabase extends JUpgradeproDriver
 			$query->order($order);
 		}
 
-		// Pagination
-		if ($pagination === true) {
-			$chunk_limit = (int) $this->params->chunk_limit;
-			$oid = (int) $this->_getStepID();
-
-			$query->setLimit( $chunk_limit, $oid );
-		}
-
 		return $query;
 	}
 

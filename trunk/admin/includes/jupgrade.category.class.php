@@ -142,6 +142,12 @@ class JUpgradeproCategory extends JUpgradepro
 		// Getting the category table
 		$category = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
 
+		// Disable observers calls
+		// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
+		// @@ See: /libraries/joomla/observer/updater.php Line: 104 
+		// @@ call_user_func_array($eventListener, $params);
+		$category->_observers->doCallObservers(false);
+
 		// Get section and old id
 		$oldlist = new stdClass();
 		$oldlist->section = !empty($row['extension']) ? $row['extension'] : 0;

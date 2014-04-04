@@ -68,6 +68,12 @@ class JUpgradeproContent extends JUpgradepro
 			// Getting the asset table
 			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
 
+			// Disable observers calls
+			// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
+			// @@ See: /libraries/joomla/observer/updater.php Line: 104 
+			// @@ call_user_func_array($eventListener, $params);
+			$content->_observers->doCallObservers(false);
+
 			// Bind data to save content
 			if (!$content->bind($row)) {
 				throw new Exception($content->getError());

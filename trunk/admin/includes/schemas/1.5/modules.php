@@ -188,6 +188,9 @@ class JUpgradeproModules extends JUpgradepro
 			$oldlist->old = $row->id;
 			unset($row->id);
 
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>='))
+				unset($row->numnews);
+
 			// Insert module
 			if (!$this->_db->insertObject($table, $row)) {
 				throw new Exception($this->_db->getErrorMsg());

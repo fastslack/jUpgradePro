@@ -121,43 +121,5 @@ class JUpgradeTableModules extends JUpgradeTable
 		}
 
 		return $rows;
-	}	
-
-	/**
-	 * 
-	 *
-	 * @access	public
-	 * @param		Array	Result to migrate
-	 * @return	Array	Migrated result
-	 */
-	function migrate(&$rows)
-	{
-
-		$row['params = isset($row['params) ? $this->convertParams($row['params) : '';
-
-		## Fix access
-		$row['access = $row['access+1;
-
-		## Language
-		$row['language = "*";
-
-		## Module field changes
-		if ($row['module == "mod_mainmenu") {
-			$row['module = "mod_menu";
-		}
-		else if ($row['module == "mod_archive") {
-			$row['module = "mod_articles_archive";
-		}
-		else if ($row['module == "mod_latestnews") {
-			$row['module = "mod_articles_latest";
-		}
-		else if ($row['module == "mod_mostread") {
-			$row['module = "mod_articles_popular";
-		}
-		else if ($row['module == "mod_newsflash") {
-			$row['module = "mod_articles_news";
-		}
-
-		return $rows;
 	}
 }

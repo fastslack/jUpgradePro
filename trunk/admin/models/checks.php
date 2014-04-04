@@ -200,6 +200,14 @@ class JUpgradeproModelChecks extends JModelLegacy
 			}
 		}
 
+		// Change protected to $observers object to disable it
+		$file = JPATH_LIBRARIES.'/joomla/table/table.php';
+		$read = JFile::read($file);
+		$read = str_replace("	protected \$_observers;", "	public \$_observers;", $read);
+		$read = JFile::write($file, $read);
+
+		JLoader::register('JTable', JPATH_LIBRARIES.'/joomla/table/table.php');
+
 		// Done checks
 		if (!JUpgradeproHelper::isCli())
 			$this->returnError (100, 'DONE');

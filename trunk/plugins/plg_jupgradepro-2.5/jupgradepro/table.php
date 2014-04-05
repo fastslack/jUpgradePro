@@ -91,13 +91,15 @@ class JUpgradeproTable extends JTable
 	 */
 	public function getCleanup()
 	{
+		$name = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
+
 		// Getting the database instance
 		$db = JFactory::getDbo();	
 
 		$query = "UPDATE jupgradepro_plugin_steps SET cid = 0"; 
-		//if ($name != false) {
-		//	$query .= " WHERE name = '{$name}'";
-		//}
+		if ($name != false) {
+			$query .= " WHERE name = '{$name}'";
+		}
 
 		$db->setQuery( $query );
 		$result = $db->query();
@@ -183,7 +185,7 @@ class JUpgradeproTable extends JTable
 
 		if (is_array($rows)) {
 
-			$update_id = $oid + count($rows);
+			$update_id = $oid+$chunk;
 
 			$this->_updateID($update_id);
 
@@ -366,7 +368,7 @@ class JUpgradeproTable extends JTable
 	{
 		// Do custom migration
 		return $rows;
-	}
+	}	
 
 	/**
  	* Writes to file all the selected database tables structure with SHOW CREATE TABLE

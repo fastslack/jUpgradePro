@@ -183,7 +183,9 @@ class JUpgradeproContent extends JUpgradepro
 			// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
 			// @@ See: /libraries/joomla/observer/updater.php Line: 104 
 			// @@ call_user_func_array($eventListener, $params);
-			$content->_observers->doCallObservers(false);
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
+				$content->_observers->doCallObservers(false);
+			}
 
 			// Bind data to save content
 			if (!$content->bind($row)) {

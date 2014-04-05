@@ -146,7 +146,9 @@ class JUpgradeproCategory extends JUpgradepro
 		// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
 		// @@ See: /libraries/joomla/observer/updater.php Line: 104 
 		// @@ call_user_func_array($eventListener, $params);
-		$category->_observers->doCallObservers(false);
+		if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
+			$category->_observers->doCallObservers(false);
+		}
 
 		// Get section and old id
 		$oldlist = new stdClass();

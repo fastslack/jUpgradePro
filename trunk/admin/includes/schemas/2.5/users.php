@@ -106,15 +106,18 @@ class JUpgradeproUsers extends JUpgradeproUser
 	public function &dataHook($rows)
 	{
 		// Do some custom post processing on the list.
-		foreach ($rows as &$row)
+		if (is_array($rows))
 		{
-			$row = (array) $row;
+			foreach ($rows as &$row)
+			{
+				$row = (array) $row;
 
-			// Remove unused fields.
-			unset($row['otpKey']);
-			unset($row['otep']);
-			unset($row['gid']);
-			unset($row['usertype']);
+				// Remove unused fields.
+				unset($row['otpKey']);
+				unset($row['otep']);
+				unset($row['gid']);
+				unset($row['usertype']);
+			}
 		}
 		
 		return $rows;

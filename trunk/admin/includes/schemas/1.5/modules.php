@@ -189,7 +189,11 @@ class JUpgradeproModules extends JUpgradepro
 			unset($row->id);
 
 			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>='))
+			{
 				unset($row->numnews);
+				unset($row->iscore);
+				unset($row->control);
+			}
 
 			// Insert module
 			if (!$this->_db->insertObject($table, $row)) {

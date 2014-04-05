@@ -48,7 +48,7 @@ class JUpgradeproTable extends JTable
 		if ($row !== false) {
 
 			$row = $this->migrate($row);
-		
+
 			$this->bind($row);
 			// Return as JSON
 			return $this->toJSON();

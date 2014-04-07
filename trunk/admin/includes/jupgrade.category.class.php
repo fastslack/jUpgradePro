@@ -139,13 +139,24 @@ class JUpgradeproCategory extends JUpgradepro
 	 */
 	public function insertCategory($row, $parent = false)
 	{
+		// Change protected to $observers object to disable it
+		// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
+		// @@ See: https://github.com/joomla/joomla-cms/pull/3408
+		if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
+			$file = JPATH_LIBRARIES.'/joomla/table/table.php';
+			$read = JFile::read($file);
+			$read = str_replace("	protected \$_observers;", "	public \$_observers;", $read);
+			$read = JFile::write($file, $read);
+
+			require_once($file);
+		}
+
 		// Getting the category table
 		$category = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
 
 		// Disable observers calls
 		// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
-		// @@ See: /libraries/joomla/observer/updater.php Line: 104 
-		// @@ call_user_func_array($eventListener, $params);
+		// @@ See: https://github.com/joomla/joomla-cms/pull/3408
 		if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
 			$category->_observers->doCallObservers(false);
 		}

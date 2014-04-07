@@ -433,7 +433,7 @@ class JUpgradeproExtensions extends JUpgradepro
 			$old_tables = $this->_driver->_db_old->getTableList();
 			$old_prefix = $params->old_dbprefix;
 		}else if ($params->method == "rest") {
-			$old_tables = json_decode($driver->requestRest('tableslist'));
+			$old_tables = json_decode($this->_driver->requestRest('tableslist'));
 			$old_prefix = substr($old_tables[10], 0, strpos($old_tables[10], '_')+1);
 		}
 

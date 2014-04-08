@@ -51,4 +51,19 @@ class JUpgradeproModelExtensions extends JModelLegacy
 			}
 		}
 	}
+
+	/**
+	 * returnError
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+	public function returnError ($number, $text)
+	{
+		$message['number'] = $number;
+		$message['text'] = JText::_($text);
+		print(json_encode($message));
+		exit;
+	}
+
 } // end class

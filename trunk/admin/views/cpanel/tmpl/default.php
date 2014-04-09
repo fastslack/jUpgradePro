@@ -19,11 +19,16 @@ $version = "v{$this->version}";
 $params	= $this->params;
 // get document to add scripts
 $document	= JFactory::getDocument();
-$document->addScript('components/com_jupgradepro/js/dwProgressBar.js');
+$document->addScript('components/com_jupgradepro/js/RadialProgressBar.js');
 $document->addScript("components/com_jupgradepro/js/migrate.js");
 $document->addScript('components/com_jupgradepro/js/requestmultiple.js');
 $document->addStyleSheet("components/com_jupgradepro/css/jupgradepro.css");
 ?>
+
+<link href='http://fonts.googleapis.com/css?family=Chivo:400,400italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Gudea:400,400italic' rel='stylesheet' type='text/css'>
+<link href='http://fonts.googleapis.com/css?family=Ubuntu' rel='stylesheet' type='text/css'>
+
 <script type="text/javascript">
 
 window.addEvent('domready', function() {
@@ -60,14 +65,13 @@ window.addEvent('domready', function() {
 
 				<div id="checks">
 					<p class="text"><?php echo JText::_('Checking and cleaning...'); ?></p>
-					<div id="pb0"></div>
+					<div id="pb0" data-progress="1%"></div>
 					<div><small><i><span id="checkstatus"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
 				</div>
 
 				<div id="migration">
-					<p class="text"><?php echo JText::_('Upgrading progress...'); ?></p>
-					<div id="pb4"></div>
-					<div><small><i><span id="migrate_status"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
+					<p class="text" id="migrate_text"><?php echo JText::_('Upgrading progress...'); ?></p>
+					<div id="pb4" data-progress="1%"></div>
 					<div id="counter">
 						<i><small><b><span id="currItem">0</span></b> items /
 						<b><span id="totalItems">0</span></b> items</small></i>
@@ -76,7 +80,7 @@ window.addEvent('domready', function() {
 
 				<div id="files">
 					<p class="text"><?php echo JText::_('Copying images/media files...'); ?></p>
-					<div id="pb5"></div>
+					<div id="pb5" data-progress="1%"></div>
 					<div><small><i><span id="files_status"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
 					<div id="files_counter">
 						<i><small><b><span id="files_currItem">0</span></b> items /
@@ -86,13 +90,12 @@ window.addEvent('domready', function() {
 
 				<div id="templates">
 					<p class="text"><?php echo JText::_('Copying templates...'); ?></p>
-					<div id="pb6"></div>
+					<div id="pb6" data-progress="1%"></div>
 				</div>
 
 				<div id="extensions">
-					<p class="text"><?php echo JText::_('Upgrading 3rd extensions...'); ?></p>
-					<div id="pb7"></div>
-					<div><small><i><span id="ext_status"><?php echo JText::_('Initialize...'); ?></span></i></small></div>
+					<p class="text" id="ext_text"><?php echo JText::_('Upgrading 3rd extensions...'); ?></p>
+					<div id="pb7" data-progress="1%"></div>
 					<div id="ext_counter">
 						<i><small><b><span id="ext_currItem">0</span></b> items /
 						<b><span id="ext_totalItems">0</span></b> items</small></i>
@@ -114,7 +117,7 @@ window.addEvent('domready', function() {
 							<a href="http://www.matware.com.ar/proyects/jupgradepro.html">Project Site</a> /
 							<a href="http://www.matware.com.ar/forums/jupgradepro.html">Community</a> /
 							<a href="https://github.com/fastslack/jUpgradePro">GitHub</a> /
-							<a href="https://github.com/fastslack/jUpgradePro/wiki">Documentation</a><br />
+							<a href="http://matware.com.ar/documentation/jupgradepro/main-table-of-contents.html">Documentation</a><br />
 						</h3>
 					</div>
 				</div>

@@ -200,6 +200,18 @@ class JUpgradeproModelChecks extends JModelLegacy
 			}
 		}
 
+		// Change protected to $observers object to disable it
+		// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
+		// @@ See: https://github.com/joomla/joomla-cms/pull/3408
+		if (version_compare($new_version, '3.0', '>=')) {
+			$file = JPATH_LIBRARIES.'/joomla/observer/updater.php';
+			$read = JFile::read($file);
+			$read = str_replace("call_user_func_array(\$eventListener, \$params)", "//call_user_func_array(\$eventListener, \$params)", $read);
+			$read = JFile::write($file, $read);
+
+			require_once($file);
+		}
+
 		// Done checks
 		if (!JUpgradeproHelper::isCli())
 			$this->returnError (100, 'DONE');

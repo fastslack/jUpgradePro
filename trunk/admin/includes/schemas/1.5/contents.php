@@ -176,28 +176,8 @@ class JUpgradeproContent extends JUpgradepro
 				throw new Exception($this->_db->getErrorMsg());
 			}
 
-			// Change protected to $observers object to disable it
-			// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
-			// @@ See: https://github.com/joomla/joomla-cms/pull/3408
-			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
-				$file = JPATH_LIBRARIES.'/joomla/table/table.php';
-				$read = JFile::read($file);
-				$read = str_replace("	protected \$_observers;", "	public \$_observers;", $read);
-				$read = JFile::write($file, $read);
-
-				require_once($file);
-			}
-
 			// Getting the asset table
 			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
-
-			// Disable observers calls
-			// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
-			// @@ See: /libraries/joomla/observer/updater.php Line: 104 
-			// @@ call_user_func_array($eventListener, $params);
-			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
-				$content->_observers->doCallObservers(false);
-			}
 
 			// Bind data to save content
 			if (!$content->bind($row)) {

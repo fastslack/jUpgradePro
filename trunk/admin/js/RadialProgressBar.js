@@ -18,7 +18,7 @@ var RadialProgressBar = new Class({
       animateText: true,
       autoStart: true,
 			watch: true,
-			watchInterval: 100,
+			watchInterval: 1000,
 			stopWatchAt100: true
     },
 

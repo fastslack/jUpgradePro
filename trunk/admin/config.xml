@@ -26,6 +26,13 @@
 			default="100"
 		/>
 
+<!--
+		<field name="keep_ids" type="radio" default="1" label="Keep id's" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+-->
+
 	</fieldset>
 
 	<fieldset

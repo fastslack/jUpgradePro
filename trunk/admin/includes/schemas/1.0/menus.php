@@ -10,6 +10,7 @@
 * @link http://www.matware.com.ar/
 * @license GNU General Public License version 2 or later; see LICENSE
 */
+JLoader::register('JUpgradeproMenus', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.menus.class.php');
 /**
  * Upgrade class for Menus
  *
@@ -18,7 +19,7 @@
  * @since	0.4.5
  */
 
-class JUpgradeproMenu extends JUpgradepro
+class JUpgradeproMenu extends JUpgradeproMenus
 {
 	/**
 	 * Setting the conditions hook
@@ -33,11 +34,11 @@ class JUpgradeproMenu extends JUpgradepro
 		
 		$conditions['as'] = "m";
 		
-		$conditions['select'] = 'm.id, m.menutype, m.name, m.name AS title, \'\' AS alias, m.link, m.type, c.option, m.published, m.parent AS parent_id,'
-			.' m.sublevel AS level, m.ordering, m.checked_out, m.checked_out_time, m.browserNav, m.access, m.params, \'\' AS home';
+		$conditions['select'] = 'm.*, c.option, p.name AS palias';
 		
 		$join = array();
 		$join[] = "#__components AS c ON c.id = m.componentid";
+		$join[] = "#__menu AS p ON p.id = m.parent";
 		
 		$conditions['where'] = array();
 		$conditions['join'] = $join;
@@ -79,9 +80,9 @@ class JUpgradeproMenu extends JUpgradepro
 		$query->clear();
 		// 3.0 Changes
 		if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
-			$query->select("`menutype`, `title`, '' AS `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
+			$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
 		}else{
-			$query->select("`menutype`, `title`, '' AS `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
+			$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
 		}
 
 		$query->from("#__menu");
@@ -133,66 +134,6 @@ class JUpgradeproMenu extends JUpgradepro
  
 			$row = (array) $row;
 
-			// Fixing access
-			$row['access']++;
-
-			// Fixing level
-			if (isset($row['sublevel']))
-			{
-				$row['level'] = $row['sublevel']++;
-			}
-
-			// Fixing language
-			$row['language'] = '*';
-
-			// Fixing parent_id
-			if (isset($row['parent']))
-			{
-				$row['parent_id'] = $row['parent'];
-			}
-
-      // Converting params to JSON
-      $row['params'] = $this->convertParams($row['params']);
-
-      // Fixing menus URLs
-      if (strpos($row['link'], 'option=com_content') !== false)
-			{
-        if (strpos($row['link'], 'view=frontpage') !== false) {
-          $row['link'] = 'index.php?option=com_content&view=featured';
-        } 
-      }
-
-      if ( (strpos($row['link'], 'Itemid=') !== false) AND $row['type'] == 'menulink')
-			{
-
-          // Extract the Itemid from the URL
-          if (preg_match('|Itemid=([0-9]+)|', $row['link'], $tmp))
-					{
-          	$item_id = $tmp[1];
-
-            $row['params'] = $row['params'] . "\naliasoptions=".$item_id;
-            $row['type'] = 'alias';
-            $row['link'] = 'index.php?Itemid=';
-          }
-      }
-
-      if (strpos($row['link'], 'option=com_user&') !== false)
-			{
-        $row['link'] = preg_replace('/com_user/', 'com_users', $row['link']);
-        $row['component_id'] = 25;
-				$row['option'] = 'com_users';
-
-				// Change the register view to registration
-        if (strpos($row['link'], 'view=register') !== false)
-				{
-          $row['link'] = 'index.php?option=com_users&view=registration';
-        }
-				else if (strpos($row['link'], 'view=user') !== false)
-				{
-          $row['link'] = 'index.php?option=com_users&view=profile';
-        }
-      }
-      // End fixing menus URL's
     }
 
 		return $rows;
@@ -227,12 +168,19 @@ class JUpgradeproMenu extends JUpgradepro
 	 */
 	public function dataHook($rows = null)
 	{
+		// Get the query
+		$query = $this->_db->getQuery(true);
+
+		// Get the params
 		$params = $this->getParams();
-		$table	= $this->getDestinationTable();
+
+		// Get the table name
+		$tablename = $this->getDestinationTable();
 
 		// Getting the extensions id's of the new Joomla installation
-		$query = "SELECT extension_id, element"
-		." FROM #__extensions";
+		$query->clear();
+		$query->select('extension_id, element');
+		$query->from('#__extensions');
 		$this->_db->setQuery($query);
 		$extensions_ids = $this->_db->loadObjectList('element');	
 
@@ -241,20 +189,38 @@ class JUpgradeproMenu extends JUpgradepro
 
 		$total = count($rows);
 
+		// Start the update
 		foreach ($rows as $row)
 		{
 			// Convert the array into an object.
 			$row = (object) $row;
 
-			// Create the alias
-			$row->alias = JFilterOutput::stringURLSafe($row->title);
+			// Converting params to JSON
+			$row->params = $this->convertParams($row->params);
 
-			// Getting the duplicated alias
-			$alias = $this->getAlias($row->alias);
+			// Fixing language
+			$row->language = '*';
+
+			// Fixing access
+			$row->access++;
+
+			// Fixing level
+			if (isset($row->sublevel))
+			{
+				$row->level = $row->sublevel++;
+			}
+
+			// Fixing type
+			$row->type = ($row->type == 'url') ? 'url' : 'component';
 
 			// Prevent MySQL duplicate error
 			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
+			$row->alias = JFilterOutput::stringURLSafe($row->name);
+			$alias = $this->getAlias($row->alias);
 			$row->alias = (!empty($alias)) ? $alias."~" : $row->alias;
+
+			// Fixing menus URLs
+			$row = $this->migrateLink($row);
 
 			// Get new/old id's values
 			$menuMap = new stdClass();
@@ -264,13 +230,13 @@ class JUpgradeproMenu extends JUpgradepro
 
 			// Fixing id if == 1 (used by root)
 			if ($row->id == 1) {
-				$query = "SELECT id"
-				." FROM #__menu"
-				." ORDER BY id DESC LIMIT 1";
+				$query->clear();
+				$query->select('id + 1');
+				$query->from('#__menu');
+				$query->order('id DESC');
+				$query->limit(1);
 				$this->_db->setQuery($query);
-				$lastid = $this->_db->loadResult();	
-
-				$row->id = $lastid + 1;
+				$row->id = $this->_db->loadResult();
 			}	
 
 			// Fixing extension_id
@@ -278,39 +244,46 @@ class JUpgradeproMenu extends JUpgradepro
 				$row->component_id = isset($extensions_ids[$row->option]) ? $extensions_ids[$row->option]->extension_id : 0;
 			}
 			
-			// Fixes
+			// Fixing name
 			$row->title = $row->name;
 
 			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>='))
 				unset($row->ordering);
 
-
 			// Not needed
+			unset($row->id);
 			unset($row->name);
 			unset($row->option);
 			unset($row->componentid);
 
-      // Extract the id from the URL
-      if (preg_match('|id=([0-9]+)|', $row->link, $tmp))
-			{
-				$id = $tmp[1];
+			// Getting the table and query
+			$table = JTable::getInstance('Menu', 'JTable');
+			// Setting the location of the new category
+			if ($row->palias !== false) {
 
-				if ( (strpos($row->link, 'layout=blog') !== false) AND
-					( (strpos($row->link, 'view=category') !== false) OR
-					(strpos($row->link, 'view=section') !== false) ) ) {
-						$catid = $this->getMapListValue('categories', 'categories', 'old = ' . $id);
-						$row->link = "index.php?option=com_content&view=category&layout=blog&id={$catid}";
-				} elseif (strpos($row->link, 'view=section') !== false) {
-						$catid = $this->getMapListValue('categories', 'com_section', 'old = ' . $id);
-						$row->link = 'index.php?option=com_content&view=category&layout=blog&id='.$catid;
-				}
+				$query->clear();
+				$query->select('id');
+				$query->from('#__menu');
+				$query->where('title = '.$this->_db->q($row->palias));
+				$query->order('id DESC');
+				$query->limit(1);
+				$this->_db->setQuery($query);
+				$row->parent = $this->_db->loadResult();				
+
+				$table->setLocation($row->parent, 'last-child');
+			}
+			// Bind the data
+			try {
+				$table->bind((array) $row);
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
 			}
 
-			// Inserting the menu
-			try	{
-				$this->_db->insertObject($table, $row);
-			}	catch (Exception $e) {
-				throw new Exception($e->getMessage());
+			// Store to database
+			try {
+				$table->store();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
 			}
 
 			// Save the new id

@@ -38,7 +38,7 @@ class JUpgradeproMenu extends JUpgradeproMenus
 		
 		$join = array();
 		$join[] = "#__components AS c ON c.id = m.componentid";
-		$join[] = "LEFT JOIN #__menu AS p ON p.id = m.parent";
+		$join[] = "#__menu AS p ON p.id = m.parent";
 		
 		$conditions['where'] = array();
 		$conditions['join'] = $join;

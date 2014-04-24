@@ -1,3 +1,23 @@
+# Travis file for jUpgradePro
+language: php
+
+# list any PHP version you want to test against
 php:
-  - "5.4"
-  - "5.3"
+  # aliased to a recent 5.3.x version
+  - 5.3
+  # aliased to a recent 5.4.x version
+  - 5.4
+  # aliased to a recent 5.5.x version
+  - 5.5
+
+# optionally specify a list of environments, for example to test different RDBMS
+env:
+  - DB=mysql
+
+# omitting "script:" will default to phpunit
+# use the $DB env variable to determine the phpunit.xml to use
+#script: phpunit --configuration phpunit_$DB.xml --coverage-text
+
+# configure notifications (email, IRC, campfire etc)
+notifications:
+  email: "support@matware.com.ar"

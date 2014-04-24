@@ -200,6 +200,19 @@ class JUpgradeproModelChecks extends JModelLegacy
 			}
 		}
 
+		// Checking tables
+		if ($params->skip_core_categories != 1) {
+			$query->clear();
+			$query->select('COUNT(id)');
+			$query->from("`#__categories`");
+			$this->_db->setQuery($query);
+			$categories_count = $this->_db->loadResult();
+
+			if ($categories_count > 7) {
+				throw new Exception('COM_JUPGRADEPRO_ERROR_DATABASE_CATEGORIES');
+			}
+		}
+
 		// Change protected to $observers object to disable it
 		// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
 		// @@ See: https://github.com/joomla/joomla-cms/pull/3408

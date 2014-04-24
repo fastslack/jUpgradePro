@@ -641,7 +641,7 @@ class JUpgradepro
 		$query = $this->_db->getQuery(true);
 		$query->select('alias');
 		$query->from($table);
-		$query->where("alias LIKE '{$alias}%'");
+		$query->where("alias RLIKE '^{$alias}$'", "OR")->where("alias RLIKE '^{$alias}[~]$'");
 		$query->order('alias DESC');
 		$query->limit(1);
 		$this->_db->setQuery($query);

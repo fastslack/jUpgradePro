@@ -107,17 +107,9 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		$table = $this->getDestinationTable();
 		// Getting the component parameter with global settings
 		$params = $this->getParams();
-
-		/**
-		 * Inserting the categories
-		 * @since	2.5.1
-		 */
 		// Content categories
 		$this->section = 'com_content'; 
-
 		// Initialize values
-		$aliases = array();
-		$unique_alias_suffix = 1;
 		$rootidmap = 0;
 
 		// JTable::store() run an update if id exists so we create them first
@@ -164,13 +156,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 				$category['id'] = $rootidmap;
 			}
 
-			// Check if has duplicated aliases
-			$alias = $this->getAlias('#__categories', $category['alias']);
-
-			// Prevent MySQL duplicate error
-			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
-			$category['alias'] = (!empty($alias)) ? $alias."~" : $category['alias'];
-
+			// Insert the category
 			$this->insertCategory($category);
 
 			// Updating the steps table

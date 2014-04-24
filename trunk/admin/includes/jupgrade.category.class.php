@@ -49,10 +49,6 @@ class JUpgradeproCategory extends JUpgradepro
 	 */
 	public function databaseHook($rows = null)
 	{
-		// Initialize values
-		$aliases = array();
-		$unique_alias_suffix = 1;
-
 		// Do some custom post processing on the list.
 		foreach ($rows as &$row)
 		{
@@ -74,13 +70,6 @@ class JUpgradeproCategory extends JUpgradepro
 			if ($row['alias'] == "") {
 				$row['alias'] = JFilterOutput::stringURLSafe($row['title']);
 			}
-
-			// The Joomla 2.5/3.0+ database structure does not allow duplicate aliases
-			if (in_array($row['alias'], $aliases, true)) {
-				$row['alias'] = $row['alias'].$unique_alias_suffix;
-				$unique_alias_suffix++;
-			}
-			$aliases[] = $row['alias'];
 		}
 
 		return $rows;
@@ -139,10 +128,6 @@ class JUpgradeproCategory extends JUpgradepro
 	 */
 	public function insertCategory($row, $parent = false)
 	{
-		//$file = JPATH_LIBRARIES.'/joomla/table/table.php';
-		//require_once($file);
-		//jimport('joomla.table.table');
-
 		// Getting the category table
 		$category = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
 

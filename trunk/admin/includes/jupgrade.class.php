@@ -636,11 +636,11 @@ class JUpgradepro
 	 * @since	3.2.1
 	 * @throws	Exception
 	 */
-	public function getAlias($alias)
+	public function getAlias($table, $alias)
 	{
 		$query = $this->_db->getQuery(true);
 		$query->select('alias');
-		$query->from('#__menu');
+		$query->from($table);
 		$query->where("alias LIKE '{$alias}%'");
 		$query->order('alias DESC');
 		$query->limit(1);

@@ -33,7 +33,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	{
 		$conditions = array();
 
-		$conditions['select'] = '`id`, `id` AS sid, `title`, `alias`, `section` AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
+		$conditions['select'] = '`id`, `id` AS sid, `title`, `alias`, `section`, `section` AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
 
 		$where_or = array();
 		$where_or[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
@@ -160,24 +160,16 @@ class JUpgradeproCategories extends JUpgradeproCategory
 			$category['rgt'] = null;
 			$category['level'] = null;
 
-			$category['access'] = $category['access'] == 0 ? 1 : $category['access'] + 1;
-			$category['language'] = !empty($category['language']) ? $category['language'] : '*';
-
 			if ($category['id'] == 1) {
 				$category['id'] = $rootidmap;
 			}
 
 			// Check if has duplicated aliases
-			$query = "SELECT alias"
-			." FROM #__categories"
-			." WHERE alias = ".$this->_db->quote($category['alias']);
-			$this->_db->setQuery($query);
-			$aliases = $this->_db->loadAssoc();
+			$alias = $this->getAlias('#__categories', $category['alias']);
 
-			$count = count($aliases);
-			if ($count > 0) {
-				$category['alias'] .= "-".rand(0, 99999);
-			}
+			// Prevent MySQL duplicate error
+			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
+			$category['alias'] = (!empty($alias)) ? $alias."~" : $category['alias'];
 
 			$this->insertCategory($category);
 

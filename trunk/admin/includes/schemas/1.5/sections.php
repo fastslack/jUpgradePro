@@ -106,10 +106,10 @@ class JUpgradeproSections extends JUpgradeproCategory
 	 */
 	public function afterHook()
 	{
-		// Fixing the parents
-		$this->fixParents();
 		// Insert existing categories
 		$this->insertExisting();
+		// Fixing the parents
+		$this->fixParents();
 	}
 
 	/**
@@ -120,7 +120,7 @@ class JUpgradeproSections extends JUpgradeproCategory
 	 */
 	protected function fixParents()
 	{
-		$change_parent = $this->getMapList('categories', false, "section != 0");
+		$change_parent = $this->getMapList('categories', false, "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'");
 
 		// Insert the sections
 		foreach ($change_parent as $category)
@@ -130,14 +130,18 @@ class JUpgradeproSections extends JUpgradeproCategory
 			$table->load($category->new);
 
 			$custom = "old = {$category->section}";
+
 			$parent = $this->getMapListValue('categories', 'com_section', $custom);
 
-			// Setting the location of the new category
-			$table->setLocation($parent, 'last-child');
+			if (!empty($parent))
+			{
+				// Setting the location of the new category
+				$table->setLocation($parent, 'last-child');
 
-			// Insert the category
-			if (!@$table->store()) {
-				throw new Exception($table->getError());
+				// Insert the category
+				if (!$table->store()) {
+					throw new Exception($table->getError());
+				}
 			}
 		}
 	}

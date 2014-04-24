@@ -156,7 +156,7 @@ class JUpgradeproCategory extends JUpgradepro
 		// Get section and old id
 		$oldlist = new stdClass();
 		$oldlist->section = !empty($row['extension']) ? $row['extension'] : 0;
-		$oldlist->old = isset($row['old_id']) ? $row['old_id'] : $row['id'];
+		$oldlist->old = isset($row['old_id']) ? (int) $row['old_id'] : (int) $row['id'];
 		unset($row['old_id']);
 
 		// Setting the default rules
@@ -178,25 +178,17 @@ class JUpgradeproCategory extends JUpgradepro
 			}
 		}
 
-		// Getting the data
-		$query = $this->_db->getQuery(true);
-		$query->select('alias');
-		$query->from('#__categories');
-		$query->where("alias LIKE '{$row['alias']}%'");
-		$query->order('id DESC');
-		$query->limit(1);
-		$this->_db->setQuery($query);
-		$alias = $this->_db->loadColumn();
+		// Fix language and access
+		$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
+		$row['language'] = !empty($row['language']) ? $row['language'] : '*';
+
+		// Check if has duplicated aliases
+		$alias = $this->getAlias('#__categories', $row['alias']);
 
 		// Prevent MySQL duplicate error
 		// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
-		$c = count($alias);
-		if ($c > 0)
-		{
-			$row['alias'] = $alias[$c-1] . str_repeat("~", $c);
-		}
+		$row['alias'] = (!empty($alias)) ? $alias."~" : $row['alias'];
 
-		// @@ TODO: maybe $parent flag is unused
 		// If has parent made $path and get parent id
 		if ($parent !== false) {
 			// Setting the location of the new category
@@ -214,9 +206,9 @@ class JUpgradeproCategory extends JUpgradepro
 		}
 
 		// Get new id
-		$oldlist->new = $category->id;
+		$oldlist->new = (int) $category->id;
 
-		// Save old and new id
+		// Insert the row backup
 		if (!$this->_db->insertObject('#__jupgradepro_categories', $oldlist)) {
 			throw new Exception($this->_db->getErrorMsg());
 		}

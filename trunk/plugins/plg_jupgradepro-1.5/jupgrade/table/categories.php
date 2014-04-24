@@ -81,6 +81,8 @@ class JUpgradeTableCategories extends JUpgradeTable
 	{
 		$conditions = array();
 
+		$conditions['select'] = '`id`, `id` AS sid, `title`, `alias`, `section`, `section` AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
+
 		$where_or = array();
 		$where_or[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
 		$where_or[] = "section IN ('com_banner', 'com_contact', 'com_contact_details', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";

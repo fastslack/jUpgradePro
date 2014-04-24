@@ -77,12 +77,14 @@ class JUpgradeTableSections extends JUpgradeTable
 	public function getConditionsHook()
 	{
 		$conditions = array();
-				
+
+		$conditions['select'] = '`id`, `id` AS old_id, `title`, `alias`, \'com_section\' AS extension, `description`, `published`, `checked_out`, `checked_out_time`, `access`, `params`';
+
 		$where = array();
 		$where[] = "scope = 'content'";
-		
+
 		$conditions['where'] = $where;
-		
+
 		return $conditions;
 	}
 

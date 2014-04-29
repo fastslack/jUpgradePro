@@ -63,34 +63,36 @@ class JUpgradeproCategories extends JUpgradeproCategory
 			throw new RuntimeException($e->getMessage());
 		}
 
-		// Getting the menus
-		$query->clear();
-		$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`,  `params`, `created_user_id`");
-		$query->from("#__categories");
-		$query->where("id > 1");
-		$query->order('id ASC');
-		$this->_db->setQuery($query);
-
-		try {
-			$categories = $this->_db->loadObjectList();
-		} catch (RuntimeException $e) {
-			throw new RuntimeException($e->getMessage());
-		}
-
-
-		foreach ($categories as $category)
+		if ($this->params->keep_ids == 1)
 		{
-			$id = $category->id;
-			unset($category->id);
+			// Getting the categories
+			$query->clear();
+			$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`,  `params`, `created_user_id`");
+			$query->from("#__categories");
+			$query->where("id > 1");
+			$query->order('id ASC');
+			$this->_db->setQuery($query);
 
-			$this->_db->insertObject('#__jupgradepro_default_categories', $category);
+			try {
+				$categories = $this->_db->loadObjectList();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 
-			// Getting the categories table
-			$table = JTable::getInstance('Category', 'JTable');
-			// Load it before delete. Joomla bug?
-			$table->load($id);
-			// Delete
-			$table->delete($id);
+			foreach ($categories as $category)
+			{
+				$id = $category->id;
+				unset($category->id);
+
+				$this->_db->insertObject('#__jupgradepro_default_categories', $category);
+
+				// Getting the categories table
+				$table = JTable::getInstance('Category', 'JTable');
+				// Load it before delete. Joomla bug?
+				$table->load($id);
+				// Delete
+				$table->delete($id);
+			}
 		}
 	}
 
@@ -113,29 +115,34 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		$rootidmap = 0;
 
 		// JTable::store() run an update if id exists so we create them first
-		foreach ($rows as $category)
+		if ($this->params->keep_ids == 1)
 		{
-			$object = new stdClass();
+			foreach ($rows as $category)
+			{
+				$object = new stdClass();
 
-			$category = (array) $category;
+				$category = (array) $category;
 
-			if ($category['id'] == 1) {
-				$query = "SELECT id+1"
-				." FROM #__categories"
-				." ORDER BY id DESC LIMIT 1";
-				$this->_db->setQuery($query);
-				$rootidmap = $this->_db->loadResult();
+				if ($category['id'] == 1) {
+					$query->clear();
+					$query->select("`id` + 1");
+					$query->from("#__categories");
+					$query->where("id > 1");
+					$query->order('id DESC');
+					$query->limit(1);
+					$this->_db->setQuery($query);
 
-				$object->id = $rootidmap;
-				$category['old_id'] = $category['id'];
-				$category['id'] = $rootidmap;
-			}else{
-				$object->id = $category['id'];
-			}
+					$object->id = $category['id'] = $rootidmap;
+				}else{
+					$object->id = $category['id'];
+				}
 
-			// Inserting the categories
-			if (!$this->_db->insertObject($table, $object)) {
-				echo $this->_db->getErrorMsg();
+				// Inserting the categories
+				try {
+					$this->_db->insertObject($table, $object);
+				} catch (RuntimeException $e) {
+					throw new RuntimeException($e->getMessage());
+				}
 			}
 		}
 
@@ -146,17 +153,19 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		{
 			$category = (array) $category;
 
-			$category['asset_id'] = null;
-			$category['parent_id'] = 1;
-			$category['lft'] = null;
-			$category['rgt'] = null;
-			$category['level'] = null;
+			// Reset some fields
+			$category['asset_id'] = $category['lft'] = $category['rgt'] = null;
+
+			// Check if path is correct
+			$category['path'] = empty($category['path']) ? $category['alias'] : $category['path'];
 
 			if ($category['id'] == 1) {
 				$category['id'] = $rootidmap;
 			}
 
 			// Insert the category
+			$category['old_id'] = $category['id'];
+
 			$this->insertCategory($category);
 
 			// Updating the steps table

@@ -82,17 +82,25 @@ class JUpgradeproModelChecks extends JModelLegacy
 		// Get the tables from old site
 		if ($params->method == "database") {
 			$old_tables = JUpgradepro::getInstance($step)->_driver->_db_old->getTableList();
+			$old_columns = JUpgradepro::getInstance($step)->_driver->_db_old->getTableColumns('#__users');
 			$old_prefix = $params->old_dbprefix;
 		}else if ($params->method == "rest") {
 			$old_tables = json_decode($driver->requestRest('tableslist'));
+			$old_columns = array();
+			//$old_columns = json_decode($driver->requestRest('tablescolumns'));
 			$old_prefix = substr($old_tables[10], 0, strpos($old_tables[10], '_')+1);
 		}
 
 		// Check the old site Joomla! version
-		$old_version = $this->checkOldVersion($old_tables, $old_prefix);
+		$old_version = $this->checkOldVersion($old_tables, $old_prefix, $old_columns);
 		// Get the new site Joomla! version
 		$v = new JVersion();
 		$new_version = $v->RELEASE;
+
+		// Check if the version is fine
+		if (empty($old_version) || empty($new_version)) {
+			throw new Exception('COM_JUPGRADEPRO_ERROR_NO_VERSION');
+		}
 
 		// Save the versions to database
 		$this->setVersion('old', $old_version);
@@ -175,7 +183,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 		}		
 
 		// Checking tables
-		if ($params->skip_core_contents != 1) {
+		if ($params->skip_core_contents != 1 && $params->keep_ids == 1) {
 			$query->clear();
 			$query->select('COUNT(id)');
 			$query->from("`#__content`");
@@ -188,7 +196,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 		}
 
 		// Checking tables
-		if ($params->skip_core_users != 1) {
+		if ($params->skip_core_users != 1 && $params->keep_ids == 1) {
 			$query->clear();
 			$query->select('COUNT(id)');
 			$query->from("`#__users`");
@@ -201,7 +209,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 		}
 
 		// Checking tables
-		if ($params->skip_core_categories != 1) {
+		if ($params->skip_core_categories != 1 && $params->keep_ids == 1) {
 			$query->clear();
 			$query->select('COUNT(id)');
 			$query->from("`#__categories`");
@@ -250,7 +258,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 	 * @return	version	The Joomla! version
 	 * @since	3.2.0
 	 */
-	public function checkOldVersion ($tables, $prefix)
+	public function checkOldVersion ($tables, $prefix, $columns)
 	{
 		// Trim the prefix value
 		$prefix = trim($prefix);
@@ -261,7 +269,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 		$j25 = "{$prefix}update_categories";
 		$j30 = "{$prefix}assets";
 		$j31 = "{$prefix}content_types";
-		$j32 = "{$prefix}postinstall_messages";
+		$j32 = $j33 = "{$prefix}postinstall_messages";
 
 		// Check the correct version
 		if (in_array($j10, $tables))
@@ -279,6 +287,10 @@ class JUpgradeproModelChecks extends JModelLegacy
 		else if(in_array($j31, $tables) && !in_array($j32, $tables))
 		{
 			$version = "3.1";
+		}
+		else if(in_array($j33, $tables) && array_key_exists('requireReset', $columns))
+		{
+			$version = "3.3";
 		}
 		else if(in_array($j32, $tables))
 		{

@@ -26,12 +26,10 @@
 			default="100"
 		/>
 
-<!--
-		<field name="keep_ids" type="radio" default="1" label="Keep id's" description="">
-			<option value="1">JYES</option>
+		<field name="keep_ids" type="radio" default="0" label="COM_JUPGRADEPRO_CONFIG_KEEP_IDS" description="COM_JUPGRADEPRO_CONFIG_KEEP_IDS_DESC">
 			<option value="0">JNO</option>
+			<option value="1">JYES</option>
 		</field>
--->
 
 	</fieldset>
 

@@ -115,7 +115,7 @@ class JUpgradeproModelCleanup extends JModelLegacy
 			$del_tables[] = '#__jupgradepro_modules';
 
 		// Truncate contents if are enabled
-		if ($params->skip_core_contents != 1)
+		if ($params->skip_core_contents != 1 && $params->keep_ids == 1)
 			$del_tables[] = '#__content';
 
 		for ($i=0;$i<count($del_tables);$i++) {

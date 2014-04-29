@@ -167,12 +167,20 @@ class JUpgradeproCategory extends JUpgradepro
 		$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
 		$row['language'] = !empty($row['language']) ? $row['language'] : '*';
 
+		// Check if path is correct
+		$row['path'] = empty($row['path']) ? $row['alias'] : $row['path'];
+
 		// Check if has duplicated aliases
 		$alias = $this->getAlias('#__categories', $row['alias']);
 
 		// Prevent MySQL duplicate error
 		// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
 		$row['alias'] = (!empty($alias)) ? $alias."~" : $row['alias'];
+
+		// Remove the default id if keep ids parameters is not enabled
+		if ($this->params->keep_ids != 1) {
+			unset($row['id']);
+		}
 
 		// If has parent made $path and get parent id
 		if ($parent !== false) {

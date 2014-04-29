@@ -167,13 +167,20 @@ class JUpgradeproContent extends JUpgradepro
 			// Converting the metadata to JSON
 			$row['metadata'] = $this->convertParams($row['metadata'], false);
 
-			// JTable:store() run an update if id exists into the object so we create them first
-			$object = new stdClass();
-			$object->id = $row['id'];
+			if ($this->params->keep_ids == 1)
+			{
+				// JTable:store() run an update if id exists into the object so we create them first
+				$object = new stdClass();
+				$object->id = $row['id'];
 
-			// Inserting the content
-			if (!$this->_db->insertObject($table, $object)) {
-				throw new Exception($this->_db->getErrorMsg());
+				// Inserting the content
+				if (!$this->_db->insertObject($table, $object)) {
+					throw new Exception($this->_db->getErrorMsg());
+				}
+			}
+			else
+			{
+				unset($row['id']);
 			}
 
 			// Getting the asset table

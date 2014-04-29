@@ -106,10 +106,11 @@ class JUpgradeproSections extends JUpgradeproCategory
 	 */
 	public function afterHook()
 	{
-		// Insert existing categories
-		$this->insertExisting();
 		// Fixing the parents
 		$this->fixParents();
+
+		// Insert existing categories
+		$this->insertExisting();
 	}
 
 	/**
@@ -186,7 +187,6 @@ class JUpgradeproSections extends JUpgradeproCategory
 
 				$db->setQuery($query);
 				$parent = $db->loadResult();
-
 			}
 
 			// Inserting the category

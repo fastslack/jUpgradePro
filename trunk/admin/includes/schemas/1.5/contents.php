@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -141,16 +141,12 @@ class JUpgradeproContent extends JUpgradepro
 			$row['alias'] = !empty($row['alias']) ? $row['alias'] : "###BLANK###";
 			$row['alias'] = JApplication::stringURLSafe($row['alias']);
 
-			// Check if has duplicated aliases
-			$query = "SELECT alias FROM #__content"
-			." WHERE alias = ".$this->_db->quote($row['alias']);
-			$this->_db->setQuery($query);
-			$aliases = $this->_db->loadAssoc();
+			// Getting the duplicated alias
+			$alias = $this->getAlias('#__content', $row['alias']);
 
-			$count = count($aliases);
-			if ($count > 0) {
-				$row['alias'] .= "-".rand(0, 99999999);
-			}
+			// Prevent MySQL duplicate error
+			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
+			$row['alias'] = (!empty($alias)) ? $alias."~" : $row['alias'];
 
 			// Setting the default rules
 			$rules = array();
@@ -188,17 +184,17 @@ class JUpgradeproContent extends JUpgradepro
 
 			// Bind data to save content
 			if (!$content->bind($row)) {
-				echo $content->getError();
+				throw new Exception($content->getError());
 			}
 
 			// Check the content
 			if (!$content->check()) {
-				echo $content->getError();
+				throw new Exception($content->getError());
 			}
 
 			// Insert the content
 			if (!$content->store()) {
-				echo $content->getError();
+				throw new Exception($content->getError());
 			}
 
 			// Updating the steps table

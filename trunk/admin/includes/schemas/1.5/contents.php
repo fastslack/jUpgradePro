@@ -137,17 +137,6 @@ class JUpgradeproContent extends JUpgradepro
 			// Map catid
 			$row['catid'] = isset($catidmap[$row['catid']]) ? $catidmap[$row['catid']]->new : $defaultId;
 
-			// Aliases
-			$row['alias'] = !empty($row['alias']) ? $row['alias'] : "###BLANK###";
-			$row['alias'] = JApplication::stringURLSafe($row['alias']);
-
-			// Getting the duplicated alias
-			$alias = $this->getAlias('#__content', $row['alias']);
-
-			// Prevent MySQL duplicate error
-			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
-			$row['alias'] = (!empty($alias)) ? $alias."~" : $row['alias'];
-
 			// Setting the default rules
 			$rules = array();
 			$rules['core.delete'] = array('6' => true);
@@ -156,7 +145,7 @@ class JUpgradeproContent extends JUpgradepro
 			$row['rules'] = $rules;
 
 			// Add tags if Joomla! is greater than 3.1
-			if (version_compare(JUpgradeproHelper::getVersion('old'), '2.5', '<') && version_compare(JUpgradeproHelper::getVersion('new'), '3.1', '>=')) {
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.1', '>=')) {
 				$row['metadata'] = $row['metadata'] . "\ntags=";
 			}
 
@@ -181,6 +170,20 @@ class JUpgradeproContent extends JUpgradepro
 
 			// Getting the asset table
 			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
+
+			// Aliases
+			$row['alias'] = !empty($row['alias']) ? $row['alias'] : "###BLANK###";
+			$row['alias'] = JApplication::stringURLSafe($row['alias']);
+
+			// Prevent MySQL duplicate error
+			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
+			if ($content->load(array('alias' => $row['alias'], 'catid' => $row['catid'])))
+			{
+				// Getting the duplicated alias
+				$alias = $this->getAlias('#__content', $row['alias']);
+				// Set the modified alias
+				$row['alias'] = $alias."~";
+			}
 
 			// Bind data to save content
 			if (!$content->bind($row)) {

@@ -67,7 +67,7 @@ class JUpgradeTableUsergroupmap extends JUpgradeTable
 	 */
 	function migrate(&$rows)
 	{
-		foreach ($rows as $row)
+		foreach ($rows as &$row)
 		{
 			// Do some custom post processing on the list.
 			// The schema for old group map is: group_id, section_value, aro_id

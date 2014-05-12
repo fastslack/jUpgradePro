@@ -41,6 +41,57 @@ class JUpgradeproCategory extends JUpgradepro
 	protected $_tbl_key = 'id';
 
 	/**
+	 * Method to do pre-processes modifications before migrate
+	 *
+	 * @return	boolean	Returns true if all is fine, false if not.
+	 * @since	3.2.0
+	 * @throws	Exception
+	 */
+	public function beforeHook()
+	{
+		// Insert uncategorized id
+		$query = $this->_db->getQuery(true);
+		$query->insert('#__jupgradepro_categories')->columns('`old`, `new`')->values("0, 2");
+		try {
+			$this->_db->setQuery($query)->execute();
+		} catch (RuntimeException $e) {
+			throw new RuntimeException($e->getMessage());
+		}
+
+		if ($this->params->keep_ids == 1)
+		{
+			// Getting the categories
+			$query->clear();
+			$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`,  `params`, `created_user_id`");
+			$query->from("#__categories");
+			$query->where("id > 1");
+			$query->order('id ASC');
+			$this->_db->setQuery($query);
+
+			try {
+				$categories = $this->_db->loadObjectList();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
+
+			foreach ($categories as $category)
+			{
+				$id = $category->id;
+				unset($category->id);
+
+				$this->_db->insertObject('#__jupgradepro_default_categories', $category);
+
+				// Getting the categories table
+				$table = JTable::getInstance('Category', 'JTable');
+				// Load it before delete. Joomla bug?
+				$table->load($id);
+				// Delete
+				$table->delete($id);
+			}
+		}
+	}
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
@@ -57,8 +108,6 @@ class JUpgradeproCategory extends JUpgradepro
 			$row['params'] = $this->convertParams($row['params']);
 			$row['title'] = str_replace("'", "&#39;", $row['title']);
 			$row['description'] = str_replace("'", "&#39;", $row['description']);
-			$row['extension'] = isset($row['section']) ? $row['section'] : '' ;
-			unset($row['section']);
 
 			if ($row['extension'] == 'com_banner') {
 				$row['extension'] = "com_banners";
@@ -114,7 +163,7 @@ class JUpgradeproCategory extends JUpgradepro
 			$table = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
 
 			if (!$table->rebuild()) {
-				echo JError::raiseError(500, $table->getError());
+				throw new Exception($table->getError());
 			}
 		}
 	}
@@ -151,7 +200,7 @@ class JUpgradeproCategory extends JUpgradepro
 
 		// Correct extension
 		if (isset($row['extension'])) {
-			if (is_numeric($row['extension']) || $row['extension'] == "" || $row['extension'] == "category") {
+			if ($this->params->keep_ids == 1 && is_numeric($row['extension']) || $row['extension'] == "" || $row['extension'] == "category") {
 				$row['extension'] = "com_content";
 			}
 
@@ -163,8 +212,7 @@ class JUpgradeproCategory extends JUpgradepro
 			}
 		}
 
-		// Fix language and access
-		$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;
+		// Fix language
 		$row['language'] = !empty($row['language']) ? $row['language'] : '*';
 
 		// Check if path is correct
@@ -180,6 +228,12 @@ class JUpgradeproCategory extends JUpgradepro
 		// Remove the default id if keep ids parameters is not enabled
 		if ($this->params->keep_ids != 1) {
 			unset($row['id']);
+
+			if ($row['parent_id'] != 1) {
+				$oldlist->section = $row['parent_id'];
+			}else{
+				$parent = 1;
+			}
 		}
 
 		// If has parent made $path and get parent id

@@ -31,67 +31,29 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	 */
 	public static function getConditionsHook()
 	{
-		$conditions = array();
+		// Get the component parameters
+		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
+		$params = JUpgradeproHelper::getParams();
 
+		$conditions = array();
 		$conditions['select'] = '*';
 
-		$where_or = array();
-		$where_or[] = "extension REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
-		$where_or[] = "extension IN ('com_banners', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
-
-		$conditions['order'] = "id DESC, extension DESC";		
-		$conditions['where_or'] = $where_or;
-		
-		return $conditions;
-	}
-
-	/**
-	 * Method to do pre-processes modifications before migrate
-	 *
-	 * @return	boolean	Returns true if all is fine, false if not.
-	 * @since	3.2.0
-	 * @throws	Exception
-	 */
-	public function beforeHook()
-	{
-		// Insert uncategorized id
-		$query = $this->_db->getQuery(true);
-		$query->insert('#__jupgradepro_categories')->columns('`old`, `new`')->values("0, 2");
-		try {
-			$this->_db->setQuery($query)->execute();
-		} catch (RuntimeException $e) {
-			throw new RuntimeException($e->getMessage());
-		}
-
-		// Getting the menus
-		$query->clear();
-		$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`,  `params`, `created_user_id`");
-		$query->from("#__categories");
-		$query->where("id > 1");
-		$query->order('id ASC');
-		$this->_db->setQuery($query);
-
-		try {
-			$categories = $this->_db->loadObjectList();
-		} catch (RuntimeException $e) {
-			throw new RuntimeException($e->getMessage());
-		}
-
-
-		foreach ($categories as $category)
+		if ($params->keep_ids == 1)
 		{
-			$id = $category->id;
-			unset($category->id);
-
-			$this->_db->insertObject('#__jupgradepro_default_categories', $category);
-
-			// Getting the categories table
-			$table = JTable::getInstance('Category', 'JTable');
-			// Load it before delete. Joomla bug?
-			$table->load($id);
-			// Delete
-			$table->delete($id);
+			$where_or = array();
+			$where_or[] = "extension REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
+			$where_or[] = "extension IN ('com_banners', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
+			$conditions['where_or'] = $where_or;
+			$conditions['order'] = "id DESC, extension DESC";	
+		}else{
+			$where = array();
+			$where[] = "path != 'uncategorised'";
+			$where[] = "(extension REGEXP '^[\-\+]?[[:digit:]]*\.?[[:digit:]]*$' OR extension IN ('com_banners', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' ))";
+			$conditions['where'] = $where;
+			$conditions['order'] = "parent_id DESC";	
 		}
+
+		return $conditions;
 	}
 
 	/**
@@ -109,38 +71,36 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		$params = $this->getParams();
 		// Initialize values
 		$rootidmap = 0;
-		// Content categories
-		$this->section = 'com_content'; 
 
 		// JTable::store() run an update if id exists so we create them first
-		foreach ($rows as $category)
+		if ($this->params->keep_ids == 1)
 		{
-			$object = new stdClass();
-
-			$category = (array) $category;
-
-			if ($category['id'] == 1) {
-				$query = "SELECT id+1"
-				." FROM #__categories"
-				." ORDER BY id DESC LIMIT 1";
-				$this->_db->setQuery($query);
-				$rootidmap = $this->_db->loadResult();
-
-				$object->id = $rootidmap;
-				$category['old_id'] = $category['id'];
-				$category['id'] = $rootidmap;
-			}else{
-				$object->id = $category['id'];
-			}
-
-			// Inserting the categories id's
-			try
+			foreach ($rows as $category)
 			{
-				$this->_db->insertObject($table, $object);
-			}
-			catch (RuntimeException $e)
-			{
-				throw new RuntimeException($this->_db->getErrorMsg());
+				$object = new stdClass();
+
+				$category = (array) $category;
+
+				if ($category['id'] == 1) {
+					$query = $this->_db->getQuery(true);
+					$query->select("`id` + 1");
+					$query->from("#__categories");
+					$query->where("id > 1");
+					$query->order('id DESC');
+					$query->limit(1);
+					$this->_db->setQuery($query);
+
+					$object->id = $category['id'] = $rootidmap;
+				}else{
+					$object->id = $category['id'];
+				}
+
+				// Inserting the categories
+				try {
+					$this->_db->insertObject($table, $object);
+				} catch (RuntimeException $e) {
+					throw new RuntimeException($e->getMessage());
+				}
 			}
 		}
 
@@ -150,12 +110,6 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		foreach ($rows as $category)
 		{
 			$category = (array) $category;
-
-			$category['asset_id'] = null;
-			$category['parent_id'] = 1;
-			$category['lft'] = null;
-			$category['rgt'] = null;
-			$category['level'] = null;
 
 			if ($category['id'] == 1) {
 				$category['id'] = $rootidmap;
@@ -169,5 +123,49 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		}
 
 		return false;
+	}
+
+	/**
+	 * Run custom code after hooks
+	 *
+	 * @return	void
+	 * @since	3.0
+	 */
+	public function afterHook()
+	{
+		// Fixing the parents
+		$this->fixParents();
+		// Insert existing categories
+		//$this->insertExisting();
+	}
+
+	/**
+	 * Update the categories parent's
+	 *
+	 * @return	void
+	 * @since	3.0
+	 */
+	protected function fixParents()
+	{
+		$change_parent = $this->getMapList('categories', false, "section != 0");
+
+		// Insert the sections
+		foreach ($change_parent as $category)
+		{
+			// Getting the category table
+			$table = JTable::getInstance('Category', 'JTable');
+			$table->load($category->new);
+
+			$custom = "old = {$category->section}";
+			$parent = $this->getMapListValue('categories', false, $custom);
+
+			// Setting the location of the new category
+			$table->setLocation($parent, 'last-child');
+
+			// Insert the category
+			if (!@$table->store()) {
+				throw new Exception($table->getError());
+			}
+		}
 	}
 }

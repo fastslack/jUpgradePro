@@ -38,9 +38,18 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		$where_or = array();
 		$where_or[] = "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
 		$where_or[] = "section IN ('com_banner', 'com_contact', 'com_contact_details', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
-
-		$conditions['order'] = "id DESC, section DESC, ordering DESC";		
 		$conditions['where_or'] = $where_or;
+
+		// Get the component parameters
+		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
+		$params = JUpgradeproHelper::getParams();
+
+		if ($params->keep_ids == 1)
+		{
+			$conditions['order'] = "id DESC, section DESC, ordering DESC";	
+		}else{
+			$conditions['order'] = "id ASC, section ASC, ordering ASC";	
+		}
 		
 		return $conditions;
 	}
@@ -158,6 +167,9 @@ class JUpgradeproCategories extends JUpgradeproCategory
 
 			// Check if path is correct
 			$category['path'] = empty($category['path']) ? $category['alias'] : $category['path'];
+
+			// Fix the access
+			$category['access'] = $category['access'] == 0 ? 1 : $category['access'] + 1;
 
 			if ($category['id'] == 1) {
 				$category['id'] = $rootidmap;

@@ -60,7 +60,7 @@ window.addEvent('domready', function() {
 
 				<div id="update">
 					<br /><img src="components/com_jupgradepro/images/update.png" align="middle" border="0"/><br />
-					<h2><?php echo JText::_('START UPGRADE'); ?></h2><br />
+					<h2><?php echo JText::_('START'); ?></h2><br />
 				</div>
 
 				<div id="checks">

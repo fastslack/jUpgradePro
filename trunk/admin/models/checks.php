@@ -80,14 +80,15 @@ class JUpgradeproModelChecks extends JModelLegacy
 		}
 
 		// Get the tables from old site
+		$old_columns = array();
+
 		if ($params->method == "database") {
 			$old_tables = JUpgradepro::getInstance($step)->_driver->_db_old->getTableList();
 			$old_columns = JUpgradepro::getInstance($step)->_driver->_db_old->getTableColumns('#__users');
 			$old_prefix = $params->old_dbprefix;
 		}else if ($params->method == "rest") {
 			$old_tables = json_decode($driver->requestRest('tableslist'));
-			$old_columns = array();
-			//$old_columns = json_decode($driver->requestRest('tablescolumns'));
+			$old_columns = json_decode($driver->requestRest('tablescolumns'));
 			$old_prefix = substr($old_tables[10], 0, strpos($old_tables[10], '_')+1);
 		}
 

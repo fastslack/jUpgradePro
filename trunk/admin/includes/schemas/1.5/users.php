@@ -120,12 +120,6 @@ class JUpgradeproUsers extends JUpgradeproUser
 			$row = (array) $row;
 
 			$row['params'] = $this->convertParams($row['params']);
-
-			// Chaging admin username and email
-			if ($row['username'] == 'admin') {
-				$row['username'] = $row['username'].'-old';
-				$row['email'] = $row['email'].'-old';
-			}
 		}
 		
 		return $rows;
@@ -147,6 +141,12 @@ class JUpgradeproUsers extends JUpgradeproUser
 
 			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
 				unset($row['usertype']);
+			}
+
+			// Chaging admin username and email
+			if ($row['username'] == 'admin') {
+				$row['username'] = $row['username'].'-old';
+				$row['email'] = $row['email'].'-old';
 			}
 
 			// Remove unused fields. 

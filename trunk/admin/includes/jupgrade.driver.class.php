@@ -44,7 +44,7 @@ class JUpgradeproDriver
 		jimport('legacy.component.helper');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
-		// Set the step params	
+		// Set the step params
 		$this->_step = ($step !== null) ? $step : null;
 
 		$this->params = JUpgradeproHelper::getParams();

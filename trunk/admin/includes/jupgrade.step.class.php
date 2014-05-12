@@ -81,7 +81,10 @@ class JUpgradeproStep
 		$this->old_ver = JUpgradeproHelper::getVersion('old');
 
 		// Load the last step from database
-		$this->_load($name);
+		if ($name !== false)
+		{
+			$this->_load($name);
+		}
 	}
 
 	/**

@@ -186,7 +186,8 @@ var jUpgradepro = new Class({
 		}, 10000); 
 
 		// Configure the radial progress bar
-		var pb4 = new RadialProgressBar($('pb4'), {
+		//var pb4
+		$('pb4').pb4 = new RadialProgressBar($('pb4'), {
 			autoStart: true
 		});
 
@@ -217,7 +218,7 @@ var jUpgradepro = new Class({
 				var row_object = JSON.decode(row_response);
 
 				if (row_object.cid == 0) {
-					$('pb4').set('data-progress', '1%');
+					$('pb4').pb4.reset();
 					currItem.innerHTML = 1;
 				}else{
 					currItem.innerHTML = row_object.cid;
@@ -231,12 +232,11 @@ var jUpgradepro = new Class({
 
 				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
 					if (row_object.end == 1) {
-						$('pb4').set('data-progress', '100%');
+						$('pb4').set('data-progress', '100');
 						this.cancel();
 						step.cancel();
 						self.extensions(e);
 					} else if (row_object.next == 1) {
-						$('pb4').set('data-progress', '1%');
 						step.send();
 					}
 				}
@@ -258,9 +258,9 @@ var jUpgradepro = new Class({
 
 				var object = JSON.decode(response);
 
-				if (object === null)
+				if (typeof(object) === 'undefined' || object == null)
 				{
-					$('pb4').set('data-progress', '100%');
+					$('pb4').set('data-progress', '100');
 					this.cancel();
 					self.extensions(e);
 				}
@@ -268,11 +268,11 @@ var jUpgradepro = new Class({
 				// Redirect if total == 0
 				if (object.total == 0) {
 					if (object.end == 1) {
-						$('pb4').set('data-progress', '100%');
+						$('pb4').set('data-progress', '100');
 						this.cancel();
 						self.extensions(e);
 					}else{
-						$('pb4').set('data-progress', '100%');
+						$('pb4').set('data-progress', '100');
 						step.send();
 					}
 				}
@@ -285,11 +285,12 @@ var jUpgradepro = new Class({
 				var count1 = object.cid / object.total;
 				var percent = count1 * 100;
 
-				$('pb4').set('data-progress', percent +'%');
+				$('pb4').set('data-progress', percent);
 
 				migrate_text.innerHTML = 'Migrating ' + object.title;
 				if (object.middle != true) {
 					if (object.cid == 0) {
+						$('pb4').pb4.reset();
 						currItem.innerHTML = 1;
 					}else{
 						currItem.innerHTML = object.cid;
@@ -309,8 +310,10 @@ var jUpgradepro = new Class({
 
 		step.send();
 
-		// Scroll the window
-		//var myScroll = new Fx.Scroll(window).toBottom();
+		// Scroll the window if debug are enabled
+		if (self.options.debug_step == 1) {
+			var myScroll = new Fx.Scroll(window).toBottom();
+		}
 
 	}, // end function
 
@@ -324,7 +327,7 @@ var jUpgradepro = new Class({
 		var self = this;
 
 		// Configure the radial progress bar
-		var pb7 = new RadialProgressBar($('pb7'), {
+		$('pb7').pb7 = new RadialProgressBar($('pb7'), {
 			autoStart: true
 		});
 
@@ -354,7 +357,12 @@ var jUpgradepro = new Class({
 
 				var row_object = JSON.decode(row_response);
 
-				ext_currItem.innerHTML = row_object.cid;
+				if (row_object.cid == 0) {
+					$('pb7').pb7.reset();
+					ext_currItem.innerHTML = 1;
+				}else{
+					ext_currItem.innerHTML = row_object.cid;
+				}
 
 				if (self.options.debug_migrate == 1) {
 					ext_html_debug.innerHTML = ext_html_debug.innerHTML + '<br><br>==========<br><b>[ROW: '+row_object.name+']</b><br><br>' +row_response;
@@ -362,7 +370,7 @@ var jUpgradepro = new Class({
 
 				if (row_object.cid == row_object.stop.toInt()+1 || row_object.next == 1 ) {
 					if (row_object.end == 1) {
-						$('pb7').set('data-progress', '100%');
+						$('pb7').set('data-progress', '100');
 						this.cancel();
 						ext_step.cancel();
 						self.done();
@@ -390,7 +398,7 @@ var jUpgradepro = new Class({
 
 				if (object === null)
 				{
-					$('pb7').set('data-progress', '100%');
+					$('pb7').set('data-progress', '100');
 					this.cancel();
 					self.done();
 				}
@@ -398,7 +406,7 @@ var jUpgradepro = new Class({
 				// Redirect if total == 0
 				if (object.total == 0) {
 					if (object.end == 1) {
-						$('pb7').set('data-progress', '100%');
+						$('pb7').set('data-progress', '100');
 						this.cancel();
 						self.done();
 					}else{
@@ -415,7 +423,7 @@ var jUpgradepro = new Class({
 				var count1 = object.cid / object.total;
 				var percent = count1 * 100;
 
-				$('pb7').set('data-progress', percent +'%');
+				$('pb7').set('data-progress', percent);
 
 				ext_text.innerHTML = 'Migrating ' + object.name;
 				if (object.middle != true) {
@@ -461,6 +469,11 @@ var jUpgradepro = new Class({
 
 		// Run the check
 		check.send();
+
+		// Scroll the window if debug are enabled
+		if (self.options.debug_step == 1) {
+			var myScroll = new Fx.Scroll(window).toBottom();
+		}
 
 	}, // end function
 

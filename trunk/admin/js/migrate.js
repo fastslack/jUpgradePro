@@ -186,7 +186,6 @@ var jUpgradepro = new Class({
 		}, 10000); 
 
 		// Configure the radial progress bar
-		//var pb4
 		$('pb4').pb4 = new RadialProgressBar($('pb4'), {
 			autoStart: true
 		});

@@ -124,7 +124,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 				$category = (array) $category;
 
 				if ($category['id'] == 1) {
-					$query->clear();
+					$query = $this->_db->getQuery(true);
 					$query->select("`id` + 1");
 					$query->from("#__categories");
 					$query->where("id > 1");

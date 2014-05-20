@@ -23,7 +23,7 @@
 			size="60"
 			label="COM_JUPGRADEPRO_CONFIG_LIMIT"
 			description="COM_JUPGRADEPRO_CONFIG_LIMIT_DESC"
-			default="100"
+			default="10"
 		/>
 
 		<field name="keep_ids" type="radio" default="0" label="COM_JUPGRADEPRO_CONFIG_KEEP_IDS" description="COM_JUPGRADEPRO_CONFIG_KEEP_IDS_DESC">

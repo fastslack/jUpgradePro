@@ -77,7 +77,7 @@ class JUpgradeproViewCpanel extends JViewLegacy
 		$xml = JFactory::getXML($xmlfile);
 
 		$this->params =	$params;
-		$this->version = $xml->version[0];
+		$this->version = (string) $xml->version[0];
 
 		parent::display($tpl);
 	}

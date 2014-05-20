@@ -40,7 +40,14 @@ class JUpgradeproModelChecks extends JModelLegacy
 		$params = JUpgradeproHelper::getParams();
 
 		// Getting the step instance
-		$step = JUpgradeproStep::getInstance();
+		$step = JUpgradeproStep::getInstance(false);
+
+		// Get the new site Joomla! version
+		$v = new JVersion();
+		$new_version = $v->RELEASE;
+
+		// Define tables array
+		$old_columns = array();
 
 		// Check for bad configurations
 		if ($params->method == "rest") {
@@ -70,6 +77,20 @@ class JUpgradeproModelChecks extends JModelLegacy
 				case 406:
 					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_506');
 			}
+
+			// Get the database parameters
+			$old_tables = json_decode($driver->requestRest('tableslist'));
+			$old_columns = json_decode($driver->requestRest('tablescolumns'));
+			$old_prefix = substr($old_tables[10], 0, strpos($old_tables[10], '_')+1);
+
+			// Get the extension version
+			$xmlfile = JPATH_ADMINISTRATOR.'/components/com_jupgradepro/jupgradepro.xml';
+			$xml = JFactory::getXML($xmlfile);
+			$ext_version = (string) $xml->version[0];
+
+			if ($code != $ext_version) {
+				throw new Exception('COM_JUPGRADEPRO_ERROR_VERSION_NOT_MATCH');
+			}
 		}
 
 		// Check for bad configurations
@@ -77,26 +98,15 @@ class JUpgradeproModelChecks extends JModelLegacy
 			if ($params->old_hostname == '' || $params->old_username == '' || $params->old_db == '' || $params->old_dbprefix == '' ) {
 				throw new Exception('COM_JUPGRADEPRO_ERROR_DATABASE_CONFIG');
 			}
-		}
 
-		// Get the tables from old site
-		$old_columns = array();
-
-		if ($params->method == "database") {
+			// Get the database parameters
 			$old_tables = JUpgradepro::getInstance($step)->_driver->_db_old->getTableList();
 			$old_columns = JUpgradepro::getInstance($step)->_driver->_db_old->getTableColumns('#__users');
 			$old_prefix = $params->old_dbprefix;
-		}else if ($params->method == "rest") {
-			$old_tables = json_decode($driver->requestRest('tableslist'));
-			$old_columns = json_decode($driver->requestRest('tablescolumns'));
-			$old_prefix = substr($old_tables[10], 0, strpos($old_tables[10], '_')+1);
 		}
 
 		// Check the old site Joomla! version
 		$old_version = $this->checkOldVersion($old_tables, $old_prefix, $old_columns);
-		// Get the new site Joomla! version
-		$v = new JVersion();
-		$new_version = $v->RELEASE;
 
 		// Check if the version is fine
 		if (empty($old_version) || empty($new_version)) {
@@ -197,7 +207,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 		}
 
 		// Checking tables
-		if ($params->skip_core_users != 1 && $params->keep_ids == 1) {
+		if ($params->skip_core_users != 1) {
 			$query->clear();
 			$query->select('COUNT(id)');
 			$query->from("`#__users`");

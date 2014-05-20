@@ -42,101 +42,10 @@ class JUpgradeproMenu extends JUpgradeproMenus
 		
 		$conditions['where'] = array();
 		$conditions['join'] = $join;
-		$conditions['order'] = "m.id DESC";
+
+		$conditions['order'] = "m.id ASC";
 		
 		return $conditions;
-	}
-
-	/**
-	 * Method to be called before migrate any data
-	 *
-	 * @return	array
-	 * @since	3.2.0
-	 * @throws	Exception
-	 */
-	public function beforeHook()
-	{
-		// Insert needed value
-		$query = $this->_db->getQuery(true);
-		$query->insert('#__jupgradepro_menus')->columns('`old`, `new`')->values("0, 0");
-
-		try {
-			$this->_db->setQuery($query)->execute();
-		} catch (RuntimeException $e) {
-			throw new RuntimeException($e->getMessage());
-		}
-
-		// Clear the default database
-		$query->clear();
-		$query->delete()->from('#__jupgradepro_default_menus')->where('id > 100');
-
-		try {
-			$this->_db->setQuery($query)->execute();
-		} catch (RuntimeException $e) {
-			throw new RuntimeException($e->getMessage());
-		}
-
-		// Getting the menus
-		$query->clear();
-		// 3.0 Changes
-		if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
-			$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
-		}else{
-			$query->select("`menutype`, `title`, `alias`, `note`, `path`, `link`, `type`, `published`, `parent_id`, `component_id`, `ordering`, `checked_out`, `checked_out_time`, `browserNav`, `access`, `img`, `template_style_id`, `params`, `home`, `language`, `client_id`");
-		}
-
-		$query->from("#__menu");
-		$query->where("id > 100");
-		$query->where("alias != 'home'");
-		$query->order('id ASC');
-		$this->_db->setQuery($query);
-
-		try {
-			$menus = $this->_db->loadObjectList();
-		} catch (RuntimeException $e) {
-			throw new RuntimeException($e->getMessage());
-		}
-
-		foreach ($menus as $menu)
-		{
-			// Convert the array into an object.
-			$menu = (object) $menu;
-
-			try {
-				$this->_db->insertObject('#__jupgradepro_default_menus', $menu);
-			} catch (RuntimeException $e) {
-				throw new RuntimeException($e->getMessage());
-			}
-		}
-
-		// Cleanup the entire menu
-		$query->clear();
-		$query->delete()->from('#__menu')->where('id > 1');
-
-		try {
-			$this->_db->setQuery($query)->execute();
-		} catch (RuntimeException $e) {
-			throw new RuntimeException($e->getMessage());
-		}
-	}
-
-	/**
-	 * Get the raw data for this part of the upgrade.
-	 *
-	 * @return	array	Returns a reference to the source data array.
-	 * @since	0.4.5
-	 * @throws	Exception
-	 */
-	public function databaseHook($rows = null)
-	{
-		// Do some custom post processing on the list.
-		foreach ($rows as $key => &$row) {
- 
-			$row = (array) $row;
-
-    }
-
-		return $rows;
 	}
 
 	/**
@@ -308,7 +217,10 @@ class JUpgradeproMenu extends JUpgradeproMenus
 	 */
 	public function afterHook()
 	{
-		$this->insertDefaultMenus();
+		if ($this->params->keep_ids == 1)
+		{
+			$this->insertDefaultMenus();
+		}
 	}
 
 	/**

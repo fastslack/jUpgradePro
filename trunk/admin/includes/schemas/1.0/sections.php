@@ -44,6 +44,17 @@ class JUpgradeproSections extends JUpgradeproCategory
 	}
 
 	/**
+	 * Method to do pre-processes modifications before migrate
+	 *
+	 * @return	boolean	Returns true if all is fine, false if not.
+	 * @since	3.2.2
+	 * @throws	Exception
+	 */
+	public function beforeHook()
+	{
+	}
+
+	/**
 	 * Get the raw data for this part of the upgrade.
 	 *
 	 * @return	array	Returns a reference to the source data array.
@@ -60,13 +71,7 @@ class JUpgradeproSections extends JUpgradeproCategory
 			$row['params'] = $this->convertParams($row['params']);
 			$row['title'] = str_replace("'", "&#39;", $row['title']);
 			$row['description'] = str_replace("'", "&#39;", $row['description']);
-
 			$row['extension'] = 'com_section';
-
-			// Correct alias
-			if ($row['alias'] == "") {
-				$row['alias'] = JFilterOutput::stringURLSafe($row['title']);
-			}
 		}
 
 		return $rows;
@@ -87,6 +92,9 @@ class JUpgradeproSections extends JUpgradeproCategory
 		foreach ($rows as $section)
 		{
 			$section = (array) $section;
+
+			// Correct the access
+			$section['access'] = $section['access'] == 0 ? 1 : $section['access'] + 1;
 
 			// Inserting the category
 			$this->insertCategory($section);
@@ -110,6 +118,18 @@ class JUpgradeproSections extends JUpgradeproCategory
 		$this->fixParents();
 		// Insert existing categories
 		$this->insertExisting();
+
+		// Change protected to $observers object to disable it
+		// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
+		// @@ See: https://github.com/joomla/joomla-cms/pull/3408
+		if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
+			$file = JPATH_LIBRARIES.'/joomla/observer/updater.php';
+			$read = JFile::read($file);
+			$read = str_replace("//call_user_func_array(\$eventListener, \$params)", "call_user_func_array(\$eventListener, \$params)", $read);
+			$read = JFile::write($file, $read);
+
+			require_once($file);
+		}
 	}
 
 	/**
@@ -120,7 +140,7 @@ class JUpgradeproSections extends JUpgradeproCategory
 	 */
 	protected function fixParents()
 	{
-		$change_parent = $this->getMapList('categories', false, "section != 0");
+		$change_parent = $this->getMapList('categories', false, "section REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$' AND section != 0");
 
 		// Insert the sections
 		foreach ($change_parent as $category)
@@ -130,64 +150,19 @@ class JUpgradeproSections extends JUpgradeproCategory
 			$table->load($category->new);
 
 			$custom = "old = {$category->section}";
+
 			$parent = $this->getMapListValue('categories', 'com_section', $custom);
 
-			// Setting the location of the new category
-			$table->setLocation($parent, 'last-child');
+			if (!empty($parent))
+			{
+				// Setting the location of the new category
+				$table->setLocation($parent, 'last-child');
 
-			// Insert the category
-			if (!@$table->store()) {
-				throw new Exception($table->getError());
+				// Insert the category
+				if (!$table->store()) {
+					throw new Exception($table->getError());
+				}
 			}
 		}
 	}
-
-	/**
-	 * Insert existing categories saved in cleanup step
-	 *
-	 * @return	void
-	 * @since	3.0
-	 */
-	protected function insertExisting()
-	{
-		// Getting the database instance
-		$db = JFactory::getDbo();
-
-		// Getting the data
-		$query = $db->getQuery(true);
-		$query->select('*');
-		$query->from('#__jupgradepro_default_categories');
-		$query->order('id ASC');
-		$db->setQuery($query);
-		$categories = $db->loadAssocList();
-
-		foreach ($categories as $category) {
-
-			// Unset id
-			$category['id'] = 0;
-
-			// Looking for parent
-			$parent = 1;
-			$explode = explode("/", $category['path']);
-
-			if (count($explode) > 1) {
-
-				// Getting the data
-				$query = $db->getQuery(true);
-				$query->select('id');
-				$query->from('#__categories');
-				$query->where("path = '{$explode[0]}'");
-				$query->order('id ASC');
-				$query->limit(1);
-
-				$db->setQuery($query);
-				$parent = $db->loadResult();
-
-			}
-
-			// Inserting the category
-			$this->insertCategory($category, $parent);
-		}
-
-	} // end method
 } // end class

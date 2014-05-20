@@ -51,7 +51,7 @@ class JUpgradeproModelCleanup extends JModelLegacy
 
 		// Set all cid, status and cache to 0
 		$query = $this->_db->getQuery(true);
-		$query->update('#__jupgradepro_steps')->set('cid = 0, status = 0, cache = 0, total = 0, stop = 0');
+		$query->update('#__jupgradepro_steps')->set('cid = 0, status = 0, cache = 0, total = 0, stop = 0, start = 0, stop = 0, first = 0, debug = \'\'');
 		$this->_db->setQuery($query)->execute();
 
 		// Convert the params to array
@@ -101,10 +101,18 @@ class JUpgradeproModelCleanup extends JModelLegacy
 		{
 			$del_tables[] = '#__jupgradepro_categories';
 			$del_tables[] = '#__jupgradepro_default_categories';
+
+			$query->clear();
+			$query->insert('#__jupgradepro_categories')->columns('`old`, `new`')->values("0, 2");
+			try {
+				$this->_db->setQuery($query)->execute();
+			} catch (RuntimeException $e) {
+				throw new RuntimeException($e->getMessage());
+			}
 		}
 
 		// Truncate menu types if menus are enabled
-		if ($params->skip_core_menus != 1)
+		if ($params->skip_core_menus != 1 && $params->keep_ids == 1)
 		{
 			$del_tables[] = '#__menu_types';
 			$del_tables[] = '#__jupgradepro_menus';

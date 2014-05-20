@@ -182,7 +182,7 @@ class JUpgradeproContent extends JUpgradepro
 				// Getting the duplicated alias
 				$alias = $this->getAlias('#__content', $row['alias']);
 				// Set the modified alias
-				$row['alias'] = $alias."~";
+				$row['alias'] .= "-".rand(0, 99999999);
 			}
 
 			// Bind data to save content

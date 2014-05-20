@@ -137,21 +137,6 @@ class JUpgradeproContent extends JUpgradepro
 			// Map catid
 			$row['catid'] = isset($catidmap[$row['catid']]) ? $catidmap[$row['catid']]->new : $defaultId;
 
-			// Aliases
-			$row['alias'] = !empty($row['alias']) ? $row['alias'] : "###BLANK###";
-			$row['alias'] = JApplication::stringURLSafe($row['alias']);
-
-			// Check if has duplicated aliases
-			$query = "SELECT alias FROM #__content"
-			." WHERE alias = ".$this->_db->quote($row['alias']);
-			$this->_db->setQuery($query);
-			$aliases = $this->_db->loadAssoc();
-
-			$count = count($aliases);
-			if ($count > 0) {
-				$row['alias'] .= "-".rand(0, 99999999);
-			}
-
 			// Setting the default rules
 			$rules = array();
 			$rules['core.delete'] = array('6' => true);
@@ -174,6 +159,20 @@ class JUpgradeproContent extends JUpgradepro
 			// JTable:store() run an update if id exists into the object so we create them first
 			$object = new stdClass();
 			$object->id = $row['id'];
+
+			// Aliases
+			$row['alias'] = !empty($row['alias']) ? $row['alias'] : "###BLANK###";
+			$row['alias'] = JApplication::stringURLSafe($row['alias']);
+
+			// Prevent MySQL duplicate error
+			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
+			if ($content->load(array('alias' => $row['alias'], 'catid' => $row['catid'])))
+			{
+				// Getting the duplicated alias
+				$alias = $this->getAlias('#__content', $row['alias']);
+				// Set the modified alias
+				$row['alias'] .= "-".rand(0, 99999999);
+			}
 
 			// Inserting the content
 			if (!$this->_db->insertObject($table, $object)) {

@@ -47,9 +47,11 @@ div#update{
 	width: 300px;
 	margin: 10px auto 0 auto;
 }
+
 div#update:hover{
 	cursor: pointer;
 }
+
 div#update:active{
 	-moz-box-shadow:0 2px 0 #DDD, 0 1px 0 #FFF inset, 0 2px 1px #FFF, 0 -1px 0 #FFF inset;
 	-webkit-box-shadow:0 2px 0 #DDD, 0 1px 0 #FFF inset, 0 2px 1px #FFF, 0 -1px 0 #FFF inset;

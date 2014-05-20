@@ -57,6 +57,29 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	}
 
 	/**
+	 * The public entry point for the class.
+	 *
+	 * @return	void
+	 * @since	0.5.6
+	 * @throws	Exception
+	 */
+	public function upgrade()
+	{
+/*
+		if (parent::upgrade()) {
+			// Rebuild the categories table
+			$table = JTable::getInstance('Category', 'JTable', array('dbo' => $this->_db));
+
+			if (!$table->rebuild()) {
+				throw new Exception($table->getError());
+			}
+		}
+*/
+		parent::upgrade();
+
+	}
+
+	/**
 	 * Sets the data in the destination database.
 	 *
 	 * @return	void
@@ -134,7 +157,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	public function afterHook()
 	{
 		// Fixing the parents
-		$this->fixParents();
+		//$this->fixParents();
 		// Insert existing categories
 		//$this->insertExisting();
 	}

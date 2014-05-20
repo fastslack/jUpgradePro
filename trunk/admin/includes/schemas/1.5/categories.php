@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -40,69 +40,35 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		$where_or[] = "section IN ('com_banner', 'com_contact', 'com_contact_details', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
 		$conditions['where_or'] = $where_or;
 
-		// Get the component parameters
-		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
-		$params = JUpgradeproHelper::getParams();
-
-		if ($params->keep_ids == 1)
-		{
-			$conditions['order'] = "id DESC, section DESC, ordering DESC";	
-		}else{
-			$conditions['order'] = "id ASC, section ASC, ordering ASC";	
-		}
+		$conditions['order'] = "id ASC, section ASC, ordering ASC";
 		
 		return $conditions;
 	}
 
 	/**
-	 * Method to do pre-processes modifications before migrate
+	 * Get the raw data for this part of the upgrade.
 	 *
-	 * @return	boolean	Returns true if all is fine, false if not.
-	 * @since	3.2.0
+	 * @return	array	Returns a reference to the source data array.
+	 * @since	0.5.6
 	 * @throws	Exception
 	 */
-	public function beforeHook()
+	public function databaseHook($rows = null)
 	{
-		// Insert uncategorized id
-		$query = $this->_db->getQuery(true);
-		$query->insert('#__jupgradepro_categories')->columns('`old`, `new`')->values("0, 2");
-		try {
-			$this->_db->setQuery($query)->execute();
-		} catch (RuntimeException $e) {
-			throw new RuntimeException($e->getMessage());
-		}
-
-		if ($this->params->keep_ids == 1)
+		// Do some custom post processing on the list.
+		foreach ($rows as &$row)
 		{
-			// Getting the categories
-			$query->clear();
-			$query->select("`id`, `parent_id`, `path`, `extension`, `title`, `alias`, `note`, `description`, `published`,  `params`, `created_user_id`");
-			$query->from("#__categories");
-			$query->where("id > 1");
-			$query->order('id ASC');
-			$this->_db->setQuery($query);
+			$row['params'] = $this->convertParams($row['params']);
+			$row['title'] = str_replace("'", "&#39;", $row['title']);
+			$row['description'] = str_replace("'", "&#39;", $row['description']);
 
-			try {
-				$categories = $this->_db->loadObjectList();
-			} catch (RuntimeException $e) {
-				throw new RuntimeException($e->getMessage());
-			}
-
-			foreach ($categories as $category)
-			{
-				$id = $category->id;
-				unset($category->id);
-
-				$this->_db->insertObject('#__jupgradepro_default_categories', $category);
-
-				// Getting the categories table
-				$table = JTable::getInstance('Category', 'JTable');
-				// Load it before delete. Joomla bug?
-				$table->load($id);
-				// Delete
-				$table->delete($id);
+			if ($row['extension'] == 'com_banner') {
+				$row['extension'] = "com_banners";
+			}else if ($row['extension'] == 'com_contact_details') {
+				$row['extension'] = "com_contact";
 			}
 		}
+
+		return $rows;
 	}
 
 	/**
@@ -120,65 +86,92 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		$params = $this->getParams();
 		// Content categories
 		$this->section = 'com_content'; 
-		// Initialize values
-		$rootidmap = 0;
+		// Get the total
+		$total = count($rows);
 
 		// JTable::store() run an update if id exists so we create them first
 		if ($this->params->keep_ids == 1)
 		{
 			foreach ($rows as $category)
 			{
-				$object = new stdClass();
-
 				$category = (array) $category;
 
+				// Check if id = 1
 				if ($category['id'] == 1) {
-					$query = $this->_db->getQuery(true);
-					$query->select("`id` + 1");
-					$query->from("#__categories");
-					$query->where("id > 1");
-					$query->order('id DESC');
-					$query->limit(1);
-					$this->_db->setQuery($query);
-
-					$object->id = $category['id'] = $rootidmap;
+					$rootidcategory = true;
+					continue;
 				}else{
-					$object->id = $category['id'];
+					$id = $category['id'];
 				}
 
-				// Inserting the categories
+				$query = $this->_db->getQuery(true);
+				$query->insert('#__categories')->columns('`id`')->values($id);
+
 				try {
-					$this->_db->insertObject($table, $object);
+					$this->_db->setQuery($query)->execute();
 				} catch (RuntimeException $e) {
 					throw new RuntimeException($e->getMessage());
 				}
 			}
 		}
 
-		$total = count($rows);
-
 		// Update the category
 		foreach ($rows as $category)
 		{
 			$category = (array) $category;
 
-			// Reset some fields
-			$category['asset_id'] = $category['lft'] = $category['rgt'] = null;
-
-			// Check if path is correct
-			$category['path'] = empty($category['path']) ? $category['alias'] : $category['path'];
-
-			// Fix the access
-			$category['access'] = $category['access'] == 0 ? 1 : $category['access'] + 1;
-
+			// Check if id = 1
 			if ($category['id'] == 1) {
-				$category['id'] = $rootidmap;
+				// Set correct values
+				$category['root_id'] = 1;
+				unset($category['id']);
+				unset($category['sid']);
+				unset($category['section']);
+				// We need an object
+				$category = (object) $category;
+
+				try	{
+					$this->_db->insertObject('#__jupgradepro_default_categories', $category);
+				}	catch (Exception $e) {
+					throw new Exception($e->getMessage());
+				}
+
+				// Updating the steps table
+				$this->_step->_nextID($total);
+
+				continue;
 			}
 
-			// Insert the category
-			$category['old_id'] = $category['id'];
+			// Reset some fields
+			$category['asset_id'] = $category['lft'] = $category['rgt'] = null;
+			// Check if path is correct
+			$category['path'] = empty($category['path']) ? $category['alias'] : $category['path'];
+			// Fix the access
+			$category['access'] = $category['access'] == 0 ? 1 : $category['access'] + 1;
+			// Set the correct parent id
+			$category['parent_id'] = $category['level'] = 1;
 
+			// Insert the category
 			$this->insertCategory($category);
+
+			// Updating the steps table
+			$this->_step->_nextID($total);
+		}
+
+		$rootcatobj = $this->getFirstCategory();
+
+		// Insert the category id = 1
+		if (is_array($rootcatobj) && $this->getTotal() == $this->_step->cid)
+		{
+			// Check if path is correct
+			$rootcatobj['path'] = empty($rootcatobj['path']) ? $rootcatobj['alias'] : $rootcatobj['path'];
+			// Fix the access
+			$rootcatobj['access'] = $rootcatobj['access'] == 0 ? 1 : $rootcatobj['access'] + 1;
+			// Set the correct parent id
+			$rootcatobj['parent_id'] = $rootcatobj['level'] = 1;
+
+			// Insert the category
+			$this->insertCategory($rootcatobj);
 
 			// Updating the steps table
 			$this->_step->_nextID($total);

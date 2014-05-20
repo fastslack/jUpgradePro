@@ -31,24 +31,26 @@ class JUpgradeproCategories extends JUpgradeproCategory
 	 */
 	public static function getConditionsHook()
 	{
-		$conditions = array();
-
-		$conditions['select'] = '*';
-
-		$where_or = array();
-		$where_or[] = "extension REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
-		$where_or[] = "extension IN ('com_banners', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
-		$conditions['where_or'] = $where_or;
-
 		// Get the component parameters
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 		$params = JUpgradeproHelper::getParams();
 
+		$conditions = array();
+		$conditions['select'] = '*';
+
 		if ($params->keep_ids == 1)
 		{
+			$where_or = array();
+			$where_or[] = "extension REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
+			$where_or[] = "extension IN ('com_banners', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
+			$conditions['where_or'] = $where_or;
 			$conditions['order'] = "id DESC, extension DESC";	
 		}else{
-			$conditions['order'] = "id ASC, extension ASC";	
+			$where = array();
+			$where[] = "path != 'uncategorised'";
+			$where[] = "(extension REGEXP '^[\-\+]?[[:digit:]]*\.?[[:digit:]]*$' OR extension IN ('com_banners', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' ))";
+			$conditions['where'] = $where;
+			$conditions['order'] = "parent_id DESC";	
 		}
 
 		return $conditions;

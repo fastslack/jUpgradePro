@@ -630,23 +630,28 @@ class JUpgradepro
 	/**
 	 * Get the alias if its duplicated
 	 *
+	 * @param	string	$table	The table to search.
 	 * @param	string	$alias	The alias to search.
+	 * @param	string	$extension	The extension to filter.
 	 *
 	 * @return	string	The alias
 	 * @since	3.2.1
 	 * @throws	Exception
 	 */
-	public function getAlias($table, $alias)
+	public function getAlias($table, $alias, $extension = false)
 	{
 		$query = $this->_db->getQuery(true);
 		$query->select('alias');
 		$query->from($table);
+		if ($extension !== false) {
+			$query->where("extension = '{$extension}'");
+		}
 		$query->where("alias RLIKE '^{$alias}$'", "OR")->where("alias RLIKE '^{$alias}[~]$'");
 		$query->order('alias DESC');
 		$query->limit(1);
 		$this->_db->setQuery($query);
 
-		return $this->_db->loadResult();
+		return (string) $this->_db->loadResult();
 	}
 
 	/**

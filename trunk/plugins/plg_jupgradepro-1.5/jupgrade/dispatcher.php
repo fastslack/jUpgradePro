@@ -64,12 +64,17 @@ class JRESTDispatcher
 
 		// Check task is only to test the connection
 		if ($task == 'check') {
-			return true;
+			$xmlfile = JPATH_PLUGINS .'/system/jupgrade.xml';
+			$xml = new JSimpleXML;
+			$xml->loadFile($xmlfile);
+			$ret = (string) $xml->document->version[0]->_data;
+
+			return $ret;
 		}
 
 		// Loading table
 		if (!empty($table)) {
-			JTable::addIncludePath(JPATH_ROOT .'/plugins/system/jupgrade/table');
+			JTable::addIncludePath(JPATH_PLUGINS .'/system/jupgrade/table');
 
 			if (!in_array($name, $this->skip_steps)) {
 				$class = JUpgradeTable::getInstance('generic', 'JUpgradeTable');
@@ -79,7 +84,7 @@ class JRESTDispatcher
 			}
 
 		}else if (isset($files)) {
-			require_once JPATH_ROOT .'/plugins/system/jupgrade/files.php';
+			require_once JPATH_PLUGINS .'/system/jupgrade/files.php';
 			$class = new JUpgradeFiles();
 		}
 
@@ -95,6 +100,5 @@ class JRESTDispatcher
 		{
 			return false;	
 		}
-
 	}
 }

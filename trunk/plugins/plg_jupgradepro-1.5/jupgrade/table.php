@@ -474,6 +474,17 @@ class JUpgradeTable extends JTable
 	}
 
 	/**
+	 * Method to get the columns
+	 *
+	 * @since   3.2.0
+	 * @throws  JDatabaseException
+	 */
+	public function getTablescolumns()
+	{
+		return json_encode(array());
+	}
+
+	/**
 	 * Method to get the parameters of one table
 	 *
 	 * @return  string  JSON parameters

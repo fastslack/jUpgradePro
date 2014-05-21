@@ -168,4 +168,27 @@ class JUpgradeproMenus extends JUpgradepro
 		return $row;
 	}
 
+	/**
+	 * Get the saved first menu
+	 *
+	 * @return object An object with the first menu.
+	 * @since		3.3.0
+	 * @throws	Exception
+	 */
+	public function getFirstMenu()
+	{
+		// Get the correct equipment
+		$query = $this->_db->getQuery(true);
+		// Select some values
+		$query->select("m.*");
+		// Set the from table
+		$query->from($this->_db->qn('#__jupgradepro_default_menus') . ' as m');
+		// Conditions
+		$query->where("m.root_id = 1");
+		// Limit and order
+		$query->order('m.id DESC');
+		$query->limit(1);
+		// Retrieve the data.
+		return $this->_db->setQuery($query)->loadAssoc();
+	}
 }

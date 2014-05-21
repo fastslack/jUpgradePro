@@ -131,6 +131,9 @@ class JUpgradeproContent extends JUpgradepro
 		{
 			$row = (array) $row;
 
+			// Getting the asset table
+			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
+
 			// Check if title isn't blank
 			$row['title'] = !empty($row['title']) ? $row['title'] : "###BLANK###";
 
@@ -178,9 +181,6 @@ class JUpgradeproContent extends JUpgradepro
 			if (!$this->_db->insertObject($table, $object)) {
 				throw new Exception($this->_db->getErrorMsg());
 			}
-
-			// Getting the asset table
-			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
 
 			// Bind data to save content
 			if (!$content->bind($row)) {

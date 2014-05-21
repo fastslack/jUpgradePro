@@ -121,7 +121,7 @@ class JUpgradeproCategories extends JUpgradeproCategory
 			$category = (array) $category;
 
 			// Check if id = 1
-			if ($category['id'] == 1) {
+			if ($category['id'] == 1 && $this->params->keep_ids == 1) {
 				// Set correct values
 				$category['root_id'] = 1;
 				unset($category['id']);

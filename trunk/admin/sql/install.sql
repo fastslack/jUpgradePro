@@ -330,6 +330,7 @@ INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`,
 DROP TABLE IF EXISTS `#__jupgradepro_default_menus`;
 CREATE TABLE IF NOT EXISTS `#__jupgradepro_default_menus` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `root_id` int(10) unsigned NOT NULL DEFAULT '0',
   `menutype` varchar(24) NOT NULL COMMENT 'The type of menu this item belongs to. FK to #__menu_types.menutype',
   `title` varchar(255) NOT NULL COMMENT 'The display title of the menu item.',
   `alias` varchar(255) CHARACTER SET utf8 COLLATE utf8_bin NOT NULL COMMENT 'The SEF alias of the menu item.',
@@ -391,6 +392,7 @@ INSERT INTO `#__jupgradepro_default_menus` (`id`, `menutype`, `title`, `alias`, 
 DROP TABLE IF EXISTS `#__jupgradepro_default_categories`;
 CREATE TABLE IF NOT EXISTS `#__jupgradepro_default_categories` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
+  `root_id` int(10) unsigned NOT NULL DEFAULT '0',
   `parent_id` int(10) unsigned NOT NULL DEFAULT '0',
   `path` varchar(255) NOT NULL DEFAULT '',
   `extension` varchar(50) NOT NULL DEFAULT '',

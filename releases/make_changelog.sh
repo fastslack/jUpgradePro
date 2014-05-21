@@ -10,7 +10,7 @@
 
 PROJECT="jUpgradePro"
 USER="fastslack"
-FILE=~/path/to/file
+FILE=./FILE
 LINK="http://github.com/${USER}/${PROJECT}/commit/%H"
 
 git log --pretty=format:"%ai <i>by %an</i><br />%n \+ [[%h]](${LINK}) <b>%s</b> <br />%n" | grep -v Merge > ${FILE}

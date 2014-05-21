@@ -28,6 +28,11 @@ class JUpgradeproTable extends JTable
 	/**
 	 * Table type
 	 */		
+	public $_keepid = 0;
+
+	/**
+	 * Table type
+	 */		
 	public $_type = '';
 
 	/**
@@ -64,8 +69,11 @@ class JUpgradeproTable extends JTable
 	 *
 	 * @since   3.0
 	 */
-	public function getRows($chunk)
+	public function getRows($chunk, $keepid)
 	{
+		// Set the keep id flag
+		$this->_keepid = $keepid;
+
 		// Get the next id
 		$id = $this->_getStepID();
 
@@ -473,6 +481,17 @@ class JUpgradeproTable extends JTable
 		$db = JFactory::getDbo();
 
 		return json_encode($db->getPrefix());
+	}
+
+	/**
+	 * Method to get the columns
+	 *
+	 * @since   3.2.0
+	 * @throws  JDatabaseException
+	 */
+	public function getTablescolumns()
+	{
+		return json_encode(array());
 	}
 
 	/**

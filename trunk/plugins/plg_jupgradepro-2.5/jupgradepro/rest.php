@@ -47,6 +47,7 @@ class JRESTMessage
 		'HTTP_TABLE',
 		'HTTP_FILES',
 		'HTTP_CHUNK',
+		'HTTP_KEEPID',
 		'HTTP_KEY',
 		'HTTP_USER',
 		'HTTP_PW',

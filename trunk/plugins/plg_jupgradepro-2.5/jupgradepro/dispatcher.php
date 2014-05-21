@@ -57,13 +57,18 @@ class JRESTDispatcher
 		$name = $table = !empty($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : 'generic';
 		$files = isset($this->_parameters['HTTP_FILES']) ? $this->_parameters['HTTP_FILES'] : '';
 		$chunk = isset($this->_parameters['HTTP_CHUNK']) ? $this->_parameters['HTTP_CHUNK'] : '';
+		$keepid = isset($this->_parameters['HTTP_KEEPID']) ? $this->_parameters['HTTP_KEEPID'] : 0;
 
 		// Fixing table if is extension
 		$table = (substr($table, 0, 4) == 'ext_') ? substr($table, 4) : $table;
 
 		// Check task is only to test the connection
 		if ($task == 'check') {
-			return true;
+			$xmlfile = JPATH_PLUGINS .'/system/jupgradepro/jupgradepro.xml';
+			$xml = JFactory::getXML($xmlfile);
+			$ret = (string) $xml->version[0];
+
+			return $ret;
 		}
 
 		// Loading table
@@ -88,7 +93,7 @@ class JRESTDispatcher
 		// Does the method exist?
 		if (method_exists($class, $method))
 		{
-			return ($task == 'rows') ? $class->$method($chunk) : $class->$method();
+			return ($task == 'rows') ? $class->$method($chunk, $keepid) : $class->$method();
 		}
 		else
 		{

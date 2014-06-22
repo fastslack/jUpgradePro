@@ -122,7 +122,7 @@ class JUpgradeproMenu extends JUpgradeproMenus
 			// Prevent MySQL duplicate error
 			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
 			$alias = $this->getAlias('#__menu', $row->alias);
-			$row->alias = (!empty($alias)) ? $alias."~" : $row->alias;
+			$row->alias = (!empty($alias)) ? $alias."-".rand(0, 999999) : $row->alias;
 
 			// Fixing menus URLs
 			$row = $this->migrateLink($row);

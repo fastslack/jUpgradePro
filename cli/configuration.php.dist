@@ -57,6 +57,7 @@ final class JConfig
 	public $skip_core_contacts = 0;
 	public $skip_core_newsfeeds = 0;
 	public $skip_core_weblinks = 0;
+	public $keep_ids = 0;
 	/**
 	* The database configuration for your new site
 	*

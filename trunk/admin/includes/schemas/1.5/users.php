@@ -141,7 +141,9 @@ class JUpgradeproUsers extends JUpgradeproUser
 
 			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
 				unset($row['usertype']);
-				unset($row['uid']);
+				if (isset($row['uid'])) {
+					unset($row['uid']);
+				}
 			}
 
 			// Chaging admin username and email

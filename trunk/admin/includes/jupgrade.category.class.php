@@ -172,11 +172,11 @@ class JUpgradeproCategory extends JUpgradepro
 		}
 
 		// Check if has duplicated aliases
-		$alias = $this->getAlias('#__categories', $row['alias'], $row['extension']);
+		$alias = $this->getAlias('#__categories', $row['alias']);
 
 		// Prevent MySQL duplicate error
 		// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
-		$row['alias'] = (!empty($alias)) ? $alias."~" : $row['alias'];
+		$row['alias'] = (!empty($alias)) ? $alias."-".rand(0, 999999) : $row['alias'];
 
 		// Remove the default id if keep ids parameters is not enabled
 		if ($this->params->keep_ids != 1)

@@ -188,7 +188,7 @@ class JUpgradeproModules extends JUpgradepro
 			$oldlist->old = $row->id;
 			unset($row->id);
 
-			if (version_compare(JUpgradeproHelper::getVersion('new'), '2.5', '>='))
+			if (version_compare(JUpgradeproHelper::getVersion('new'), '1.5', '>='))
 			{
 				unset($row->numnews);
 				unset($row->iscore);

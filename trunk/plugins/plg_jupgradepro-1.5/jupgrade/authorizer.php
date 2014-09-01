@@ -37,7 +37,7 @@ class JRESTAuthorizer
 		$client_key = trim($pluginParams->get('client_key'));
 
 		// Uncrypt the request
-		$key = isset($params['HTTP_USER']) ? base64_decode($params['HTTP_KEY']) ? '';
+		$key = isset($params['HTTP_USER']) ? base64_decode($params['HTTP_KEY']) : '';
 		$parts	= explode( ':', $key );
 		$key	= trim($parts[0]);
 

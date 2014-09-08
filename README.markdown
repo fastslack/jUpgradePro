@@ -44,9 +44,3 @@ Documentation
 ------------
 
 http://matware.com.ar/documentation/jupgradepro/main-table-of-contents.html
-
-
-
-
-
-

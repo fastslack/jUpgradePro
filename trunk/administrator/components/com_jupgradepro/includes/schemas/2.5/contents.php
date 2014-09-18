@@ -54,6 +54,8 @@ class JUpgradeproContent extends JUpgradepro
 			// Check if title and alias isn't blank
 			$row['title'] = !empty($row['title']) ? $row['title'] : "###BLANK###";
 			$row['alias'] = !empty($row['alias']) ? $row['alias'] : "###BLANK###";
+			$row['introtext'] = !empty($row['introtext']) ? $row['introtext'] : "###BLANK###";
+			$row['fulltext'] = !empty($row['fulltext']) ? $row['fulltext'] : "###BLANK###";
 
 			// Add tags if Joomla! is greater than 3.1
 			if (version_compare(JUpgradeproHelper::getVersion('new'), '3.1', '>=')) {

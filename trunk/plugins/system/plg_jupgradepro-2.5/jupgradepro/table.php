@@ -462,9 +462,21 @@ class JUpgradeproTable extends JTable
 		$db = JFactory::getDbo();
 
 		// Set the query to get the tables statement.
-		$tables = $db->getTableList();
+		$tables = $db->getPrefix();
+		$prefix = $db->getTableList();
 
-		return json_encode($tables);
+		$new_tables = array();
+		$count_prefix = strlen($prefix);
+
+		foreach ($tables as $table)
+		{
+			if ($prefix == substr($table, 0, $count_prefix))
+			{
+				$new_tables[] = $table;
+			}
+		}
+
+		return json_encode($new_tables);
 	}
 
 	/**

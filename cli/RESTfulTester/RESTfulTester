@@ -1,0 +1,149 @@
+#!/usr/bin/php
+<?php
+/**
+* RESTfulTester
+*
+* @version $Id:
+* @package jUpgradePro
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
+* @author Matias Aguirre
+* @email maguirre@matware.com.ar
+* @link http://www.matware.com.ar/
+* @license GNU General Public License version 2 or later; see LICENSE
+*/
+// We are a valid Joomla entry point.
+define('_JEXEC', 1);
+
+// Bootstrap the application.
+require dirname(dirname(__FILE__)).'/bootstrap.php';
+
+// Import the HTTP libraries
+jimport('joomla.http.http');
+
+class RESTfulTester extends JApplicationCli
+{
+	/**
+	* Class constructor.
+	*
+	* @return void
+	*
+	* @since 2.5.0
+	*/
+	public function __construct()
+	{
+		// Call the parent __construct method so it bootstraps the application class.
+		parent::__construct();
+
+		// Add the logger.
+		JLog::addLogger(
+			// Pass an array of configuration options
+			array(
+				// Set the name of the log file
+				'text_file' => JPATH_BASE.'/logs/RESTfulTester.log.php'
+			)
+		);
+
+		// Getting the parameters
+		$this->params = new JRegistry(new JConfig);
+
+		// Creating first dabatase instance
+		$this->_db = JFactory::getDBO();
+	}
+
+	/**
+	 * execute
+	 *
+	 * @return	none
+	 * @since	2.5.0
+	 */
+  public function execute()
+  {
+		$task = 'check';
+		//$table = 'banners_tracks';
+		$table = null;
+
+		print_r( $this->testRestPlugin($task, $table) );
+
+	} // end method
+
+
+	/**
+	 * Method to test the jUpgradePro plugin
+	 *
+	 * @param	string The task name to request.
+	 * @param	string The table name.
+	 *
+	 * @return	
+	 * @since	0.4.4
+	 * @throws	Exception
+	 */
+	protected function testRestPlugin($task, $table)
+	{
+		$data = array();
+		// JHttp instance
+		$http = new JHttp();
+		$data = $this->_getRestData();
+	
+		// Set the parameters to send
+		$data['table'] = $table;
+		$data['task'] = $task;
+
+		$response = $http->get($this->params->get('url'), $data);
+
+		return $response;
+	}
+
+	/**
+	 * Get the raw data for this part of the upgrade.
+	 *
+	 * @return	array	Returns a reference to the source data array.
+	 * @since	3.0.0
+	 * @throws	Exception
+	 */
+	public function &_getRestData()
+	{
+		$data = array();
+
+		// Setting the headers for REST
+		$rest_username = $this->params->get('username');
+		$rest_password = $this->params->get('password');
+		$rest_key = $this->params->get('restkey');
+
+		// Setting the headers for REST
+		$str = $rest_username.":".$rest_password;
+		$data['Authorization'] = base64_encode($str);
+
+		// Encoding user
+		$user_encode = $rest_username.":".$rest_key;
+		$data['AUTH_USER'] = base64_encode($user_encode);
+		// Sending by other way, some servers not allow AUTH_ values
+		$data['USER'] = base64_encode($user_encode);
+
+		// Encoding password
+		$pw_encode = $rest_password.":".$rest_key;
+		$data['AUTH_PW'] = base64_encode($pw_encode);
+		// Sending by other way, some servers not allow AUTH_ values
+		$data['PW'] = base64_encode($pw_encode);
+
+		// Encoding key
+		$key_encode = $rest_key.":".$rest_key;
+		$data['KEY'] = base64_encode($key_encode);
+
+		return $data;
+	}
+
+} // end class
+
+// Wrap the execution in a try statement to catch any exceptions thrown anywhere in the script.
+try
+{
+	// Instantiate the application object, passing the class name to JCli::getInstance
+	// and use chaining to execute the application.
+	JApplicationCli::getInstance('RESTfulTester')->execute();
+}
+catch (Exception $e)
+{
+	// An exception has been caught, just echo the message.
+	fwrite(STDOUT, $e->getMessage() . "\n");
+	exit($e->getCode());
+}

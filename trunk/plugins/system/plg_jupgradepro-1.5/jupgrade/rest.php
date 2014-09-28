@@ -187,6 +187,10 @@ class JRESTMessage
 			{
 				return trim($headers['Authorization']);
 			}
+			else if (isset($headers['Auth-User']))
+			{
+				return trim($headers['Auth-User']);
+			}
 		}
 		// Otherwise we need to look in the $_SERVER superglobal.
 		elseif (isset($_SERVER['HTTP_AUTHORIZATION']))

@@ -27,6 +27,12 @@ cp -r ../trunk $DIR
 find ${DIR} -name ".svn" -type d -exec rm -rf {} \;
 find ${DIR} -name ".DS_Store" -exec rm -rf {} \;
 
+# Zip jUpgradePro component
+cd $DIR/administrator/components/com_jupgradepro
+zip -rq $PACKAGE .
+mv $PACKAGE ${RELEASE_DIR}/.
+cd ${RELEASE_DIR}
+
 # Zip plugin for J! 1.5
 cd ${DIR}/plugins/system/plg_jupgradepro-1.5
 zip -rq plg_${PROJECT}-restful-${VERSION}-j1.5.zip .
@@ -42,7 +48,6 @@ cd ${RELEASE_DIR}
 # Create packages
 #rm $PACKAGE
 rm -rf $DIR/plugin/
-zip -rq $PACKAGE $DIR
 
 # create symlink
 rm -rf com_${PROJECT}-latest.zip

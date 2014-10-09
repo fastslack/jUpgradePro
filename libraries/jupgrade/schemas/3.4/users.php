@@ -11,7 +11,7 @@
 * @license GNU General Public License version 2 or later; see LICENSE
 */
 
-JLoader::register("JUpgradeproUser", JPATH_COMPONENT_ADMINISTRATOR."/includes/jupgrade.users.class.php");
+JLoader::register("JUpgradeproUser", JPATH_LIBRARIES."/jupgrade/jupgrade.users.class.php");
 
 /**
  * Upgrade class for Users

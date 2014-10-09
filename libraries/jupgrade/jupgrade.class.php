@@ -91,7 +91,7 @@ class JUpgradepro
 		$this->_db = JFactory::getDBO();
 
 		// Getting the driver
-		JLoader::register('JUpgradeproDriver', JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.driver.class.php');
+		JLoader::register('JUpgradeproDriver', JPATH_LIBRARIES.'/jupgrade/jupgrade.driver.class.php');
 
 		if ($this->_step instanceof JUpgradeproStep) {
 			$this->_step->table = $this->getSourceTable();

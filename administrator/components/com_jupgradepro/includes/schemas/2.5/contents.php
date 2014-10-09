@@ -53,7 +53,6 @@ class JUpgradeproContent extends JUpgradepro
 
 			// Check if title and alias isn't blank
 			$row['title'] = !empty($row['title']) ? $row['title'] : "###BLANK###";
-			$row['alias'] = !empty($row['alias']) ? $row['alias'] : "###BLANK###";
 			$row['introtext'] = !empty($row['introtext']) ? $row['introtext'] : "###BLANK###";
 			$row['fulltext'] = !empty($row['fulltext']) ? $row['fulltext'] : "###BLANK###";
 
@@ -71,8 +70,22 @@ class JUpgradeproContent extends JUpgradepro
 				throw new Exception($this->_db->getErrorMsg());
 			}
 
-			// Getting the asset table
+			// Get the asset table
 			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
+
+			// Aliases
+			$row['alias'] = !empty($row['alias']) ? $row['alias'] : "###BLANK###";
+			$row['alias'] = JApplication::stringURLSafe($row['alias']);
+
+			// Prevent MySQL duplicate error
+			// @@ Duplicate entry for key 'idx_client_id_parent_id_alias_language'
+			if ($content->load(array('alias' => $row['alias'], 'catid' => $row['catid'])))
+			{
+				// Getting the duplicated alias
+				$alias = $this->getAlias('#__content', $row['alias']);
+				// Set the modified alias
+				$row['alias'] .= "-".rand(0, 99999999);
+			}
 
 			// Bind data to save content
 			if (!$content->bind($row)) {

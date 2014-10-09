@@ -168,7 +168,7 @@ class JUpgradeproContent extends JUpgradepro
 				unset($row['id']);
 			}
 
-			// Getting the asset table
+			// Get the asset table
 			$content = JTable::getInstance('Content', 'JTable', array('dbo' => $this->_db));
 
 			// Aliases

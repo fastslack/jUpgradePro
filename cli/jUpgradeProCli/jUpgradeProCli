@@ -15,7 +15,7 @@
 define('_JEXEC', 1);
 
 // Bootstrap the application.
-require './bootstrap.php';
+require dirname(dirname(__FILE__)).'/bootstrap.php';
 
 class jUpgradeProCli extends JApplicationCli
 {

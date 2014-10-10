@@ -71,7 +71,7 @@ class JUpgradeproDriver
 
 		// Derive the class name from the driver.
 		$class_name = 'JUpgradeproDriver' . ucfirst(strtolower($params->method));
-		$class_file = JPATH_COMPONENT_ADMINISTRATOR.'/includes/driver/'.$params->method.'.php';
+		$class_file = JPATH_LIBRARIES.'/jupgrade/driver/'.$params->method.'.php';
 
 		// Require the driver file
 		if (JFile::exists($class_file)) {

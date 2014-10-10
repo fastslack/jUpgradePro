@@ -11,7 +11,7 @@
 * @license GNU General Public License version 2 or later; see LICENSE
 */
 // Require the category class
-require_once JPATH_COMPONENT_ADMINISTRATOR.'/includes/jupgrade.category.class.php';
+require_once JPATH_LIBRARIES.'/jupgrade/jupgrade.category.class.php';
 
 /**
  * Upgrade class for Contacts

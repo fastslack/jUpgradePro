@@ -452,8 +452,8 @@ class JUpgradeTable extends JTable
 		$db = JFactory::getDbo();
 
 		// Set the query to get the tables statement.
-		$tables = $db->getPrefix();
-		$prefix = $db->getTableList();
+		$prefix = $db->getPrefix();
+		$tables = $db->getTableList();
 
 		$new_tables = array();
 		$count_prefix = strlen($prefix);

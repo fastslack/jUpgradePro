@@ -19,10 +19,10 @@ $version = "v{$this->version}";
 $params	= $this->params;
 // get document to add scripts
 $document	= JFactory::getDocument();
-$document->addScript('components/com_jupgradepro/js/RadialProgressBar.js');
-$document->addScript("components/com_jupgradepro/js/migrate.js");
-$document->addScript('components/com_jupgradepro/js/requestmultiple.js');
-$document->addStyleSheet("components/com_jupgradepro/css/jupgradepro.css");
+$document->addScript('../media/com_jupgradepro/js/RadialProgressBar.js');
+$document->addScript("../media/com_jupgradepro/js/migrate.js");
+$document->addScript('../media/com_jupgradepro/js/requestmultiple.js');
+$document->addStyleSheet("../media/com_jupgradepro/css/jupgradepro.css");
 ?>
 
 <link href='http://fonts.googleapis.com/css?family=Chivo:400,400italic' rel='stylesheet' type='text/css'>
@@ -59,7 +59,7 @@ window.addEvent('domready', function() {
 				</div>
 
 				<div id="update">
-					<br /><img src="components/com_jupgradepro/images/update.png" align="middle" border="0"/><br />
+					<br /><img src="../media/com_jupgradepro/images/update.png" align="middle" border="0"/><br />
 					<h2><?php echo JText::_('START'); ?></h2><br />
 				</div>
 

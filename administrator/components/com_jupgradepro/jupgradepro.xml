@@ -20,15 +20,18 @@
 		<filename>index.html</filename>
 	</files>
 
+	<media destination="com_jupgradepro" folder="media/com_jupgradepro">
+		<folder>css</folder>
+		<folder>images</folder>
+		<folder>js</folder>
+	</media>
+
 	<administration>
 		<menu img="components/com_jupgradepro/images/jupgradepro.png">COM_JUPGRADEPRO</menu>
 
 		<files folder="admin">
 			<folder>controllers</folder>
-			<folder>css</folder>
 			<folder>helpers</folder>
-			<folder>images</folder>
-			<folder>js</folder>
 			<folder>language</folder>
 			<folder>models</folder>
 			<folder>sql</folder>

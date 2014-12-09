@@ -13,10 +13,10 @@
 // No direct access.
 defined('_JEXEC') or die;
 
-JLoader::register('jUpgrade', JPATH_LIBRARIES.'/jupgrade/jupgrade.compat.php');
-JLoader::register('JUpgradepro', JPATH_LIBRARIES.'/jupgrade/jupgrade.class.php');
-JLoader::register('JUpgradeproDriver', JPATH_LIBRARIES.'/jupgrade/jupgrade.driver.class.php');
-JLoader::register('JUpgradeproStep', JPATH_LIBRARIES.'/jupgrade/jupgrade.step.class.php');
+JLoader::register('jUpgrade', JPATH_LIBRARIES.'/matware/jupgrade/jupgrade.compat.php');
+JLoader::register('JUpgradepro', JPATH_LIBRARIES.'/matware/jupgrade/jupgrade.php');
+JLoader::register('JUpgradeproDriver', JPATH_LIBRARIES.'/matware/jupgrade/driver.php');
+JLoader::register('JUpgradeproStep', JPATH_LIBRARIES.'/matware/jupgrade/step.php');
 
 /**
  * JUpgradeproModelChecks Model
@@ -86,6 +86,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 			// Get the extension version
 			$xmlfile = JPATH_ADMINISTRATOR.'/components/com_jupgradepro/jupgradepro.xml';
 			$xml = JFactory::getXML($xmlfile);
+
 			$ext_version = (string) $xml->version[0];
 
 			// Compare the versions

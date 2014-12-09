@@ -13,9 +13,9 @@
 // No direct access.
 defined('_JEXEC') or die;
 
-JLoader::register('JUpgradepro', JPATH_LIBRARIES.'/jupgrade/jupgrade.class.php');
-JLoader::register('jUpgrade', JPATH_LIBRARIES.'/jupgrade/jupgrade.compat.php');
-JLoader::register('JUpgradeproStep', JPATH_LIBRARIES.'/jupgrade/jupgrade.step.class.php');
+JLoader::register('JUpgradepro', JPATH_LIBRARIES.'/matware/jupgrade/jupgrade.php');
+JLoader::register('jUpgrade', JPATH_LIBRARIES.'/matware/jupgrade/jupgrade.compat.php');
+JLoader::register('JUpgradeproStep', JPATH_LIBRARIES.'/matware/jupgrade/step.php');
 
 /**
  * jUpgradePro Model

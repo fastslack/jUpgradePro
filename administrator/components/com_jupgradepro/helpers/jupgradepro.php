@@ -94,8 +94,8 @@ class JUpgradeproHelper
 
 			$schema = JUpgradeproHelper::getVersion('old');
 
-			$file_core = JPATH_LIBRARIES."/jupgrade/schemas/{$schema}/{$name}.php";
-			$file_checks = JPATH_LIBRARIES."/jupgrade/extensions/{$schema}/{$name}.php";
+			$file_core = JPATH_LIBRARIES."/matware/jupgrade/schemas/{$schema}/{$name}.php";
+			$file_checks = JPATH_LIBRARIES."/matware/jupgrade/extensions/{$schema}/{$name}.php";
 
 			// Require the file
 			if (JFile::exists($file_core)) {
@@ -157,7 +157,7 @@ class JUpgradeproHelper
 
 		if ($total == 0)
 		{
-			JLoader::register('JUpgradeproDriver', JPATH_LIBRARIES.'/jupgrade/jupgrade.driver.class.php');
+			JLoader::register('JUpgradeproDriver', JPATH_LIBRARIES.'/matware/jupgrade/driver.php');
 			$driver = JUpgradeproDriver::getInstance($step);
 			return $driver->getTotal();
 		}else{

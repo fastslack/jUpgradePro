@@ -12,7 +12,7 @@
 */
 
 // Require the category class
-require_once JPATH_LIBRARIES.'/jupgrade/jupgrade.category.class.php';
+JLoader::register("JUpgradeproCategory", JPATH_LIBRARIES."/matware/jupgrade/category.php");
 
 /**
  * Upgrade class for Contacts

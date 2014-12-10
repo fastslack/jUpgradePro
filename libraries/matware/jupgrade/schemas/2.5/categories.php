@@ -10,8 +10,9 @@
 * @link http://www.matware.com.ar/
 * @license GNU General Public License version 2 or later; see LICENSE
 */
+
 // Require the category class
-require_once JPATH_LIBRARIES.'/jupgrade/jupgrade.category.class.php';
+JLoader::register("JUpgradeproCategory", JPATH_LIBRARIES."/matware/jupgrade/category.php");
 
 /**
  * Upgrade class for categories

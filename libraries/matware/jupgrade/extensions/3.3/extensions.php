@@ -11,7 +11,7 @@
 * @license GNU General Public License version 2 or later; see LICENSE
 */
 
-JLoader::register('JUpgradeproExtensions', JPATH_LIBRARIES."/jupgrade/jupgrade.extensions.class.php");
+JLoader::register('JUpgradeproExtensions', JPATH_LIBRARIES."/matware/jupgrade/extensions.php");
 
 /**
  * Upgrade class for 3rd party extensions

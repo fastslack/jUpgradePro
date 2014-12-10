@@ -16,7 +16,7 @@ defined('_JEXEC') or die;
 /**
  * jUpgradePro utility class for migrations
  *
- * @package		MatWare
+ * @package		Matware
  * @subpackage	com_jupgradepro
  */
 class JUpgradepro
@@ -84,14 +84,14 @@ class JUpgradepro
 		jimport('cms.version.version');
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
-		// Getting the component parameters
+		// Get the component parameters
 		$this->params = JUpgradeproHelper::getParams();
 
-		// Creating dabatase instance for this installation
+		// Create the dabatase instance for this installation
 		$this->_db = JFactory::getDBO();
 
-		// Getting the driver
-		JLoader::register('JUpgradeproDriver', JPATH_LIBRARIES.'/jupgrade/jupgrade.driver.class.php');
+		// Get the driver
+		JLoader::register('JUpgradeproDriver', JPATH_LIBRARIES.'/matware/jupgrade/driver.php');
 
 		if ($this->_step instanceof JUpgradeproStep) {
 			$this->_step->table = $this->getSourceTable();
@@ -100,7 +100,7 @@ class JUpgradepro
 		// Initialize the driver
 		$this->_driver = JUpgradeproDriver::getInstance($step);
 
-		// Getting the total
+		// Get the total
 		if (!empty($step->source)) {
 			$this->_total = JUpgradeproHelper::getTotal($step);
 		}

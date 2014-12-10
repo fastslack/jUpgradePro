@@ -4,13 +4,15 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
 * @license GNU General Public License version 2 or later; see LICENSE
 */
-JLoader::register('JUpgradeproMenus', JPATH_LIBRARIES."/jupgrade/jupgrade.menus.class.php");
+
+JLoader::register('JUpgradeproMenus', JPATH_LIBRARIES."/matware/jupgrade/menus.php");
+
 /**
  * Upgrade class for Menus
  *

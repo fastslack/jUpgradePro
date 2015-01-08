@@ -78,36 +78,39 @@ class JUpgradeproCategories extends JUpgradeproCategory
 		$this->section = 'com_content'; 
 
 		// JTable::store() run an update if id exists so we create them first
-		foreach ($rows as $category)
+		if ($this->params->keep_ids == 1)
 		{
-			$object = new stdClass();
-
-			$category = (array) $category;
-
-			if ($category['id'] == 1) {
-				$query->clear();
-				$query->select('id+1');
-				$query->from('#__categories');
-				$query->order('id DESC');
-				$query->limit(1);
-				$this->_db->setQuery($query);
-				$rootidmap = $this->_db->loadResult();
-
-				$object->id = $rootidmap;
-				$category['old_id'] = $category['id'];
-				$category['id'] = $rootidmap;
-			}else{
-				$object->id = $category['id'];
-			}
-
-			// Inserting the categories id's
-			try
+			foreach ($rows as $category)
 			{
-				$this->_db->insertObject($table, $object);
-			}
-			catch (RuntimeException $e)
-			{
-				throw new RuntimeException($this->_db->getErrorMsg());
+				$object = new stdClass();
+
+				$category = (array) $category;
+
+				if ($category['id'] == 1) {
+					$query->clear();
+					$query->select('id+1');
+					$query->from('#__categories');
+					$query->order('id DESC');
+					$query->limit(1);
+					$this->_db->setQuery($query);
+					$rootidmap = $this->_db->loadResult();
+
+					$object->id = $rootidmap;
+					$category['old_id'] = $category['id'];
+					$category['id'] = $rootidmap;
+				}else{
+					$object->id = $category['id'];
+				}
+
+				// Inserting the categories id's
+				try
+				{
+					$this->_db->insertObject($table, $object);
+				}
+				catch (RuntimeException $e)
+				{
+					throw new RuntimeException($this->_db->getErrorMsg());
+				}
 			}
 		}
 

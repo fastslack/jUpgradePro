@@ -58,6 +58,18 @@ final class JConfig
 	public $skip_core_newsfeeds = 0;
 	public $skip_core_weblinks = 0;
 	/**
+	 * Enable/disable extensions
+	 * @var int
+	 */
+	public $skip_exte = 0;
+	/**
+	 * Should ID's be kept? 
+	 * 	!!! Warning !!! setting to 1 will delete ALL content!
+	 * @var int
+	 */
+	public $keep_ids= 0;
+	
+	/**
 	* The database configuration for your new site
 	*
 	* @vars strings

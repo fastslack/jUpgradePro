@@ -1,7 +1,7 @@
 jUpgradePro
 ========
 
-**jUpgradePro** is the only FREE extension of Joomla! that allows you to migrate the information you have stored easily between two different installations of Joomla!
+**jUpgradePro** is an extension of Joomla! that allows you to migrate the information you have stored easily between two different installations of Joomla!
 
 You will be able to migrate data from older versions of Joomla! to the latest versions in minutes! Also you can move data from differents Joomla! sites using the same version!
 

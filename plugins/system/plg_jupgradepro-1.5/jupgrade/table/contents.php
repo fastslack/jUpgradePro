@@ -105,9 +105,9 @@ class JUpgradeTableContents extends JUpgradeTable
 	 * @param		Array	Result to migrate
 	 * @return	Array	Migrated result
 	 */
-	function migrate(&$rows)
+	function migrate($rows)
 	{
-		foreach ($rows as $row)
+		foreach ($rows as &$row)
 		{
 			$row['attribs'] = $this->convertParams($row['attribs']);
 			$row['access'] = $row['access'] == 0 ? 1 : $row['access'] + 1;

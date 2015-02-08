@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2015 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -23,8 +23,8 @@ define('JPATH_ADMINISTRATOR', JPATH_SITE.'/administrator'   );
 define('JPATH_LIBRARIES', JPATH_SITE.'/libraries'   );
 define('JPATH_INSTALLATION', JPATH_SITE.'/installation'   );
 define('JPATH_CACHE', JPATH_SITE.'/cache'   );
-define('JPATH_COMPONENT', dirname(dirname(__FILE__)).'/trunk/admin' );
-define('JPATH_COMPONENT_ADMINISTRATOR', dirname(dirname(__FILE__)).'/trunk/admin');
+define('JPATH_COMPONENT', dirname(dirname(__FILE__)).'/administrator/components/com_jupgradepro' );
+define('JPATH_COMPONENT_ADMINISTRATOR', dirname(dirname(__FILE__)).'/administrator/components/com_jupgradepro');
 
 // Import the Joomla! Platform
 if (file_exists(JPATH_LIBRARIES.'/import.legacy.php')) {

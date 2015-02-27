@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension type="package" version="2.5">
+
+	<name>jUpgradePro</name>
+	<author>Matias Aguirre</author>
+	<authorEmail>maguirre@matware.com.ar</authorEmail>
+	<authorUrl>http://www.matware.com.ar</authorUrl>
+
+	<packagename>jupgradepro</packagename>
+	<url>http://www.matware.com.ar/</url>
+	<packager>Matias Aguirre</packager>
+	<packagerurl>http://www.matware.com.ar/</packagerurl>
+	<!-- <update>http://www.updateurl.com/update</update> -->
+
+	<copyright>Copyright 2006 - 2015 Matias Aguirre. All rights reserved.</copyright>
+	<license>GNU General Public License version 2 or later.</license>
+	<creationDate>2012-08-30</creationDate>
+	<version>3.4.0</version>
+	<description></description>
+
+	<files folder="packages">
+		<file type="component" id="com_jupgradepro" >com_jupgradepro.zip</file>
+		<file type="library" id="matware">lib_matware.zip</file>
+		<file type="plugin" id="matware" group="system">plg_sys_matware.zip</file>
+	</files>
+
+</extension>

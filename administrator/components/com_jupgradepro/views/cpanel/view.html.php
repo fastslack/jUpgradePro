@@ -45,12 +45,6 @@ class JUpgradeproViewCpanel extends JViewLegacy
 		// Add a back button.
 		JToolbarHelper::title(JText::_( 'jUpgradePro' ), 'jupgradepro');
 
-		if (version_compare(JUpgradeproHelper::getVersion('new'), '3.0', '>=')) {
-			$bar->appendButton('Link', 'wand', 'Buy 3rd extensions plugins', $url2);
-		} else {
-			$bar->appendButton('Link', 'extension', 'Buy 3rd extensions plugins', $url2);
-		}
-
 		JToolbarHelper::preferences('com_jupgradepro', '500');
 		JToolbarHelper::spacer();
 		JToolbarHelper::help('help', false, $url);

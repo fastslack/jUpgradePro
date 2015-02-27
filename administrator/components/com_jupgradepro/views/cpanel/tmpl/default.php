@@ -110,13 +110,13 @@ window.addEvent('domready', function() {
 					<div id="info_version"><i><?php echo JText::_('jUpgradePro'); ?></i> <?php echo JText::_('Version').' <b>'.$this->version.'</b>'; ?></div>
 					<div id="info_thanks">
 						<p>
-							<?php echo JText::_('Developed by'); ?> <i><a href="http://www.matware.com.ar/">Matware &#169;</a></i>  Copyleft 2006-2014<br />
+							<?php echo JText::_('Developed by'); ?> <i><a href="http://www.matware.com.ar/">Matware &#169;</a></i>  Copyleft 2006-2015<br />
 							Licensed as <a href="http://www.gnu.org/licenses/old-licenses/gpl-2.0.html"><i>GNU General Public License v2</i></a><br />
 						</p>
 						<h3>
 							<a href="http://www.matware.com.ar/proyects/jupgradepro.html">Project Site</a> /
 							<a href="http://www.matware.com.ar/forums/jupgradepro.html">Community</a> /
-							<a href="https://github.com/fastslack/jUpgradePro">GitHub</a> /
+							<a href="https://github.com/fastslack/jUpgradePro/issues">Issues</a> /
 							<a href="http://matware.com.ar/documentation/jupgradepro/main-table-of-contents.html">Documentation</a><br />
 						</h3>
 					</div>

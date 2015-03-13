@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="2.5.0" method="upgrade">
+<extension type="component" version="2.5.19" method="upgrade">
 	<name>jUpgradePro</name>
 	<author>Matias Aguirre</author>
 	<authorEmail>maguirre@matware.com.ar</authorEmail>
@@ -49,6 +49,10 @@
 			<language tag="en-GB">language/en-GB/en-GB.com_jupgradepro.sys.ini</language>
 			<language tag="es-ES">language/es-ES/es-ES.com_jupgradepro.ini</language>
 			<language tag="es-ES">language/es-ES/es-ES.com_jupgradepro.sys.ini</language>
+			<language tag="fr-FR">language/fr-FR/fr-FR.com_jupgradepro.ini</language>
+			<language tag="fr-FR">language/fr-FR/fr-FR.com_jupgradepro.sys.ini</language>
+			<language tag="nl-NL">language/nl-NL/nl-NL.com_jupgradepro.ini</language>
+			<language tag="nl-NL">language/nl-NL/nl-NL.com_jupgradepro.sys.ini</language>
 		</languages>
 	</administration>
 

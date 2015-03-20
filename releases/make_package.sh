@@ -34,7 +34,7 @@ cp -r ../plugins ${PKG_DIR}/plg_jupgradepro
 cp -r ../media ${PKG_DIR}/com_jupgradepro/media
 
 # Zip jUpgradePro component
-cd ${PKG_DIR}/com_jupgradepro
+cd ${PKG_DIR}/${COM_PACKAGE}
 zip -rq ${COM_PACKAGE} .
 mv ${COM_PACKAGE}.zip ${RELEASE_DIR}/packages/.
 cd ${RELEASE_DIR}
@@ -54,28 +54,17 @@ cd ${RELEASE_DIR}
 # Create packages
 zip -rq ${PKG_DIR}-${VERSION}.zip packages/ pkg_${PROJECT}.xml
 
-
-# Zip jUpgradePro component
-#cd $DIR/administrator/components/com_jupgradepro
-#zip -rq $PACKAGE .
-#mv $PACKAGE ${RELEASE_DIR}/.
-#cd ${RELEASE_DIR}
-
 # Zip plugin for J! 1.5
-#cd ${DIR}/plugins/system/plg_jupgradepro-1.5
-#zip -rq plg_${PROJECT}-restful-${VERSION}-j1.5.zip .
-#mv plg_${PROJECT}-restful-${VERSION}-j1.5.zip ${RELEASE_DIR}/.
-#cd ${RELEASE_DIR}
+cd ../plugins/system/plg_jupgradepro-1.5
+zip -rq plg_${PROJECT}-restful-${VERSION}-j1.5.zip .
+mv plg_${PROJECT}-restful-${VERSION}-j1.5.zip ${RELEASE_DIR}/.
+cd ${RELEASE_DIR}
 
 # Zip plugin for J! 2.5 or greater
-#cd $DIR/plugins/system/plg_jupgradepro-2.5
-#zip -rq plg_${PROJECT}-restful-${VERSION}-j2.5-j3.zip .
-#mv plg_${PROJECT}-restful-${VERSION}-j2.5-j3.zip ${RELEASE_DIR}/.
-#cd ${RELEASE_DIR}
-
-# Create packages
-#rm $PACKAGE
-#rm -rf $DIR/plugins/
+cd ../plugins/system/plg_jupgradepro-2.5
+zip -rq plg_${PROJECT}-restful-${VERSION}-j2.5-j3.zip .
+mv plg_${PROJECT}-restful-${VERSION}-j2.5-j3.zip ${RELEASE_DIR}/.
+cd ${RELEASE_DIR}
 
 # create symlink
 #rm -rf com_${PROJECT}-latest.zip

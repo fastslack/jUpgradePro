@@ -33,6 +33,12 @@ final class JConfig
 	*/
 	public $chunk_limit = '100';
 	/**
+	* Keep the original id's.
+	*
+	* @var boolean	If you set it to yes, all your content will be deleted!
+	*/
+    public $keep_ids = false;
+	/**
 	* Keep the template positions
 	*
 	* @var boolean	True if you like to keep the template positions

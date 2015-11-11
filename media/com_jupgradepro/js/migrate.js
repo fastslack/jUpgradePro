@@ -262,6 +262,7 @@ var jUpgradepro = new Class({
 					$('pb4').set('data-progress', '100');
 					this.cancel();
 					self.extensions(e);
+					return;
 				}
 
 				// Redirect if total == 0
@@ -395,11 +396,12 @@ var jUpgradepro = new Class({
 
 				var object = JSON.decode(response);
 
-				if (object === null)
+				if (typeof(object) === 'undefined' || object == null)
 				{
 					$('pb7').set('data-progress', '100');
 					this.cancel();
 					self.done();
+					return;
 				}
 
 				// Redirect if total == 0

@@ -103,7 +103,7 @@ var jUpgradepro = new Class({
 				url: 'index.php?option=com_jupgradepro&format=raw&task=ajax.cleanup',
 				method: 'get',
 				noCache: true
-			}); // end Request		
+			}); // end Request
 
 			cleanup.addEvents({
 				'complete': function(response) {
@@ -111,7 +111,7 @@ var jUpgradepro = new Class({
 					var object = JSON.decode(response);
 
 					if (self.options.debug_check == 1) {
-						html_debug.innerHTML = html_debug.innerHTML + '<br><br>==========<br><b>[cleanup]</b><br><br>' +object.text;
+						html_debug.innerHTML = html_debug.innerHTML + '<br><br>==========<br><b>[cleanup]</b><br><br>' +response;
 						console.log(response);
 					}
 
@@ -131,7 +131,7 @@ var jUpgradepro = new Class({
 				url: 'index.php?option=com_jupgradepro&format=raw&task=ajax.checks',
 				method: 'get',
 				noCache: true
-			}); // end Request		
+			}); // end Request
 
 			checks.addEvents({
 				'complete': function(response) {
@@ -183,7 +183,7 @@ var jUpgradepro = new Class({
 
 		setTimeout(function() {
 			mySlideWarning.slideOut();
-		}, 10000); 
+		}, 10000);
 
 		// Configure the radial progress bar
 		$('pb4').pb4 = new RadialProgressBar($('pb4'), {
@@ -203,7 +203,7 @@ var jUpgradepro = new Class({
 		var counter = 0;
 
 		//
-		// 
+		//
 		//
 		var row = new Request({
 			link: 'chain',
@@ -243,13 +243,13 @@ var jUpgradepro = new Class({
 		});
 
 		//
-		// 
+		//
 		//
 		var step = new Request({
 			link: 'chain',
 			url: 'index.php?option=com_jupgradepro&format=raw&task=ajax.step',
 			method: 'get'
-		}); // end Request		
+		}); // end Request
 
 		//
 		step.addEvents({
@@ -299,7 +299,7 @@ var jUpgradepro = new Class({
 				totalItems.innerHTML = object.total;
 
 				// Start the checks
-				row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&table='+object.name;	
+				row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&table='+object.name;
 
 				// Running the request[s]
 				if (object.total != 0) {
@@ -388,7 +388,7 @@ var jUpgradepro = new Class({
 			link: 'chain',
 			url: 'index.php?option=com_jupgradepro&format=raw&task=ajax.step&extensions=tables',
 			method: 'get'
-		}); // end Request		
+		}); // end Request
 
 
 		ext_step.addEvents({
@@ -433,7 +433,7 @@ var jUpgradepro = new Class({
 				ext_totalItems.innerHTML = object.total;
 
 				// Start the checks
-				ext_row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&extensions=tables&table='+object.name;	
+				ext_row.options.url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.migrate&extensions=tables&table='+object.name;
 
 				// Running the request[s]
 				if (object.total != 0) {
@@ -463,7 +463,7 @@ var jUpgradepro = new Class({
 				}else if (response == 0){
 					$('pb7').set('data-progress', '100%');
 					this.cancel();
-					self.done();					
+					self.done();
 				}
 			}
 		});
@@ -535,21 +535,21 @@ var jUpgradepro = new Class({
 		}
 
 		//
-		// 
+		//
 		//
 		var file = new Request({
 			link: 'chain',
 			method: 'get'
 		}); // end Request
-	
+
 		//
-		// 
+		//
 		//
 		var step = new Request({
 			link: 'chain',
 			url: 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=imageslist',
 			method: 'get'
-		}); // end Request		
+		}); // end Request
 
 		step.addEvents({
 			'complete': function(response) {
@@ -568,7 +568,7 @@ var jUpgradepro = new Class({
 						//console.log(response);
 						counter = counter + 1;
 						currItem.innerHTML = counter;
-						status.innerHTML = 'Getting ' + basename(object.images[counter]);						
+						status.innerHTML = 'Getting ' + basename(object.images[counter]);
 
 						percent = (counter / object.total) * 100;
 
@@ -577,18 +577,18 @@ var jUpgradepro = new Class({
 						if (counter == object.total) {
 							self.done();
 						}
-						
+
 					}
 				});
-				
+
 				// Start the checks
-				file.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=image&files=images';			
-				
+				file.options.url = 'index.php?option=com_jupgradepro&format=raw&view='+method+'&task=image&files=images';
+
 				for (i=1;i<=object.total;i++) {
-					rm.addRequest(i, file);			
+					rm.addRequest(i, file);
 				}
-		
-				rm.runAll();			
+
+				rm.runAll();
 			}
 		});
 
@@ -633,7 +633,7 @@ var jUpgradepro = new Class({
 			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=templatesfiles',
 			method: 'get',
 			noCache: true
-		}); // end Request		
+		}); // end Request
 
 		templates_files.addEvents({
 			'complete': function(response) {
@@ -657,13 +657,13 @@ var jUpgradepro = new Class({
 		});
 
 		//
-		// Templates 
+		// Templates
 		//
 		var templates = new Request({
 			url: 'index.php?option=com_jupgradepro&format=raw&view=ajax&task=templates',
 			method: 'get',
 			noCache: true
-		}); // end Request		
+		}); // end Request
 
 		templates.addEvents({
 			'complete': function(response) {

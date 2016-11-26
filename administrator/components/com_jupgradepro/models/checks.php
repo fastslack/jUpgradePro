@@ -56,14 +56,14 @@ class JUpgradeproModelChecks extends JModelLegacy
 				throw new Exception('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
 			}
 
-			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' || 
+			if ($params->rest_hostname == 'http://www.example.org/' || $params->rest_hostname == '' ||
 					$params->rest_username == '' || $params->rest_password == '' || $params->rest_key == '') {
 				throw new Exception('COM_JUPGRADEPRO_ERROR_REST_CONFIG');
 			}
 
 			// Checking the RESTful connection
 			$driver = JUpgradeproDriver::getInstance();
-			$code = $driver->requestRest('check');
+			$code = trim($driver->requestRest('check'));
 
 			switch ($code) {
 				case 401:
@@ -192,8 +192,8 @@ class JUpgradeproModelChecks extends JModelLegacy
 		}
 
 		if ($flag === false) {
-			throw new Exception('COM_JUPGRADEPRO_ERROR_SKIPS_ALL');				
-		}		
+			throw new Exception('COM_JUPGRADEPRO_ERROR_SKIPS_ALL');
+		}
 
 		// Checking tables
 		if ($params->skip_core_contents != 1 && $params->keep_ids == 1) {

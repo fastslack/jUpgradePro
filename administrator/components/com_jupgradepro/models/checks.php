@@ -323,10 +323,14 @@ class JUpgradeproModelChecks extends JModelLegacy
 	 * @return	none
 	 * @since	2.5.0
 	 */
-	public function returnError ($number, $text)
+	public function returnError ($number, $text, $debug = false)
 	{
 		$message['number'] = $number;
 		$message['text'] = JText::_($text);
+		if ($debug != false)
+		{
+			$message['debug'] = $debug;
+		}
 		print(json_encode($message));
 		exit;
 	}

@@ -56,7 +56,7 @@ class jUpgradeProCli extends JApplicationCli
 	{
 		// Call the parent __construct method so it bootstraps the application class.
 		parent::__construct();
-	
+
 		// Getting the parameters
 		$this->params = new JRegistry(new JConfig);
 
@@ -92,7 +92,7 @@ class jUpgradeProCli extends JApplicationCli
 	{
 		// Print help
 		$this->out();
-		$this->out(' jUpgradeProCli v3.3.0');
+		$this->out(' jUpgradeProCli v3.6.0');
 		$this->out();
 		$this->out(' Author: Matias Aguirre (maguirre@matware.com.ar)');
 		$this->out(' URL: http://www.matware.com.ar');
@@ -233,7 +233,7 @@ class jUpgradeProCli extends JApplicationCli
 
 			if ( empty($step->id) || !isset($step->stop)) {
 				break;
-			}	
+			}
 
 			$this->out("{$this->_c['WHITE']}|  {$this->_c['GREEN']}[{$step->id}] Migrating {$step->name} (Start:{$step->start} - Stop: {$step->stop} - Total: {$step->total})");
 

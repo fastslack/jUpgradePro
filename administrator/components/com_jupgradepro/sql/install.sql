@@ -338,6 +338,56 @@ INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`,
 (NULL, '3.4', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
 (NULL, '3.4', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
 
+INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
+(NULL, '3.5', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'usergroupmap', 'Users Groups', 'user_id', 'user_usergroup_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'contents', 'Contents', 'id', 'content', 'content', 0, 'JUpgradeproContent', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'contents_frontpage', 'FrontPage Contents', 'content_id', 'content_frontpage', 'content_frontpage', 0, 'JUpgradeproContentFrontpage', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'menus', 'Menus', 'id', 'menu', 'menu', 0, 'JUpgradeproMenu', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'menus_types', 'Menus Types', 'id', 'menu_types', 'menu_types', 0, 'JUpgradeproMenusTypes', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'modules', 'Core Modules', 'id', 'modules', 'modules', 0, 'JUpgradeproModules', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'modules_menu', 'Modules Menus', 'moduleid', 'modules_menu', 'modules_menu', 0, 'JUpgradeproModulesMenu', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'banners', 'Banners', 'id', 'banners', 'banners', 0, 'JUpgradeproBanners', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'banners_clients', 'Banners Clients', 'id', 'banner_clients', 'banner_clients', 0, 'JUpgradeproBannersClients', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'banners_tracks', 'Banners Tracks', 'banner_id', 'banner_tracks', 'banner_tracks', 0, 'JUpgradeproBannersTracks', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'JUpgradeproContacts', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.5', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
+
+INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
+(NULL, '3.6', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'usergroupmap', 'Users Groups', 'user_id', 'user_usergroup_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'contents', 'Contents', 'id', 'content', 'content', 0, 'JUpgradeproContent', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'contents_frontpage', 'FrontPage Contents', 'content_id', 'content_frontpage', 'content_frontpage', 0, 'JUpgradeproContentFrontpage', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'menus', 'Menus', 'id', 'menu', 'menu', 0, 'JUpgradeproMenu', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'menus_types', 'Menus Types', 'id', 'menu_types', 'menu_types', 0, 'JUpgradeproMenusTypes', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'modules', 'Core Modules', 'id', 'modules', 'modules', 0, 'JUpgradeproModules', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'modules_menu', 'Modules Menus', 'moduleid', 'modules_menu', 'modules_menu', 0, 'JUpgradeproModulesMenu', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'banners', 'Banners', 'id', 'banners', 'banners', 0, 'JUpgradeproBanners', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'banners_clients', 'Banners Clients', 'id', 'banner_clients', 'banner_clients', 0, 'JUpgradeproBannersClients', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'banners_tracks', 'Banners Tracks', 'banner_id', 'banner_tracks', 'banner_tracks', 0, 'JUpgradeproBannersTracks', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'JUpgradeproContacts', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.6', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
+
+INSERT INTO `#__jupgradepro_steps` (`id`, `version`, `name`, `title`, `tbl_key`, `source`, `destination`, `cid`, `class`, `status`, `cache`, `extension`, `total`, `start`, `stop`, `first`) VALUES
+(NULL, '3.7', 'users', 'Users', 'id', 'users', 'users', 0, 'JUpgradeproUsers', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'usergroupmap', 'Users Groups', 'user_id', 'user_usergroup_map', 'user_usergroup_map', 0, 'JUpgradeproUsergroupMap', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'categories', 'Categories', 'id', 'categories', 'categories', 0, 'JUpgradeproCategories', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'contents', 'Contents', 'id', 'content', 'content', 0, 'JUpgradeproContent', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'contents_frontpage', 'FrontPage Contents', 'content_id', 'content_frontpage', 'content_frontpage', 0, 'JUpgradeproContentFrontpage', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'menus', 'Menus', 'id', 'menu', 'menu', 0, 'JUpgradeproMenu', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'menus_types', 'Menus Types', 'id', 'menu_types', 'menu_types', 0, 'JUpgradeproMenusTypes', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'modules', 'Core Modules', 'id', 'modules', 'modules', 0, 'JUpgradeproModules', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'modules_menu', 'Modules Menus', 'moduleid', 'modules_menu', 'modules_menu', 0, 'JUpgradeproModulesMenu', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'banners', 'Banners', 'id', 'banners', 'banners', 0, 'JUpgradeproBanners', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'banners_clients', 'Banners Clients', 'id', 'banner_clients', 'banner_clients', 0, 'JUpgradeproBannersClients', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'banners_tracks', 'Banners Tracks', 'banner_id', 'banner_tracks', 'banner_tracks', 0, 'JUpgradeproBannersTracks', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'contacts', 'Contacts', 'id', 'contact_details', 'contact_details', 0, 'JUpgradeproContacts', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'newsfeeds', 'NewsFeeds', 'id', 'newsfeeds', 'newsfeeds', 0, 'JUpgradeproNewsfeeds', 0, 0, 0, 0, 0, 0, 0),
+(NULL, '3.7', 'weblinks', 'Weblinks', 'id', 'weblinks', 'weblinks', 0, 'JUpgradeproWeblinks', 0, 0, 0, 0, 0, 0, 0);
 -- --------------------------------------------------------
 
 

@@ -36,7 +36,7 @@ class plgSystemJUpgrade extends JPlugin
 	 * @since	1.0
 	 */
 	function plgSystemJUpgrade(& $subject, $config) {
-		
+
 		parent::__construct($subject, $config);
 	}
 
@@ -48,10 +48,9 @@ class plgSystemJUpgrade extends JPlugin
 		require_once JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'dispatcher.php';
 		require_once JPATH_ROOT .DS.'plugins' .DS.'system'.DS.'jupgrade'.DS.'table.php';
 
-
 		// Check if jupgrade_steps exists
 		$this->checkStepTable();
-		
+
 		// Getting the database instance
 		$db = JFactory::getDbo();
 
@@ -59,7 +58,7 @@ class plgSystemJUpgrade extends JPlugin
 
 		// Get the REST message from the current request.
 		$rest = new JRESTMessage;
-		
+
 		if ($rest->loadFromRequest())
 		{
 			$request = true;
@@ -81,7 +80,7 @@ class plgSystemJUpgrade extends JPlugin
 
 			// Check the username and pass
 			$dispatcher = new JRESTDispatcher;
-		
+
 			$return = $dispatcher->execute($rest->_parameters);
 
 			if ($return !== false) {
@@ -90,32 +89,32 @@ class plgSystemJUpgrade extends JPlugin
 				JResponse::setHeader('status', 401);
 				JResponse::setBody('Dispatch error.');
 				JResponse::sendHeaders();
-				exit;		
+				exit;
 			}
 
 			exit; // Exit
 		}
-		
+
 		//exit; // Exit test
-		
+
 	} // end method
 
 
 	function checkStepTable()
 	{
 		// Getting the database instance
-		$db = JFactory::getDbo();	
+		$db = JFactory::getDbo();
 
 		$sqlfile = JPATH_ROOT .DS.'plugins'.DS.'system'.DS.'jupgrade'.DS.'sql'.DS.'install.sql';
-	
+
 		// Checking tables
 		$query = "SHOW TABLES";
 		$db->setQuery($query);
 		$tables = $db->loadResultArray();
-		
+
 		if (!in_array('jupgrade_plugin_steps', $tables)) {
 			$this->populateDatabase( $db, $sqlfile );
-		}		
+		}
 
 	} // end method
 
@@ -143,5 +142,5 @@ class plgSystemJUpgrade extends JPlugin
 
 		return true;
 	}
-	
+
 } // end class

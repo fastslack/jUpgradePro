@@ -12,7 +12,7 @@
 #
 
 PROJECT="jupgradepro"
-VERSION="3.6.0"
+VERSION="3.6.1"
 
 RELEASE_DIR=`pwd`
 PKG_DIR="pkg_$PROJECT"

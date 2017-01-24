@@ -191,6 +191,10 @@ class JRESTMessage
 			{
 				return trim($headers['Auth-User']);
 			}
+			else if (isset($headers['User']))
+			{
+				return trim($headers['User']);
+			}
 		}
 		// Otherwise we need to look in the $_SERVER superglobal.
 		elseif (isset($_SERVER['HTTP_AUTHORIZATION']))
@@ -258,7 +262,7 @@ class JRESTMessage
 	}
 
 	/**
-	 * 
+	 *
 	 *
 	 * @param   string  $header  Authorization header.
 	 *
@@ -276,11 +280,11 @@ class JRESTMessage
 		{
 			if (isset($_SERVER[$k]))
 			{
-				if (strpos($k, 'AUTH_USER')) { 
+				if (strpos($k, 'AUTH_USER')) {
 					$parameters['AUTH_USER'] = trim($_SERVER[$k]);
 				}else if (strpos($k, 'AUTH_PW')) {
 					$parameters['AUTH_PW'] = trim($_SERVER[$k]);
-				}else if (strpos($k, 'USER')) { 
+				}else if (strpos($k, 'USER')) {
 					$parameters['USER'] = trim($_SERVER[$k]);
 				}else if (strpos($k, 'PW')) {
 					$parameters['PW'] = trim($_SERVER[$k]);
@@ -291,8 +295,8 @@ class JRESTMessage
 		}
 
 		// If we didn't find anything return false.
-		if (empty($parameters) 
-			|| ( empty($parameters['AUTH_USER']) || empty($parameters['AUTH_PW']) ) 
+		if (empty($parameters)
+			|| ( empty($parameters['AUTH_USER']) || empty($parameters['AUTH_PW']) )
 			&& ( empty($parameters['USER']) || empty($parameters['PW']) ) )
 		{
 			return false;

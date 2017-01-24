@@ -183,7 +183,7 @@ class jUpgradeProCli extends JApplicationCli
 			// Start benchmark
 			$time_start = microtime(true);
 
-			echo "{$this->_c['WHITE']}|  {$this->_c['RED']}[{$this->_c['YELLOW']}";
+			$this->out("{$this->_c['WHITE']}|  {$this->_c['RED']}[{$this->_c['YELLOW']}", false);
 			if ($step->stop != -1) {
 				$response = $this->migrate_model->migrate($step->name, false);
 			}

@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2017 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -33,10 +33,10 @@ class JUpgradeproModelMigrate extends JModelLegacy
 	function migrate($table = false, $json = true, $extensions = false) {
 
 		$table = (bool) ($table != false) ? $table : JRequest::getCmd('table', null);
-		
+
 		//@todo fix this in javascript, this is just a workaround
 		if ($table == 'undefined') $table = null;
-		
+
 		$extensions = (bool) ($extensions != false) ? $extensions : JRequest::getCmd('extensions', false);
 
 		// Init the jUpgradepro instance
@@ -71,7 +71,7 @@ class JUpgradeproModelMigrate extends JModelLegacy
 		$empty = false;
 		if ($step->cid == 0 && $step->total == 0 && $step->start == 0 && $step->stop == 0) {
 			$empty = true;
-		} 
+		}
 
 		if ($step->stop == 0) {
 			$step->stop = -1;

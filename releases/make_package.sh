@@ -4,7 +4,7 @@
 #
 # @version $Id:
 # @package jUpgradePro
-# @copyright Copyright (C) 2004 - 2016 Matware. All rights reserved.
+# @copyright Copyright (C) 2004 - 2017 Matware. All rights reserved.
 # @author Matias Aguirre
 # @email maguirre@matware.com.ar
 # @link http://www.matware.com.ar/
@@ -12,7 +12,7 @@
 #
 
 PROJECT="jupgradepro"
-VERSION="3.6.1"
+VERSION="3.6.2beta3"
 
 RELEASE_DIR=`pwd`
 PKG_DIR="pkg_$PROJECT"

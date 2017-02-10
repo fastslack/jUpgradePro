@@ -4,7 +4,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2013 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2017 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/

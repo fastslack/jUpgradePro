@@ -73,7 +73,7 @@ class RESTfulTester extends JApplicationCli
 	 * @param	string The task name to request.
 	 * @param	string The table name.
 	 *
-	 * @return	
+	 * @return
 	 * @since	0.4.4
 	 * @throws	Exception
 	 */
@@ -83,7 +83,7 @@ class RESTfulTester extends JApplicationCli
 		// JHttp instance
 		$http = new JHttp();
 		$data = $this->_getRestData();
-	
+
 		// Set the parameters to send
 		$data['table'] = $table;
 		$data['task'] = $task;

@@ -41,7 +41,7 @@ class JUpgradeproModelChecks extends JModelLegacy
 
 		// Get the step instance
 		$step = JUpgradeproStep::getInstance(false);
-echo "SSDS";
+
 		// Get the new site Joomla! version
 		$v = new JVersion();
 		$new_version = $v->RELEASE;
@@ -64,7 +64,7 @@ echo "SSDS";
 			// Checking the RESTful connection
 			$driver = JUpgradeproDriver::getInstance();
 			$code = trim($driver->requestRest('check'));
-var_dump($code);
+
 			switch ($code) {
 				case 401:
 					throw new Exception('COM_JUPGRADEPRO_ERROR_REST_501');

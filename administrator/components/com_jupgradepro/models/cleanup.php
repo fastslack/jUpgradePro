@@ -126,6 +126,14 @@ class JUpgradeproModelCleanup extends JModelLegacy
 		if ($params->skip_core_contents != 1 && $params->keep_ids == 1)
 			$del_tables[] = '#__content';
 
+		// Truncate usergroups if are enabled
+		if ($params->skip_core_usergroups != 1)
+			$del_tables[] = '#__usergroups';
+
+		// Truncate viewlevels if are enabled
+		if ($params->skip_core_viewlevels != 1)
+			$del_tables[] = '#__viewlevels';
+
 		for ($i=0;$i<count($del_tables);$i++) {
 			$query->clear();
 			$query->delete()->from("{$del_tables[$i]}");

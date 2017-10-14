@@ -25,6 +25,8 @@ JLoader::register('JUpgradeproStep', JPATH_LIBRARIES.'/matware/jupgrade/step.php
  */
 class JUpgradeproModelChecks extends JModelLegacy
 {
+	public $old_tables = array();
+
 	/**
 	 * Initial checks in jUpgradePro
 	 *
@@ -36,10 +38,10 @@ class JUpgradeproModelChecks extends JModelLegacy
 		// Loading the helper
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
-		// Getting the component parameter with global settings
+		// Get the component parameter with global settings
 		$params = JUpgradeproHelper::getParams();
 
-		// Getting the step instance
+		// Get the step instance
 		$step = JUpgradeproStep::getInstance(false);
 
 		// Get the new site Joomla! version
@@ -79,9 +81,8 @@ class JUpgradeproModelChecks extends JModelLegacy
 			}
 
 			// Get the database parameters
-			$old_tables = json_decode($driver->requestRest('tableslist'));
-			$old_columns = json_decode($driver->requestRest('tablescolumns'));
-			$old_prefix = substr($old_tables[10], 0, strpos($old_tables[10], '_')+1);
+			$this->old_tables = json_decode($driver->requestRest('tableslist'));
+			$this->old_prefix = substr($old_tables[10], 0, strpos($old_tables[10], '_')+1);
 
 			// Get the extension version
 			$xmlfile = JPATH_ADMINISTRATOR.'/components/com_jupgradepro/jupgradepro.xml';
@@ -102,13 +103,12 @@ class JUpgradeproModelChecks extends JModelLegacy
 			}
 
 			// Get the database parameters
-			$old_tables = JUpgradepro::getInstance($step)->_driver->_db_old->getTableList();
-			$old_columns = JUpgradepro::getInstance($step)->_driver->_db_old->getTableColumns('#__users');
-			$old_prefix = $params->old_dbprefix;
+			$this->old_tables = JUpgradepro::getInstance($step)->_driver->_db_old->getTableList();
+			$this->old_prefix = $params->old_dbprefix;
 		}
 
 		// Check the old site Joomla! version
-		$old_version = $this->checkOldVersion($old_tables, $old_prefix, $old_columns);
+		$old_version = $this->checkOldVersion();
 
 		// Check if the version is fine
 		if (empty($old_version) || empty($new_version)) {
@@ -234,18 +234,6 @@ class JUpgradeproModelChecks extends JModelLegacy
 			}
 		}
 
-		// Change protected to $observers object to disable it
-		// @@ Prevent Joomla! 'Application Instantiation Error' when try to call observers
-		// @@ See: https://github.com/joomla/joomla-cms/pull/3408
-		if (version_compare($new_version, '3.0', '>=')) {
-			$file = JPATH_LIBRARIES.'/joomla/observer/updater.php';
-			$read = JFile::read($file);
-			$read = str_replace("call_user_func_array(\$eventListener, \$params)", "//call_user_func_array(\$eventListener, \$params)", $read);
-			$read = JFile::write($file, $read);
-
-			require_once($file);
-		}
-
 		// Done checks
 		if (!JUpgradeproHelper::isCli())
 			$this->returnError (100, 'DONE');
@@ -266,52 +254,97 @@ class JUpgradeproModelChecks extends JModelLegacy
 	}
 
 	/**
+	 * Check if one column exists
+	 *
+	 * @return	none
+	 * @since	3.8.0
+	 */
+	public function checkColumn ($table, $column)
+	{
+		if (!in_array($table, $this->old_tables))
+		{
+			return false;
+		}
+
+		// Get the step instance
+		$step = JUpgradeproStep::getInstance(false);
+		$columns = JUpgradepro::getInstance($step)->_driver->_db_old->getTableColumns($table);
+
+		return array_key_exists($column, $columns) ? true : false;
+	}
+
+	/**
 	 * Check the Joomla! version from tables
 	 *
 	 * @return	version	The Joomla! version
 	 * @since	3.2.0
 	 */
-	public function checkOldVersion ($tables, $prefix, $columns)
+	public function checkOldVersion ()
 	{
 		// Trim the prefix value
-		$prefix = trim($prefix);
+		$this->prefix = trim($this->old_prefix);
 
 		// Set the tables to search
-		$j10 = "{$prefix}bannerfinish";
-		$j15 = "{$prefix}core_acl_aro";
-		$j25 = "{$prefix}update_categories";
-		$j30 = "{$prefix}assets";
-		$j31 = "{$prefix}content_types";
-		$j32 = $j33 = "{$prefix}postinstall_messages";
+		$j10 = "{$this->old_prefix}bannerfinish";
+		$j15 = "{$this->old_prefix}core_acl_aro";
+		$j25 = "{$this->old_prefix}update_categories";
+		$j30 = "{$this->old_prefix}assets";
+		$j31 = "{$this->old_prefix}content_types";
+		$j32 = $j33 = "{$this->old_prefix}postinstall_messages";
+		$j34 = "{$this->old_prefix}redirect_links";
+		$j35 = "{$this->old_prefix}utf8_conversion";
+		$j36 = "{$this->old_prefix}menu_types";
+		$j37 = "{$this->old_prefix}fields";
+		$j38 = "{$this->old_prefix}fields_groups";
 
 		// Check the correct version
-		if (in_array($j10, $tables))
+		if (in_array($j10, $this->old_tables))
 		{
 			$version = "1.0";
 		}
-		else if(in_array($j15, $tables))
+		else if(in_array($j15, $this->old_tables))
 		{
 			$version = "1.5";
 		}
-		else if(in_array($j30, $tables) && !in_array($j25, $tables) && !in_array($j31, $tables))
+		else if(in_array($j30, $this->old_tables) && !in_array($j25, $this->old_tables) && !in_array($j31, $this->old_tables))
 		{
 			$version = "3.0";
 		}
-		else if(in_array($j31, $tables) && !in_array($j32, $tables))
+		else if(in_array($j31, $this->old_tables) && !in_array($j32, $this->old_tables))
 		{
 			$version = "3.1";
 		}
-		else if(in_array($j33, $tables) && array_key_exists('requireReset', $columns))
+		else if($this->checkColumn($j33, 'requireReset'))
 		{
 			$version = "3.3";
 		}
-		else if(in_array($j25, $tables) || in_array($j30, $tables))
+		else if($this->checkColumn($j34, 'header'))
 		{
-			$version = "2.5";
+			$version = "3.4";
 		}
-		else if(in_array($j32, $tables))
+		else if(in_array($j32, $this->old_tables))
+		{
+			$version = "3.5";
+		}
+		else if(in_array($j32, $this->old_tables))
 		{
 			$version = "3.2";
+		}
+		else if($this->checkColumn($j36, 'asset_id'))
+		{
+			$version = "3.6";
+		}
+		else if(in_array($j37, $this->old_tables))
+		{
+			$version = "3.7";
+		}
+		else if($this->checkColumn($j38, 'params'))
+		{
+			$version = "3.8";
+		}
+		else if(in_array($j25, $this->old_tables) || in_array($j30, $this->old_tables))
+		{
+			$version = "2.5";
 		}
 
 		return $version;

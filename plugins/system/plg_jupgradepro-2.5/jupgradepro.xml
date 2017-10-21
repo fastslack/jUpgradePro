@@ -7,7 +7,7 @@
 	<license>http://www.gnu.org/licenses/gpl-2.0.html GNU/GPL</license>
 	<authorEmail>maguirre@matware.com.ar</authorEmail>
 	<authorUrl>http://www.matware.com.ar</authorUrl>
-	<version>3.6.2</version>
+	<version>3.8.0</version>
 	<description>RESTFul WebService for jUpgradePro</description>
 	<files>
 		<filename plugin="jupgradepro">jupgradepro.php</filename>

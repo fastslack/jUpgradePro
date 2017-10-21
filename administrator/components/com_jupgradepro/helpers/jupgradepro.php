@@ -33,7 +33,7 @@ class JUpgradeproHelper
 	}
 
 	/**
-	 * Getting the parameters 
+	 * Getting the parameters
 	 *
 	 * @return  bool	True on success
 	 *
@@ -116,7 +116,7 @@ class JUpgradeproHelper
 	}
 
 	/**
-	 * Getting the total 
+	 * Getting the total
 	 *
 	 * @return  int	The total number
 	 *

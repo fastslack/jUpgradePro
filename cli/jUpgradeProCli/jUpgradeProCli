@@ -5,7 +5,7 @@
 *
 * @version $Id:
 * @package jUpgradePro
-* @copyright Copyright (C) 2004 - 2014 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2017 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -92,7 +92,7 @@ class jUpgradeProCli extends JApplicationCli
 	{
 		// Print help
 		$this->out();
-		$this->out(' jUpgradeProCli v3.6.2');
+		$this->out(' jUpgradeProCli v3.8.0');
 		$this->out();
 		$this->out(' Author: Matias Aguirre (maguirre@matware.com.ar)');
 		$this->out(' URL: http://www.matware.com.ar');

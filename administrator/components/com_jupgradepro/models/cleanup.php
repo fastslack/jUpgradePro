@@ -73,7 +73,13 @@ class JUpgradeproModelCleanup extends JModelLegacy
 						$this->updateStep('arogroup');
 
 						// Disable the sections step
+						$this->updateStep('usergroups');
+
+						// Disable the sections step
 						$this->updateStep('usergroupmap');
+
+						// Disable the sections step
+						$this->updateStep('viewlevels');
 					}
 
 					if ($name == 'categories') {
@@ -123,8 +129,8 @@ class JUpgradeproModelCleanup extends JModelLegacy
 			$del_tables[] = '#__jupgradepro_modules';
 
 		// Truncate contents if are enabled
-		if ($params->skip_core_contents != 1 && $params->keep_ids == 1)
-			$del_tables[] = '#__content';
+		//if ($params->skip_core_contents != 1 && $params->keep_ids == 1)
+		//	$del_tables[] = '#__content';
 
 		// Truncate usergroups if are enabled
 		if ($params->skip_core_usergroups != 1)
@@ -161,13 +167,11 @@ class JUpgradeproModelCleanup extends JModelLegacy
 	 */
 	public function updateStep ($name)
 	{
-		// Get the version
-		$version = JUpgradeproHelper::getVersion('old');
-
 		// Get the JQuery object
 		$query = $this->_db->getQuery(true);
 
-		$query->update('#__jupgradepro_steps')->set('status = 2')->where('name = \''.$name.'\'')->where('version = \''.$version.'\'');
+		$query->update('#__jupgradepro_steps AS s')->set('s.status = 2')->where('s.name = \''.$name.'\'');
+
 		try {
 			$this->_db->setQuery($query)->execute();
 		} catch (RuntimeException $e) {

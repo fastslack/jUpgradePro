@@ -41,6 +41,7 @@ class JUpgradeproModelMigrate extends JModelLegacy
 
 		// Init the jUpgradepro instance
 		$step = JUpgradeproStep::getInstance($table, $extensions);
+
 		$jupgrade = JUpgradepro::getInstance($step);
 
 		// Get the database structure

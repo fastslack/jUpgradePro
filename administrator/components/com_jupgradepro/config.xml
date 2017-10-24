@@ -131,15 +131,6 @@
 			default="jos_"
 		/>
 
-		<field
-			name="path"
-			type="text"
-			size="60"
-			label="COM_JUPGRADEPRO_CONFIG_PATH"
-			description="COM_JUPGRADEPRO_CONFIG_PATH_DESC"
-			default=""
-		/>
-
 	</fieldset>
 
 	<fieldset
@@ -224,18 +215,18 @@
 
 	</fieldset>
 
-	<fieldset 
-		name="permissions" 
-		label="JCONFIG_PERMISSIONS_LABEL" 
+	<fieldset
+		name="permissions"
+		label="JCONFIG_PERMISSIONS_LABEL"
 		description="JCONFIG_PERMISSIONS_DESC">
-		
-		<field 
-			name="rules" 
-			type="rules" 
-			label="JCONFIG_PERMISSIONS_LABEL" 
-			class="inputbox" 
-			filter="rules" 
-			component="com_jupgradepro" 
+
+		<field
+			name="rules"
+			type="rules"
+			label="JCONFIG_PERMISSIONS_LABEL"
+			class="inputbox"
+			filter="rules"
+			component="com_jupgradepro"
 			section="component" />
 	</fieldset>
 

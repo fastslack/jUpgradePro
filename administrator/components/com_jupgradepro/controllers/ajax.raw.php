@@ -19,6 +19,7 @@ use Jupgradenext\Models\Cleanup;
 use Jupgradenext\Models\Migrate;
 use Jupgradenext\Models\Sites;
 use Jupgradenext\Models\Step;
+use Jupgradenext\Upgrade\UpgradeHelper;
 use Joomla\DI\Container;
 
 /**
@@ -233,11 +234,6 @@ class JupgradeproControllerAjax extends JControllerLegacy
 	{
 		$return = '';
 		$this->_db = JFactory::getDbo();
-
-		// Get params
-		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
-		$params = JUpgradeproHelper::getParams();
-
 		$app = JFactory::getApplication();
 
 		$task = $app->input->get('command', false);

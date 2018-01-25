@@ -31,10 +31,6 @@ class JUpgradeproViewCpanel extends JViewLegacy
 	 */
 	function display($tpl = null)
 	{
-		// Get params
-		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
-		$params = JUpgradeproHelper::getParams();
-
 		// Get DBo
 		$db = JFactory::getDBO();
 
@@ -58,7 +54,6 @@ class JUpgradeproViewCpanel extends JViewLegacy
 
 		$xml = JFactory::getXML($xmlfile);
 
-		$this->params =	$params;
 		$this->version = (string) $xml->version[0];
 
 		parent::display($tpl);

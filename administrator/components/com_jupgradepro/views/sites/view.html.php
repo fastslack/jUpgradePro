@@ -15,6 +15,8 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
+use Jupgradenext\Upgrade\UpgradeHelper;
+
 /**
  * View class for a list of Jupgradepro.
  *
@@ -53,7 +55,7 @@ class JupgradeproViewSites extends JViewLegacy
 			throw new Exception(implode("\n", $errors));
 		}
 
-		JupgradeproHelper::addSubmenu('sites');
+		UpgradeHelper::addSubmenu('sites');
 		$this->addToolbar();
 
 		//$this->sidebar = JHtmlSidebar::render();
@@ -70,7 +72,7 @@ class JupgradeproViewSites extends JViewLegacy
 	protected function addToolbar()
 	{
 		$state = $this->get('State');
-		$canDo = JupgradeproHelper::getActions();
+		$canDo = UpgradeHelper::getActions();
 
 		JToolBarHelper::title(JText::_('COM_JUPGRADEPRO_TITLE_SITES'), 'stack article');
 

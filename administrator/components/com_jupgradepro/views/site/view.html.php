@@ -15,6 +15,8 @@ defined('_JEXEC') or die;
 
 jimport('joomla.application.component.view');
 
+use Jupgradenext\Upgrade\UpgradeHelper;
+
 /**
  * View to edit
  *
@@ -78,7 +80,7 @@ class JupgradeproViewSite extends JViewLegacy
 			$checkedOut = false;
 		}
 
-		$canDo = JupgradeproHelper::getActions();
+		$canDo = UpgradeHelper::getActions();
 
 		JToolBarHelper::title(JText::_('COM_JUPGRADEPRO_TITLE_ADDNEW'), 'folder-plus');
 

@@ -1,0 +1,15 @@
+{
+    "name": "fastslack/jupgradepro",
+    "type": "project",
+    "license": "GNU",
+    "authors": [
+        {
+            "name": "Matias Aguirre",
+            "email": "maguirre@matware.com.ar"
+        }
+    ],
+    "require": {
+        "matware-lab/jupgradenext": "dev-master"
+    },
+    "minimum-stability": "dev"
+}

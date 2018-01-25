@@ -1,0 +1,212 @@
+<?xml version="1.0" encoding="utf-8"?>
+<form>
+  <fieldset
+		name="global"
+		label="COM_JUPGRADEPRO_CONFIG_GLOBAL_TITLE"
+		description="COM_JUPGRADEPRO_CONFIG_GLOBAL_TITLE_DESC">
+
+    <field
+			name="name"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_NAME"
+			description="COM_JUPGRADEPRO_CONFIG_NAME_DESC"
+			default=""
+      required="true"
+		/>
+
+		<field
+			name="method"
+			type="list"
+			label="COM_JUPGRADEPRO_CONFIG_METHOD"
+			description="COM_JUPGRADEPRO_CONFIG_METHOD_DESC"
+			default="database">
+			<option value="database">COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE</option>
+			<option	value="rest">COM_JUPGRADEPRO_CONFIG_REST_TITLE</option>
+		</field>
+
+		<field
+			name="chunk_limit"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_LIMIT"
+			description="COM_JUPGRADEPRO_CONFIG_LIMIT_DESC"
+			default="10"
+		/>
+
+		<field name="keep_ids" type="radio" default="0" label="COM_JUPGRADEPRO_CONFIG_KEEP_IDS" description="COM_JUPGRADEPRO_CONFIG_KEEP_IDS_DESC">
+			<option value="0">JNO</option>
+			<option value="1">JYES</option>
+		</field>
+
+	</fieldset>
+
+	<fieldset
+		name="restful"
+		label="COM_JUPGRADEPRO_CONFIG_REST_TITLE"
+		description="COM_JUPGRADEPRO_CONFIG_REST_TITLE_DESC">
+
+		<field
+			name="rest_hostname"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_HOSTNAME"
+			description="COM_JUPGRADEPRO_CONFIG_HOSTNAME_DESC"
+			default="http://www.example.org/"
+		/>
+
+		<field
+			name="rest_username"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_USERNAME"
+			description="COM_JUPGRADEPRO_CONFIG_USERNAME_DESC"
+			default=""
+		/>
+
+		<field
+			name="rest_password"
+			type="password"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_PASSWORD"
+			description="COM_JUPGRADEPRO_CONFIG_PASSWORD_DESC"
+			default=""
+		/>
+
+		<field
+			name="rest_key"
+			type="password"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_KEY"
+			description="COM_JUPGRADEPRO_CONFIG_KEY_DESC"
+			default=""
+		/>
+
+	</fieldset>
+
+	<fieldset
+		name="database"
+		label="COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE"
+		description="COM_JUPGRADEPRO_CONFIG_DATABASE_TITLE_DESC">
+
+		<field name="db_type" type="list" default="mysql" label="Database driver" description="Database driver">
+			<option value="mysql">MySQL</option>
+			<option value="mysqli">MySQLi</option>
+		</field>
+
+		<field
+			name="db_hostname"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_HOSTNAME"
+			description="COM_JUPGRADEPRO_CONFIG_HOSTNAME_DB_DESC"
+			default="localhost"
+		/>
+
+		<field
+			name="db_username"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_USERNAME"
+			description="COM_JUPGRADEPRO_CONFIG_USERNAME_DB_DESC"
+			default=""
+		/>
+
+		<field
+			name="db_password"
+			type="password"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_PASSWORD"
+			description="COM_JUPGRADEPRO_CONFIG_PASSWORD_DB_DESC"
+			default=""
+		/>
+
+		<field
+			name="db_name"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_DATABASE"
+			description="COM_JUPGRADEPRO_CONFIG_DATABASE_DB_DESC"
+			default=""
+		/>
+
+		<field
+			name="db_prefix"
+			type="text"
+			size="60"
+			label="COM_JUPGRADEPRO_CONFIG_PREFIX"
+			description="COM_JUPGRADEPRO_CONFIG_PREFIX_DESC"
+			default="jos_"
+		/>
+
+	</fieldset>
+
+	<fieldset
+		name="skips"
+		label="COM_JUPGRADEPRO_CONFIG_SKIPS_TITLE">
+
+		<field name="spacer1" type="spacer" class="text" label="&lt;b&gt;Core skips&lt;/b&gt;" />
+
+		<field name="skip_core_users" type="radio" default="0" label="Skip users" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_categories" type="radio" default="0" label="Skip categories" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_contents" type="radio" default="0" label="Skip contents" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_contents_frontpage" type="radio" default="0" label="Skip contents frontpage" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_menus" type="radio" default="0" label="Skip menus" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_menus_types" type="radio" default="0" label="Skip menus types" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_modules" type="radio" default="0" label="Skip modules" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_modules_menu" type="radio" default="0" label="Skip modules menus" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_banners" type="radio" default="0" label="Skip banners" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_banners_clients" type="radio" default="0" label="Skip banners clients" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_banners_tracks" type="radio" default="0" label="Skip banners tracks" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_contacts" type="radio" default="0" label="Skip contacts" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_newsfeeds" type="radio" default="0" label="Skip newsfeeds" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+		<field name="skip_core_weblinks" type="radio" default="0" label="Skip weblinks" description="">
+			<option value="1">JYES</option>
+			<option value="0">JNO</option>
+		</field>
+
+	</fieldset>
+  <fieldset name="accesscontrol">
+    <field name="asset_id" type="hidden" filter="unset"/>
+    <field name="rules" type="rules" label="JFIELD_RULES_LABEL" translate_label="false" filter="rules" validate="rules" class="inputbox" component="com_rollershade" section="product"/>
+  </fieldset>
+</form>

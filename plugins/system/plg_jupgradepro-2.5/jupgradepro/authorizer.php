@@ -31,7 +31,7 @@ class JRESTAuthorizer
 	public function authorize(&$db, $params)
 	{
 		// Getting the client key
-		$plugin =& JPluginHelper::getPlugin('system', 'jupgradepro');
+		$plugin = JPluginHelper::getPlugin('system', 'jupgradepro');
 		$pluginParams = json_decode($plugin->params);
 		$client_key = trim($pluginParams->client_key);
 

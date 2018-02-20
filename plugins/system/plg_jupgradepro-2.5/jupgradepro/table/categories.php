@@ -49,13 +49,13 @@ class JUpgradeproTableCategories extends JUpgradeproTable
 			$where_or[] = "extension REGEXP '^[\\-\\+]?[[:digit:]]*\\.?[[:digit:]]*$'";
 			$where_or[] = "extension IN ('com_banners', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' )";
 			$conditions['where_or'] = $where_or;
-			$conditions['order'] = "id DESC, extension DESC";	
+			$conditions['order'] = "id DESC, extension DESC";
 		}else{
 			$where = array();
 			$where[] = "path != 'uncategorised'";
 			$where[] = "(extension REGEXP '^[\-\+]?[[:digit:]]*\.?[[:digit:]]*$' OR extension IN ('com_banners', 'com_contact', 'com_content', 'com_newsfeeds', 'com_sections', 'com_weblinks' ))";
 			$conditions['where'] = $where;
-			$conditions['order'] = "parent_id DESC";	
+			$conditions['order'] = "parent_id DESC";
 		}
 
 		return $conditions;

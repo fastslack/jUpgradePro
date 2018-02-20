@@ -27,13 +27,75 @@ class JUpgradeproTable extends JTable
 {
 	/**
 	 * Table type
-	 */		
+	 */
 	public $_keepid = 0;
 
 	/**
 	 * Table type
-	 */		
+	 */
 	public $_type = '';
+
+	/**
+	 * Static method to get an instance of a Table class if it can be found in the table include paths.
+	 *
+	 * To add include paths for searching for Table classes see Table::addIncludePath().
+	 *
+	 * @param   string  $type    The type (name) of the Table class to get an instance of.
+	 * @param   string  $prefix  An optional prefix for the table class name.
+	 * @param   array   $config  An optional array of configuration values for the Table object.
+	 *
+	 * @return  Table|boolean   A Table object if found or boolean false on failure.
+	 *
+	 * @since   11.1
+	 */
+	public static function getInstance($type, $prefix = 'JTable', $config = array())
+	{
+		// Sanitize and prepare the table class name.
+		$type       = preg_replace('/[^A-Z0-9_\.-]/i', '', $type);
+		$tableClass = $prefix . ucfirst($type);
+
+		// Only try to load the class if it doesn't already exist.
+		if (!class_exists($tableClass))
+		{
+			// Search for the class file in the JTable include paths.
+			jimport('joomla.filesystem.path');
+
+			$paths = self::addIncludePath();
+			$pathIndex = 0;
+
+			if ($tableClass == 'JUpgradeproTableGeneric')
+			{
+				include_once JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/table/generic.php';
+			}else{
+				while (!class_exists($tableClass) && $pathIndex < count($paths))
+				{
+					if ($tryThis = \JPath::find($paths[$pathIndex++], strtolower($type) . '.php'))
+					{
+						// Import the class file.
+						include_once $tryThis;
+					}
+				}
+			}
+
+			if (!class_exists($tableClass))
+			{
+				/*
+				* If unable to find the class file in the Table include paths. Return false.
+				* The warning JLIB_DATABASE_ERROR_NOT_SUPPORTED_FILE_NOT_FOUND has been removed in 3.6.3.
+				* In 4.0 an Exception (type to be determined) will be thrown.
+				* For more info see https://github.com/joomla/joomla-cms/issues/11570
+				*/
+
+				return false;
+			}
+		}
+
+		// If a database object was passed in the configuration array use it, otherwise get the global one from \JFactory.
+		$db = isset($config['dbo']) ? $config['dbo'] : \JFactory::getDbo();
+
+		// Instantiate a new table class and return it.
+		return new $tableClass($db);
+	}
 
 	/**
 	 * Get the row
@@ -93,7 +155,7 @@ class JUpgradeproTable extends JTable
 	/**
 	 * Cleanup
 	 *
-	 * @return  boolean 
+	 * @return  boolean
 	 *
 	 * @since   3.0
 	 */
@@ -102,9 +164,9 @@ class JUpgradeproTable extends JTable
 		$name = isset($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : '';
 
 		// Getting the database instance
-		$db = JFactory::getDbo();	
+		$db = JFactory::getDbo();
 
-		$query = "UPDATE jupgradepro_plugin_steps SET cid = 0"; 
+		$query = "UPDATE jupgradepro_plugin_steps SET cid = 0";
 		if ($name != false) {
 			$query .= " WHERE name = '{$name}'";
 		}
@@ -121,7 +183,7 @@ class JUpgradeproTable extends JTable
 	 * @access	public
 	 * @return	int	The total of rows
 	 */
-	public function load( $oid = null )
+	public function load( $oid = null, $reset = true)
 	{
 		$key = $this->getKeyName();
 		$table = $this->getTableName();
@@ -134,14 +196,14 @@ class JUpgradeproTable extends JTable
 			$this->$key = $oid;
 		}
 
-		$this->reset();	
+		$this->reset();
 
 		// Getting the database instance
 		$db = JFactory::getDbo();
 
 		// Get the conditions
 		$conditions = $this->_processConditions();
-		
+
 		$limit = "LIMIT {$oid}, 1";
 
 		// Get the row
@@ -176,14 +238,14 @@ class JUpgradeproTable extends JTable
 			return false;
 		}
 
-		$this->reset();	
+		$this->reset();
 
 		// Getting the database instance
 		$db = JFactory::getDbo();
 
 		// Get the conditions
 		$conditions = $this->_processConditions();
-		
+
 		$limit = "LIMIT {$oid}, {$chunk}";
 
 		// Get the row
@@ -263,7 +325,7 @@ class JUpgradeproTable extends JTable
 		if (isset($conditions['where_or'])) {
 			$return['where_or'] = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
 		}
-	
+
 		$return['select'] = isset($conditions['select']) ? $conditions['select'] : '*';
 		$return['as'] = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 
@@ -291,7 +353,7 @@ class JUpgradeproTable extends JTable
 	public function _updateID($id)
 	{
 		// Getting the database instance
-		$db = JFactory::getDbo();	
+		$db = JFactory::getDbo();
 
 		$name = $this->_getStepName();
 
@@ -322,7 +384,7 @@ class JUpgradeproTable extends JTable
 	public function _getStepID()
 	{
 		// Getting the database instance
-		$db = JFactory::getDbo();	
+		$db = JFactory::getDbo();
 
 		$name = $this->_getStepName();
 
@@ -359,10 +421,10 @@ class JUpgradeproTable extends JTable
 	 */
 	public function getConditionsHook()
 	{
-		$conditions = array();		
+		$conditions = array();
 		$conditions['where'] = array();
 		// Do customisation of the params field here for specific data.
-		return $conditions;	
+		return $conditions;
 	}
 
 	/**
@@ -376,14 +438,15 @@ class JUpgradeproTable extends JTable
 	{
 		// Do custom migration
 		return $rows;
-	}	
+	}
 
 	/**
  	* Writes to file all the selected database tables structure with SHOW CREATE TABLE
 	* @param string $table The table name
 	*/
 	public function getTableStructure() {
-		// Getting the database instance
+
+		// Get the database instance
 		$db = JFactory::getDbo();
 
 		$tables = $this->_tbl;
@@ -435,7 +498,7 @@ class JUpgradeproTable extends JTable
 		$table = $this->_tbl;
 		$prefix = $db->getPrefix();
 
-		$table = str_replace ('#__', $prefix, $table); 
+		$table = str_replace ('#__', $prefix, $table);
 
 		// Set the query to get the tables statement.
 		$db->setQuery('SHOW TABLES');
@@ -498,12 +561,14 @@ class JUpgradeproTable extends JTable
 	/**
 	 * Method to get the columns
 	 *
-	 * @since   3.2.0
+	 * @since   3.8.0
 	 * @throws  JDatabaseException
 	 */
-	public function getTablescolumns()
+	public function getTablescolumns($table)
 	{
-		return json_encode(array());
+		// Getting the database instance
+		$db = JFactory::getDbo();
+		return json_encode($db->getTableColumns($table));
 	}
 
 	/**
@@ -522,7 +587,7 @@ class JUpgradeproTable extends JTable
 		$table = $this->_tbl;
 		$prefix = $db->getPrefix();
 
-		$table = str_replace ('#__', $prefix, $table); 
+		$table = str_replace ('#__', $prefix, $table);
 
 		// Set the query to get the tables statement.
 		$query = "SELECT params FROM {$table} WHERE `option` = 'com_content' LIMIT 1";
@@ -553,10 +618,10 @@ class JUpgradeproTable extends JTable
 			{ // internal field
 				continue;
 			}
-			
+
 			$array[$k] = $v;
 		}
-		
+
 		$json = json_encode($array);
 
 		return $json;
@@ -594,5 +659,5 @@ class JUpgradeproTable extends JTable
 	protected function convertParamsHook(&$object)
 	{
 		// Do customisation of the params field here for specific data.
-	}	
+	}
 }

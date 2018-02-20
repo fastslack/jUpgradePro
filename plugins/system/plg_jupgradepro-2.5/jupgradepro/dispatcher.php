@@ -2,7 +2,7 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2018 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
@@ -12,7 +12,7 @@
 defined('_JEXEC') or die;
 
 /**
- * REST Request Dispatcher class 
+ * REST Request Dispatcher class
  *
  * @package     Joomla.Platform
  * @subpackage  REST
@@ -36,10 +36,13 @@ class JRESTDispatcher
 	 * @var    array  A list with the steps to skip
 	 * @since  3.0
 	 */
-	private $skip_steps = array('banners', 'banners_clients', 'banners_tracks', 'categories', 'contacts', 'contents', 'contents_frontpage', 'ext_categories', 'ext_components', 'ext_modules', 'ext_plugins', 'generic', 'menus', 'menus_types', 'modules', 'modules_menu', 'newsfeeds', 'usergroupmap', 'users', 'weblinks');
+	private $skip_steps = array('banners', 'banners_clients', 'banners_tracks', 'categories', 'contacts',
+															'contents', 'contents_frontpage', 'ext_categories', 'ext_components', 'ext_modules',
+															'ext_plugins', 'generic', 'menus', 'menus_types', 'modules', 'modules_menu', 'newsfeeds',
+															'usergroupmap', 'users', 'usergroups', 'viewlevels', 'weblinks');
 
 	/**
-	 * 
+	 *
 	 *
 	 * @return  boolean
 	 *
@@ -48,13 +51,14 @@ class JRESTDispatcher
 	public function execute($parameters)
 	{
 		// Getting the database instance
-		$db = JFactory::getDbo();	
+		$db = JFactory::getDbo();
 
 		// Loading params
 		$this->_parameters = $parameters;
 
 		$task = isset($this->_parameters['HTTP_TASK']) ? $this->_parameters['HTTP_TASK'] : '';
-		$name = $table = !empty($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : 'generic';
+		$table = !empty($this->_parameters['HTTP_TABLE']) ? $this->_parameters['HTTP_TABLE'] : 'generic';
+		$name = str_replace('#__', '', $table);
 		$files = isset($this->_parameters['HTTP_FILES']) ? $this->_parameters['HTTP_FILES'] : '';
 		$chunk = isset($this->_parameters['HTTP_CHUNK']) ? $this->_parameters['HTTP_CHUNK'] : '';
 		$keepid = isset($this->_parameters['HTTP_KEEPID']) ? $this->_parameters['HTTP_KEEPID'] : 0;
@@ -93,11 +97,22 @@ class JRESTDispatcher
 		// Does the method exist?
 		if (method_exists($class, $method))
 		{
-			return ($task == 'rows') ? $class->$method($chunk, $keepid) : $class->$method();
+			if ($task == 'rows')
+			{
+				return $class->$method($chunk, $keepid);
+			}
+			else if ($task == 'tablescolumns')
+			{
+				return $class->$method($table);
+			}
+			else
+			{
+				return $class->$method();
+			}
 		}
 		else
 		{
-			return false;	
+			return false;
 		}
 
 	}

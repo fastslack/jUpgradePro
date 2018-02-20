@@ -32,7 +32,7 @@ class plgSystemJUpgradepro extends JPlugin
 
 		// Check if jupgrade_steps exists
 		$this->checkStepTable();
-		
+
 		// Getting the database instance
 		$db = JFactory::getDbo();
 
@@ -40,7 +40,7 @@ class plgSystemJUpgradepro extends JPlugin
 
 		// Get the REST message from the current request.
 		$rest = new JRESTMessage;
-		
+
 		if ($rest->loadFromRequest())
 		{
 			$request = true;
@@ -62,7 +62,7 @@ class plgSystemJUpgradepro extends JPlugin
 
 			// Check the username and pass
 			$dispatcher = new JRESTDispatcher;
-		
+
 			$return = $dispatcher->execute($rest->_parameters);
 
 			if ($return !== false) {
@@ -78,23 +78,23 @@ class plgSystemJUpgradepro extends JPlugin
 		}
 
 		//exit; // Exit test
-		
+
 	} // end method
 
 
 	function checkStepTable()
 	{
 		// Getting the database instance
-		$db = JFactory::getDbo();	
+		$db = JFactory::getDbo();
 
 		$sqlfile = JPATH_ROOT .'/plugins/system/jupgradepro/jupgradepro/sql/install.sql';
-	
+
 		// Checking tables
 		$tables = $db->getTableList();
 
 		if (!in_array('jupgradepro_plugin_steps', $tables)) {
 			$this->populateDatabase( $db, $sqlfile );
-		}		
+		}
 
 	} // end method
 
@@ -122,5 +122,5 @@ class plgSystemJUpgradepro extends JPlugin
 
 		return true;
 	}
-	
+
 } // end class

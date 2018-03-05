@@ -82,7 +82,7 @@ class JupgradeproModelSites extends JModelList
 		$this->setState('params', $params);
 
 		// List state information.
-		parent::populateState('a.id', 'asc');
+		parent::populateState('a.id', 'desc');
 	}
 
 	/**
@@ -174,7 +174,7 @@ class JupgradeproModelSites extends JModelList
 
 		if ($orderCol && $orderDirn)
 		{
-			$query->order($db->escape($orderCol . ' ' . $orderDirn));
+			$query->order($db->escape($orderCol . ' DESC'));
 		}
 
 		return $query;

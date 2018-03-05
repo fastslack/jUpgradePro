@@ -79,12 +79,6 @@ $document->addStyleSheet(JUri::root() . 'media/com_jupgradepro/css/form.css');
 					<input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>" />
 					<input type="hidden" name="jform[checked_out_time]" value="<?php echo $this->item->checked_out_time; ?>" />
 
-					<?php if ($this->state->params->get('save_history', 1)) : ?>
-					<div class="control-group">
-						<div class="control-label"><?php echo $this->form->getLabel('version_note'); ?></div>
-						<div class="controls"><?php echo $this->form->getInput('version_note'); ?></div>
-					</div>
-					<?php endif; ?>
 				</fieldset>
 			</div>
 		</div>

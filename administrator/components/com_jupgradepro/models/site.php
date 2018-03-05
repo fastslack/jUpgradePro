@@ -13,14 +13,15 @@
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modeladmin');
+use Joomla\CMS\MVC\Model\AdminModel;
+use Jupgradenext\Tables\Site;
 
 /**
  * Jupgradepro model.
  *
  * @since  3.8
  */
-class JupgradeproModelSite extends JModelAdmin
+class JupgradeproModelSite extends AdminModel
 {
 	/**
 	 * @var      string    The prefix to use with controller messages.
@@ -123,12 +124,28 @@ class JupgradeproModelSite extends JModelAdmin
 	 */
 	public function getItem($pk = null)
 	{
-		if ($item = parent::getItem($pk))
+
+		if (empty($pk))
 		{
-			// Do any procesing on fields here if needed
+			$pk = (int) JFactory::getApplication()->input->get('id', 0);
 		}
 
-		return $item;
+		if ($pk !== 0)
+    {
+      $item = Site::find($pk)->toArray();
+    }else{
+			$item = new Site();
+		}
+
+		$jsonlist = array('database', 'restful', 'skips');
+
+		foreach ($jsonlist as $key => $value) {
+
+			$jsondecode = json_decode($item[$value], true);
+			$item = array_merge($item, $jsondecode);
+		}
+
+		return (object) $item;
 	}
 
 	/**
@@ -142,7 +159,16 @@ class JupgradeproModelSite extends JModelAdmin
 	 */
 	public function save($data)
 	{
-		if (parent::save($data))
+		$id = \JFactory::getApplication()->input->get('id', 0, 'int');
+
+    if ($id !== 0)
+    {
+      $site = Site::find($id);
+    }else{
+			$site = new Site();
+		}
+
+		if ($site->saveSite($data))
 		{
 			return true;
 		}

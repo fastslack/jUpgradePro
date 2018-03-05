@@ -55,7 +55,7 @@ class JupgradeproViewSites extends JViewLegacy
 			throw new Exception(implode("\n", $errors));
 		}
 
-		UpgradeHelper::addSubmenu('sites');
+		//UpgradeHelper::addSubmenu('sites');
 		$this->addToolbar();
 
 		//$this->sidebar = JHtmlSidebar::render();
@@ -72,7 +72,7 @@ class JupgradeproViewSites extends JViewLegacy
 	protected function addToolbar()
 	{
 		$state = $this->get('State');
-		$canDo = UpgradeHelper::getActions();
+		$canDo = JHelperContent::getActions('com_jupgradepro');
 
 		JToolBarHelper::title(JText::_('COM_JUPGRADEPRO_TITLE_SITES'), 'stack article');
 
@@ -84,11 +84,6 @@ class JupgradeproViewSites extends JViewLegacy
 			if ($canDo->get('core.create'))
 			{
 				JToolBarHelper::addNew('site.add', 'JTOOLBAR_NEW');
-
-				if (isset($this->items[0]))
-				{
-					JToolbarHelper::custom('sites.duplicate', 'copy.png', 'copy_f2.png', 'JTOOLBAR_DUPLICATE', true);
-				}
 			}
 
 			if ($canDo->get('core.edit') && isset($this->items[0]))
@@ -111,16 +106,16 @@ class JupgradeproViewSites extends JViewLegacy
 				JToolBarHelper::deleteList('', 'site.delete', 'JTOOLBAR_DELETE');
 			}
 
-			if (isset($this->items[0]->state))
-			{
-				JToolBarHelper::divider();
-				JToolBarHelper::archiveList('sites.archive', 'JTOOLBAR_ARCHIVE');
-			}
-
 			if (isset($this->items[0]->checked_out))
 			{
 				JToolBarHelper::custom('sites.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
 			}
+		}
+
+		if (isset($this->items[0]))
+		{
+			// If this component does not use state then show a direct delete button as we can not trash
+			JToolBarHelper::deleteList('', 'site.delete', 'JTOOLBAR_DELETE');
 		}
 
 		// Show trash and delete for components that uses the state field

@@ -48,7 +48,7 @@ class JupgradeproTableSite extends JTable
 	public function bind($array, $ignore = '')
 	{
 	  $date = JFactory::getDate();
-		$task = JFactory::getApplication()->input->get('task');
+		$jsonflag = false;
 
 		$input = JFactory::getApplication()->input;
 		$task = $input->getString('task', '');
@@ -68,30 +68,48 @@ class JupgradeproTableSite extends JTable
 			$array['modified_by'] = JFactory::getUser()->id;
 		}
 
-		// Save restful, db and skips as
-		$db = $rest = $skip = array();
+		$jsonlist = array('restful', 'database', 'skips');
 
+		// Check if json encode is needed
 		foreach ($array as $key => $value) {
+
 			$tag = explode("_", $key);
 
-			switch ($tag[0]) {
-				case 'db':
-					$db[$key] = $value;
-					break;
-
-				case 'rest':
-					$rest[$key] = $value;
-					break;
-
-				case 'skip':
-					$skip[$key] = $value;
-					break;
+			if ($tag[0] == 'db')
+			{
+				$jsonflag = true;
 			}
+
 		}
 
-		$array['database'] = json_encode($db);
-		$array['restful'] = json_encode($rest);
-		$array['skips'] = json_encode($skip);
+		// Encode to json
+		if ($jsonflag == true)
+		{
+			// Save restful, db and skips as
+			$db = $rest = $skip = array();
+
+			foreach ($array as $key => $value) {
+				$tag = explode("_", $key);
+
+				switch ($tag[0]) {
+					case 'db':
+						$db[$key] = $value;
+						break;
+
+					case 'rest':
+						$rest[$key] = $value;
+						break;
+
+					case 'skip':
+						$skip[$key] = $value;
+						break;
+				}
+			}
+
+			$array['database'] = json_encode($db);
+			$array['restful'] = json_encode($rest);
+			$array['skips'] = json_encode($skip);
+		}
 
 		return parent::bind($array, $ignore);
 	}

@@ -86,7 +86,11 @@ class JupgradeproControllerAjax extends JControllerLegacy
 
 		if ($siteDbo == false)
 		{
-			echo \JText::_('COM_JUPGRADEPRO_ERROR_SITE_NOT_EXIST');
+			$return = array();
+			$return['code'] = 500;
+			$return['message'] = \JText::_('COM_JUPGRADEPRO_ERROR_SITE_NOT_EXIST');
+
+			print(json_encode($return));
 			JFactory::getApplication()->close();
 		}
 
@@ -143,6 +147,20 @@ class JupgradeproControllerAjax extends JControllerLegacy
 		} catch (Exception $e) {
 			$model->returnError (500, $e->getMessage());
 		}
+	}
+
+	/**
+	 * Run jUpgradePro extensions
+	 */
+	public function cleantable()
+	{
+		// Create container
+		$this->createContainer();
+
+		// Set all cid, status and cache to 0
+		$query = $this->container->get('db')->getQuery(true);
+		$query->update('#__jupgradepro_steps')->set('cid = 0, status = 0, cache = 0, total = 0, stop = 0, start = 0, stop = 0, first = 0, debug = \'\'');
+		$this->container->get('db')->setQuery($query)->execute();
 	}
 
 	/**

@@ -80,7 +80,7 @@ class JupgradeproViewSite extends JViewLegacy
 			$checkedOut = false;
 		}
 
-		$canDo = UpgradeHelper::getActions();
+		$canDo = JHelperContent::getActions('com_jupgradepro');
 
 		JToolBarHelper::title(JText::_('COM_JUPGRADEPRO_TITLE_ADDNEW'), 'folder-plus');
 

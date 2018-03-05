@@ -59,9 +59,10 @@ $sortFields = $this->getSortFields();
 				<thead>
 				<tr>
 					<?php if (isset($this->items[0]->ordering)): ?>
+						<!--
 						<th width="1%" class="nowrap center hidden-phone">
                             <?php echo JHtml::_('searchtools.sort', '', 'a.ordering', $listDirn, $listOrder, null, 'asc', 'JGRID_HEADING_ORDERING', 'icon-menu-2'); ?>
-                        </th>
+                        </th>-->
 					<?php endif; ?>
 					<th width="1%" class="hidden-phone">
 						<input type="checkbox" name="checkall-toggle" value=""
@@ -80,10 +81,10 @@ $sortFields = $this->getSortFields();
 				<?php echo JHtml::_('searchtools.sort',  'COM_JUPGRADEPRO_SITES_NAME', 'a.`name`', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left' width="20%">
-				<?php echo JHtml::_('searchtools.sort',  'COM_JUPGRADEPRO_SITES_RESTFUL', 'a.`restful`', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('searchtools.sort',  'COM_JUPGRADEPRO_SITES_GENERAL_INFO', 'a.`restful`', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left' width="20%">
-				<?php echo JHtml::_('searchtools.sort',  'COM_JUPGRADEPRO_SITES_MYSQL', 'a.`mysql`', $listDirn, $listOrder); ?>
+				<?php echo JHtml::_('searchtools.sort',  'COM_JUPGRADEPRO_SITES_METHOD', 'a.`mysql`', $listDirn, $listOrder); ?>
 				</th>
 				<th class='left' width="20%">
 				<?php echo JHtml::_('searchtools.sort',  'COM_JUPGRADEPRO_SITES_SKIPS', 'a.`skips`', $listDirn, $listOrder); ?>
@@ -100,15 +101,23 @@ $sortFields = $this->getSortFields();
 				</tfoot>
 				<tbody>
 				<?php foreach ($this->items as $i => $item) :
+
 					$ordering   = ($listOrder == 'a.ordering');
 					$canCreate  = $user->authorise('core.create', 'com_jupgradepro');
 					$canEdit    = $user->authorise('core.edit', 'com_jupgradepro');
 					$canCheckin = $user->authorise('core.manage', 'com_jupgradepro');
 					$canChange  = $user->authorise('core.edit.state', 'com_jupgradepro');
+
+					$info = array();
+					$info['method'] = $item->method;
+					$info['chunk_limit'] = $item->chunk_limit;
+					$info['keep_ids'] = $item->keep_ids;
+
 					?>
 					<tr class="row<?php echo $i % 2; ?>">
 
 						<?php if (isset($this->items[0]->ordering)) : ?>
+							<!--
 							<td class="order nowrap center hidden-phone">
 								<?php if ($canChange) :
 									$disableClassName = '';
@@ -130,6 +139,7 @@ $sortFields = $this->getSortFields();
 						</span>
 								<?php endif; ?>
 							</td>
+						-->
 						<?php endif; ?>
 						<td class="hidden-phone">
 							<?php echo JHtml::_('grid.id', $i, $item->id); ?>
@@ -153,15 +163,19 @@ $sortFields = $this->getSortFields();
 				<?php else : ?>
 					<?php echo $this->escape($item->name); ?>
 				<?php endif; ?>
-
-				</td>				<td>
-
-					<?php echo $this->fixJSON($item->restful); ?>
-				</td>				<td>
-
+				</td>
+				<td>
+					<b>☘ <?php echo JText::_('COM_JUPGRADEPRO_SITES_GENERAL_INFO'); ?></b><br />
+					<?php echo $this->fixJSON(json_encode($info)); ?>
+				</td>
+				<td>
+					<b><?php echo JText::_('COM_JUPGRADEPRO_SITES_DATABASE'); ?></b><br />
 					<?php echo $this->fixJSON($item->database); ?>
-				</td>				<td>
-
+					<b><?php echo JText::_('COM_JUPGRADEPRO_SITES_RESTFUL'); ?></b><br />
+					<?php echo $this->fixJSON($item->restful); ?>
+				</td>
+				<td>
+					<b>☘ <?php echo JText::_('COM_JUPGRADEPRO_SITES_SKIPS'); ?></b><br />
 					<?php echo $this->fixJSON($item->skips); ?>
 				</td>
 

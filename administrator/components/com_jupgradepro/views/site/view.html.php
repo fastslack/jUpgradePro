@@ -69,7 +69,7 @@ class JupgradeproViewSite extends JViewLegacy
 		JFactory::getApplication()->input->set('hidemainmenu', true);
 
 		$user  = JFactory::getUser();
-		$isNew = ($this->item->id == 0);
+		$isNew = isset($this->item->id) && ($this->item->id == 0);
 
 		if (isset($this->item->checked_out))
 		{

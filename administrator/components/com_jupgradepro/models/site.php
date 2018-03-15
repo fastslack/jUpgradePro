@@ -134,13 +134,13 @@ class JupgradeproModelSite extends AdminModel
     {
       $item = Site::find($pk)->toArray();
     }else{
-			$item = new Site();
+			$item = array('database' => '[]', 'restful' => '[]' , 'skips' => '[]');
 		}
 
 		$jsonlist = array('database', 'restful', 'skips');
 
-		foreach ($jsonlist as $key => $value) {
-
+		foreach ($jsonlist as $key => $value)
+		{
 			$jsondecode = json_decode($item[$value], true);
 			$item = array_merge($item, $jsondecode);
 		}

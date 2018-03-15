@@ -299,8 +299,13 @@ class JupgradeproControllerAjax extends JControllerLegacy
 			$return .= "\n".JText::_('COM_JUPGRADEPRO_CONFIG_NAME') . "        |     " . JText::_('COM_JUPGRADEPRO_TITLE_METHOD');
 			$return .= "\n------------------------------------------\n";
 
-			foreach ($items as $key => $value) {
-				$return .= "[[g;grey;]{$value->name}]            |     " . $value->method . "\n";
+			if (!empty($items))
+			{
+				foreach ($items as $key => $value) {
+					$return .= "[[g;grey;]{$value->name}]            |     " . $value->method . "\n";
+				}
+			}else{
+				$return .= JText::_('COM_JUPGRADEPRO_SITES_NOT_FOUND') . "\n";
 			}
 
 			print($return);

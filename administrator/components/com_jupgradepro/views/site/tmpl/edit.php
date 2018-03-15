@@ -23,6 +23,8 @@ JHtml::_('behavior.keepalive');
 $document = JFactory::getDocument();
 $document->addStyleSheet(JUri::root() . 'media/com_jupgradepro/css/form.css');
 
+$id = isset($this->item->id) ? $this->item->id : 0;
+
 ?>
 <script type="text/javascript">
 	js = jQuery.noConflict();
@@ -48,7 +50,7 @@ $document->addStyleSheet(JUri::root() . 'media/com_jupgradepro/css/form.css');
 </script>
 
 <form
-	action="<?php echo JRoute::_('index.php?option=com_jupgradepro&layout=edit&id=' . (int) $this->item->id); ?>"
+	action="<?php echo JRoute::_('index.php?option=com_jupgradepro&layout=edit&id=' . (int) $id); ?>"
 	method="post" enctype="multipart/form-data" name="adminForm" id="site-form" class="form-validate">
 
 	<div class="form-horizontal">

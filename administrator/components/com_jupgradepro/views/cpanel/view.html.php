@@ -51,8 +51,7 @@ class JUpgradeproViewCpanel extends JViewLegacy
 		JToolbarHelper::spacer();
 
 		$xmlfile = JPATH_COMPONENT_ADMINISTRATOR.'/jupgradepro.xml';
-
-		$xml = JFactory::getXML($xmlfile);
+		$xml = simplexml_load_file($xmlfile);
 
 		$this->version = (string) $xml->version[0];
 

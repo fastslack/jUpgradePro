@@ -29,10 +29,15 @@ class JUpgradeproController extends JControllerLegacy
 	 */
 	function display($cachable = false, $urlparams = array())
 	{
-		// set default view if not set
-		JRequest::setVar('view', JRequest::getCmd('view', 'cpanel'));
+		$input = JFactory::getApplication()->input;
 
-		// call parent behavior
-		parent::display($cachable);
+		$view = $input->get('view', false);
+
+		if ($view == false)
+		{
+			$input->set('view', 'cpanel');
+		}
+
+		return parent::display();
 	}
 }

@@ -30,6 +30,8 @@ if (!JFactory::getUser()->authorise('core.manage', 'com_jupgradepro'))
 // import joomla controller library
 jimport('joomla.application.component.controller');
 
+$task = JFactory::getApplication()->input->get('task');
+
 // Getting the controller
 $controller	= JControllerLegacy::getInstance('JUpgradepro');
 $controller->execute(JFactory::getApplication()->input->get('task'));

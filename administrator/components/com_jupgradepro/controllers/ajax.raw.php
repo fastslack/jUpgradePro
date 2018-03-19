@@ -99,8 +99,7 @@ class JupgradeproControllerAjax extends JControllerLegacy
 		}, true);
 
 		// Get the new site Joomla! version
-		$v = new \JVersion();
-		$version = (string) $v->RELEASE;
+		$version = constant("\\Joomla\\CMS\\Version::MAJOR_VERSION") . "." . constant("\\Joomla\\CMS\\Version::MINOR_VERSION");
 
 		$this->container->share('origin_version', function (Container $c) use ($version) {
 			return $version;

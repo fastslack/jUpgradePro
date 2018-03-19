@@ -30,7 +30,6 @@ class JupgradeproTableSite extends JTable
 	 */
 	public function __construct(&$db)
 	{
-		JObserverMapper::addObserverClassToClass('JTableObserverContenthistory', 'RollershadeTableSite', array('typeAlias' => 'com_jupgradepro.site'));
 		parent::__construct('#__jupgradepro_sites', 'id', $db);
 	}
 

@@ -38,9 +38,9 @@ http://www.joomla.org/technical-requirements.html
 Download
 ------------
 
-http://matware.com.ar/downloads/jupgradepro.html
+http://matware.org/downloads/jupgradepro.html
 
 Documentation
 ------------
 
-http://matware.com.ar/documentation/jupgradepro/main-table-of-contents.html
+http://matware.org/documentation/jupgradepro/main-table-of-contents.html

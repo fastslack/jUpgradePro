@@ -4,7 +4,7 @@
 #
 # @version $Id:
 # @package jUpgradePro
-# @copyright Copyright (C) 2004 - 2017 Matware. All rights reserved.
+# @copyright Copyright (C) 2004 - 2018 Matware. All rights reserved.
 # @author Matias Aguirre
 # @email maguirre@matware.com.ar
 # @link http://www.matware.com.ar/
@@ -12,14 +12,14 @@
 #
 
 PROJECT="jupgradepro"
-VERSION="3.6.2beta3"
+VERSION="3.8.0alpha1"
 
 RELEASE_DIR=`pwd`
 PKG_DIR="pkg_$PROJECT"
 
 COM_PACKAGE="com_jupgradepro"
-LIB_PACKAGE="lib_matware"
-PLG_PACKAGE="plg_sys_matware"
+#LIB_PACKAGE="lib_matware"
+#PLG_PACKAGE="plg_sys_matware"
 
 # copy all needed files
 rm *.zip
@@ -27,9 +27,15 @@ rm *.zip
 
 mkdir ${PKG_DIR}
 
+# Run composer
+cd ../administrator/components/com_jupgradepro
+#rm -rf vendor/
+composer update
+cd ../../../releases
+
 cp -r ../administrator/components/com_jupgradepro ${PKG_DIR}/com_jupgradepro
-cp -r ../matware-libraries/libraries/matware ${PKG_DIR}/lib_matware
-cp -r ../matware-libraries/plugins/system/matware ${PKG_DIR}/plg_matware
+#cp -r ../matware-libraries/libraries/matware ${PKG_DIR}/lib_matware
+#cp -r ../matware-libraries/plugins/system/matware ${PKG_DIR}/plg_matware
 cp -r ../plugins ${PKG_DIR}/plg_jupgradepro
 cp -r ../media ${PKG_DIR}/com_jupgradepro/media
 
@@ -40,25 +46,25 @@ mv ${COM_PACKAGE}.zip ${RELEASE_DIR}/packages/.
 cd ${RELEASE_DIR}
 
 # Zip Matware library
-cd ${PKG_DIR}/lib_matware
-zip -rq ${LIB_PACKAGE} .
-mv ${LIB_PACKAGE}.zip ${RELEASE_DIR}/packages/.
-cd ${RELEASE_DIR}
+#cd ${PKG_DIR}/lib_matware
+#zip -rq ${LIB_PACKAGE} .
+#mv ${LIB_PACKAGE}.zip ${RELEASE_DIR}/packages/.
+#cd ${RELEASE_DIR}
 
 # Zip Matware plugin
-cd ${PKG_DIR}/plg_matware
-zip -rq ${PLG_PACKAGE} .
-mv ${PLG_PACKAGE}.zip ${RELEASE_DIR}/packages/.
-cd ${RELEASE_DIR}
+#cd ${PKG_DIR}/plg_matware
+#zip -rq ${PLG_PACKAGE} .
+#mv ${PLG_PACKAGE}.zip ${RELEASE_DIR}/packages/.
+#cd ${RELEASE_DIR}
 
 # Create packages
 zip -rq ${PKG_DIR}-${VERSION}.zip packages/ pkg_${PROJECT}.xml
 
 # Zip plugin for J! 1.5
-cd ../plugins/system/plg_jupgradepro-1.5
-zip -rq plg_${PROJECT}-restful-${VERSION}-j1.5.zip .
-mv plg_${PROJECT}-restful-${VERSION}-j1.5.zip ${RELEASE_DIR}/.
-cd ${RELEASE_DIR}
+#cd ../plugins/system/plg_jupgradepro-1.5
+#zip -rq plg_${PROJECT}-restful-${VERSION}-j1.5.zip .
+#mv plg_${PROJECT}-restful-${VERSION}-j1.5.zip ${RELEASE_DIR}/.
+#cd ${RELEASE_DIR}
 
 # Zip plugin for J! 2.5 or greater
 cd ../plugins/system/plg_jupgradepro-2.5

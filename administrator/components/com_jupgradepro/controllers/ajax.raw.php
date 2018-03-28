@@ -13,6 +13,8 @@
 
 defined('_JEXEC') or die;
 
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\DI\Container;
 use Jupgradenext\Steps;
 use Jupgradenext\Models\Checks;
 use Jupgradenext\Models\Cleanup;
@@ -20,7 +22,6 @@ use Jupgradenext\Models\Migrate;
 use Jupgradenext\Models\Sites;
 use Jupgradenext\Models\Step;
 use Jupgradenext\Upgrade\UpgradeHelper;
-use Joomla\DI\Container;
 
 /**
  * The jUpgradePro ajax controller
@@ -29,7 +30,7 @@ use Joomla\DI\Container;
  * @subpackage  com_jupgradepro
  * @since       3.0.3
  */
-class JupgradeproControllerAjax extends JControllerLegacy
+class JupgradeproControllerAjax extends AdminController
 {
 	/**
 	 * @var		string	The context for persistent state.
@@ -48,7 +49,7 @@ class JupgradeproControllerAjax extends JControllerLegacy
 	 * @return  jUpgradeProModel
 	 * @since   3.0.3
 	 */
-	public function getModel($name = '', $prefix = 'JUpgradeproModel', $config = array())
+	public function getModel($name = '', $prefix = 'JupgradeproModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
 		return $model;
@@ -108,6 +109,9 @@ class JupgradeproControllerAjax extends JControllerLegacy
 		$this->container->share('default_site', function (Container $c) use ($site) {
 			return $site;
 		}, true);
+
+		// Set default extensions value
+		$this->container->set('extensions', false);
 	}
 
 	/**
@@ -158,7 +162,7 @@ class JupgradeproControllerAjax extends JControllerLegacy
 
 		// Set all cid, status and cache to 0
 		$query = $this->container->get('db')->getQuery(true);
-		$query->update('#__jupgradepro_steps')->set('cid = 0, status = 0, cache = 0, total = 0, stop = 0, start = 0, stop = 0, first = 0, debug = \'\'');
+		$query->update('#__jupgradepro_steps')->set('cid = 0, status = 0, cache = 0, total = 0, stop = 0, start = 0, first = 0, debug = \'\'');
 		$this->container->get('db')->setQuery($query)->execute();
 	}
 

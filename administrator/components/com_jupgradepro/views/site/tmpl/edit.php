@@ -31,7 +31,7 @@ $id = isset($this->item->id) ? $this->item->id : 0;
 	js(document).ready(function () {
 
 	});
-/*
+
 	Joomla.submitbutton = function (task) {
 		if (task == 'site.cancel') {
 			Joomla.submitform(task, document.getElementById('site-form'));
@@ -47,7 +47,7 @@ $id = isset($this->item->id) ? $this->item->id : 0;
 			}
 		}
 	}
-*/
+
 </script>
 
 <form

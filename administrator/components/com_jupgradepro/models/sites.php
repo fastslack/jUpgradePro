@@ -18,7 +18,7 @@ jimport('joomla.application.component.modellist');
 /**
  * Methods supporting a list of Jupgradepro records.
  *
- * @since  1.6
+ * @since  3.8
  */
 class JupgradeproModelSites extends JModelList
 {
@@ -28,25 +28,18 @@ class JupgradeproModelSites extends JModelList
 	* @param   array  $config  An optional associative array of configuration settings.
 	*
 	* @see        JController
-	* @since      1.6
+	* @since      3.8
 	*/
 	public function __construct($config = array())
 	{
 		if (empty($config['filter_fields']))
 		{
 			$config['filter_fields'] = array(
-				'id', 'a.`id`',
-				'ordering', 'a.`ordering`',
-				'state', 'a.`state`',
-				'created_by', 'a.`created_by`',
-				'modified_by', 'a.`modified_by`',
-				'group', 'a.`group`',
-				'group_name', 'a.`group_name`',
-				'article_code', 'a.`article_code`',
-				'description', 'a.`description`',
-				'description2', 'a.`description2`',
-				'unit', 'a.`unit`',
-				'price', 'a.`price`',
+				'id', 'a.id',
+				'ordering', 'a.ordering',
+				'state', 'a.state',
+				'created_by', 'a.created_by',
+				'modified_by', 'a.modified_by'
 			);
 		}
 
@@ -96,7 +89,7 @@ class JupgradeproModelSites extends JModelList
 	 *
 	 * @return   string A store id.
 	 *
-	 * @since    1.6
+	 * @since    3.8
 	 */
 	protected function getStoreId($id = '')
 	{
@@ -112,7 +105,7 @@ class JupgradeproModelSites extends JModelList
 	 *
 	 * @return   JDatabaseQuery
 	 *
-	 * @since    1.6
+	 * @since    3.8
 	 */
 	protected function getListQuery()
 	{
@@ -121,24 +114,20 @@ class JupgradeproModelSites extends JModelList
 		$query = $db->getQuery(true);
 
 		// Select the required fields from the table.
-		$query->select(
-			$this->getState(
-				'list.select', 'DISTINCT a.*'
-			)
-		);
-		$query->from('`#__jupgradepro_sites` AS a');
+		$query->select("a.*");
+		$query->from('#__jupgradepro_sites AS a');
 
 		// Join over the users for the checked out user
 		$query->select("uc.name AS uEditor");
 		$query->join("LEFT", "#__users AS uc ON uc.id=a.checked_out");
 
 		// Join over the user field 'created_by'
-		$query->select('`created_by`.name AS `created_by`');
-		$query->join('LEFT', '#__users AS `created_by` ON `created_by`.id = a.`created_by`');
+		$query->select('cby.name AS created_by');
+		$query->join('LEFT', '#__users AS cby ON cby.id = a.created_by');
 
 		// Join over the user field 'modified_by'
-		$query->select('`modified_by`.name AS `modified_by`');
-		$query->join('LEFT', '#__users AS `modified_by` ON `modified_by`.id = a.`modified_by`');
+		$query->select('mby.name AS modified_by');
+		$query->join('LEFT', '#__users AS mby ON mby.id = a.modified_by');
 
 		// Filter by published state
 		$published = $this->getState('filter.state');
@@ -146,10 +135,6 @@ class JupgradeproModelSites extends JModelList
 		if (is_numeric($published))
 		{
 			$query->where('a.state = ' . (int) $published);
-		}
-		elseif ($published === '')
-		{
-			//$query->where('(a.state IN (0, 1))');
 		}
 
 		// Filter by search in title

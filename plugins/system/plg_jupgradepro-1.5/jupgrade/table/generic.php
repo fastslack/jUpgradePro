@@ -47,7 +47,7 @@ class JUpgradeTableGeneric extends JUpgradeTable
 		$keys = $this->_getTableKeys($table);
 
 		$conditions['order'] = count( $keys ) ? implode( ', ', $keys ) : '';
-		
+
 		return $conditions;
 	}
 
@@ -65,7 +65,6 @@ class JUpgradeTableGeneric extends JUpgradeTable
 
 		// Getting table
 		$name = $table;
-		$table = '#__'.$table;
 
 		// Getting key
 		$keys = $this->_getTableKeys($table);

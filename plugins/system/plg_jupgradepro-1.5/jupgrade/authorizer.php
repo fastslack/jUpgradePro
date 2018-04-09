@@ -37,7 +37,15 @@ class JRESTAuthorizer
 		$client_key = trim($pluginParams->get('client_key'));
 
 		// Uncrypt the request
-		$key = isset($params['HTTP_KEY']) ? base64_decode($params['HTTP_KEY']) : '';
+		$key = isset($params['HTTP_KEY']) ? base64_decode($params['HTTP_KEY']) : false;
+
+		if ($key === false) {
+			JResponse::setHeader('status', 402);
+			JResponse::setBody('Client key do not exists.');
+			JResponse::sendHeaders();
+			exit;
+		}
+
 		$parts	= explode( ':', $key );
 		$key	= trim($parts[0]);
 
@@ -77,7 +85,7 @@ class JRESTAuthorizer
 		}
 
 		$parts	= explode( ':', $password_decode );
-		$password	= $parts[0];
+		$password	= trim($parts[0]);
 
 		// Getting the local username and password
 		$query = 'SELECT `id`, `password`, `gid`'

@@ -27,7 +27,7 @@ class JUpgradeTable extends JTable
 {
 	/**
 	 * Table type
-	 */		
+	 */
 	public $_type = '';
 
 	/**
@@ -48,7 +48,7 @@ class JUpgradeTable extends JTable
 		if ($row !== false) {
 
 			$row = $this->migrate($row);
-		
+
 			$this->bind($row);
 			// Return as JSON
 			return $this->toJSON();
@@ -86,16 +86,16 @@ class JUpgradeTable extends JTable
 	/**
 	 * Cleanup
 	 *
-	 * @return  boolean 
+	 * @return  boolean
 	 *
 	 * @since   3.0
 	 */
 	public function getCleanup()
 	{
 		// Getting the database instance
-		$db = JFactory::getDbo();	
+		$db = JFactory::getDbo();
 
-		$query = "UPDATE jupgrade_plugin_steps SET cid = 0"; 
+		$query = "UPDATE jupgrade_plugin_steps SET cid = 0";
 		//if ($this->table != false) {
 		//	$query .= " WHERE name = '{$this->table}'";
 		//}
@@ -125,14 +125,14 @@ class JUpgradeTable extends JTable
 			$this->$key = $oid;
 		}
 
-		$this->reset();	
+		$this->reset();
 
 		// Getting the database instance
 		$db = JFactory::getDbo();
 
 		// Get the conditions
 		$conditions = $this->_processConditions();
-		
+
 		$limit = "LIMIT {$oid}, 1";
 
 		// Get the row
@@ -167,14 +167,14 @@ class JUpgradeTable extends JTable
 			return false;
 		}
 
-		$this->reset();	
+		$this->reset();
 
 		// Getting the database instance
 		$db = JFactory::getDbo();
 
 		// Get the conditions
 		$conditions = $this->_processConditions();
-		
+
 		$limit = "LIMIT {$oid}, {$chunk}";
 
 		// Get the row
@@ -254,7 +254,7 @@ class JUpgradeTable extends JTable
 		if (isset($conditions['where_or'])) {
 			$return['where_or'] = count( $conditions['where_or'] ) ? 'WHERE ' . implode( ' OR ', $conditions['where_or'] ) : '';
 		}
-	
+
 		$return['select'] = isset($conditions['select']) ? $conditions['select'] : '*';
 		$return['as'] = isset($conditions['as']) ? 'AS '.$conditions['as'] : '';
 
@@ -282,7 +282,7 @@ class JUpgradeTable extends JTable
 	public function _updateID($id)
 	{
 		// Getting the database instance
-		$db = JFactory::getDbo();	
+		$db = JFactory::getDbo();
 
 		$name = $this->_getStepName();
 
@@ -312,7 +312,7 @@ class JUpgradeTable extends JTable
 	public function _getStepID()
 	{
 		// Getting the database instance
-		$db = JFactory::getDbo();	
+		$db = JFactory::getDbo();
 
 		$name = $this->_getStepName();
 
@@ -349,10 +349,10 @@ class JUpgradeTable extends JTable
 	 */
 	public function getConditionsHook()
 	{
-		$conditions = array();		
+		$conditions = array();
 		$conditions['where'] = array();
 		// Do customisation of the params field here for specific data.
-		return $conditions;	
+		return $conditions;
 	}
 
 	/**
@@ -425,7 +425,7 @@ class JUpgradeTable extends JTable
 		$table = $this->_tbl;
 		$prefix = $db->getPrefix();
 
-		$table = str_replace ('#__', $prefix, $table); 
+		$table = str_replace ('#__', $prefix, $table);
 
 		// Set the query to get the tables statement.
 		$db->setQuery('SHOW TABLES');
@@ -488,12 +488,14 @@ class JUpgradeTable extends JTable
 	/**
 	 * Method to get the columns
 	 *
-	 * @since   3.2.0
+	 * @since   3.8.0
 	 * @throws  JDatabaseException
 	 */
-	public function getTablescolumns()
+	public function getTablescolumns($table)
 	{
-		return json_encode(array());
+		// Getting the database instance
+		$db = JFactory::getDbo();
+		return json_encode($db->getTableColumns($table));
 	}
 
 	/**
@@ -512,7 +514,7 @@ class JUpgradeTable extends JTable
 		$table = $this->_tbl;
 		$prefix = $db->getPrefix();
 
-		$table = str_replace ('#__', $prefix, $table); 
+		$table = str_replace ('#__', $prefix, $table);
 
 		// Set the query to get the tables statement.
 		$query = "SELECT params FROM {$table} WHERE `option` = 'com_content' LIMIT 1";
@@ -543,10 +545,10 @@ class JUpgradeTable extends JTable
 			{ // internal field
 				continue;
 			}
-			
+
 			$array[$k] = $v;
 		}
-		
+
 		$json = json_encode($array);
 
 		return $json;
@@ -584,5 +586,5 @@ class JUpgradeTable extends JTable
 	protected function convertParamsHook(&$object)
 	{
 		// Do customisation of the params field here for specific data.
-	}	
+	}
 }

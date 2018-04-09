@@ -2,13 +2,14 @@
 /**
 * @version $Id:
 * @package Matware.jUpgradePro
-* @copyright Copyright (C) 2005 - 2014 Matware. All rights reserved.
+* @copyright Copyright (C) 2004 - 2018 Matware. All rights reserved.
 * @author Matias Aguirre
 * @email maguirre@matware.com.ar
 * @link http://www.matware.com.ar/
 * @based on https://github.com/LouisLandry/joomla-platform/tree/oauth/libraries/joomla/oauth
 * @license GNU General Public License version 2 or later; see LICENSE
 */
+
 // no direct access
 defined( '_JEXEC' ) or die( 'Restricted access' );
 
@@ -261,6 +262,7 @@ class JRESTMessage
 		return trim($uri);
 	}
 
+
 	/**
 	 *
 	 *
@@ -280,15 +282,8 @@ class JRESTMessage
 		{
 			if (isset($_SERVER[$k]))
 			{
-				if (strpos($k, 'AUTH_USER')) {
-					$parameters['AUTH_USER'] = trim($_SERVER[$k]);
-				}else if (strpos($k, 'AUTH_PW')) {
-					$parameters['AUTH_PW'] = trim($_SERVER[$k]);
-				}else if (strpos($k, 'USER')) {
-					$parameters['USER'] = trim($_SERVER[$k]);
-				}else if (strpos($k, 'PW')) {
-					$parameters['PW'] = trim($_SERVER[$k]);
-				}else{
+				if (!empty(trim($_SERVER[$k])))
+				{
 					$parameters[$k] = trim($_SERVER[$k]);
 				}
 			}
@@ -297,7 +292,8 @@ class JRESTMessage
 		// If we didn't find anything return false.
 		if (empty($parameters)
 			|| ( empty($parameters['AUTH_USER']) || empty($parameters['AUTH_PW']) )
-			&& ( empty($parameters['USER']) || empty($parameters['PW']) ) )
+			&& ( empty($parameters['USER']) || empty($parameters['PW']) )
+			&& ( empty($parameters['HTTP_USER']) || empty($parameters['HTTP_PW']) ) )
 		{
 			return false;
 		}

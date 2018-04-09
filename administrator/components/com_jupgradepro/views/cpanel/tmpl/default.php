@@ -89,8 +89,11 @@ $userId	= $user->get('id');
 	          $.migrateSite(term, command, spinners);
 
 	        } else {
+
 	          $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_COMMAND_NOT_FOUND"));
+
 	        }
+
 	    }, {
 	      greetings: '[[b;red;]       _ __  __                           __     ____           \n      (_) / / /___  ____ __________ _____/ /__  / __ \\_________ \n     / / / / / __ \\/ __ `/ ___/ __ `/ __  / _ \\/ /_/ / ___/ __ \\ \n    / / /_/ / /_/ / /_/ / /  / /_/ / /_/ /  __/ ____/ /  / /_/ /\n __/ /\\____/ .___/\\__, /_/   \\__,_/\\__,_/\\___/_/   /_/   \\____/ \n/___/     /_/    /____/                                  ][[big;orange;]v3.8]     \n\n\n\n  Type [[b;green;]help [command\\]] for assistance\n\n  Commands: [[ib;yellow;] show, check, migrate]  \n\n',
 	      name: 'jupgradeproconsole',

@@ -12,8 +12,8 @@
 
 	<install>
 		<sql>
-			<file charset="utf8" driver="mysql">administrator/components/com_admin/sql/mysql/install.sql</file>
-			<file charset="utf8" driver="postgresql">administrator/components/com_admin/sql/postgresql/install.sql</file>
+			<file charset="utf8" driver="mysql">sql/mysql/install.sql</file>
+			<file charset="utf8" driver="postgresql">sql/postgresql/install.sql</file>
 		</sql>
 	</install>
 

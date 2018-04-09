@@ -7,6 +7,7 @@ jQuery(function($, undefined) {
   var url5 = 'index.php?option=com_jupgradepro&format=raw&task=ajax.cleanup';
   var url6 = 'index.php?option=com_jupgradepro&format=raw&task=ajax.checks';
   var url7 = 'index.php?option=com_jupgradepro&format=raw&task=ajax.cleantable';
+  var url8 = 'index.php?option=com_jupgradepro&format=raw&task=ajax.extensions';
 
   /*
    * Load the saved planning data to jQuery form
@@ -93,6 +94,7 @@ jQuery(function($, undefined) {
         $.get(url1site,	function(result) {
 
           if (result !== undefined) {
+            term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LINE"));
             $.printConsole(term, result);
           }
         });
@@ -228,7 +230,7 @@ jQuery(function($, undefined) {
 
                             setTimeout(function(){
                               term.find('.cursor').hide();
-                              $.callStep(term, false, p, split[1], spinners, true);
+                              $.callStep(term, false, p, split[1], spinners, true, false);
                             }, 2000);
                             term.pop();
                             history.enable();
@@ -250,7 +252,7 @@ jQuery(function($, undefined) {
                     $.stop(term, spinner, object.message);
 
                     setTimeout(function(){
-                      $.callStep(term, false, p, split[1], spinners);
+                      $.callStep(term, false, p, split[1], spinners, false);
                     }, 2000);
 
                   }
@@ -271,7 +273,7 @@ jQuery(function($, undefined) {
   });
 
   /*
-   * Load the saved planning data to jQuery form
+   * Start spinning
    */
   $.extend({
     start: function (term, spinner, message) {
@@ -290,6 +292,9 @@ jQuery(function($, undefined) {
     }
   });
 
+  /*
+   * Stop spinning
+   */
   $.extend({
     stop: function (term, spinner, message) {
       setTimeout(function() {
@@ -309,11 +314,18 @@ jQuery(function($, undefined) {
 
 
   $.extend({
-    callMigrate: function (term, data, p, sitename, spinners) {
+    callMigrate: function (term, data, p, sitename, spinners, extensions) {
+
+      if (extensions == true)
+      {
+        url4site = url4 + '&extensions=tables';
+      }else{
+        url4site = url4;
+      }
 
       //$.start(term, spinners['dots2']);
 
-      var ret = $.get(url4,	function(response) {
+      var ret = $.get(url4site,	function(response) {
 
         var object = jQuery.parseJSON( response );
 
@@ -338,7 +350,7 @@ jQuery(function($, undefined) {
 
             setTimeout(function(){
               $.printConsole(term, '[[g;white;]|]  [[g;red;](][[i;yellow;]' + text + '][[g;red;])]', false);
-              return $.callStep(term, data, p, sitename, spinners);
+              return $.callStep(term, data, p, sitename, spinners, false, extensions);
             }, 500);
 
           });
@@ -350,9 +362,46 @@ jQuery(function($, undefined) {
     }
   });
 
+  $.extend({
+    callExtensionsCheck: function (term, data, p, sitename, spinners) {
+
+      var url8site = url8 + '&site=' + sitename + '&extensions=check';
+
+      $.get(url8site,	function(response) {
+
+        var object = jQuery.parseJSON( response );
+
+console.log(object);
+
+        if (object.code >= 500)
+        {
+          $.printConsole(term, object.message);
+          term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN3"));
+          return false;
+        }
+
+        if (object.code == 200)
+        {
+          promise = p.then(function(){
+            $.printConsole(term, object.message);
+          });
+
+          promise = p.then(function(){
+            setTimeout(function(){
+              return $.callStep(term, data, p, sitename, spinners, false, true);
+            }, 500);
+          });
+
+          return false;
+        }
+
+      });
+
+    }
+  });
 
   $.extend({
-    callStep: function (term, data, p, sitename, spinners, cleantable) {
+    callStep: function (term, data, p, sitename, spinners, cleantable, extensions) {
 
       if (cleantable == true)
       {
@@ -365,15 +414,29 @@ jQuery(function($, undefined) {
         });
       }
 
-      var ret = $.get(url3,	function(response) {
+      if (extensions == true)
+      {
+        url3site = url3 + '&extensions=tables';
+      }else{
+        url3site = url3;
+      }
+
+      var ret = $.get(url3site,	function(response) {
 
         var object = jQuery.parseJSON( response );
 
         if (object.name == undefined)
         {
           term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN2"));
-          $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_MIGRATION_FINISHED"));
-          term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN3"));
+          //$.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_MIGRATION_FINISHED"));
+          //term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN3"));
+
+          promise = p.then(function(){
+            setTimeout(function(){
+              return $.callExtensionsCheck(term, data, p, sitename, spinners);
+            }, 500);
+          });
+
           return false;
         }
 
@@ -389,7 +452,9 @@ jQuery(function($, undefined) {
           term.echo('[[g;white;]|]  [[b;green;] Migrating '+object.name+' (Start: '+object.cid+' - Stop: '+stop+' - Total: '+object.total+')');
         });
 
-        if (object.end == true || object.code == 404)
+console.log(object);
+
+        if ((object.extension != '0' && object.end == true) || object.code == 404)
         {
           promise = p.then(function(){
             $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN2"));
@@ -405,7 +470,7 @@ jQuery(function($, undefined) {
           promise = p.then(function(){
 
             setTimeout(function(){
-              return $.callMigrate(term, object, p, sitename, spinners);
+              return $.callMigrate(term, object, p, sitename, spinners, extensions);
             }, 500);
 
           });
@@ -413,7 +478,7 @@ jQuery(function($, undefined) {
 
           promise = p.then(function(){
             setTimeout(function(){
-              return $.callStep(term, data, p, sitename, spinners);
+              return $.callStep(term, data, p, sitename, spinners, false, extensions);
             }, 500);
           });
         }

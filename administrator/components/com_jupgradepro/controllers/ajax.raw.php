@@ -21,6 +21,7 @@ use Jupgradenext\Models\Cleanup;
 use Jupgradenext\Models\Migrate;
 use Jupgradenext\Models\Sites;
 use Jupgradenext\Models\Step;
+use Jupgradenext\Models\Extensions;
 use Jupgradenext\Upgrade\UpgradeHelper;
 
 /**
@@ -65,6 +66,11 @@ class JupgradeproControllerAjax extends AdminController
 
 		$site = JFactory::getApplication()->input->get('site', false);
 
+		// Set default site to container
+		$this->container->share('default_site', function (Container $c) use ($site) {
+			return $site;
+		}, true);
+
 		// Set input to container
 		$input = JFactory::getApplication()->input;
 		$this->container->share('input', function (Container $c) use ($input) {
@@ -77,27 +83,38 @@ class JupgradeproControllerAjax extends AdminController
 			return $db;
 		}, true);
 
+		// Get extensions input
+		$extensions = $input->get('extensions', false);
+		$this->container->share('extensions', function (Container $c) use ($extensions) {
+			return $extensions;
+		}, true);
+
 		//$this->container->registerServiceProvider(new \Providers\DatabaseServiceProvider);
 		$this->container->registerServiceProvider(new \Providers\SitesServiceProvider);
 		$this->container->registerServiceProvider(new \Providers\StepsServiceProvider);
 
 		// Set input to container
 		$sites = $this->container->get('sites');
-		$siteDbo = $sites->getSiteDbo($site);
+		$siteConfig = $sites->getSite();
 
-		if ($siteDbo == false)
+		if ($siteConfig['method'] == 'database')
 		{
-			$return = array();
-			$return['code'] = 500;
-			$return['message'] = \JText::_('COM_JUPGRADEPRO_ERROR_SITE_NOT_EXIST');
+			$siteDbo = $sites->getSiteDbo($site);
 
-			print(json_encode($return));
-			JFactory::getApplication()->close();
+			if ($siteDbo == false)
+			{
+				$return = array();
+				$return['code'] = 500;
+				$return['message'] = \JText::_('COM_JUPGRADEPRO_ERROR_SITE_NOT_EXIST');
+
+				print(json_encode($return));
+				JFactory::getApplication()->close();
+			}
+
+			$this->container->share('external', function (Container $c) use ($siteDbo) {
+				return $siteDbo;
+			}, true);
 		}
-
-		$this->container->share('external', function (Container $c) use ($siteDbo) {
-			return $siteDbo;
-		}, true);
 
 		// Get the new site Joomla! version
 		$version = constant("\\Joomla\\CMS\\Version::MAJOR_VERSION") . "." . constant("\\Joomla\\CMS\\Version::MINOR_VERSION");
@@ -105,13 +122,6 @@ class JupgradeproControllerAjax extends AdminController
 		$this->container->share('origin_version', function (Container $c) use ($version) {
 			return $version;
 		}, true);
-
-		$this->container->share('default_site', function (Container $c) use ($site) {
-			return $site;
-		}, true);
-
-		// Set default extensions value
-		$this->container->set('extensions', false);
 	}
 
 	/**
@@ -209,8 +219,11 @@ class JupgradeproControllerAjax extends AdminController
 	 */
 	public function extensions()
 	{
+		// Create container
+		$this->createContainer();
+
 		// Get the model for the view.
-		$model = $this->getModel('Extensions');
+		$model = new Extensions($this->container);
 
 		// Running the extensions
 		try {
@@ -269,7 +282,8 @@ class JupgradeproControllerAjax extends AdminController
 			// Select the required fields from the table.
 			$query->select("*");
 			$query->from('#__jupgradepro_sites AS s');
-			$query->where("s.name = '{$site}'");
+			$qSite = $this->_db->quote($site);
+			$query->where("s.name = {$qSite}");
 			$query->limit(1);
 
 			// Set query
@@ -280,6 +294,13 @@ class JupgradeproControllerAjax extends AdminController
 				$item = $this->_db->loadObject();
 			} catch (RuntimeException $e) {
 				throw new RuntimeException($e->getMessage());
+			}
+
+			if (empty($item))
+			{
+				$return .= JText::_('COM_JUPGRADEPRO_CONFIG_SITE_NOT_FOUND');
+				print($return);
+				$app->close();
 			}
 
 			$method = $item->method;
@@ -299,20 +320,43 @@ class JupgradeproControllerAjax extends AdminController
 
 			$items = $model->getItems();
 
-			$return .= "\n".JText::_('COM_JUPGRADEPRO_CONFIG_NAME') . "        |     " . JText::_('COM_JUPGRADEPRO_TITLE_METHOD');
-			$return .= "\n------------------------------------------\n";
+			$configTitle = "[[g;white;]|] " . JText::_('COM_JUPGRADEPRO_CONFIG_NAME');
+
+			$return .= $configTitle . $this->getSpaces($configTitle, 30) . "|     " . JText::_('COM_JUPGRADEPRO_TITLE_METHOD');
+			$return .= "\n|┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n";
 
 			if (!empty($items))
 			{
 				foreach ($items as $key => $value) {
-					$return .= "[[g;grey;]{$value->name}]            |     " . $value->method . "\n";
+					$valTitle = "[[g;grey;]{$value->name}]";
+					$return .= "[[g;white;]|] " . $valTitle . $this->getSpaces($valTitle) . "|     " . $value->method . "\n";
 				}
+				$return .= JText::_('COM_JUPGRADEPRO_HORIZONTAL_LIN3') . "\n";
 			}else{
 				$return .= JText::_('COM_JUPGRADEPRO_SITES_NOT_FOUND') . "\n";
 			}
 
 			print($return);
 		}
+	}
+
+	/**
+   * Check if state is set
+   *
+   * @param   mixed  $state  State
+   *
+   * @return bool
+   */
+  protected function getSpaces($string, $length = 27)
+  {
+		$len = $length - strlen($string);
+
+		$return = "";
+		for ($i=0; $i < $len; $i++) {
+			$return .= " ";
+		}
+
+		return $return;
 	}
 
 	/**

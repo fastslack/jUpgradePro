@@ -2,10 +2,9 @@
 -- Table structure for table "#__jupgradepro_errors"
 --
 
-DROP TABLE IF EXISTS public."#__jupgradepro_errors";
+DROP TABLE IF EXISTS "#__jupgradepro_errors";
 
-
-CREATE TABLE public."#__jupgradepro_errors" (
+CREATE TABLE "#__jupgradepro_errors" (
   "id" integer NOT NULL ,
   "method" character varying(255) NOT NULL,
   "step" character varying(255) NOT NULL,
@@ -16,10 +15,10 @@ CREATE TABLE public."#__jupgradepro_errors" (
 
 
 
-DROP TABLE IF EXISTS public."#__jupgradepro_extensions";
+DROP TABLE IF EXISTS "#__jupgradepro_extensions";
 
 
-CREATE TABLE public."#__jupgradepro_extensions" (
+CREATE TABLE "#__jupgradepro_extensions" (
   "id" integer NOT NULL ,
   "version" character varying(255) NOT NULL,
   "name" character varying(255) NOT NULL,
@@ -47,10 +46,10 @@ INSERT INTO "#__jupgradepro_extensions" VALUES (7,'1.0','extensions','Check exte
 -- Table structure for table "#__jupgradepro_extensions_tables"
 --
 
-DROP TABLE IF EXISTS public."#__jupgradepro_extensions_tables";
+DROP TABLE IF EXISTS "#__jupgradepro_extensions_tables";
 
 
-CREATE TABLE public."#__jupgradepro_extensions_tables" (
+CREATE TABLE "#__jupgradepro_extensions_tables" (
   "id" integer NOT NULL ,
   "eid" integer NOT NULL,
   "version" character varying(255) NOT NULL,
@@ -81,10 +80,10 @@ CREATE TABLE public."#__jupgradepro_extensions_tables" (
 -- Table structure for table "#__jupgradepro_files_images"
 --
 
-DROP TABLE IF EXISTS public."#__jupgradepro_files_images";
+DROP TABLE IF EXISTS "#__jupgradepro_files_images";
 
 
-CREATE TABLE public."#__jupgradepro_files_images" (
+CREATE TABLE "#__jupgradepro_files_images" (
   "id" integer NOT NULL ,
   "name" character varying(255) NOT NULL,
   PRIMARY KEY ("id")
@@ -100,10 +99,10 @@ CREATE TABLE public."#__jupgradepro_files_images" (
 -- Table structure for table "#__jupgradepro_files_media"
 --
 
-DROP TABLE IF EXISTS public."#__jupgradepro_files_media";
+DROP TABLE IF EXISTS "#__jupgradepro_files_media";
 
 
-CREATE TABLE public."#__jupgradepro_files_media" (
+CREATE TABLE "#__jupgradepro_files_media" (
   "id" integer NOT NULL ,
   "name" character varying(255) NOT NULL,
   PRIMARY KEY ("id")
@@ -118,10 +117,10 @@ CREATE TABLE public."#__jupgradepro_files_media" (
 -- Table structure for table "#__jupgradepro_files_templates"
 --
 
-DROP TABLE IF EXISTS public."#__jupgradepro_files_templates";
+DROP TABLE IF EXISTS "#__jupgradepro_files_templates";
 
 
-CREATE TABLE public."#__jupgradepro_files_templates" (
+CREATE TABLE "#__jupgradepro_files_templates" (
   "id" integer NOT NULL ,
   "name" character varying(255) NOT NULL,
   PRIMARY KEY ("id")
@@ -136,10 +135,10 @@ CREATE TABLE public."#__jupgradepro_files_templates" (
 -- Table structure for table "#__jupgradepro_old_ids"
 --
 
-DROP TABLE IF EXISTS public."#__jupgradepro_old_ids";
+DROP TABLE IF EXISTS "#__jupgradepro_old_ids";
 
 
-CREATE TABLE public."#__jupgradepro_old_ids" (
+CREATE TABLE "#__jupgradepro_old_ids" (
   "id" integer NOT NULL ,
   "table" varchar(200) DEFAULT NULL,
   "old_id" integer DEFAULT NULL,
@@ -157,10 +156,10 @@ CREATE TABLE public."#__jupgradepro_old_ids" (
 -- Table structure for table "#__jupgradepro_sites"
 --
 
-DROP TABLE IF EXISTS public."#__jupgradepro_sites";
+DROP TABLE IF EXISTS "#__jupgradepro_sites";
 
 
-CREATE TABLE public."#__jupgradepro_sites" (
+CREATE TABLE "#__jupgradepro_sites" (
   "id" integer NOT NULL ,
   "name" varchar(45) DEFAULT NULL,
   "restful" json DEFAULT NULL,
@@ -190,10 +189,10 @@ INSERT INTO "#__jupgradepro_sites" VALUES (17,'dywos','{"rest_key": "", "rest_ho
 -- Table structure for table "#__jupgradepro_steps"
 --
 
-DROP TABLE IF EXISTS public."#__jupgradepro_steps";
+DROP TABLE IF EXISTS "#__jupgradepro_steps";
 
 
-CREATE TABLE public."#__jupgradepro_steps" (
+CREATE TABLE "#__jupgradepro_steps" (
   "id" integer NOT NULL ,
   "from" integer NOT NULL DEFAULT '10',
   "to" integer NOT NULL DEFAULT '99',
@@ -226,10 +225,10 @@ INSERT INTO "#__jupgradepro_steps" VALUES (1,10,99,'users','Users','id','users',
 -- Table structure for table "#__jupgradepro_version"
 --
 
-DROP TABLE IF EXISTS public."#__jupgradepro_version";
+DROP TABLE IF EXISTS "#__jupgradepro_version";
 
 
-CREATE TABLE public."#__jupgradepro_version" (
+CREATE TABLE "#__jupgradepro_version" (
   "new" character varying(255) NOT NULL,
   "old" character varying(255) NOT NULL,
   PRIMARY KEY ("new")

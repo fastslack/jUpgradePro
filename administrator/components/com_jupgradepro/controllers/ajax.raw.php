@@ -65,6 +65,12 @@ class JupgradeproControllerAjax extends AdminController
 		$this->container = new Container;
 
 		$site = JFactory::getApplication()->input->get('site', false);
+		$config = JFactory::getConfig();
+
+		// Set config to container
+		$this->container->share('config', function (Container $c) use ($config) {
+			return $config;
+		}, true);
 
 		// Set default site to container
 		$this->container->share('default_site', function (Container $c) use ($site) {

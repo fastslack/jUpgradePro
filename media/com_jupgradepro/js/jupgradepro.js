@@ -226,24 +226,33 @@ jQuery(function($, undefined) {
                     var history = term.history();
                     history.disable();
                     term.push(function(command) {
-                        if (command.match(/^(Yes)$/i)) {
+                      if (command.match(/^(R)$/i)) {
 
-                            setTimeout(function(){
-                              term.find('.cursor').hide();
-                              $.callStep(term, false, p, split[1], spinners, true, false);
-                            }, 2000);
-                            term.pop();
-                            history.enable();
+                          setTimeout(function(){
+                            term.find('.cursor').hide();
+                            $.callStep(term, false, p, split[1], spinners, false, false);
+                          }, 2000);
+                          term.pop();
+                          history.enable();
 
-                        } else if (command.match(/^(No)$/i)) {
+                      } else if (command.match(/^(A)$/i)) {
 
-                            term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN3"));
-                            term.pop();
-                            history.enable();
+                          setTimeout(function(){
+                            term.find('.cursor').hide();
+                            $.callStep(term, false, p, split[1], spinners, true, false);
+                          }, 2000);
+                          term.pop();
+                          history.enable();
 
-                        }
+                      } else if (command.match(/^(C)$/i)) {
+
+                          term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN3"));
+                          term.pop();
+                          history.enable();
+
+                      }
                     }, {
-                        prompt: '[[g;white;]|] (Yes/No) ? '
+                        prompt: '[[g;white;]|] (Run [[gb;orange;](A)]gain / [[gb;green;](R)]esume / [[gb;red;](C)]ancel) ? '
                     });
                   }
 
@@ -451,8 +460,6 @@ console.log(object);
           term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN2"));
           term.echo('[[g;white;]|]  [[b;green;] Migrating '+object.name+' (Start: '+object.cid+' - Stop: '+stop+' - Total: '+object.total+')');
         });
-
-console.log(object);
 
         if ((object.extension != '0' && object.end == true) || object.code == 404)
         {

@@ -53,9 +53,8 @@ CREATE TABLE `#__jupgradepro_extensions_tables` (
   `name` varchar(255) NOT NULL,
   `tbl_key` varchar(255) NOT NULL,
   `element` varchar(255) NOT NULL,
-  `destination` varchar(255) NOT NULL,
   `source` varchar(255) NOT NULL,
-  `class` varchar(255) NOT NULL,
+  `destination` varchar(255) NOT NULL,
   `cid` int(11) NOT NULL DEFAULT '0',
   `status` int(11) NOT NULL DEFAULT '0',
   `cache` int(11) NOT NULL,
@@ -149,6 +148,8 @@ CREATE TABLE `#__jupgradepro_sites` (
 -- Table structure for table `#__jupgradepro_steps`
 --
 
+DROP TABLE IF EXISTS `#__jupgradepro_steps`;
+
 CREATE TABLE `#__jupgradepro_steps` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `from` int(11) NOT NULL DEFAULT '10',
@@ -156,9 +157,9 @@ CREATE TABLE `#__jupgradepro_steps` (
   `name` varchar(255) NOT NULL,
   `title` varchar(255) NOT NULL,
   `tbl_key` varchar(255) NOT NULL,
+  `dest_tbl_key` varchar(255) NOT NULL,
   `source` varchar(255) NOT NULL,
   `destination` varchar(255) NOT NULL,
-  `class` varchar(255) NOT NULL,
   `cid` int(11) NOT NULL DEFAULT '0',
   `status` int(11) NOT NULL,
   `cache` int(11) NOT NULL,
@@ -175,7 +176,7 @@ CREATE TABLE `#__jupgradepro_steps` (
 -- Dumping data for table `#__jupgradepro_steps`
 --
 
-INSERT INTO `#__jupgradepro_steps` VALUES (1,10,99,'users','Users','id','users','users','JUpgradeproUsers',0,0,0,0,0,0,0,0,''),(2,25,99,'usergroups','User Groups','id','usergroups','usergroups','JUpgradeproUsergroups',0,0,0,0,0,0,0,0,''),(3,25,99,'viewlevels','View Access Levels','id','viewlevels','viewlevels','JUpgradeproViewlevels',0,0,0,0,0,0,0,0,''),(4,10,15,'usergroupmap','Users Groups','aro_id','core_acl_groups_aro_map','user_usergroup_map','JUpgradeproUsergroupMap',0,0,0,0,0,0,0,0,''),(5,25,99,'usergroupmap','Users Groups','user_id','user_usergroup_map','user_usergroup_map','JUpgradeproUsergroupMap',0,0,0,0,0,0,0,0,''),(6,10,99,'categories','Categories','id','categories','categories','JUpgradeproCategories',0,0,0,0,0,0,0,0,''),(7,10,15,'sections','Sections','id','sections','categories','JUpgradeproSections',0,0,0,0,0,0,0,0,''),(8,10,99,'contents','Contents','id','content','content','JUpgradeproContent',0,0,0,0,0,0,0,0,''),(9,10,99,'contents_frontpage','FrontPage Contents','content_id','content_frontpage','content_frontpage','JUpgradeproContentFrontpage',0,0,0,0,0,0,0,0,''),(10,10,99,'menus','Menus','id','menu','menu','JUpgradeproMenu',0,0,0,0,0,0,0,0,''),(11,10,99,'menus_types','Menus Types','id','menu_types','menu_types','JUpgradeproMenusTypes',0,0,0,0,0,0,0,0,''),(12,10,99,'modules','Core Modules','id','modules','modules','JUpgradeproModules',0,0,0,0,0,0,0,0,''),(13,10,99,'modules_menu','Modules Menus','moduleid','modules_menu','modules_menu','JUpgradeproModulesMenu',0,0,0,0,0,0,0,0,''),(14,10,15,'banners','Banners','bid','banner','banners','JUpgradeproBanners',0,0,0,0,0,0,0,0,''),(15,25,99,'banners','Banners','id','banners','banners','JUpgradeproBanners',0,0,0,0,0,0,0,0,''),(16,10,15,'banners_clients','Banners Clients','cid','bannerclient','banner_clients','JUpgradeproBannersClients',0,0,0,0,0,0,0,0,''),(17,25,99,'banners_clients','Banners Clients','id','banner_clients','banner_clients','JUpgradeproBannersClients',0,0,0,0,0,0,0,0,''),(18,15,15,'banners_tracks','Banners Tracks','banner_id','bannertrack','banner_tracks','JUpgradeproBannersTracks',0,0,0,0,0,0,0,0,''),(19,25,99,'banners_tracks','Banners Tracks','banner_id','banner_tracks','banner_tracks','JUpgradeproBannersTracks',0,0,0,0,0,0,0,0,''),(20,10,99,'contacts','Contacts','id','contact_details','contact_details','JUpgradeproContacts',0,0,0,0,0,0,0,0,''),(21,10,99,'newsfeeds','NewsFeeds','id','newsfeeds','newsfeeds','JUpgradeproNewsfeeds',0,0,0,0,0,0,0,0,''),(22,10,33,'weblinks','Weblinks','id','weblinks','weblinks','JUpgradeproWeblinks',0,0,0,0,0,0,0,0,'');
+INSERT INTO `#__jupgradepro_steps` VALUES (1,10,99,'users','Users','id','id','users','users',0,0,0,0,0,0,0,0,''),(2,25,99,'usergroups','User Groups','id','id','usergroups','usergroups',0,0,0,0,0,0,0,0,''),(3,25,99,'viewlevels','View Access Levels','id','id','viewlevels','viewlevels',0,0,0,0,0,0,0,0,''),(4,10,15,'usergroupmap','Users Groups','aro_id','user_id','core_acl_groups_aro_map','user_usergroup_map',0,0,0,0,0,0,0,0,''),(5,25,99,'usergroupmap','Users Groups','user_id','user_id','user_usergroup_map','user_usergroup_map',0,0,0,0,0,0,0,0,''),(6,10,99,'categories','Categories','id','id','categories','categories',0,0,0,0,0,0,0,0,''),(7,10,15,'sections','Sections','id','id','sections','categories',0,0,0,0,0,0,0,0,''),(8,10,99,'contents','Contents','id','id','content','content',0,0,0,0,0,0,0,0,''),(9,10,99,'contents_frontpage','FrontPage Contents','content_id','content_id','content_frontpage','content_frontpage',0,0,0,0,0,0,0,0,''),(10,10,99,'menus','Menus','id','id','menu','menu',0,0,0,0,0,0,0,0,''),(11,10,99,'menus_types','Menus Types','id','id','menu_types','menu_types',0,0,0,0,0,0,0,0,''),(12,10,99,'modules','Core Modules','id','id','modules','modules',0,0,0,0,0,0,0,0,''),(13,10,99,'modules_menu','Modules Menus','moduleid','moduleid','modules_menu','modules_menu',0,0,0,0,0,0,0,0,''),(14,10,15,'banners','Banners','bid','id','banner','banners',0,0,0,0,0,0,0,0,''),(15,25,99,'banners','Banners','id','id','banners','banners',0,0,0,0,0,0,0,0,''),(16,10,15,'banners_clients','Banners Clients','cid','cid','bannerclient','banner_clients',0,0,0,0,0,0,0,0,''),(17,25,99,'banners_clients','Banners Clients','id','id','banner_clients','banner_clients',0,0,0,0,0,0,0,0,''),(18,15,15,'banners_tracks','Banners Tracks','banner_id','banner_id','bannertrack','banner_tracks',0,0,0,0,0,0,0,0,''),(19,25,99,'banners_tracks','Banners Tracks','banner_id','banner_id','banner_tracks','banner_tracks',0,0,0,0,0,0,0,0,''),(20,10,99,'contacts','Contacts','id','id','contact_details','contact_details',0,0,0,0,0,0,0,0,''),(21,10,99,'newsfeeds','NewsFeeds','id','id','newsfeeds','newsfeeds',0,0,0,0,0,0,0,0,''),(22,10,33,'weblinks','Weblinks','id','id','weblinks','weblinks',0,0,0,0,0,0,0,0,'');
 
 --
 -- Table structure for table `#__jupgradepro_version`

@@ -33,14 +33,14 @@ Requirements
 
 **jUpgradePro** is a Joomla! based extension so the requirements are the same as Joomla!
 
-http://www.joomla.org/technical-requirements.html
+https://www.joomla.org/technical-requirements.html
 
-Download
+More info
 ------------
 
-http://matware.com.ar/downloads/jupgradepro.html
+https://matware.com.ar/projects/jupgradepro/jupgradepro.html
 
 Documentation
 ------------
 
-http://matware.com.ar/documentation/jupgradepro/main-table-of-contents.html
+https://matware.com.ar/projects/jupgradepro/jupgradepro-documentation/jupgradepro-table-of-contents.html

@@ -17,14 +17,11 @@
 		</sql>
 	</install>
 
-	<files folder="site">
-		<filename>index.html</filename>
-	</files>
-
 	<media destination="com_jupgradepro" folder="media/com_jupgradepro">
 		<folder>css</folder>
 		<folder>images</folder>
 		<folder>js</folder>
+		<folder>json</folder>
 	</media>
 
 	<administration>
@@ -32,10 +29,11 @@
 
 		<files folder="admin">
 			<folder>controllers</folder>
-			<folder>helpers</folder>
 			<folder>language</folder>
 			<folder>models</folder>
+			<folder>tables</folder>
 			<folder>sql</folder>
+			<folder>vendor</folder>
 			<folder>views</folder>
 
 			<filename>jupgradepro.php</filename>
@@ -43,6 +41,7 @@
 			<filename>access.xml</filename>
 			<filename>controller.php</filename>
 			<filename>index.html</filename>
+			<filename>composer.json</filename>
 		</files>
 
 		<languages folder="admin">

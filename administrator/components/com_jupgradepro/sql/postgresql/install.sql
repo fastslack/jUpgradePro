@@ -185,7 +185,7 @@ SELECT setval('#__jupgradepro_sites_id_seq', 1, false);
 DROP TABLE IF EXISTS "#__jupgradepro_steps";
 
 CREATE TABLE "#__jupgradepro_steps" (
-  "id" integer NOT NULL AUTO_INCREMENT,
+  "id" serial NOT NULL,
   "from" integer NOT NULL DEFAULT '10',
   "to" integer NOT NULL DEFAULT '99',
   "name" character varying(255) NOT NULL,

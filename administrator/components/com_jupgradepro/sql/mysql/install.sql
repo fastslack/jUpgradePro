@@ -116,6 +116,7 @@ CREATE TABLE `#__jupgradepro_old_ids` (
   `table` varchar(200) DEFAULT NULL,
   `old_id` int(11) DEFAULT NULL,
   `new_id` int(11) DEFAULT NULL,
+  `section` VARCHAR(45) NULL,
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
@@ -181,6 +182,8 @@ INSERT INTO `#__jupgradepro_steps` VALUES (1,10,99,'users','Users','id','id','us
 --
 -- Table structure for table `#__jupgradepro_version`
 --
+
+DROP TABLE IF EXISTS `#__jupgradepro_version`;
 
 CREATE TABLE `#__jupgradepro_version` (
   `new` varchar(255) NOT NULL,

@@ -14,7 +14,6 @@
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Model\AdminModel;
-use Jupgradenext\Tables\Site;
 
 /**
  * Jupgradepro model.
@@ -124,7 +123,6 @@ class JupgradeproModelSite extends AdminModel
 	 */
 	public function getItem($pk = null)
 	{
-
 		if (empty($pk))
 		{
 			$pk = (int) JFactory::getApplication()->input->get('id', 0);
@@ -132,7 +130,7 @@ class JupgradeproModelSite extends AdminModel
 
 		if ($pk !== 0)
     {
-      $item = Site::find($pk)->toArray();
+      $item = (array) parent::getItem($pk);
     }else{
 			$item = array('database' => '[]', 'restful' => '[]' , 'skips' => '[]');
 		}
@@ -145,7 +143,9 @@ class JupgradeproModelSite extends AdminModel
 			$item = array_merge($item, $jsondecode);
 		}
 
-		return (object) $item;
+		array_splice($item, 0, 1);
+
+		return $item;
 	}
 
 	/**
@@ -159,21 +159,36 @@ class JupgradeproModelSite extends AdminModel
 	 */
 	public function save($data)
 	{
-		$id = \JFactory::getApplication()->input->get('id', 0, 'int');
+		// Save restful, db and skips as
+		$db = $rest = $skip = array();
 
-    if ($id !== 0)
-    {
-      $site = Site::find($id);
-    }else{
-			$site = new Site();
-		}
-
-		if ($site->saveSite($data))
+		foreach ($data as $key => &$value)
 		{
-			return true;
+			$tag = explode("_", $key);
+
+			switch ($tag[0]) {
+				case 'db':
+					$db[$key] = $value;
+					unset($data[$key]);
+					break;
+
+				case 'rest':
+					$rest[$key] = $value;
+					unset($data[$key]);
+					break;
+
+				case 'skip':
+					$skip[$key] = $value;
+					unset($data[$key]);
+					break;
+			}
 		}
 
-		return false;
+		$data['database'] = json_encode($db);
+		$data['restful'] = json_encode($rest);
+		$data['skips'] = json_encode($skip);
+
+		return parent::save($data);
 	}
 
 	/**

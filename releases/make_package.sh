@@ -12,30 +12,29 @@
 #
 
 PROJECT="jupgradepro"
-VERSION="3.8.0alpha1"
+VERSION="3.8.0beta5"
 
 RELEASE_DIR=`pwd`
 PKG_DIR="pkg_$PROJECT"
 
 COM_PACKAGE="com_jupgradepro"
-#LIB_PACKAGE="lib_matware"
-#PLG_PACKAGE="plg_sys_matware"
 
 # copy all needed files
 rm *.zip
-#rm -rf $DIR
+rm -rf ${PKG_DIR}
+rm ${RELEASE_DIR}/packages/*
 
 mkdir ${PKG_DIR}
 
-# Run composer
-cd ../administrator/components/com_jupgradepro
-#rm -rf vendor/
-composer update
-cd ../../../releases
-
+# Copy administrator component
 cp -r ../administrator/components/com_jupgradepro ${PKG_DIR}/com_jupgradepro
-#cp -r ../matware-libraries/libraries/matware ${PKG_DIR}/lib_matware
-#cp -r ../matware-libraries/plugins/system/matware ${PKG_DIR}/plg_matware
+
+# Run composer
+cd ${PKG_DIR}/com_jupgradepro
+rm -rf vendor/
+composer update
+cd ${RELEASE_DIR}
+
 cp -r ../plugins ${PKG_DIR}/plg_jupgradepro
 cp -r ../media ${PKG_DIR}/com_jupgradepro/media
 
@@ -45,26 +44,16 @@ zip -rq ${COM_PACKAGE} .
 mv ${COM_PACKAGE}.zip ${RELEASE_DIR}/packages/.
 cd ${RELEASE_DIR}
 
-# Zip Matware library
-#cd ${PKG_DIR}/lib_matware
-#zip -rq ${LIB_PACKAGE} .
-#mv ${LIB_PACKAGE}.zip ${RELEASE_DIR}/packages/.
-#cd ${RELEASE_DIR}
-
-# Zip Matware plugin
-#cd ${PKG_DIR}/plg_matware
-#zip -rq ${PLG_PACKAGE} .
-#mv ${PLG_PACKAGE}.zip ${RELEASE_DIR}/packages/.
-#cd ${RELEASE_DIR}
-
 # Create packages
 zip -rq ${PKG_DIR}-${VERSION}.zip packages/ pkg_${PROJECT}.xml
 
+exit;
+
 # Zip plugin for J! 1.5
-#cd ../plugins/system/plg_jupgradepro-1.5
-#zip -rq plg_${PROJECT}-restful-${VERSION}-j1.5.zip .
-#mv plg_${PROJECT}-restful-${VERSION}-j1.5.zip ${RELEASE_DIR}/.
-#cd ${RELEASE_DIR}
+cd ../plugins/system/plg_jupgradepro-1.5
+zip -rq plg_${PROJECT}-restful-${VERSION}-j1.5.zip .
+mv plg_${PROJECT}-restful-${VERSION}-j1.5.zip ${RELEASE_DIR}/.
+cd ${RELEASE_DIR}
 
 # Zip plugin for J! 2.5 or greater
 cd ../plugins/system/plg_jupgradepro-2.5

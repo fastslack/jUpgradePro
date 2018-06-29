@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<extension type="component" version="3.8.0" method="upgrade">
+<extension type="component" version="3.0" method="upgrade">
 	<name>jUpgradePro</name>
 	<author>Matias Aguirre</author>
 	<authorEmail>maguirre@matware.com.ar</authorEmail>
@@ -25,7 +25,7 @@
 	</media>
 
 	<administration>
-		<menu img="components/com_jupgradepro/images/jupgradepro.png">COM_JUPGRADEPRO</menu>
+		<menu img="media/com_jupgradepro/images/jupgradepro.png">COM_JUPGRADEPRO</menu>
 
 		<files folder="admin">
 			<folder>controllers</folder>

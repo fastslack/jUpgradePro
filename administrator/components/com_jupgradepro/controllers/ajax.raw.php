@@ -259,9 +259,9 @@ class JupgradeproControllerAjax extends AdminController
 
 		if ($version != false)
 		{
-			echo "Joomla! version {$version} found!";
+			echo \JText::sprintf('COM_JUPGRADEPRO_CHECK_VERSION', $version);
 		}else{
-			echo 'Check failed. Joomla! do not found.';
+			echo \JText::_('COM_JUPGRADEPRO_CHECK_VERSION_FAILED');
 		}
 
 		$app->close();

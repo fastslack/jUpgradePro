@@ -94,9 +94,9 @@ DROP TABLE IF EXISTS `#__jupgradepro_sites`;
 CREATE TABLE `#__jupgradepro_sites` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` varchar(45) DEFAULT NULL,
-  `restful` json DEFAULT NULL,
-  `database` json DEFAULT NULL,
-  `skips` json DEFAULT NULL,
+  `restful` text DEFAULT NULL,
+  `database` text DEFAULT NULL,
+  `skips` text DEFAULT NULL,
   `created_by` int(11) DEFAULT NULL,
   `created` datetime DEFAULT NULL,
   `modified_by` int(11) DEFAULT NULL,

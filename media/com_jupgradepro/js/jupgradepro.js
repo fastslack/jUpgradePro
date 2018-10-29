@@ -380,8 +380,6 @@ jQuery(function($, undefined) {
 
         var object = jQuery.parseJSON( response );
 
-console.log(object);
-
         if (object.code >= 500)
         {
           $.printConsole(term, object.message);
@@ -433,6 +431,17 @@ console.log(object);
       var ret = $.get(url3site,	function(response) {
 
         var object = jQuery.parseJSON( response );
+
+        if (extensions == true && object.code == 404)
+        {
+          promise = p.then(function(){
+            $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN2"));
+            $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_FINISH_STEP"));
+            $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN3"));
+          });
+
+          return false;
+        }
 
         if (object.name == undefined)
         {

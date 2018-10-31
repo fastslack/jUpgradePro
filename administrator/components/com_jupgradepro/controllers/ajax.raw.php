@@ -15,6 +15,12 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\DI\Container;
+use Joomla\Filesystem\Folder;
+
+use Symfony\Component\Console\Input\StringInput;
+use Symfony\Component\Console\Output\StringOutput;
+use Symfony\Component\Console\Input\ArrayInput;
+
 use Jupgradenext\Steps;
 use Jupgradenext\Models\Checks;
 use Jupgradenext\Models\Cleanup;
@@ -41,6 +47,16 @@ class JupgradeproControllerAjax extends AdminController
 
 	private $container;
 
+	protected $composer_data = array(
+		'url' => 'https://getcomposer.org/composer.phar',
+		'dir' => JPATH_ROOT.'/administrator/components/com_jupgradepro/',
+		'bin' => JPATH_ROOT.'/media/com_jupgradepro/phar/composer.phar',
+		'json' => JPATH_ROOT.'/administrator/components/com_jupgradepro/composer.json',
+		'conf' => array(
+			"minimum-stability" => "dev"
+		)
+	);
+
 	/**
 	 * Proxy for getModel.
 	 *
@@ -61,6 +77,8 @@ class JupgradeproControllerAjax extends AdminController
 	 */
 	public function createContainer()
 	{
+		$this->checkLibraries();
+
 		// Get a new DI container
 		$this->container = new Container;
 
@@ -259,9 +277,9 @@ class JupgradeproControllerAjax extends AdminController
 
 		if ($version != false)
 		{
-			echo \JText::sprintf('COM_JUPGRADEPRO_CHECK_VERSION', $version);
+			$this->returnError (400, \JText::sprintf('COM_JUPGRADEPRO_CHECK_VERSION', $version));
 		}else{
-			echo \JText::_('COM_JUPGRADEPRO_CHECK_VERSION_FAILED');
+			$this->returnError (500, \JText::sprintf('COM_JUPGRADEPRO_CHECK_VERSION_FAILED', $version));
 		}
 
 		$app->close();
@@ -317,9 +335,7 @@ class JupgradeproControllerAjax extends AdminController
 			$return .= "\n".JText::_('COM_JUPGRADEPRO_TITLE_LIMIT').": [[g;grey;]{$item->chunk_limit}]\n";
 			$return .= $this->fixJSON($json);
 
-			print($return);
-
-		}elseif ($task == 'sites') {
+		} elseif ($task == 'sites') {
 
 			// Get the model for the view.
 			$model = $this->getModel('Sites');
@@ -341,9 +357,9 @@ class JupgradeproControllerAjax extends AdminController
 			}else{
 				$return .= JText::_('COM_JUPGRADEPRO_SITES_NOT_FOUND') . "\n";
 			}
-
-			print($return);
 		}
+
+		print($return);
 	}
 
 	/**
@@ -424,4 +440,108 @@ class JupgradeproControllerAjax extends AdminController
 		print(json_encode($response));
 		exit;
 	}
+
+	/**
+	 * Download composer installer
+	 *
+	 * @return  void
+	 */
+	 function updateComposer()
+	 {
+		set_time_limit(-1);
+
+		$command = "composer require matware-lab/jupgradenext";
+		$explode = explode(' ', $command);
+		$command = $explode[1];
+		$command2 = isset($explode[2]) ? ' ' . $explode[2] : '';
+
+		// Download composer.phar
+		$this->downloadComposer();
+
+		// Require composer bootstrap
+		require_once "phar://{$this->composer_data['bin']}/src/bootstrap.php";
+
+		// Use root directory
+		chdir($this->composer_data['dir']);
+		putenv("COMPOSER_HOME={$this->composer_data['dir']}");
+
+		// Force to use php://output instead of php://stdout
+		putenv("OSTYPE=OS400");
+
+		// Get the application console instance
+		$app = new \Composer\Console\Application();
+		$factory = new \Composer\Factory();
+		$output = $factory->createOutput();
+
+		// Build commands and arguments array
+		$array = array();
+		$array['command'] = trim($command);
+
+		if ($array['command'] == 'require' || $array['command'] == 'remove')
+		{
+			$array['packages'] = array(trim($command2));
+		}
+
+		// Set composer base root to Joomla! root
+		$array['-d'] = $this->composer_data['dir'];
+
+		// Get input
+		$input = new \Symfony\Component\Console\Input\ArrayInput($array);
+
+		// Set interactive to false
+		$input->setInteractive(true);
+
+		// Run application
+		$return = $app->run($input, $output);
+	 }
+
+	/**
+	 * Get status
+	 *
+	 * @return  void
+	 */
+	 function statusComposer()
+	 {
+		$output = array(
+		'composer' => file_exists($this->composer_data['bin']),
+		'composer_extracted' => file_exists(dirname(__DIR__) . '/extracted'),
+		'installer' => file_exists(dirname(__DIR__) . '/includes/installer.php'),
+		);
+		header("Content-Type: text/json; charset=utf-8");
+		echo json_encode($output);
+	 }
+
+	/**
+	 * Download composer installer
+	 *
+	 * @return  void
+	 */
+	 function downloadComposer()
+	 {
+		 if (!file_exists($this->composer_data['bin']))
+		 {
+			 copy($this->composer_data['url'], $this->composer_data['bin']);
+		 }
+	 }
+
+	/**
+	 * Check for composer libraries
+	 *
+	 * @return  void
+	 */
+	 function checkLibraries()
+	 {
+		 jimport('joomla.filesystem.folder');
+
+		 if (JFolder::exists(JPATH_COMPONENT_ADMINISTRATOR . '/vendor') == false)
+		 {
+			 $return = array();
+			 $return['code'] = 500;
+			 $return['message'] = \JText::_('COM_JUPGRADEPRO_COMPOSER_NOT_FOUND');
+
+			 print(json_encode($return));
+			 JFactory::getApplication()->close();
+		 }
+ 	 }
+
 }

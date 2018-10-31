@@ -55,10 +55,61 @@ jQuery(function($, undefined) {
         $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_HELP_MIGRATE"));
       }
 
+      if (split[1] == 'composer')
+      {
+        $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_HELP_COMPOSER"));
+      }
+
       if (!split[1])
       {
         $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_HELP_DESC"));
       }
+    }
+  });
+
+  /*
+   * Update composer
+   */
+  $.extend({
+    updateComposer: function(term, command, spinners) {
+
+      var spinner = spinners['clock'];
+
+      var split = command.split(' ');
+
+      term.pause();
+
+      if (split[1] == 'install')
+      {
+        var url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.updateComposer';
+
+        term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LINE"));
+        term.echo(Joomla.JText._("COM_JUPGRADEPRO_COMPOSER_START"));
+        $.start(term, spinner, Joomla.JText._("TEST"));
+
+        $.get(url,	function(result) {
+
+          $.stop(term, spinner);
+
+          if (result !== undefined) {
+            $.printConsole(term, result);
+          }
+        });
+      }
+      else if (split[1] == 'status')
+      {
+        var url = 'index.php?option=com_jupgradepro&format=raw&task=ajax.statusComposer';
+
+        $.get(url,	function(result) {
+
+          if (result !== undefined) {
+            $.printConsole(term, result);
+          }
+        });
+      }else{
+        $.printConsole(term, Joomla.JText._("COM_JUPGRADEPRO_HELP_COMPOSER"));
+      }
+
     }
   });
 
@@ -124,8 +175,16 @@ jQuery(function($, undefined) {
 
         $.get(url2site,	function(result) {
 
+          var object = jQuery.parseJSON( result );
+
+          if (object.code >= 500)
+          {
+            $.printConsole(term, object.message);
+            return false;
+          }
+
           if (result !== undefined) {
-            $.printConsole(term, result);
+            $.printConsole(term, object.message);
           }
         });
 

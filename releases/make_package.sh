@@ -11,15 +11,16 @@
 # @license GNU General Public License version 2 or later; see LICENSE
 #
 
+# Project info
 PROJECT="jupgradepro"
-VERSION="3.8.0beta5"
+VERSION="3.8.1"
+COM_PACKAGE="com_jupgradepro"
 
+# Get used variables
 RELEASE_DIR=`pwd`
 PKG_DIR="pkg_$PROJECT"
 
-COM_PACKAGE="com_jupgradepro"
-
-# copy all needed files
+# Remove used directories and files
 rm *.zip
 rm -rf ${PKG_DIR}
 rm ${RELEASE_DIR}/packages/*
@@ -29,12 +30,10 @@ mkdir ${PKG_DIR}
 # Copy administrator component
 cp -r ../administrator/components/com_jupgradepro ${PKG_DIR}/com_jupgradepro
 
-# Run composer
-cd ${PKG_DIR}/com_jupgradepro
-rm -rf vendor/
-composer update
+# Go to release dir
 cd ${RELEASE_DIR}
 
+# Copy plugins and media
 cp -r ../plugins ${PKG_DIR}/plg_jupgradepro
 cp -r ../media ${PKG_DIR}/com_jupgradepro/media
 
@@ -46,8 +45,6 @@ cd ${RELEASE_DIR}
 
 # Create packages
 zip -rq ${PKG_DIR}-${VERSION}.zip packages/ pkg_${PROJECT}.xml
-
-exit;
 
 # Zip plugin for J! 1.5
 cd ../plugins/system/plg_jupgradepro-1.5

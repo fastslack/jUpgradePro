@@ -12,16 +12,14 @@
 	<packagerurl>http://www.matware.com.ar/</packagerurl>
 	<!-- <update>http://www.updateurl.com/update</update> -->
 
-	<copyright>Copyright 2004 - 2017 Matias Aguirre. All rights reserved.</copyright>
+	<copyright>Copyright 2004 - 2018 Matias Aguirre. All rights reserved.</copyright>
 	<license>GNU General Public License version 2 or later.</license>
 	<creationDate>2012-08-30</creationDate>
-	<version>3.8.0</version>
+	<version>3.8.1</version>
 	<description></description>
 
 	<files folder="packages">
 		<file type="component" id="com_jupgradepro" >com_jupgradepro.zip</file>
-		<file type="library" id="matware">lib_matware.zip</file>
-		<file type="plugin" id="matware" group="system">plg_sys_matware.zip</file>
 	</files>
 
 </extension>

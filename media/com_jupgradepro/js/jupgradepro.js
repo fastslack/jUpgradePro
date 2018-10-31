@@ -73,7 +73,7 @@ jQuery(function($, undefined) {
   $.extend({
     updateComposer: function(term, command, spinners) {
 
-      var spinner = spinners['clock'];
+      var spinner = spinners['dots12'];
 
       var split = command.split(' ');
 
@@ -93,6 +93,8 @@ jQuery(function($, undefined) {
 
           if (result !== undefined) {
             $.printConsole(term, result);
+            term.echo(Joomla.JText._("COM_JUPGRADEPRO_COMPOSER_INSTALLED"));
+            term.echo(Joomla.JText._("COM_JUPGRADEPRO_HORIZONTAL_LIN3"));
           }
         });
       }

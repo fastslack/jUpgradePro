@@ -353,10 +353,11 @@ class JupgradeproControllerAjax extends AdminController
 					$valTitle = "[[g;grey;]{$value->name}]";
 					$return .= "[[g;white;]|] " . $valTitle . $this->getSpaces($valTitle) . "|     " . $value->method . "\n";
 				}
-				$return .= JText::_('COM_JUPGRADEPRO_HORIZONTAL_LIN3') . "\n";
 			}else{
 				$return .= JText::_('COM_JUPGRADEPRO_SITES_NOT_FOUND') . "\n";
 			}
+
+			$return .= JText::_('COM_JUPGRADEPRO_HORIZONTAL_LIN3') . "\n";
 		}
 
 		print($return);
@@ -502,13 +503,17 @@ class JupgradeproControllerAjax extends AdminController
 	 */
 	 function statusComposer()
 	 {
-		$output = array(
-		'composer' => file_exists($this->composer_data['bin']),
-		'composer_extracted' => file_exists(dirname(__DIR__) . '/extracted'),
-		'installer' => file_exists(dirname(__DIR__) . '/includes/installer.php'),
-		);
-		header("Content-Type: text/json; charset=utf-8");
-		echo json_encode($output);
+		 jimport('joomla.filesystem.folder');
+
+		 if (JFolder::exists(JPATH_COMPONENT_ADMINISTRATOR . '/vendor') == false)
+		 {
+			 $return = \JText::_('COM_JUPGRADEPRO_COMPOSER_NOT_FOUND');
+		 }else{
+			 $return = \JText::_('COM_JUPGRADEPRO_COMPOSER_FOUND');
+		 }
+
+		 print($return);
+		 JFactory::getApplication()->close();
 	 }
 
 	/**

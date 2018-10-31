@@ -22,6 +22,7 @@
 		<folder>images</folder>
 		<folder>js</folder>
 		<folder>json</folder>
+		<folder>phar</folder>
 	</media>
 
 	<administration>
@@ -33,7 +34,6 @@
 			<folder>models</folder>
 			<folder>tables</folder>
 			<folder>sql</folder>
-			<folder>vendor</folder>
 			<folder>views</folder>
 
 			<filename>jupgradepro.php</filename>

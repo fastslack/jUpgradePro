@@ -2,27 +2,30 @@
 /**
  * jUpgradePro
  *
- * @version $Id:
- * @package jUpgradePro
- * @copyright Copyright (C) 2004 - 2018 Matware. All rights reserved.
- * @author Matias Aguirre
- * @email maguirre@matware.com.ar
- * @link http://www.matware.com.ar/
- * @license GNU General Public License version 2 or later; see LICENSE
+ * @version   $Id:
+ * @package   jUpgradePro
+ * @copyright Copyright (C) 2004 - 2019 Matware. All rights reserved.
+ * @author    Matias Aguirre
+ * @email     maguirre@matware.com.ar
+ * @link      http://www.matware.com.ar/
+ * @license   GNU General Public License version 2 or later; see LICENSE
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
+use Joomla\CMS\MVC\View\HtmlView;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Helper\ContentHelper;
 
 use Jupgradenext\Upgrade\UpgradeHelper;
 
 /**
- * View class for a list of Jupgradepro.
+ * View class for a list of sites to migrate.
  *
  * @since  3.8
  */
-class JupgradeproViewSites extends JViewLegacy
+class JupgradeproViewSites extends HtmlView
 {
 	protected $items;
 
@@ -38,15 +41,16 @@ class JupgradeproViewSites extends JViewLegacy
 	 * @return void
 	 *
 	 * @throws Exception
+	 * @since  3.8.0
 	 */
 	public function display($tpl = null)
 	{
 		JLoader::import('helpers.jupgradepro', JPATH_COMPONENT_ADMINISTRATOR);
 
-		$this->state = $this->get('State');
-		$this->items = $this->get('Items');
-		$this->pagination = $this->get('Pagination');
-		$this->filterForm = $this->get('FilterForm');
+		$this->state         = $this->get('State');
+		$this->items         = $this->get('Items');
+		$this->pagination    = $this->get('Pagination');
+		$this->filterForm    = $this->get('FilterForm');
 		$this->activeFilters = $this->get('ActiveFilters');
 
 		// Check for errors.
@@ -67,14 +71,14 @@ class JupgradeproViewSites extends JViewLegacy
 	 *
 	 * @return void
 	 *
-	 * @since    1.6
+	 * @since  3.8.0
 	 */
 	protected function addToolbar()
 	{
 		$state = $this->get('State');
-		$canDo = JHelperContent::getActions('com_jupgradepro');
+		$canDo = ContentHelper::getActions('com_jupgradepro');
 
-		JToolBarHelper::title(JText::_('COM_JUPGRADEPRO_TITLE_SITES'), 'stack article');
+		ToolBarHelper::title(Text::_('COM_JUPGRADEPRO_TITLE_SITES'), 'stack article');
 
 		// Check if the form exists before showing the add/edit buttons
 		$formPath = JPATH_COMPONENT_ADMINISTRATOR . '/views/site';
@@ -83,12 +87,12 @@ class JupgradeproViewSites extends JViewLegacy
 		{
 			if ($canDo->get('core.create'))
 			{
-				JToolBarHelper::addNew('site.add', 'JTOOLBAR_NEW');
+				ToolBarHelper::addNew('site.add', 'JTOOLBAR_NEW');
 			}
 
 			if ($canDo->get('core.edit') && isset($this->items[0]))
 			{
-				JToolBarHelper::editList('site.edit', 'JTOOLBAR_EDIT');
+				ToolBarHelper::editList('site.edit', 'JTOOLBAR_EDIT');
 			}
 		}
 
@@ -96,26 +100,26 @@ class JupgradeproViewSites extends JViewLegacy
 		{
 			if (isset($this->items[0]->state))
 			{
-				JToolBarHelper::divider();
-				JToolBarHelper::custom('sites.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
-				JToolBarHelper::custom('sites.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
+				ToolBarHelper::divider();
+				ToolBarHelper::custom('sites.publish', 'publish.png', 'publish_f2.png', 'JTOOLBAR_PUBLISH', true);
+				ToolBarHelper::custom('sites.unpublish', 'unpublish.png', 'unpublish_f2.png', 'JTOOLBAR_UNPUBLISH', true);
 			}
 			elseif (isset($this->items[0]))
 			{
 				// If this component does not use state then show a direct delete button as we can not trash
-				JToolBarHelper::deleteList('', 'site.delete', 'JTOOLBAR_DELETE');
+				ToolBarHelper::deleteList('', 'site.delete', 'JTOOLBAR_DELETE');
 			}
 
 			if (isset($this->items[0]->checked_out))
 			{
-				JToolBarHelper::custom('sites.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
+				ToolBarHelper::custom('sites.checkin', 'checkin.png', 'checkin_f2.png', 'JTOOLBAR_CHECKIN', true);
 			}
 		}
 
 		if (isset($this->items[0]))
 		{
 			// If this component does not use state then show a direct delete button as we can not trash
-			JToolBarHelper::deleteList('', 'site.delete', 'JTOOLBAR_DELETE');
+			ToolBarHelper::deleteList('', 'site.delete', 'JTOOLBAR_DELETE');
 		}
 
 		// Show trash and delete for components that uses the state field
@@ -123,22 +127,22 @@ class JupgradeproViewSites extends JViewLegacy
 		{
 			if ($state->get('filter.state') == -2 && $canDo->get('core.delete'))
 			{
-				JToolBarHelper::deleteList('', 'sites.delete', 'JTOOLBAR_EMPTY_TRASH');
-				JToolBarHelper::divider();
+				ToolBarHelper::deleteList('', 'sites.delete', 'JTOOLBAR_EMPTY_TRASH');
+				ToolBarHelper::divider();
 			}
 			elseif ($canDo->get('core.edit.state'))
 			{
-				JToolBarHelper::trash('sites.trash', 'JTOOLBAR_TRASH');
-				JToolBarHelper::divider();
+				ToolBarHelper::trash('sites.trash', 'JTOOLBAR_TRASH');
+				ToolBarHelper::divider();
 			}
 		}
 
 		if ($canDo->get('core.admin'))
 		{
-			JToolBarHelper::preferences('com_jupgradepro');
+			ToolBarHelper::preferences('com_jupgradepro');
 		}
 
-		JToolBarHelper::cancel('site.cancel', 'JTOOLBAR_BACK');
+		ToolBarHelper::cancel('site.cancel', 'JTOOLBAR_BACK');
 
 		// Set sidebar action - New in 3.0
 		JHtmlSidebar::setAction('index.php?option=com_jupgradepro&view=products');
@@ -147,39 +151,42 @@ class JupgradeproViewSites extends JViewLegacy
 	/**
 	 * Method to order fields
 	 *
-	 * @return void
+	 * @return array
+	 * @since  3.8.0
 	 */
 	protected function getSortFields()
 	{
 		return array(
-			'a.`id`' => JText::_('JGRID_HEADING_ID'),
-			'a.`ordering`' => JText::_('JGRID_HEADING_ORDERING'),
-			'a.`state`' => JText::_('JSTATUS'),
-			'a.`name`' => JText::_('COM_JUPGRADEPRO_PRODUCTS_GROUP')
+			'a.`id`'       => Text::_('JGRID_HEADING_ID'),
+			'a.`ordering`' => Text::_('JGRID_HEADING_ORDERING'),
+			'a.`state`'    => Text::_('JSTATUS'),
+			'a.`name`'     => Text::_('COM_JUPGRADEPRO_PRODUCTS_GROUP')
 		);
 	}
 
-  /**
-   * Check if state is set
-   *
-   * @param   mixed  $state  State
-   *
-   * @return bool
-   */
-  public function getState($state)
-  {
-      return isset($this->state->{$state}) ? $this->state->{$state} : false;
-  }
+	/**
+	 * Check if state is set
+	 *
+	 * @param   mixed  $state  State
+	 *
+	 * @return bool
+	 * @since  3.8.0
+	 */
+	public function getState($state)
+	{
+		return isset($this->state->{$state}) ? $this->state->{$state} : false;
+	}
 
 	/**
-   * Check if state is set
-   *
-   * @param   mixed  $state  State
-   *
-   * @return bool
-   */
-  public function fixJSON($json)
-  {
+	 * Fix JSON from database
+	 *
+	 * @param   string  $json  The Json to fix
+	 *
+	 * @return bool
+	 * @since  3.8.0
+	 */
+	public function fixJSON($json)
+	{
 		$decode = json_decode($json);
 
 		if (!isset($decode))
@@ -187,7 +194,8 @@ class JupgradeproViewSites extends JViewLegacy
 			return false;
 		}
 
-		foreach ($decode as $key => &$value) {
+		foreach ($decode as $key => &$value)
+		{
 			if ($key == 'db_password' || $key == 'rest_password')
 			{
 				$value = '*********************';
@@ -195,18 +203,19 @@ class JupgradeproViewSites extends JViewLegacy
 
 			if ($value == "0")
 			{
-				$value = JText::_('JNO');
-			}else if ($value == "1")
+				$value = Text::_('JNO');
+			}
+			else if ($value == "1")
 			{
-				$value = JText::_('JYES');
+				$value = Text::_('JYES');
 			}
 
 		}
 
-		$return = '<pre>'. print_r($decode,1) . '</pre>';
+		$return = '<pre>' . print_r($decode, 1) . '</pre>';
 
 		$return = str_replace("stdClass Object", "", $return);
 
-    return $return;
-  }
+		return $return;
+	}
 }

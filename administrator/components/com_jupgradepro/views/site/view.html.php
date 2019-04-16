@@ -2,27 +2,31 @@
 /**
  * jUpgradePro
  *
- * @version $Id:
- * @package jUpgradePro
- * @copyright Copyright (C) 2004 - 2018 Matware. All rights reserved.
- * @author Matias Aguirre
- * @email maguirre@matware.com.ar
- * @link http://www.matware.com.ar/
- * @license GNU General Public License version 2 or later; see LICENSE
+ * @version   $Id:
+ * @package   jUpgradePro
+ * @copyright Copyright (C) 2004 - 2019 Matware. All rights reserved.
+ * @author    Matias Aguirre
+ * @email     maguirre@matware.com.ar
+ * @link      http://www.matware.com.ar/
+ * @license   GNU General Public License version 2 or later; see LICENSE
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.view');
-
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\View\HtmlView;
 use Jupgradenext\Upgrade\UpgradeHelper;
+use Joomla\CMS\Toolbar\ToolbarHelper;
+use Joomla\CMS\Language\Text;
+use Joomla\CMS\Helper\ContentHelper;
+
 
 /**
- * View to edit
+ * View to edit a site to migrate
  *
- * @since  3.8
+ * @since  3.8.0
  */
-class JupgradeproViewSite extends JViewLegacy
+class JupgradeproViewSite extends HtmlView
 {
 	protected $state;
 
@@ -38,6 +42,7 @@ class JupgradeproViewSite extends JViewLegacy
 	 * @return void
 	 *
 	 * @throws Exception
+	 * @since  3.8.0
 	 */
 	public function display($tpl = null)
 	{
@@ -63,41 +68,30 @@ class JupgradeproViewSite extends JViewLegacy
 	 * @return void
 	 *
 	 * @throws Exception
+	 * @since  3.8.0
 	 */
 	protected function addToolbar()
 	{
-		JFactory::getApplication()->input->set('hidemainmenu', true);
+		Factory::getApplication()->input->set('hidemainmenu', true);
 
-		$user  = JFactory::getUser();
-		$isNew = isset($this->item->id) && ($this->item->id == 0);
+		$canDo = ContentHelper::getActions('com_jupgradepro');
 
-		if (isset($this->item->checked_out))
-		{
-			$checkedOut = !($this->item->checked_out == 0 || $this->item->checked_out == $user->get('id'));
-		}
-		else
-		{
-			$checkedOut = false;
-		}
-
-		$canDo = JHelperContent::getActions('com_jupgradepro');
-
-		JToolBarHelper::title(JText::_('COM_JUPGRADEPRO_TITLE_ADDNEW'), 'folder-plus');
+		ToolBarHelper::title(Text::_('COM_JUPGRADEPRO_TITLE_ADDNEW'), 'folder-plus');
 
 		// If not checked out, can save the item.
 		if (($canDo->get('core.edit') || ($canDo->get('core.create'))))
 		{
-			JToolBarHelper::apply('site.apply', 'JTOOLBAR_APPLY');
-			JToolBarHelper::save('site.save', 'JTOOLBAR_SAVE');
+			ToolBarHelper::apply('site.apply', 'JTOOLBAR_APPLY');
+			ToolBarHelper::save('site.save', 'JTOOLBAR_SAVE');
 		}
 
 		if (empty($this->item->id))
 		{
-			JToolBarHelper::cancel('site.cancel', 'JTOOLBAR_CANCEL');
+			ToolBarHelper::cancel('site.cancel', 'JTOOLBAR_CANCEL');
 		}
 		else
 		{
-			JToolBarHelper::cancel('site.cancel', 'JTOOLBAR_CLOSE');
+			ToolBarHelper::cancel('site.cancel', 'JTOOLBAR_CLOSE');
 		}
 	}
 }

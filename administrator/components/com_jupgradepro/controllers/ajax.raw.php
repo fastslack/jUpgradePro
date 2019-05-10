@@ -2,20 +2,22 @@
 /**
  * jUpgradePro
  *
- * @version $Id:
- * @package jUpgradePro
- * @copyright Copyright (C) 2004 - 2018 Matware. All rights reserved.
- * @author Matias Aguirre
- * @email maguirre@matware.com.ar
- * @link http://www.matware.com.ar/
- * @license GNU General Public License version 2 or later; see LICENSE
+ * @version   $Id:
+ * @package   jUpgradePro
+ * @copyright Copyright (C) 2004 - 2019 Matware. All rights reserved.
+ * @author    Matias Aguirre
+ * @email     maguirre@matware.com.ar
+ * @link      http://www.matware.com.ar/
+ * @license   GNU General Public License version 2 or later; see LICENSE
  */
 
 defined('_JEXEC') or die;
 
-use Joomla\CMS\MVC\Controller\AdminController;
 use Joomla\DI\Container;
-use Joomla\Filesystem\Folder;
+use Joomla\CMS\Filesystem\Folder;
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Controller\AdminController;
+use Joomla\CMS\Language\Text;
 
 use Symfony\Component\Console\Input\StringInput;
 use Symfony\Component\Console\Output\StringOutput;
@@ -35,23 +37,23 @@ use Jupgradenext\Upgrade\UpgradeHelper;
  *
  * @package     jUpgradePro
  * @subpackage  com_jupgradepro
- * @since       3.0.3
+ * @since       3.8.0
  */
 class JupgradeproControllerAjax extends AdminController
 {
 	/**
-	 * @var		string	The context for persistent state.
-	 * @since   3.0.3
+	 * @var     string    The context for persistent state.
+	 * @since   3.8.0
 	 */
 	protected $context = 'com_jupgradepro.ajax';
 
 	private $container;
 
 	protected $composer_data = array(
-		'url' => 'https://getcomposer.org/composer.phar',
-		'dir' => JPATH_ROOT.'/administrator/components/com_jupgradepro/',
-		'bin' => JPATH_ROOT.'/media/com_jupgradepro/phar/composer.phar',
-		'json' => JPATH_ROOT.'/administrator/components/com_jupgradepro/composer.json',
+		'url'  => 'https://getcomposer.org/composer.phar',
+		'dir'  => '/administrator/components/com_jupgradepro/',
+		'bin'  => '/media/com_jupgradepro/phar/composer.phar',
+		'json' => '/administrator/components/com_jupgradepro/composer.json',
 		'conf' => array(
 			"minimum-stability" => "dev"
 		)
@@ -60,20 +62,23 @@ class JupgradeproControllerAjax extends AdminController
 	/**
 	 * Proxy for getModel.
 	 *
-	 * @param   string	$name	The name of the model.
-	 * @param   string	$prefix	The prefix for the model class name.
+	 * @param   string  $name    The name of the model.
+	 * @param   string  $prefix  The prefix for the model class name.
 	 *
-	 * @return  jUpgradeProModel
-	 * @since   3.0.3
+	 * @return  object
+	 * @since   3.8.0
 	 */
 	public function getModel($name = '', $prefix = 'JupgradeproModel', $config = array())
 	{
 		$model = parent::getModel($name, $prefix, array('ignore_request' => true));
+
 		return $model;
 	}
 
 	/**
 	 * Create container
+	 *
+	 * @since   3.8.0
 	 */
 	public function createContainer()
 	{
@@ -82,8 +87,8 @@ class JupgradeproControllerAjax extends AdminController
 		// Get a new DI container
 		$this->container = new Container;
 
-		$site = JFactory::getApplication()->input->get('site', false);
-		$config = JFactory::getConfig();
+		$site   = Factory::getApplication()->input->get('site', false);
+		$config = Factory::getConfig();
 
 		// Set config to container
 		$this->container->share('config', function (Container $c) use ($config) {
@@ -96,13 +101,13 @@ class JupgradeproControllerAjax extends AdminController
 		}, true);
 
 		// Set input to container
-		$input = JFactory::getApplication()->input;
+		$input = Factory::getApplication()->input;
 		$this->container->share('input', function (Container $c) use ($input) {
 			return $input;
 		}, true);
 
 		// Set input to container
-		$db = JFactory::getDbo();
+		$db = Factory::getDbo();
 		$this->container->share('db', function (Container $c) use ($db) {
 			return $db;
 		}, true);
@@ -118,7 +123,7 @@ class JupgradeproControllerAjax extends AdminController
 		$this->container->registerServiceProvider(new \Providers\StepsServiceProvider);
 
 		// Set input to container
-		$sites = $this->container->get('sites');
+		$sites      = $this->container->get('sites');
 		$siteConfig = $sites->getSite();
 
 		if ($siteConfig['method'] == 'database')
@@ -127,12 +132,12 @@ class JupgradeproControllerAjax extends AdminController
 
 			if ($siteDbo == false)
 			{
-				$return = array();
-				$return['code'] = 500;
-				$return['message'] = \JText::_('COM_JUPGRADEPRO_ERROR_SITE_NOT_EXIST');
+				$return            = array();
+				$return['code']    = 500;
+				$return['message'] = Text::_('COM_JUPGRADEPRO_ERROR_SITE_NOT_EXIST');
 
 				print(json_encode($return));
-				JFactory::getApplication()->close();
+				Factory::getApplication()->close();
 			}
 
 			$this->container->share('external', function (Container $c) use ($siteDbo) {
@@ -150,6 +155,8 @@ class JupgradeproControllerAjax extends AdminController
 
 	/**
 	 * Run the jUpgradePro checks
+	 *
+	 * @since   3.8.0
 	 */
 	public function checks()
 	{
@@ -160,15 +167,20 @@ class JupgradeproControllerAjax extends AdminController
 		$checks = new Checks($this->container);
 
 		// Running the migrate
-		try {
+		try
+		{
 			$checks->checks();
-		} catch (Exception $e) {
-			$checks->returnError (500, $e->getMessage());
+		}
+		catch (Exception $e)
+		{
+			$checks->returnError(500, $e->getMessage());
 		}
 	}
 
 	/**
 	 * Run the jUpgradePro cleanup
+	 *
+	 * @since   3.8.0
 	 */
 	public function cleanup()
 	{
@@ -179,15 +191,20 @@ class JupgradeproControllerAjax extends AdminController
 		$model = new Cleanup($this->container);
 
 		// Running the cleanup
-		try {
+		try
+		{
 			echo $model->cleanup();
-		} catch (Exception $e) {
-			$model->returnError (500, $e->getMessage());
+		}
+		catch (Exception $e)
+		{
+			$model->returnError(500, $e->getMessage());
 		}
 	}
 
 	/**
 	 * Run jUpgradePro extensions
+	 *
+	 * @since   3.8.0
 	 */
 	public function cleantable()
 	{
@@ -197,11 +214,21 @@ class JupgradeproControllerAjax extends AdminController
 		// Set all cid, status and cache to 0
 		$query = $this->container->get('db')->getQuery(true);
 		$query->update('#__jupgradepro_steps')->set('cid = 0, status = 0, cache = 0, total = 0, stop = 0, start = 0, first = 0, debug = \'\'');
-		$this->container->get('db')->setQuery($query)->execute();
+
+		try
+		{
+			$this->container->get('db')->setQuery($query)->execute();
+		}
+		catch (Exception $e)
+		{
+			$this->returnError(500, $e->getMessage());
+		}
 	}
 
 	/**
 	 * Run jUpgradePro step
+	 *
+	 * @since   3.8.0
 	 */
 	public function step()
 	{
@@ -212,15 +239,20 @@ class JupgradeproControllerAjax extends AdminController
 		$model = new Step($this->container);
 
 		// Running the step
-		try {
+		try
+		{
 			$model->step(false, true);
-		} catch (Exception $e) {
-			$model->returnError (500, $e->getMessage());
+		}
+		catch (Exception $e)
+		{
+			$model->returnError(500, $e->getMessage());
 		}
 	}
 
 	/**
 	 * Run jUpgradePro migrate
+	 *
+	 * @since   3.8.0
 	 */
 	public function migrate()
 	{
@@ -231,15 +263,20 @@ class JupgradeproControllerAjax extends AdminController
 		$model = new Migrate($this->container);
 
 		// Running the migrate
-		try {
+		try
+		{
 			$model->migrate();
-		} catch (Exception $e) {
-			$model->returnError (500, $e->getMessage());
+		}
+		catch (Exception $e)
+		{
+			$model->returnError(500, $e->getMessage());
 		}
 	}
 
 	/**
 	 * Run jUpgradePro extensions
+	 *
+	 * @since   3.8.0
 	 */
 	public function extensions()
 	{
@@ -250,36 +287,40 @@ class JupgradeproControllerAjax extends AdminController
 		$model = new Extensions($this->container);
 
 		// Running the extensions
-		try {
+		try
+		{
 			$model->extensions();
-		} catch (Exception $e) {
-			$model->returnError (500, $e->getMessage());
+		}
+		catch (Exception $e)
+		{
+			$model->returnError(500, $e->getMessage());
 		}
 	}
 
 	/**
 	 * Get the component params
+	 *
+	 * @since   3.8.0
 	 */
 	public function check()
 	{
-		$return = '';
-		$this->_db = JFactory::getDbo();
+		$this->_db = Factory::getDbo();
 
-		$app = JFactory::getApplication();
-
-		$site = $app->input->get('site', false);
+		$app = Factory::getApplication();
 
 		// Get a new DI container
 		$this->createContainer();
 
-		$model = new Checks($this->container);
+		$model   = new Checks($this->container);
 		$version = $model->checkSite();
 
 		if ($version != false)
 		{
-			$this->returnError (400, \JText::sprintf('COM_JUPGRADEPRO_CHECK_VERSION', $version));
-		}else{
-			$this->returnError (500, \JText::sprintf('COM_JUPGRADEPRO_CHECK_VERSION_FAILED', $version));
+			$this->returnError(400, Text::sprintf('COM_JUPGRADEPRO_CHECK_VERSION', $version));
+		}
+		else
+		{
+			$this->returnError(500, Text::sprintf('COM_JUPGRADEPRO_CHECK_VERSION_FAILED', $version));
 		}
 
 		$app->close();
@@ -287,12 +328,14 @@ class JupgradeproControllerAjax extends AdminController
 
 	/**
 	 * Get the component params
+	 *
+	 * @since   3.8.0
 	 */
 	public function show()
 	{
-		$return = '';
-		$this->_db = JFactory::getDbo();
-		$app = JFactory::getApplication();
+		$return    = '';
+		$this->_db = Factory::getDbo();
+		$app       = Factory::getApplication();
 
 		$task = $app->input->get('command', false);
 
@@ -301,81 +344,92 @@ class JupgradeproControllerAjax extends AdminController
 			$site = $app->input->get('site', false);
 
 			// Create a new query object.
-			$query	= $this->_db->getQuery(true);
+			$query = $this->_db->getQuery(true);
 
 			// Select the required fields from the table.
 			$query->select("*");
 			$query->from('#__jupgradepro_sites AS s');
 			$qSite = $this->_db->quote($site);
 			$query->where("s.name = {$qSite}");
-			$query->limit(1);
+			$query->setLimit(1);
 
 			// Set query
 			$this->_db->setQuery($query);
 
 			// Execute the query
-			try {
+			try
+			{
 				$item = $this->_db->loadObject();
-			} catch (RuntimeException $e) {
+			}
+			catch (RuntimeException $e)
+			{
 				throw new RuntimeException($e->getMessage());
 			}
 
 			if (empty($item))
 			{
-				$return .= JText::_('COM_JUPGRADEPRO_CONFIG_SITE_NOT_FOUND');
+				$return .= Text::_('COM_JUPGRADEPRO_CONFIG_SITE_NOT_FOUND');
 				print($return);
 				$app->close();
 			}
 
 			$method = $item->method;
-			$json = $item->$method;
+			$json   = $item->$method;
 
-			$return .= "\n".JText::_('COM_JUPGRADEPRO_CONFIG_NAME').": [[g;grey;]{$item->name}]";
-			$return .= "\n".JText::_('COM_JUPGRADEPRO_TITLE_METHOD').": [[g;grey;]{$item->method}]";
-			$return .= "\n".JText::_('COM_JUPGRADEPRO_TITLE_LIMIT').": [[g;grey;]{$item->chunk_limit}]\n";
+			$return .= "\n" . Text::_('COM_JUPGRADEPRO_CONFIG_NAME') . ": [[g;grey;]{$item->name}]";
+			$return .= "\n" . Text::_('COM_JUPGRADEPRO_TITLE_METHOD') . ": [[g;grey;]{$item->method}]";
+			$return .= "\n" . Text::_('COM_JUPGRADEPRO_TITLE_LIMIT') . ": [[g;grey;]{$item->chunk_limit}]\n";
 			$return .= $this->fixJSON($json);
 
-		} elseif ($task == 'sites') {
+		}
+		elseif ($task == 'sites')
+		{
 
 			// Get the model for the view.
 			$model = $this->getModel('Sites');
 
 			$items = $model->getItems();
 
-			$configTitle = "[[g;white;]|] " . JText::_('COM_JUPGRADEPRO_CONFIG_NAME');
+			$configTitle = "[[g;white;]|] " . Text::_('COM_JUPGRADEPRO_CONFIG_NAME');
 
-			$return .= $configTitle . $this->getSpaces($configTitle, 30) . "|     " . JText::_('COM_JUPGRADEPRO_TITLE_METHOD');
+			$return .= $configTitle . $this->getSpaces($configTitle, 30) . "|     " . Text::_('COM_JUPGRADEPRO_TITLE_METHOD');
 			$return .= "\n|┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈┈\n";
 
 			if (!empty($items))
 			{
-				foreach ($items as $key => $value) {
+				foreach ($items as $key => $value)
+				{
 					$valTitle = "[[g;grey;]{$value->name}]";
-					$return .= "[[g;white;]|] " . $valTitle . $this->getSpaces($valTitle) . "|     " . $value->method . "\n";
+					$return   .= "[[g;white;]|] " . $valTitle . $this->getSpaces($valTitle) . "|     " . $value->method . "\n";
 				}
-			}else{
-				$return .= JText::_('COM_JUPGRADEPRO_SITES_NOT_FOUND') . "\n";
+			}
+			else
+			{
+				$return .= Text::_('COM_JUPGRADEPRO_SITES_NOT_FOUND') . "\n";
 			}
 
-			$return .= JText::_('COM_JUPGRADEPRO_HORIZONTAL_LIN3') . "\n";
+			$return .= Text::_('COM_JUPGRADEPRO_HORIZONTAL_LIN3') . "\n";
 		}
 
 		print($return);
 	}
 
 	/**
-   * Check if state is set
-   *
-   * @param   mixed  $state  State
-   *
-   * @return bool
-   */
-  protected function getSpaces($string, $length = 27)
-  {
+	 * Get the spaces
+	 *
+	 * @param   string   $string  The string to set spaces
+	 * @param   integer  $length  The length for this string
+	 *
+	 * @return  bool
+	 * @since   3.8.0
+	 */
+	protected function getSpaces($string, $length = 27)
+	{
 		$len = $length - strlen($string);
 
 		$return = "";
-		for ($i=0; $i < $len; $i++) {
+		for ($i = 0; $i < $len; $i++)
+		{
 			$return .= " ";
 		}
 
@@ -383,14 +437,15 @@ class JupgradeproControllerAjax extends AdminController
 	}
 
 	/**
-   * Check if state is set
-   *
-   * @param   mixed  $state  State
-   *
-   * @return bool
-   */
-  public function fixJSON($json)
-  {
+	 * Fix JSON from database
+	 *
+	 * @param   string  $json  The Json to fix
+	 *
+	 * @return bool
+	 * @since  3.8.0
+	 */
+	public function fixJSON($json)
+	{
 		$decode = json_decode($json);
 
 		if (!isset($decode))
@@ -398,7 +453,8 @@ class JupgradeproControllerAjax extends AdminController
 			return false;
 		}
 
-		foreach ($decode as $key => &$value) {
+		foreach ($decode as $key => &$value)
+		{
 			if ($key == 'db_password' || $key == 'rest_password')
 			{
 				$value = '*********************';
@@ -406,32 +462,33 @@ class JupgradeproControllerAjax extends AdminController
 
 			if ($value == "0")
 			{
-				$value = JText::_('JNO');
-			}else if ($value == "1")
+				$value = Text::_('JNO');
+			}
+			else if ($value == "1")
 			{
-				$value = JText::_('JYES');
+				$value = Text::_('JYES');
 			}
 
 		}
 
-		$return = print_r($decode,1);
+		$return = print_r($decode, 1);
 
 		$return = str_replace("stdClass Object", "", $return);
 
-    return $return;
-  }
+		return $return;
+	}
 
 	/**
 	 * returnError
 	 *
-	 * @return	none
-	 * @since	2.5.0
+	 * @return void
+	 * @since  3.8.0
 	 */
-	public function returnError ($code, $message, $debug = false)
+	public function returnError($code, $message, $debug = false)
 	{
-		$response = array();
-		$response['code'] = $code;
-		$response['message'] = \JText::_($message);
+		$response            = array();
+		$response['code']    = $code;
+		$response['message'] = Text::_($message);
 
 		if ($debug != false)
 		{
@@ -446,36 +503,38 @@ class JupgradeproControllerAjax extends AdminController
 	 * Download composer installer
 	 *
 	 * @return  void
+	 * @since  3.8.0
 	 */
-	 function updateComposer()
-	 {
+	function updateComposer()
+	{
 		set_time_limit(-1);
 
-		$command = "composer require matware-lab/jupgradenext";
-		$explode = explode(' ', $command);
-		$command = $explode[1];
+		$command  = "composer require matware-lab/jupgradenext";
+		$explode  = explode(' ', $command);
+		$command  = $explode[1];
 		$command2 = isset($explode[2]) ? ' ' . $explode[2] : '';
 
 		// Download composer.phar
 		$this->downloadComposer();
 
 		// Require composer bootstrap
-		require_once "phar://{$this->composer_data['bin']}/src/bootstrap.php";
+		require_once "phar://" . JPATH_ROOT . "{$this->composer_data['bin']}/src/bootstrap.php";
 
 		// Use root directory
-		chdir($this->composer_data['dir']);
-		putenv("COMPOSER_HOME={$this->composer_data['dir']}");
+		$composer_home = JPATH_ROOT . $this->composer_data['dir'];
+		chdir($composer_home);
+		putenv("COMPOSER_HOME={$composer_home}");
 
 		// Force to use php://output instead of php://stdout
 		putenv("OSTYPE=OS400");
 
 		// Get the application console instance
-		$app = new \Composer\Console\Application();
+		$app     = new \Composer\Console\Application();
 		$factory = new \Composer\Factory();
-		$output = $factory->createOutput();
+		$output  = $factory->createOutput();
 
 		// Build commands and arguments array
-		$array = array();
+		$array            = array();
 		$array['command'] = trim($command);
 
 		if ($array['command'] == 'require' || $array['command'] == 'remove')
@@ -484,69 +543,76 @@ class JupgradeproControllerAjax extends AdminController
 		}
 
 		// Set composer base root to Joomla! root
-		$array['-d'] = $this->composer_data['dir'];
+		$array['-d'] = $composer_home;
 
 		// Get input
-		$input = new \Symfony\Component\Console\Input\ArrayInput($array);
+		$input = new ArrayInput($array);
 
 		// Set interactive to false
 		$input->setInteractive(true);
 
 		// Run application
-		$return = $app->run($input, $output);
-	 }
+		$app->run($input, $output);
+	}
 
 	/**
 	 * Get status
 	 *
 	 * @return  void
+	 * @throws Exception
+	 * @since  3.8.0
 	 */
-	 function statusComposer()
-	 {
-		 jimport('joomla.filesystem.folder');
+	function statusComposer()
+	{
+		if (Folder::exists(JPATH_COMPONENT_ADMINISTRATOR . '/vendor') == false)
+		{
+			$return = Text::_('COM_JUPGRADEPRO_COMPOSER_NOT_FOUND');
+		}
+		else
+		{
+			$return = Text::_('COM_JUPGRADEPRO_COMPOSER_FOUND');
+		}
 
-		 if (JFolder::exists(JPATH_COMPONENT_ADMINISTRATOR . '/vendor') == false)
-		 {
-			 $return = \JText::_('COM_JUPGRADEPRO_COMPOSER_NOT_FOUND');
-		 }else{
-			 $return = \JText::_('COM_JUPGRADEPRO_COMPOSER_FOUND');
-		 }
-
-		 print($return);
-		 JFactory::getApplication()->close();
-	 }
+		print($return);
+		Factory::getApplication()->close();
+	}
 
 	/**
 	 * Download composer installer
 	 *
 	 * @return  void
+	 * @since  3.8.0
 	 */
-	 function downloadComposer()
-	 {
-		 if (!file_exists($this->composer_data['bin']))
-		 {
-			 copy($this->composer_data['url'], $this->composer_data['bin']);
-		 }
-	 }
+	function downloadComposer()
+	{
+		$binfile = JPATH_ROOT . $this->composer_data['bin'];
+
+		if (!file_exists($binfile))
+		{
+			copy($this->composer_data['url'], $binfile);
+		}
+	}
 
 	/**
 	 * Check for composer libraries
 	 *
 	 * @return  void
+	 * @throws Exception
+	 * @since  3.8.0
 	 */
-	 function checkLibraries()
-	 {
-		 jimport('joomla.filesystem.folder');
+	function checkLibraries()
+	{
+		jimport('joomla.filesystem.folder');
 
-		 if (JFolder::exists(JPATH_COMPONENT_ADMINISTRATOR . '/vendor') == false)
-		 {
-			 $return = array();
-			 $return['code'] = 500;
-			 $return['message'] = \JText::_('COM_JUPGRADEPRO_COMPOSER_NOT_FOUND');
+		if (Folder::exists(JPATH_COMPONENT_ADMINISTRATOR . '/vendor') == false)
+		{
+			$return            = array();
+			$return['code']    = 500;
+			$return['message'] = Text::_('COM_JUPGRADEPRO_COMPOSER_NOT_FOUND');
 
-			 print(json_encode($return));
-			 JFactory::getApplication()->close();
-		 }
- 	 }
+			print(json_encode($return));
+			Factory::getApplication()->close();
+		}
+	}
 
 }

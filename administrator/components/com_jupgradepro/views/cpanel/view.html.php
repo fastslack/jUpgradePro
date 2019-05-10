@@ -17,7 +17,7 @@ defined('_JEXEC') or die;
 use Joomla\CMS\MVC\View\HtmlView;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Language\Text;
-use Joomla\Router\Route;
+use Joomla\CMS\Router\Route;
 
 jimport('joomla.application.component.view');
 

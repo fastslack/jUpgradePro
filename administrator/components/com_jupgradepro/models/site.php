@@ -2,18 +2,19 @@
 /**
  * jUpgradePro
  *
- * @version $Id:
- * @package jUpgradePro
- * @copyright Copyright (C) 2004 - 2018 Matware. All rights reserved.
- * @author Matias Aguirre
- * @email maguirre@matware.com.ar
- * @link http://www.matware.com.ar/
- * @license GNU General Public License version 2 or later; see LICENSE
+ * @version   $Id:
+ * @package   jUpgradePro
+ * @copyright Copyright (C) 2004 - 2019 Matware. All rights reserved.
+ * @author    Matias Aguirre
+ * @email     maguirre@matware.com.ar
+ * @link      http://www.matware.com.ar/
+ * @license   GNU General Public License version 2 or later; see LICENSE
  */
-
 defined('_JEXEC') or die;
 
 use Joomla\CMS\MVC\Model\AdminModel;
+use Joomla\CMS\Table\Table;
+use Joomla\CMS\Factory;
 
 /**
  * Jupgradepro model.
@@ -29,7 +30,7 @@ class JupgradeproModelSite extends AdminModel
 	protected $text_prefix = 'COM_JUPGRADEPRO';
 
 	/**
-	 * @var   	string  	Alias to manage history control
+	 * @var    string    Alias to manage history control
 	 * @since   3.8
 	 */
 	public $typeAlias = 'com_jupgradepro.site';
@@ -47,13 +48,13 @@ class JupgradeproModelSite extends AdminModel
 	 * @param   string  $prefix  A prefix for the table class name. Optional.
 	 * @param   array   $config  Configuration array for model. Optional.
 	 *
-	 * @return    JTable    A database object
+	 * @return  JTable  A database object
 	 *
 	 * @since    3.8
 	 */
 	public function getTable($type = 'Site', $prefix = 'JupgradeproTable', $config = array())
 	{
-		return JTable::getInstance($type, $prefix, $config);
+		return Table::getInstance($type, $prefix, $config);
 	}
 
 	/**
@@ -62,20 +63,18 @@ class JupgradeproModelSite extends AdminModel
 	 * @param   array    $data      An optional array of data for the form to interogate.
 	 * @param   boolean  $loadData  True if the form is to load its own data (default case), false if not.
 	 *
-	 * @return  JForm  A JForm object on success, false on failure
+	 * @return  JForm|boolean  A JForm object on success, false on failure
 	 *
-	 * @since    3.8
+	 * @throws  Exception
+	 * @since   3.8
 	 */
 	public function getForm($data = array(), $loadData = true)
 	{
-		// Initialise variables.
-		$app = JFactory::getApplication();
-
 		// Get the form.
 		$form = $this->loadForm(
 			'com_jupgradepro.site', 'site',
-			array('control' => 'jform',
-				'load_data' => $loadData
+			array('control'   => 'jform',
+			      'load_data' => $loadData
 			)
 		);
 
@@ -93,11 +92,12 @@ class JupgradeproModelSite extends AdminModel
 	 * @return   mixed  The data for the form.
 	 *
 	 * @since    3.8
+	 * @throws  Exception
 	 */
 	protected function loadFormData()
 	{
 		// Check the session for previously entered form data.
-		$data = JFactory::getApplication()->getUserState('com_jupgradepro.edit.site.data', array());
+		$data = Factory::getApplication()->getUserState('com_jupgradepro.edit.site.data', array());
 
 		if (empty($data))
 		{
@@ -120,19 +120,22 @@ class JupgradeproModelSite extends AdminModel
 	 * @return  mixed    Object on success, false on failure.
 	 *
 	 * @since    3.8
+	 * @throws  Exception
 	 */
 	public function getItem($pk = null)
 	{
 		if (empty($pk))
 		{
-			$pk = (int) JFactory::getApplication()->input->get('id', 0);
+			$pk = (int) Factory::getApplication()->input->get('id', 0);
 		}
 
 		if ($pk !== 0)
-    {
-      $item = (array) parent::getItem($pk);
-    }else{
-			$item = array('database' => '[]', 'restful' => '[]' , 'skips' => '[]');
+		{
+			$item = (array) parent::getItem($pk);
+		}
+		else
+		{
+			$item = array('database' => '[]', 'restful' => '[]', 'skips' => '[]');
 		}
 
 		$jsonlist = array('database', 'restful', 'skips');
@@ -140,7 +143,7 @@ class JupgradeproModelSite extends AdminModel
 		foreach ($jsonlist as $key => $value)
 		{
 			$jsondecode = json_decode($item[$value], true);
-			$item = array_merge($item, $jsondecode);
+			$item       = array_merge($item, $jsondecode);
 		}
 
 		array_splice($item, 0, 1);
@@ -149,13 +152,14 @@ class JupgradeproModelSite extends AdminModel
 	}
 
 	/**
-	 * Method to duplicate an Product
+	 * Method to save the site data
 	 *
-	 * @param   array  &$pks  An array of primary key IDs.
+	 * @param   array  &$data  An array with the site data.
 	 *
 	 * @return  boolean  True if successful.
 	 *
 	 * @throws  Exception
+	 * @since   3.8.0
 	 */
 	public function save($data)
 	{
@@ -166,7 +170,8 @@ class JupgradeproModelSite extends AdminModel
 		{
 			$tag = explode("_", $key);
 
-			switch ($tag[0]) {
+			switch ($tag[0])
+			{
 				case 'db':
 					$db[$key] = $value;
 					unset($data[$key]);
@@ -185,72 +190,10 @@ class JupgradeproModelSite extends AdminModel
 		}
 
 		$data['database'] = json_encode($db);
-		$data['restful'] = json_encode($rest);
-		$data['skips'] = json_encode($skip);
+		$data['restful']  = json_encode($rest);
+		$data['skips']    = json_encode($skip);
 
 		return parent::save($data);
-	}
-
-	/**
-	 * Method to duplicate an Product
-	 *
-	 * @param   array  &$pks  An array of primary key IDs.
-	 *
-	 * @return  boolean  True if successful.
-	 *
-	 * @throws  Exception
-	 */
-	public function duplicate(&$pks)
-	{
-		$user = JFactory::getUser();
-
-		// Access checks.
-		if (!$user->authorise('core.create', 'com_jupgradepro'))
-		{
-			throw new Exception(JText::_('JERROR_CORE_CREATE_NOT_PERMITTED'));
-		}
-
-		$dispatcher = JEventDispatcher::getInstance();
-		$context    = $this->option . '.' . $this->name;
-
-		// Include the plugins for the save events.
-		JPluginHelper::importPlugin($this->events_map['save']);
-
-		$table = $this->getTable();
-
-		foreach ($pks as $pk)
-		{
-			if ($table->load($pk, true))
-			{
-				// Reset the id to create a new record.
-				$table->id = 0;
-
-				if (!$table->check())
-				{
-					throw new Exception($table->getError());
-				}
-
-				// Trigger the before save event.
-				$result = $dispatcher->trigger($this->event_before_save, array($context, &$table, true));
-
-				if (in_array(false, $result, true) || !$table->store())
-				{
-					throw new Exception($table->getError());
-				}
-
-				// Trigger the after save event.
-				$dispatcher->trigger($this->event_after_save, array($context, &$table, true));
-			}
-			else
-			{
-				throw new Exception($table->getError());
-			}
-		}
-
-		// Clean cache
-		$this->cleanCache();
-
-		return true;
 	}
 
 	/**
@@ -264,14 +207,12 @@ class JupgradeproModelSite extends AdminModel
 	 */
 	protected function prepareTable($table)
 	{
-		jimport('joomla.filter.output');
-
 		if (empty($table->id))
 		{
 			// Set ordering to the last item if not set
 			if (@$table->ordering === '')
 			{
-				$db = JFactory::getDbo();
+				$db = Factory::getDbo();
 				$db->setQuery('SELECT MAX(ordering) FROM #__jupgradepro_sites');
 				$max             = $db->loadResult();
 				$table->ordering = $max + 1;

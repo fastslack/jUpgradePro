@@ -15,6 +15,7 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Factory;
+use Joomla\CMS\Uri\Uri;
 
 Text::script('COM_JUPGRADEPRO_HELP_SHOW');
 Text::script('COM_JUPGRADEPRO_HELP_CHECK');
@@ -40,11 +41,11 @@ $user   = Factory::getUser();
 $userId = $user->get('id');
 ?>
 
-<script src="<?php echo JUri::root(true); ?>/media/com_jupgradepro/js/jquery.terminal-1.11.4.js"></script>
-<script src="<?php echo JUri::root(true); ?>/media/com_jupgradepro/js/jupgradepro.js"></script>
+<script src="<?php echo Uri::root(true); ?>/media/com_jupgradepro/js/jquery.terminal-1.11.4.js"></script>
+<script src="<?php echo Uri::root(true); ?>/media/com_jupgradepro/js/jupgradepro.js"></script>
 
-<link href="<?php echo JUri::root(true); ?>/media/com_jupgradepro/css/jquery.terminal-1.11.4.min.css" rel="stylesheet"/>
-<link href="<?php echo JUri::root(true); ?>/media/com_jupgradepro/css/jquery.terminal.custom.css" rel="stylesheet"/>
+<link href="<?php echo Uri::root(true); ?>/media/com_jupgradepro/css/jquery.terminal-1.11.4.min.css" rel="stylesheet"/>
+<link href="<?php echo Uri::root(true); ?>/media/com_jupgradepro/css/jquery.terminal.custom.css" rel="stylesheet"/>
 
 <section class="content">
     <div class="container">
@@ -64,7 +65,9 @@ $userId = $user->get('id');
 <script type="text/javascript">
     jQuery(function ($, undefined) {
 
-        var url0 = '<?php echo JUri::root(); ?>media/com_jupgradepro/json/spinners.json';
+        var url0 = '<?php echo Uri::root(); ?>media/com_jupgradepro/json/spinners.json';
+
+        var height = screen.height * 70 / 100;
 
         $.getJSON(url0, function (spinners) {
 
@@ -100,7 +103,7 @@ $userId = $user->get('id');
             }, {
                 greetings: '[[b;red;]       _ __  __                           __     ____           \n      (_) / / /___  ____ __________ _____/ /__  / __ \\_________ \n     / / / / / __ \\/ __ `/ ___/ __ `/ __  / _ \\/ /_/ / ___/ __ \\ \n    / / /_/ / /_/ / /_/ / /  / /_/ / /_/ /  __/ ____/ /  / /_/ /\n __/ /\\____/ .___/\\__, /_/   \\__,_/\\__,_/\\___/_/   /_/   \\____/ \n/___/     /_/    /____/                                  ][[big;orange;]v3.8.1]     \n\n\n\n  Type [[b;green;]help [command\\]] for assistance\n\n  Commands: [[ib;yellow;] composer, show, check, migrate]  \n\n',
                 name: 'jupgradeproconsole',
-                height: 600,
+                height: height,
                 prompt: '# '
             });
 

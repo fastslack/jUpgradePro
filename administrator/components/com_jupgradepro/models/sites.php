@@ -2,34 +2,37 @@
 /**
  * jUpgradePro
  *
- * @version $Id:
- * @package jUpgradePro
- * @copyright Copyright (C) 2004 - 2018 Matware. All rights reserved.
- * @author Matias Aguirre
- * @email maguirre@matware.com.ar
- * @link http://www.matware.com.ar/
- * @license GNU General Public License version 2 or later; see LICENSE
+ * @version   $Id:
+ * @package   jUpgradePro
+ * @copyright Copyright (C) 2004 - 2019 Matware. All rights reserved.
+ * @author    Matias Aguirre
+ * @email     maguirre@matware.com.ar
+ * @link      http://www.matware.com.ar/
+ * @license   GNU General Public License version 2 or later; see LICENSE
  */
 
 defined('_JEXEC') or die;
 
-jimport('joomla.application.component.modellist');
+use Joomla\CMS\Factory;
+use Joomla\CMS\MVC\Model\ListModel;
+use Joomla\CMS\Component\ComponentHelper;
 
 /**
  * Methods supporting a list of Jupgradepro records.
  *
  * @since  3.8
  */
-class JupgradeproModelSites extends JModelList
+class JupgradeproModelSites extends ListModel
 {
-/**
-	* Constructor.
-	*
-	* @param   array  $config  An optional associative array of configuration settings.
-	*
-	* @see        JController
-	* @since      3.8
-	*/
+	/**
+	 * Constructor.
+	 *
+	 * @param   array  $config  An optional associative array of configuration settings.
+	 *
+	 * @see        JController
+	 * @since      3.8
+	 * @throws     Exception
+	 */
 	public function __construct($config = array())
 	{
 		if (empty($config['filter_fields']))
@@ -55,13 +58,13 @@ class JupgradeproModelSites extends JModelList
 	 * @param   string  $direction  Order direction
 	 *
 	 * @return void
-	 *
+	 * @since      3.8
 	 * @throws Exception
 	 */
 	protected function populateState($ordering = null, $direction = null)
 	{
 		// Initialise variables.
-		$app = JFactory::getApplication('administrator');
+		$app = Factory::getApplication('administrator');
 
 		// Load the filter state.
 		$search = $app->getUserStateFromRequest($this->context . '.filter.search', 'filter_search');
@@ -71,7 +74,7 @@ class JupgradeproModelSites extends JModelList
 		$this->setState('filter.state', $published);
 
 		// Load the parameters.
-		$params = JComponentHelper::getParams('com_jupgradepro');
+		$params = ComponentHelper::getParams('com_jupgradepro');
 		$this->setState('params', $params);
 
 		// List state information.
@@ -169,6 +172,7 @@ class JupgradeproModelSites extends JModelList
 	 * Get an array of data items
 	 *
 	 * @return mixed Array of data items on success, false on failure.
+	 * @since  3.8.0
 	 */
 	public function getItems()
 	{

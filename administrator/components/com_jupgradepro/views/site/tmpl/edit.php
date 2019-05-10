@@ -15,9 +15,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\HTML\HTMLHelper;
 use Joomla\CMS\Factory;
-use Joomla\Uri\Uri;
+use Joomla\CMS\Uri\Uri;
 use Joomla\CMS\Language\Text;
-use Joomla\Router\Route;
+use Joomla\CMS\Router\Route;
 
 HTMLHelper::addIncludePath(JPATH_COMPONENT . '/helpers/html');
 HTMLHelper::_('behavior.tooltip');
@@ -33,10 +33,16 @@ $id = isset($this->item->id) ? $this->item->id : 0;
 
 ?>
 <script type="text/javascript">
+
     js = jQuery.noConflict();
+
     js(document).ready(function () {
 
     });
+
+    <?php
+        if (JVersion::MAJOR_VERSION !== 4) {
+    ?>
 
     Joomla.submitbutton = function (task) {
         if (task == 'site.cancel') {
@@ -51,6 +57,10 @@ $id = isset($this->item->id) ? $this->item->id : 0;
             }
         }
     }
+
+    <?php
+        }
+    ?>
 
 </script>
 
@@ -78,13 +88,16 @@ $id = isset($this->item->id) ? $this->item->id : 0;
 						<?php endforeach; ?>
                     </fieldset>
 
-
-                    <input type="hidden" name="jform[id]" value="<?php echo $this->item->id; ?>"/>
-                    <input type="hidden" name="jform[ordering]" value="<?php echo $this->item->ordering; ?>"/>
-                    <input type="hidden" name="jform[state]" value="<?php echo $this->item->state; ?>"/>
-                    <input type="hidden" name="jform[checked_out]" value="<?php echo $this->item->checked_out; ?>"/>
+                    <input type="hidden" name="jform[id]"
+                           value="<?php echo isset($this->item->id) ? $this->item->id : 0; ?>"/>
+                    <input type="hidden" name="jform[ordering]"
+                           value="<?php isset($this->item->ordering) ? $this->item->ordering : 0; ?>"/>
+                    <input type="hidden" name="jform[state]"
+                           value="<?php isset($this->item->state) ? $this->item->state : 0; ?>"/>
+                    <input type="hidden" name="jform[checked_out]"
+                           value="<?php echo isset($this->item->checked_out) ? $this->item->checked_out : 0; ?>"/>
                     <input type="hidden" name="jform[checked_out_time]"
-                           value="<?php echo $this->item->checked_out_time; ?>"/>
+                           value="<?php echo isset($this->item->checked_out_time) ? $this->item->checked_out_time : 0; ?>"/>
 
                 </fieldset>
             </div>
@@ -134,12 +147,12 @@ $id = isset($this->item->id) ? $this->item->id : 0;
                 </div>
 			<?php endforeach; ?>
         </fieldset>
-		<?php echo Html::_('bootstrap.endTab'); ?>
+		<?php echo HTMLHelper::_('bootstrap.endTab'); ?>
 
-		<?php echo Html::_('bootstrap.endTabSet'); ?>
+		<?php echo HTMLHelper::_('bootstrap.endTabSet'); ?>
 
         <input type="hidden" name="task" value=""/>
-		<?php echo Html::_('form.token'); ?>
+		<?php echo HTMLHelper::_('form.token'); ?>
 
     </div>
 </form>

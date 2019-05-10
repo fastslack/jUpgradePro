@@ -15,11 +15,9 @@ defined('_JEXEC') or die;
 
 use Joomla\CMS\Factory;
 use Joomla\CMS\MVC\View\HtmlView;
-use Jupgradenext\Upgrade\UpgradeHelper;
 use Joomla\CMS\Toolbar\ToolbarHelper;
 use Joomla\CMS\Language\Text;
 use Joomla\CMS\Helper\ContentHelper;
-
 
 /**
  * View to edit a site to migrate
@@ -58,7 +56,12 @@ class JupgradeproViewSite extends HtmlView
 			throw new Exception(implode("\n", $errors));
 		}
 
-		$this->addToolbar();
+		if (JVersion::MAJOR_VERSION === 4) {
+			$this->addToolbar40();
+		}else{
+			$this->addToolbar();
+		}
+
 		parent::display($tpl);
 	}
 
@@ -93,5 +96,69 @@ class JupgradeproViewSite extends HtmlView
 		{
 			ToolBarHelper::cancel('site.cancel', 'JTOOLBAR_CLOSE');
 		}
+	}
+
+	/**
+	 * Add the page title and toolbar.
+	 *
+	 * @return  void
+	 *
+	 * @since  4.0.0
+	 * @throws Exception
+	 */
+	protected function addToolbar40()
+	{
+		Factory::getApplication()->input->set('hidemainmenu', true);
+
+		$user       = Factory::getUser();
+		$userId     = $user->id;
+		$isNew      = empty($this->item->id);
+
+		$canDo = ContentHelper::getActions('com_jupgradepro');
+
+		ToolBarHelper::title(Text::_('COM_JUPGRADEPRO_TITLE_ADDNEW'), 'folder-plus');
+
+		$toolbarButtons = [];
+
+		if ($isNew)
+		{
+			// For new records, check the create permission.
+			if ($canDo->get('core.edit'))
+			{
+				ToolbarHelper::apply('stage.apply');
+				$toolbarButtons = [['save', 'site.save'], ['save2new', 'site.save2new']];
+			}
+
+			ToolbarHelper::saveGroup(
+				$toolbarButtons,
+				'btn-success'
+			);
+		}
+		else
+		{
+			// Since it's an existing record, check the edit permission, or fall back to edit own if the owner.
+			$itemEditable = $canDo->get('core.edit') || ($canDo->get('core.edit.own') && $this->item->created_by == $userId);
+
+			if ($itemEditable)
+			{
+				ToolbarHelper::apply('site.apply');
+				$toolbarButtons = [['save', 'site.save']];
+
+				// We can save this record, but check the create permission to see if we can return to make a new one.
+				if ($canDo->get('core.create'))
+				{
+					$toolbarButtons[] = ['save2new', 'site.save2new'];
+					$toolbarButtons[] = ['save2copy', 'site.save2copy'];
+				}
+			}
+
+			ToolbarHelper::saveGroup(
+				$toolbarButtons,
+				'btn-success'
+			);
+		}
+
+		ToolbarHelper::cancel('site.cancel');
+		ToolbarHelper::divider();
 	}
 }

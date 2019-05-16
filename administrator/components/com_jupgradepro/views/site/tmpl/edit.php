@@ -29,7 +29,7 @@ HTMLHelper::_('behavior.keepalive');
 $document = Factory::getDocument();
 $document->addStyleSheet(Uri::root() . 'media/com_jupgradepro/css/form.css');
 
-$id = isset($this->item->id) ? $this->item->id : 0;
+$id = isset($this->item['id']) ? $this->item['id'] : 0;
 
 ?>
 <script type="text/javascript">
@@ -89,15 +89,15 @@ $id = isset($this->item->id) ? $this->item->id : 0;
                     </fieldset>
 
                     <input type="hidden" name="jform[id]"
-                           value="<?php echo isset($this->item->id) ? $this->item->id : 0; ?>"/>
+                           value="<?php echo isset($this->item['id']) ? $this->item['id'] : 0; ?>"/>
                     <input type="hidden" name="jform[ordering]"
-                           value="<?php isset($this->item->ordering) ? $this->item->ordering : 0; ?>"/>
+                           value="<?php isset($this->item['ordering']) ? $this->item['ordering'] : 0; ?>"/>
                     <input type="hidden" name="jform[state]"
-                           value="<?php isset($this->item->state) ? $this->item->state : 0; ?>"/>
+                           value="<?php isset($this->item['state']) ? $this->item['state'] : 0; ?>"/>
                     <input type="hidden" name="jform[checked_out]"
-                           value="<?php echo isset($this->item->checked_out) ? $this->item->checked_out : 0; ?>"/>
+                           value="<?php echo isset($this->item['checked_out']) ? $this->item['checked_out'] : 0; ?>"/>
                     <input type="hidden" name="jform[checked_out_time]"
-                           value="<?php echo isset($this->item->checked_out_time) ? $this->item->checked_out_time : 0; ?>"/>
+                           value="<?php echo isset($this->item['checked_out_time']) ? $this->item['checked_out_time'] : 0; ?>"/>
 
                 </fieldset>
             </div>

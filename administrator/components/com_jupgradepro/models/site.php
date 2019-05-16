@@ -91,8 +91,8 @@ class JupgradeproModelSite extends AdminModel
 	 *
 	 * @return   mixed  The data for the form.
 	 *
+	 * @throws   Exception
 	 * @since    3.8
-	 * @throws  Exception
 	 */
 	protected function loadFormData()
 	{
@@ -119,8 +119,8 @@ class JupgradeproModelSite extends AdminModel
 	 *
 	 * @return  mixed    Object on success, false on failure.
 	 *
-	 * @since    3.8
 	 * @throws  Exception
+	 * @since    3.8
 	 */
 	public function getItem($pk = null)
 	{
@@ -132,6 +132,11 @@ class JupgradeproModelSite extends AdminModel
 		if ($pk !== 0)
 		{
 			$item = (array) parent::getItem($pk);
+
+			if (empty($data['id']))
+			{
+				$data['id'] = (int) $pk;
+			}
 		}
 		else
 		{
@@ -192,6 +197,11 @@ class JupgradeproModelSite extends AdminModel
 		$data['database'] = json_encode($db);
 		$data['restful']  = json_encode($rest);
 		$data['skips']    = json_encode($skip);
+
+		if (empty($data['id']))
+		{
+			$data['id'] = (int) Factory::getApplication()->input->get('id', 0);
+		}
 
 		return parent::save($data);
 	}

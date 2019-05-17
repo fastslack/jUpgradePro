@@ -19,6 +19,10 @@ use Joomla\CMS\Language\Text;
 use Joomla\CMS\MVC\Controller\BaseController;
 use Joomla\CMS\Filesystem\File;
 
+// Unset memory limit
+ini_set('memory_limit', '-1');
+
+// Load composer
 $autoload = JPATH_COMPONENT_ADMINISTRATOR . '/vendor/autoload.php';
 
 if (File::exists($autoload))
